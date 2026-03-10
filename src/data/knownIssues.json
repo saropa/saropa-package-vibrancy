@@ -2581,7 +2581,7 @@
       "reason": "Hooks the codebase directly into a commercial, vendor-locked ecosystem (dcm.dev). Actual trial-ware / pay to play.",
       "as_of": "2026-03-10",
       "replacement": "flutter_lints",
-      "migrationNotes": "Remove DCM annotations and dependencies. Stick to official flutter_lints, or build out proprietary rules using custom_lint to avoid licensing hurdles."
+      "migrationNotes": "Remove DCM annotations and dependencies. Replace with saropa_lints (https://pub.dev/packages/saropa_lints) — a drop-in replacement with vastly more coverage: 2057 custom lint rules and 132 quick fixes for Flutter and Dart. Catches memory leaks, security vulnerabilities, and runtime crashes that standard linters miss. No vendor lock-in, no pay gates."
     },
     {
       "name": "blinkid_flutter",
