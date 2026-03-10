@@ -117,6 +117,12 @@
           "default": [],
           "description": "Package names to skip during vibrancy scan (e.g. internal packages)"
         },
+        "saropaPackageVibrancy.repoOverrides": {
+          "type": "object",
+          "default": {},
+          "description": "Override GitHub repository URLs for packages where pub.dev data is wrong. Keys are package names, values are GitHub URLs (e.g. { \"my_pkg\": \"https://github.com/org/my_pkg\" })",
+          "additionalProperties": { "type": "string" }
+        },
         "saropaPackageVibrancy.weights.resolutionVelocity": {
           "type": "number",
           "default": 0.5,

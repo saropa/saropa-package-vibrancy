@@ -20,6 +20,7 @@ export async function analyzePackage(
         cache: CacheService;
         githubToken?: string;
         weights?: ScoringWeights;
+        repoOverrides?: Record<string, string>;
     },
 ): Promise<VibrancyResult> {
     const knownIssue = findKnownIssue(dep.name);
@@ -28,12 +29,15 @@ export async function analyzePackage(
 
     let github = null;
     let repoInfo: { owner: string; repo: string; subpath: string | null } | null = null;
-    if (pubDev?.repositoryUrl) {
-        const parsed = extractGitHubRepo(pubDev.repositoryUrl);
+    const repoUrl = params.repoOverrides?.[dep.name]
+        ?? pubDev?.repositoryUrl
+        ?? null;
+    if (repoUrl) {
+        const parsed = extractGitHubRepo(repoUrl);
         if (parsed) {
             repoInfo = {
                 ...parsed,
-                subpath: extractRepoSubpath(pubDev.repositoryUrl),
+                subpath: extractRepoSubpath(repoUrl),
             };
             github = await fetchRepoMetrics(parsed.owner, parsed.repo, {
                 token: params.githubToken,

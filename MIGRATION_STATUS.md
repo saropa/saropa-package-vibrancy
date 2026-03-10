@@ -112,9 +112,11 @@ Reference spec: `saropa_package_validator/PLAN.md`
 
 CLI-specific feature. Not applicable to a VS Code extension.
 
-### Repo URL Overrides (Appendix C) — LOW
+### Repo URL Overrides (Appendix C) — DONE
 
-Custom repository URL overrides for packages where Pub.dev data is wrong. Not yet implemented.
+- VS Code setting: `saropaPackageVibrancy.repoOverrides` (object: package name → GitHub URL)
+- Override URL takes priority over pub.dev's `repositoryUrl`
+- Handles packages where pub.dev data is wrong or missing
 
 ---
 

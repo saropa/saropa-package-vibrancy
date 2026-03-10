@@ -27,6 +27,49 @@ describe('github-api', () => {
         });
     });
 
+    describe('repo URL override priority', () => {
+        it('should prefer override URL over pub.dev URL', () => {
+            const overrides: Record<string, string> = {
+                'my_pkg': 'https://github.com/correct-org/my_pkg',
+            };
+            const pubDevUrl = 'https://github.com/wrong-org/old_repo';
+            const repoUrl = overrides['my_pkg'] ?? pubDevUrl;
+            const parsed = extractGitHubRepo(repoUrl);
+            assert.deepStrictEqual(parsed, {
+                owner: 'correct-org', repo: 'my_pkg',
+            });
+        });
+
+        it('should fall back to pub.dev URL when no override', () => {
+            const overrides: Record<string, string> = {};
+            const pubDevUrl = 'https://github.com/dart-lang/http';
+            const repoUrl = overrides['http'] ?? pubDevUrl;
+            const parsed = extractGitHubRepo(repoUrl);
+            assert.deepStrictEqual(parsed, {
+                owner: 'dart-lang', repo: 'http',
+            });
+        });
+
+        it('should handle null pub.dev URL with no override', () => {
+            const overrides: Record<string, string> = {};
+            const pubDevUrl: string | null = null;
+            const repoUrl = overrides['pkg'] ?? pubDevUrl ?? null;
+            assert.strictEqual(repoUrl, null);
+        });
+
+        it('should use override even when pub.dev URL is null', () => {
+            const overrides: Record<string, string> = {
+                'orphan_pkg': 'https://github.com/org/orphan_pkg',
+            };
+            const pubDevUrl: string | null = null;
+            const repoUrl = overrides['orphan_pkg'] ?? pubDevUrl ?? null;
+            const parsed = extractGitHubRepo(repoUrl!);
+            assert.deepStrictEqual(parsed, {
+                owner: 'org', repo: 'orphan_pkg',
+            });
+        });
+    });
+
     describe('fetchRepoMetrics', () => {
         let fetchStub: sinon.SinonStub;
 

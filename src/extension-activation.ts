@@ -181,6 +181,9 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                 engagementLevel: config.get<number>('weights.engagementLevel', 0.4),
                 popularity: config.get<number>('weights.popularity', 0.1),
             };
+            const repoOverrides = config.get<Record<string, string>>(
+                'repoOverrides', {},
+            );
 
             const deps = parsed.deps.filter(d => !allowSet.has(d.name));
 
@@ -194,6 +197,7 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                     cache: targets.cache,
                     githubToken: token || undefined,
                     weights,
+                    repoOverrides,
                 });
                 results.push(result);
             }
