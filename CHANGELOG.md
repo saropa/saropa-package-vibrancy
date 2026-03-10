@@ -7,7 +7,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
 
-## [0.1.1] - Unreleased
+## [0.1.1]
 
 ### Added
 

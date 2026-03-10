@@ -3,7 +3,6 @@
 import os
 import re
 import sys
-import webbrowser
 from datetime import datetime
 
 from .constants import C, MARKETPLACE_URL, OPENVSX_URL, PROJECT_ROOT, REPO_URL
@@ -154,7 +153,3 @@ def print_success_banner(version: str) -> None:
   Open VSX:    {C.CYAN}{OPENVSX_URL}{C.RESET}
   Release:     {C.CYAN}{release_url}{C.RESET}
 """)
-    try:
-        webbrowser.open(MARKETPLACE_URL)
-    except Exception:
-        pass

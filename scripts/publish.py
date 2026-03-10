@@ -25,14 +25,18 @@ import argparse
 import os
 import sys
 import time
+import webbrowser
 
 # --- ANSI colors, named exit codes, and project-root path ---
-from modules.constants import C, ExitCode, PROJECT_ROOT, exit_code_from_results
+from modules.constants import (
+    C, ExitCode, MARKETPLACE_URL, PROJECT_ROOT, exit_code_from_results,
+)
 
 # --- Terminal UI: prompts, colored output, ASCII logo ---
 from modules.display import (
     ask_pipeline_mode,       # Interactive "analyze-only vs publish" chooser
     ask_publish_stores,      # Interactive store selection (Marketplace/OpenVSX/both)
+    ask_yn,                  # Yes/no prompt with default
     dim,                     # Wrap text in ANSI dim (grey) styling
     heading,                 # Print a blue section heading with separators
     info,                    # Print an "[INFO]" prefixed message in cyan
@@ -92,6 +96,9 @@ from modules.publish_steps import (
 
 # --- Packaging: build .vsix via vsce ---
 from modules.packaging import step_package
+
+# --- Post-publish: poll marketplaces to confirm version went live ---
+from modules.verify_publish import verify_publish
 
 # --- Post-analysis: local install prompts and report viewer ---
 from modules.install import (
@@ -425,9 +432,18 @@ def _main_publish(
         _save_and_show_report(results, version, vsix_path)
         return exit_code_from_results(results)
 
+    # Poll marketplaces to confirm the new version is live
+    run_step("Publish verification",
+             lambda: verify_publish(version, stores), results)
+
     # All publish steps succeeded — save the final report and celebrate
     _save_and_show_report(results, version, vsix_path, is_publish=True)
-    print_success_banner(version)  # Green box + opens marketplace in browser
+    print_success_banner(version)
+    if ask_yn("Open marketplace page in browser?", default=False):
+        try:
+            webbrowser.open(MARKETPLACE_URL)
+        except Exception:
+            pass
     return ExitCode.SUCCESS
 
 

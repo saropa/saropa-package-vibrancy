@@ -78,6 +78,7 @@ STEP_EXIT_CODES = {
     "Marketplace publish": ExitCode.PUBLISH_FAILED,
     "Open VSX publish": ExitCode.OPENVSX_FAILED,
     "GitHub release": ExitCode.RELEASE_FAILED,
+    "Publish verification": ExitCode.PUBLISH_FAILED,
 }
 
 
