@@ -38,7 +38,8 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
         `**${result.package.name}** v${result.package.version}\n\n`,
     );
     md.appendMarkdown(`| | |\n|---|---|\n`);
-    md.appendMarkdown(`| Vibrancy Score | **${result.score}**/100 |\n`);
+    const displayScore = Math.round(result.score / 10);
+    md.appendMarkdown(`| Vibrancy Score | **${displayScore}**/10 |\n`);
     md.appendMarkdown(
         `| Category | ${categoryLabel(result.category)} |\n`,
     );

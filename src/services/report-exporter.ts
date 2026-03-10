@@ -111,8 +111,9 @@ function mdPackageRows(results: VibrancyResult[]): string[] {
     for (const r of results) {
         const latest = r.pubDev?.latestVersion ?? '';
         const label = categoryLabel(r.category);
+        const displayScore = Math.round(r.score / 10);
         rows.push(
-            `| ${r.package.name} | ${r.package.version} | ${latest} | ${label} | ${r.score} |`,
+            `| ${r.package.name} | ${r.package.version} | ${latest} | ${label} | ${displayScore}/10 |`,
         );
     }
     return rows;

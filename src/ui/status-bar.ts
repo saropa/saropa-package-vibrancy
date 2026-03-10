@@ -30,7 +30,8 @@ export class VibrancyStatusBar implements vscode.Disposable {
             r => r.updateInfo && r.updateInfo.updateStatus !== 'up-to-date',
         ).length;
 
-        this._item.text = `${icon} Vibrancy: ${rounded}`;
+        const displayScore = Math.round(rounded / 10);
+        this._item.text = `${icon} Vibrancy: ${displayScore}/10`;
         let tooltip = `${results.length} packages scanned.`;
         if (updateCount > 0) {
             tooltip += ` ${updateCount} update(s) available.`;

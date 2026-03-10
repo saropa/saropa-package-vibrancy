@@ -29,12 +29,12 @@ function buildReportSummary(results: VibrancyResult[]): string {
         r => r.updateInfo && r.updateInfo.updateStatus !== 'up-to-date',
     ).length;
     const avg = results.length > 0
-        ? Math.round(results.reduce((s, r) => s + r.score, 0) / results.length)
+        ? Math.round(results.reduce((s, r) => s + r.score, 0) / results.length / 10)
         : 0;
 
     return `<div class="summary">
         <div class="summary-card"><div class="count">${results.length}</div><div class="label">Packages</div></div>
-        <div class="summary-card"><div class="count">${avg}</div><div class="label">Avg Score</div></div>
+        <div class="summary-card"><div class="count">${avg}/10</div><div class="label">Avg Score</div></div>
         <div class="summary-card vibrant"><div class="count">${counts.vibrant}</div><div class="label">Vibrant</div></div>
         <div class="summary-card quiet"><div class="count">${counts.quiet}</div><div class="label">Quiet</div></div>
         <div class="summary-card legacy"><div class="count">${counts.legacy}</div><div class="label">Legacy</div></div>
@@ -83,7 +83,7 @@ function buildRow(r: VibrancyResult): string {
         data-update="${r.updateInfo?.updateStatus ?? 'unknown'}">
         <td><a href="${url}">${name}</a></td>
         <td>${version}</td>
-        <td>${r.score}</td>
+        <td>${Math.round(r.score / 10)}/10</td>
         <td>${categoryLabel(r.category)}</td>
         <td>${date}</td>
         <td>${stars}</td>
