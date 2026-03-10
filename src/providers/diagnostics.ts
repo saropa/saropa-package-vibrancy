@@ -1,10 +1,9 @@
 import * as vscode from 'vscode';
 import { VibrancyResult } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
-import { categoryToSeverity, categoryLabel } from '../scoring/status-classifier';
+import { categoryToSeverity } from '../scoring/status-classifier';
 
 const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
-    0: vscode.DiagnosticSeverity.Error,
     1: vscode.DiagnosticSeverity.Warning,
     2: vscode.DiagnosticSeverity.Information,
     3: vscode.DiagnosticSeverity.Hint,
@@ -46,7 +45,7 @@ export class VibrancyDiagnostics {
             if (result.category === 'vibrant'
                 && result.updateInfo
                 && result.updateInfo.updateStatus !== 'up-to-date') {
-                const updateMsg = `Update available: ${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion} (${result.updateInfo.updateStatus})`;
+                const updateMsg = `${result.package.name} — Update available: ${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion} (${result.updateInfo.updateStatus})`;
                 const updateDiag = new vscode.Diagnostic(
                     vscodeRange, updateMsg, vscode.DiagnosticSeverity.Hint,
                 );
@@ -65,8 +64,20 @@ export class VibrancyDiagnostics {
 }
 
 function buildMessage(result: VibrancyResult): string {
-    const label = categoryLabel(result.category);
-    let msg = `[${label}] Score: ${result.score}/100`;
+    const score = Math.round(result.score / 10);
+    const name = result.package.name;
+
+    let msg: string;
+    if (result.knownIssue?.replacement) {
+        msg = `Replace ${name} with ${result.knownIssue.replacement}`;
+    } else if (result.category === 'end-of-life') {
+        msg = `Replace ${name}`;
+    } else if (result.category === 'legacy-locked') {
+        msg = `Review ${name}`;
+    } else {
+        msg = `Monitor ${name}`;
+    }
+
     if (result.knownIssue) {
         msg += ` — ${result.knownIssue.reason}`;
     }
@@ -74,5 +85,6 @@ function buildMessage(result: VibrancyResult): string {
         && result.updateInfo.updateStatus !== 'up-to-date') {
         msg += ` | Update: ${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion}`;
     }
-    return msg;
+
+    return `${msg} (${score}/10)`;
 }

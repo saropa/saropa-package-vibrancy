@@ -1,8 +1,29 @@
-# Change Log
+# Changelog
 
-## [0.1.0] - Unreleased
+The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
+and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+**pub.dev** — [saropa_drift_viewer](https://pub.dev/packages/saropa_drift_viewer)
+
+## [0.1.1] - Unreleased
 
 ### Added
+
+- Pub.dev-inspired gem icon for sidebar activity bar and marketplace listing
+
+### Changed
+
+- Diagnostic messages now lead with actionable verbs (Replace, Review, Monitor) instead of category labels
+- Vibrancy score shown as 0–10 scale instead of decimal out of 100
+- Severity downgraded: end-of-life is now Warning (was Error), legacy-locked is Information, quiet is Hint
+- Package name included in all diagnostic messages for readability in the Problems panel
+
+---
+
+## [0.1.0]
+
+### Added
+
 - Pub update check: detects outdated dependencies by comparing current vs latest versions
 - Changelog fetching from GitHub (with monorepo subpath support) and parsing
 - Update indicators in tree view, hover tooltips, diagnostics, report, and status bar
@@ -17,7 +38,7 @@
 - GitHub API integration (issues, PRs, stars)
 - 24-hour response caching via VS Code globalState
 - 100 bundled known-bad packages database
-- Vibrancy scoring: V = (0.5 * Resolution) + (0.4 * Engagement) + (0.1 * Popularity)
+- Vibrancy scoring: V = (0.5 _ Resolution) + (0.4 _ Engagement) + (0.1 \* Popularity)
 - Four categories: Vibrant, Quiet, Legacy-Locked, End of Life
 - Auto-scan on workspace open (configurable)
 - File watcher re-scans on pubspec.lock changes

@@ -15,8 +15,8 @@ function makeMockDocument(): vscode.TextDocument {
 function makeDiagnostic(source: string): vscode.Diagnostic {
     return {
         range: new vscode.Range(0, 0, 0, 11),
-        message: '[End of Life] Score: 5/100',
-        severity: vscode.DiagnosticSeverity.Error,
+        message: 'Replace old_package (1/10)',
+        severity: vscode.DiagnosticSeverity.Warning,
         source,
         code: 'end-of-life',
     };

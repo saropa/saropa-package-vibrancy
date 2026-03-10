@@ -74,8 +74,8 @@ describe('status-classifier', () => {
     });
 
     describe('categoryToSeverity', () => {
-        it('should map end-of-life to Error (0)', () => {
-            assert.strictEqual(categoryToSeverity('end-of-life'), 0);
+        it('should map end-of-life to Warning (1)', () => {
+            assert.strictEqual(categoryToSeverity('end-of-life'), 1);
         });
 
         it('should map vibrant to Hint (3)', () => {

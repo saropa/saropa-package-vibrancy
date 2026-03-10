@@ -61,18 +61,56 @@ describe('VibrancyDiagnostics', () => {
         assert.strictEqual(diags!.length, 0);
     });
 
-    it('should set Error severity for end-of-life', () => {
+    it('should set Warning severity for end-of-life', () => {
         const results = [makeResult('old_pkg', 5, 'end-of-life')];
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
         const diags = collection.get(uri)!;
-        assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Error);
+        assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Warning);
     });
 
-    it('should set Warning severity for legacy-locked', () => {
+    it('should set Information severity for legacy-locked', () => {
         const results = [makeResult('flutter_bloc', 30, 'legacy-locked')];
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
         const diags = collection.get(uri)!;
-        assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Warning);
+        assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Information);
+    });
+
+    it('should use Replace verb for end-of-life messages', () => {
+        const results = [makeResult('old_pkg', 5, 'end-of-life')];
+        diagnostics.update(uri, PUBSPEC_CONTENT, results);
+        const diags = collection.get(uri)!;
+        assert.strictEqual(diags[0].message, 'Replace old_pkg (1/10)');
+    });
+
+    it('should use Review verb for legacy-locked messages', () => {
+        const results = [makeResult('flutter_bloc', 35, 'legacy-locked')];
+        diagnostics.update(uri, PUBSPEC_CONTENT, results);
+        const diags = collection.get(uri)!;
+        assert.strictEqual(diags[0].message, 'Review flutter_bloc (4/10)');
+    });
+
+    it('should use Monitor verb for quiet messages', () => {
+        const results = [makeResult('http', 55, 'quiet')];
+        diagnostics.update(uri, PUBSPEC_CONTENT, results);
+        const diags = collection.get(uri)!;
+        assert.strictEqual(diags[0].message, 'Monitor http (6/10)');
+    });
+
+    it('should suggest replacement in message when known', () => {
+        const result: VibrancyResult = {
+            ...makeResult('old_pkg', 5, 'end-of-life'),
+            knownIssue: {
+                name: 'old_pkg',
+                status: 'discontinued',
+                reason: 'No longer maintained',
+                as_of: '2024-01-01',
+                replacement: 'new_pkg',
+                migrationNotes: 'Use new_pkg instead.',
+            },
+        };
+        diagnostics.update(uri, PUBSPEC_CONTENT, [result]);
+        const diags = collection.get(uri)!;
+        assert.ok(diags[0].message.startsWith('Replace old_pkg with new_pkg'));
     });
 
     it('should include known issue reason in message', () => {

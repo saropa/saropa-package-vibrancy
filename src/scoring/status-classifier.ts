@@ -42,9 +42,9 @@ export function categoryIcon(category: VibrancyCategory): string {
 /** Map category to DiagnosticSeverity value. */
 export function categoryToSeverity(category: VibrancyCategory): number {
     switch (category) {
-        case 'end-of-life': return 0;
-        case 'legacy-locked': return 1;
-        case 'quiet': return 2;
+        case 'end-of-life': return 1;
+        case 'legacy-locked': return 2;
+        case 'quiet': return 3;
         case 'vibrant': return 3;
     }
 }
