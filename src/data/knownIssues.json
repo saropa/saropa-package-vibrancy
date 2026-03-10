@@ -1,0 +1,702 @@
+[
+  {
+    "name": "flutter_datetime_picker",
+    "status": "end_of_life",
+    "reason": "Uses deprecated Theme APIs; causes instant render crashes on Impeller.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_facebook_login",
+    "status": "end_of_life",
+    "reason": "SDKs are ancient; fails Gradle builds and violates modern iOS privacy manifests.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "apple_sign_in",
+    "status": "end_of_life",
+    "reason": "Obsolete cryptography; using this triggers automatic App Store review rejections.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "adhara_socket_io",
+    "status": "end_of_life",
+    "reason": "Hardcoded to Socket.io v2; immediately disconnects from modern Node.js backends.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_money_formatter",
+    "status": "end_of_life",
+    "reason": "No Null Safety; completely refuses to compile on Dart 3.0+.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "progress_dialog",
+    "status": "end_of_life",
+    "reason": "Context leaks and layout overflows break modern navigation stacks.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_rating_bar",
+    "status": "end_of_life",
+    "reason": "Gesture math is broken on high-refresh-rate screens (120Hz+).",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_offline",
+    "status": "end_of_life",
+    "reason": "Underlying connectivity logic reports false positives on Android 14+.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "clippy_flutter",
+    "status": "end_of_life",
+    "reason": "Legacy canvas painting logic creates severe visual artifacting.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_masked_text",
+    "status": "end_of_life",
+    "reason": "Massive memory leaks from un-disposed internal TextEditingControllers.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "ff_navigation_bar",
+    "status": "end_of_life",
+    "reason": "Throws \"RenderBox was not laid out\" exceptions on device rotation.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "states_rebuilder",
+    "status": "end_of_life",
+    "reason": "Incompatible with modern Dart class modifiers (sealed/final).",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_google_places",
+    "status": "end_of_life",
+    "reason": "Locked to ancient HTTP dependencies; causes unresolvable pubspec conflicts.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "zefyr",
+    "status": "end_of_life",
+    "reason": "Architecture is dead; keyboard handling completely broken on iOS 18.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "buidler",
+    "status": "end_of_life",
+    "reason": "Half-finished project; core layout files throw null exceptions.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_twitter_login",
+    "status": "end_of_life",
+    "reason": "Hardcoded to Twitter API v1.1; 100% fail rate since X killed the endpoints.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "stripe_payment",
+    "status": "end_of_life",
+    "reason": "Uses deprecated Stripe APIs; transactions will be rejected by the processor.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_audio_recorder",
+    "status": "end_of_life",
+    "reason": "Fails on Android 14+ due to new strict microphone background policies.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "chewie_audio",
+    "status": "end_of_life",
+    "reason": "Stagnant codebase; doesn't support modern system-level audio routing.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_speed_dial",
+    "status": "end_of_life",
+    "reason": "Animation controllers misfire, causing UI to permanently lock up.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "websafe_svg",
+    "status": "end_of_life",
+    "reason": "Obsolete; Flutter natively supports Web SVGs now. Adds dead weight.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_statusbar_manager",
+    "status": "end_of_life",
+    "reason": "Conflicts directly with modern Flutter SystemChrome implementations.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "nice_button",
+    "status": "end_of_life",
+    "reason": "Uses syntax completely removed from the Dart language; won't compile.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "liquid_progress_indicator",
+    "status": "end_of_life",
+    "reason": "Shaders are incompatible with Impeller, causing screen-tearing glitches.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_tags",
+    "status": "end_of_life",
+    "reason": "Internal state management is broken; deleting tags crashes the app.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_markdown",
+    "status": "end_of_life",
+    "reason": "Discontinued by Google; vulnerable to unpatched markdown injection flaws.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_adaptive_scaffold",
+    "status": "end_of_life",
+    "reason": "Discontinued; relies on older layout constraints that fail on foldable phones.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "ios_platform_images",
+    "status": "end_of_life",
+    "reason": "Discontinued; redundant since modern Flutter seamlessly handles iOS assets.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "palette_generator",
+    "status": "end_of_life",
+    "reason": "Discontinued; incredibly slow on modern high-res device camera feeds.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_image",
+    "status": "end_of_life",
+    "reason": "Discontinued; memory leaks heavily compared to modern network image caching.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "js",
+    "status": "end_of_life",
+    "reason": "Completely replaced by modern Wasm-compatible dart:js_interop.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "scoped_model",
+    "status": "end_of_life",
+    "reason": "Ancient logic that causes massive, app-wide widget rebuild jank.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "provide",
+    "status": "end_of_life",
+    "reason": "Officially deprecated by Google 7 years ago; full of syntax errors.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_sparkline",
+    "status": "end_of_life",
+    "reason": "Pre-null-safety; custom painters throw out-of-bounds exceptions.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_sticky_header",
+    "status": "end_of_life",
+    "reason": "Completely breaks Flutter's modern sliver scroll physics; severe jank.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_circular_chart",
+    "status": "end_of_life",
+    "reason": "Relies on dead animation APIs; chart simply renders as a black box.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_full_pdf_viewer",
+    "status": "end_of_life",
+    "reason": "Platform channel architecture causes hard thread crashes on Android 15.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_html_view",
+    "status": "end_of_life",
+    "reason": "Massive security risk; highly vulnerable to modern XSS injections.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_youtube_view",
+    "status": "end_of_life",
+    "reason": "YouTube changed their iframe API policies; videos refuse to play.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_webview_plugin",
+    "status": "end_of_life",
+    "reason": "Uses the old v1 Android embedding; blocks app compilation entirely.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "admob_flutter",
+    "status": "end_of_life",
+    "reason": "Uses retired Google Ad APIs; ads will not serve and revenue is lost.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "firebase_admob",
+    "status": "end_of_life",
+    "reason": "Discontinued officially; completely incompatible with current Firebase SDKs.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_blue",
+    "status": "end_of_life",
+    "reason": "Over 800 open issues; completely fails to handle Android 14+ BLE permissions.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_ble_lib",
+    "status": "end_of_life",
+    "reason": "Native iOS bridge crashes instantly when requesting background execution.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_beacon",
+    "status": "end_of_life",
+    "reason": "Ghosted repo; hardware scanning methods are dead on modern mobile OS.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_nfc_reader",
+    "status": "end_of_life",
+    "reason": "Lacks modern tag tech support; background reading is totally broken.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_contact_picker",
+    "status": "end_of_life",
+    "reason": "Violates Play Store/App Store privacy policies by leaking full contact lists.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "contacts_service",
+    "status": "end_of_life",
+    "reason": "Unmaintained; fails to fetch modern cross-linked cloud contacts.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "sms",
+    "status": "end_of_life",
+    "reason": "Android blocked this level of SMS access years ago; immediate crash.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "telephony",
+    "status": "end_of_life",
+    "reason": "Fails modern foreground service requirements on Android 15/16.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_launch",
+    "status": "end_of_life",
+    "reason": "Obsolete functionality that `url_launcher` has handled natively for years.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "vibrate",
+    "status": "end_of_life",
+    "reason": "Uses deprecated Android vibration classes that no longer trigger hardware.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_incall_manager",
+    "status": "end_of_life",
+    "reason": "Audio route conflicts freeze the device speakerphone permanently.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_webrtc",
+    "status": "end_of_life",
+    "reason": "(Note: The 0.x versions) Video tracks desync and memory spike infinitely.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_staggered_grid_view",
+    "status": "end_of_life",
+    "reason": "(Original repo versions) Unoptimized scroll logic eats 100% of the CPU.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_slidable",
+    "status": "end_of_life",
+    "reason": "(v0.x versions) Gestures conflict with modern Flutter internal navigators.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_icons",
+    "status": "end_of_life",
+    "reason": "Generates giant font files that drastically bloat app bundle size.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "font_awesome_flutter",
+    "status": "end_of_life",
+    "reason": "(Legacy versions) Icons render as boxes due to missing font maps.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "google_fonts",
+    "status": "end_of_life",
+    "reason": "(Original 1.x) Dynamic fetching blocks the main UI thread during load.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_spinkit",
+    "status": "end_of_life",
+    "reason": "(v4.x) Hardcoded TickerProviders cause exceptions when screens pop.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_shimmer",
+    "status": "end_of_life",
+    "reason": "Fails to render transparent gradients on Impeller engine correctly.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_page_indicator",
+    "status": "end_of_life",
+    "reason": "Animation logic expects PageController structures that are now obsolete.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_card_swipper",
+    "status": "end_of_life",
+    "reason": "Ghosted project; memory management for image cards is nonexistent.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "snaplist",
+    "status": "end_of_life",
+    "reason": "Custom scroll physics are completely broken by Flutter 3+ engine updates.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "carousel_pro",
+    "status": "end_of_life",
+    "reason": "Dead UI library; auto-play timers will memory leak and crash the app.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_swiper",
+    "status": "end_of_life",
+    "reason": "Unmerged Null Safety PR has been sitting open for 4+ years.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_advanced_networkimage",
+    "status": "end_of_life",
+    "reason": "Cache eviction fails, silently filling up user disk space until OS crashes.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "cached_network_image",
+    "status": "end_of_life",
+    "reason": "Legacy version 1.x; fundamentally incompatible with Dart 3 typing.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "multi_image_picker",
+    "status": "end_of_life",
+    "reason": "Does not support Android Scoped Storage; returns dead file paths.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "image_picker_saver",
+    "status": "end_of_life",
+    "reason": "Fails on iOS 16+ due to missing modern photo library permission flags.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_exif",
+    "status": "end_of_life",
+    "reason": "Buffer parsing logic throws formatting exceptions on modern HEIC photos.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_ffmpeg",
+    "status": "end_of_life",
+    "reason": "Underlying mobile FFmpeg libraries are discontinued and fail to compile.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_sound",
+    "status": "end_of_life",
+    "reason": "(Legacy versions) Missing background service permissions for Android 15.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "audioplayers",
+    "status": "end_of_life",
+    "reason": "(v0.x versions) Native code fails to build on Apple Silicon (M1/M2/M3) Macs.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_vlc_player",
+    "status": "end_of_life",
+    "reason": "Severe texture cache issues lead to green-screen artifacting on video load.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "video_launcher",
+    "status": "end_of_life",
+    "reason": "Obsolete wrapper; native OS no longer responds to these specific intents.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_downloader",
+    "status": "end_of_life",
+    "reason": "Progress synchronization isolates are broken, leaving ghost notifications.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "open_file",
+    "status": "end_of_life",
+    "reason": "Fails to map modern MIME types, causing the OS to reject opening PDFs/docs.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "file_picker",
+    "status": "end_of_life",
+    "reason": "(Legacy versions) Returns relative paths that the app lacks permission to read.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "path_provider_ex",
+    "status": "end_of_life",
+    "reason": "Redundant; the official `path_provider` covers all external storage needs now.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_local_notifications",
+    "status": "end_of_life",
+    "reason": "(Pre-v10) Completely ignores Android 14+ POST_NOTIFICATIONS permission requirements.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "workmanager",
+    "status": "end_of_life",
+    "reason": "Background execution keys fail to register, so tasks never actually fire.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_background_service",
+    "status": "end_of_life",
+    "reason": "Fails to keep isolates alive; killed instantly by modern OS battery managers.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "android_alarm_manager",
+    "status": "end_of_life",
+    "reason": "WakeLocks fail; alarms simply do not trigger when the screen is off.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_workmanager",
+    "status": "end_of_life",
+    "reason": "Dead repo; incompatible with modern Android WorkManager architecture.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "geolocator_apple",
+    "status": "end_of_life",
+    "reason": "Standalone version dead; lacks modern iOS precise location toggles.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "geolocator_android",
+    "status": "end_of_life",
+    "reason": "Standalone version dead; crashes on Android 14 location permission prompt.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "google_api_availability",
+    "status": "end_of_life",
+    "reason": "Obsolete detection methods return false negatives on modern devices.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "location_permissions",
+    "status": "end_of_life",
+    "reason": "Completely replaced by `permission_handler`; causes manifest merge errors.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "trust_fall",
+    "status": "end_of_life",
+    "reason": "Easily bypassed by modern root tools; provides zero actual security in 2026.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "safe_device",
+    "status": "end_of_life",
+    "reason": "Flagged physical Samsung/Pixel devices as emulators due to outdated hardware lists.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_secure_storage",
+    "status": "end_of_life",
+    "reason": "(Pre-v5.0) Keychain/Keystore logic is old; data can be wiped on OS upgrades.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "biometric_storage",
+    "status": "end_of_life",
+    "reason": "Blocks the main UI thread during biometric handshakes, freezing the app.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "local_auth",
+    "status": "end_of_life",
+    "reason": "Dead standalone package; lacks modern strong biometric fallback handlers.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_app_badger",
+    "status": "end_of_life",
+    "reason": "Badge counting logic is entirely broken on Android 14+ launchers.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_shortcut_shortcuts",
+    "status": "end_of_life",
+    "reason": "Fails to register dynamic shortcuts on modern iOS/Android homescreens.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_email_sender",
+    "status": "end_of_life",
+    "reason": "File attachment intents crash due to modern FileProvider security rules.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "flutter_sms_inbox",
+    "status": "end_of_life",
+    "reason": "Google Play Store explicitly bans apps using this broad SMS read permission.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "call_log",
+    "status": "end_of_life",
+    "reason": "Dead privacy wrapper; app will be suspended from app stores for using it.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  },
+  {
+    "name": "keyboard_actions",
+    "status": "end_of_life",
+    "reason": "FocusNode conflicts cause the keyboard to continuously flicker open and closed.",
+    "as_of": "2026-03-09",
+    "replacement": null
+  }
+]

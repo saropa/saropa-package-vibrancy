@@ -1,0 +1,104 @@
+import { VibrancyResult } from '../types';
+import { categoryLabel } from '../scoring/status-classifier';
+import { getReportStyles } from './report-styles';
+import { getReportScript } from './report-script';
+
+/** Build the full HTML for the vibrancy report webview. */
+export function buildReportHtml(results: VibrancyResult[]): string {
+    const counts = countCategories(results);
+    const avg = results.length > 0
+        ? Math.round(results.reduce((s, r) => s + r.score, 0) / results.length)
+        : 0;
+
+    return `<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; style-src 'unsafe-inline'; script-src 'unsafe-inline';">
+    <style>${getReportStyles()}</style>
+</head>
+<body>
+    <h1>Package Vibrancy Report</h1>
+    <div class="summary">
+        <div class="summary-card">
+            <div class="count">${results.length}</div>
+            <div class="label">Packages</div>
+        </div>
+        <div class="summary-card">
+            <div class="count">${avg}</div>
+            <div class="label">Avg Score</div>
+        </div>
+        <div class="summary-card vibrant">
+            <div class="count">${counts.vibrant}</div>
+            <div class="label">Vibrant</div>
+        </div>
+        <div class="summary-card quiet">
+            <div class="count">${counts.quiet}</div>
+            <div class="label">Quiet</div>
+        </div>
+        <div class="summary-card legacy">
+            <div class="count">${counts.legacy}</div>
+            <div class="label">Legacy</div>
+        </div>
+        <div class="summary-card eol">
+            <div class="count">${counts.eol}</div>
+            <div class="label">End of Life</div>
+        </div>
+    </div>
+    <table>
+        <thead><tr>
+            <th data-col="name">Package<span class="sort-arrow"></span></th>
+            <th data-col="version">Version<span class="sort-arrow"></span></th>
+            <th data-col="score">Score<span class="sort-arrow"></span></th>
+            <th data-col="category">Category<span class="sort-arrow"></span></th>
+            <th data-col="published">Published<span class="sort-arrow"></span></th>
+            <th data-col="stars">Stars<span class="sort-arrow"></span></th>
+        </tr></thead>
+        <tbody id="pkg-body">
+            ${results.map(buildRow).join('\n')}
+        </tbody>
+    </table>
+    <script>${getReportScript()}</script>
+</body>
+</html>`;
+}
+
+function escapeHtml(text: string): string {
+    return text
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;');
+}
+
+function buildRow(r: VibrancyResult): string {
+    const name = escapeHtml(r.package.name);
+    const version = escapeHtml(r.package.version);
+    const date = r.pubDev?.publishedDate.split('T')[0] ?? '';
+    const stars = r.github?.stars ?? '';
+    const url = `https://pub.dev/packages/${encodeURIComponent(r.package.name)}`;
+    return `<tr data-name="${name}" data-version="${version}"
+        data-score="${r.score}" data-category="${r.category}"
+        data-published="${date}" data-stars="${stars}">
+        <td><a href="${url}">${name}</a></td>
+        <td>${version}</td>
+        <td>${r.score}</td>
+        <td>${categoryLabel(r.category)}</td>
+        <td>${date}</td>
+        <td>${stars}</td>
+    </tr>`;
+}
+
+function countCategories(results: VibrancyResult[]) {
+    let vibrant = 0, quiet = 0, legacy = 0, eol = 0;
+    for (const r of results) {
+        switch (r.category) {
+            case 'vibrant': vibrant++; break;
+            case 'quiet': quiet++; break;
+            case 'legacy-locked': legacy++; break;
+            case 'end-of-life': eol++; break;
+        }
+    }
+    return { vibrant, quiet, legacy, eol };
+}

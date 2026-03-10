@@ -1,0 +1,134 @@
+{
+  "name": "saropa-package-vibrancy",
+  "displayName": "Saropa Package Vibrancy",
+  "description": "Analyze Flutter/Dart dependency health and community vibrancy",
+  "version": "0.1.0",
+  "publisher": "saropa",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/saropa/saropa-package-vibrancy"
+  },
+  "engines": {
+    "vscode": "^1.85.0"
+  },
+  "extensionKind": [
+    "workspace"
+  ],
+  "categories": [
+    "Other",
+    "Linters"
+  ],
+  "keywords": [
+    "flutter",
+    "dart",
+    "pubspec",
+    "vibrancy",
+    "dependency",
+    "health"
+  ],
+  "activationEvents": [
+    "workspaceContains:pubspec.yaml",
+    "onView:saropaPackageVibrancy.packages"
+  ],
+  "main": "./dist/extension.js",
+  "contributes": {
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "saropaPackageVibrancy",
+          "title": "Package Vibrancy",
+          "icon": "images/sidebar-icon.svg"
+        }
+      ]
+    },
+    "views": {
+      "saropaPackageVibrancy": [
+        {
+          "id": "saropaPackageVibrancy.packages",
+          "name": "Packages"
+        }
+      ]
+    },
+    "commands": [
+      {
+        "command": "saropaPackageVibrancy.scan",
+        "title": "Saropa: Scan Package Vibrancy",
+        "icon": "$(refresh)"
+      },
+      {
+        "command": "saropaPackageVibrancy.showReport",
+        "title": "Saropa: Show Vibrancy Report",
+        "icon": "$(graph)"
+      },
+      {
+        "command": "saropaPackageVibrancy.clearCache",
+        "title": "Saropa: Clear Cache",
+        "icon": "$(trash)"
+      }
+    ],
+    "menus": {
+      "view/title": [
+        {
+          "command": "saropaPackageVibrancy.scan",
+          "when": "view == saropaPackageVibrancy.packages",
+          "group": "navigation"
+        }
+      ]
+    },
+    "configuration": {
+      "title": "Saropa Package Vibrancy",
+      "properties": {
+        "saropaPackageVibrancy.githubToken": {
+          "type": "string",
+          "default": "",
+          "description": "GitHub Personal Access Token for increased API rate limits (60/hr without, 5000/hr with)"
+        },
+        "saropaPackageVibrancy.scanOnOpen": {
+          "type": "boolean",
+          "default": true,
+          "description": "Automatically scan when a Flutter project is opened"
+        },
+        "saropaPackageVibrancy.includeDevDependencies": {
+          "type": "boolean",
+          "default": false,
+          "description": "Include dev_dependencies in the vibrancy scan"
+        },
+        "saropaPackageVibrancy.cacheTtlHours": {
+          "type": "number",
+          "default": 24,
+          "minimum": 1,
+          "maximum": 168,
+          "description": "Cache TTL in hours for API responses"
+        }
+      }
+    }
+  },
+  "scripts": {
+    "check-types": "tsc --noEmit",
+    "compile": "npm run check-types && npm run lint && node esbuild.js",
+    "compile-tests": "tsc -p ./",
+    "lint": "eslint src",
+    "package": "npm run check-types && npm run lint && node esbuild.js --production",
+    "pretest": "npm run compile-tests",
+    "test": "mocha",
+    "vscode:prepublish": "npm run package",
+    "watch": "npm-run-all -p watch:*",
+    "watch:esbuild": "node esbuild.js --watch",
+    "watch:tsc": "tsc --noEmit --watch --project tsconfig.json"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.10",
+    "@types/node": "22.x",
+    "@types/sinon": "^17.0.0",
+    "@types/vscode": "^1.85.0",
+    "@vscode/vsce": "^3.2.0",
+    "esbuild": "^0.24.0",
+    "eslint": "^9.15.0",
+    "mocha": "^11.1.0",
+    "npm-run-all": "^4.1.5",
+    "sinon": "^19.0.0",
+    "typescript": "^5.7.0",
+    "typescript-eslint": "^8.15.0"
+  }
+}

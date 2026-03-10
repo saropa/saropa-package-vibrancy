@@ -1,0 +1,109 @@
+import * as assert from 'assert';
+import * as vscode from 'vscode';
+import { VibrancyHoverProvider } from '../../providers/hover-provider';
+import { VibrancyResult } from '../../types';
+
+function makeResult(name: string, score: number): VibrancyResult {
+    return {
+        package: { name, version: '1.0.0', source: 'hosted', isDirect: true },
+        pubDev: {
+            name,
+            latestVersion: '2.0.0',
+            publishedDate: '2025-01-15T00:00:00Z',
+            repositoryUrl: null,
+            isDiscontinued: false,
+            isUnlisted: false,
+            pubPoints: 130,
+        },
+        github: { stars: 500, openIssues: 10, closedIssuesLast90d: 5,
+            mergedPrsLast90d: 3, avgCommentsPerIssue: 2,
+            daysSinceLastUpdate: 1, daysSinceLastClose: 2 },
+        knownIssue: null,
+        score,
+        category: 'vibrant',
+        resolutionVelocity: 50,
+        engagementLevel: 40,
+        popularity: 60,
+    };
+}
+
+function makeMockDocument(text: string): vscode.TextDocument {
+    const lines = text.split('\n');
+    return {
+        fileName: '/test/pubspec.yaml',
+        getText(range?: vscode.Range): string {
+            if (!range) { return text; }
+            return lines[range.start.line]?.substring(
+                range.start.character, range.end.character,
+            ) ?? '';
+        },
+        getWordRangeAtPosition(
+            pos: vscode.Position,
+            _regex?: RegExp,
+        ): vscode.Range | undefined {
+            const line = lines[pos.line];
+            if (!line) { return undefined; }
+            const match = line.match(/(\w+)/);
+            if (!match) { return undefined; }
+            const start = line.indexOf(match[1]);
+            return new vscode.Range(
+                pos.line, start, pos.line, start + match[1].length,
+            );
+        },
+    } as unknown as vscode.TextDocument;
+}
+
+describe('VibrancyHoverProvider', () => {
+    let provider: VibrancyHoverProvider;
+
+    beforeEach(() => {
+        provider = new VibrancyHoverProvider();
+    });
+
+    it('should return null when no results loaded', () => {
+        const doc = makeMockDocument('  http: ^1.0.0');
+        const result = provider.provideHover(doc, new vscode.Position(0, 2));
+        assert.strictEqual(result, null);
+    });
+
+    it('should return hover for known package', () => {
+        provider.updateResults([makeResult('http', 85)]);
+        const doc = makeMockDocument('  http: ^1.0.0');
+        const result = provider.provideHover(doc, new vscode.Position(0, 2));
+        assert.ok(result);
+        assert.ok(result instanceof vscode.Hover);
+    });
+
+    it('should include score in hover content', () => {
+        provider.updateResults([makeResult('http', 85)]);
+        const doc = makeMockDocument('  http: ^1.0.0');
+        const hover = provider.provideHover(doc, new vscode.Position(0, 2));
+        const md = hover!.contents as unknown as vscode.MarkdownString;
+        assert.ok(md.value.includes('85'));
+    });
+
+    it('should include pub.dev link', () => {
+        provider.updateResults([makeResult('http', 85)]);
+        const doc = makeMockDocument('  http: ^1.0.0');
+        const hover = provider.provideHover(doc, new vscode.Position(0, 2));
+        const md = hover!.contents as unknown as vscode.MarkdownString;
+        assert.ok(md.value.includes('pub.dev/packages/http'));
+    });
+
+    it('should return null for non-pubspec files', () => {
+        provider.updateResults([makeResult('http', 85)]);
+        const doc = {
+            ...makeMockDocument('  http: ^1.0.0'),
+            fileName: '/test/other.yaml',
+        } as unknown as vscode.TextDocument;
+        const result = provider.provideHover(doc, new vscode.Position(0, 2));
+        assert.strictEqual(result, null);
+    });
+
+    it('should return null for unrecognized package', () => {
+        provider.updateResults([makeResult('http', 85)]);
+        const doc = makeMockDocument('  unknown_pkg: ^1.0.0');
+        const hover = provider.provideHover(doc, new vscode.Position(0, 2));
+        assert.strictEqual(hover, null);
+    });
+});

@@ -1,0 +1,17 @@
+.claude/**
+.vscode/**
+.vscode-test/**
+src/**
+out/**
+test/**
+node_modules/**
+scripts/**
+.gitignore
+.mocharc.yml
+tsconfig.json
+esbuild.js
+eslint.config.mjs
+**/*.map
+**/*.ts
+coverage/**
+*.vsix

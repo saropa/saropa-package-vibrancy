@@ -1,0 +1,17 @@
+[
+  {
+    "number": 201,
+    "state": "closed",
+    "merged_at": "2024-01-11T09:00:00Z"
+  },
+  {
+    "number": 202,
+    "state": "closed",
+    "merged_at": "2024-01-13T14:00:00Z"
+  },
+  {
+    "number": 203,
+    "state": "closed",
+    "merged_at": null
+  }
+]

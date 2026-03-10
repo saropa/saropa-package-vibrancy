@@ -1,0 +1,9 @@
+out/
+dist/
+node_modules/
+*.vsix
+.vscode-test/
+coverage/
+.DS_Store
+Thumbs.db
+.claude/
