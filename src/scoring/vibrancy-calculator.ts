@@ -1,8 +1,29 @@
 import { GitHubMetrics } from '../types';
 
-const W_R = 0.5;
-const W_E = 0.4;
-const W_P = 0.1;
+/**
+ * Default scoring weights for the vibrancy formula:
+ *   V_score = (W_R * Resolution) + (W_E * Engagement) + (W_P * Popularity)
+ *
+ * Resolution and Engagement are heavily weighted because active maintainer
+ * response matters more than historical star counts. These can be overridden
+ * via VS Code settings (saropaPackageVibrancy.weights.*).
+ */
+
+/** Weight for Resolution Velocity (closed issues + merged PRs). */
+export const DEFAULT_WEIGHT_RESOLUTION = 0.5;
+
+/** Weight for Engagement Level (comment volume + discussion recency). */
+export const DEFAULT_WEIGHT_ENGAGEMENT = 0.4;
+
+/** Weight for Popularity (pub.dev points + GitHub stars). */
+export const DEFAULT_WEIGHT_POPULARITY = 0.1;
+
+/** User-configurable scoring weights. Must sum to ~1.0 for meaningful scores. */
+export interface ScoringWeights {
+    readonly resolutionVelocity: number;
+    readonly engagementLevel: number;
+    readonly popularity: number;
+}
 
 function clamp(value: number): number {
     return Math.min(100, Math.max(0, value));
@@ -35,13 +56,20 @@ export function calcPopularity(pubPoints: number, stars: number): number {
 }
 
 /** Compute overall vibrancy score (0-100). */
-export function computeVibrancyScore(params: {
-    resolutionVelocity: number;
-    engagementLevel: number;
-    popularity: number;
-}): number {
-    const raw = (W_R * params.resolutionVelocity)
-        + (W_E * params.engagementLevel)
-        + (W_P * params.popularity);
+export function computeVibrancyScore(
+    params: {
+        resolutionVelocity: number;
+        engagementLevel: number;
+        popularity: number;
+    },
+    weights?: ScoringWeights,
+): number {
+    const wR = weights?.resolutionVelocity ?? DEFAULT_WEIGHT_RESOLUTION;
+    const wE = weights?.engagementLevel ?? DEFAULT_WEIGHT_ENGAGEMENT;
+    const wP = weights?.popularity ?? DEFAULT_WEIGHT_POPULARITY;
+
+    const raw = (wR * params.resolutionVelocity)
+        + (wE * params.engagementLevel)
+        + (wP * params.popularity);
     return Math.round(clamp(raw) * 10) / 10;
 }

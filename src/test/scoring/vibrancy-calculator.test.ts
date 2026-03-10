@@ -80,7 +80,7 @@ describe('vibrancy-calculator', () => {
     });
 
     describe('computeVibrancyScore', () => {
-        it('should compute weighted average', () => {
+        it('should compute weighted average with defaults', () => {
             const score = computeVibrancyScore({
                 resolutionVelocity: 80,
                 engagementLevel: 60,
@@ -97,6 +97,44 @@ describe('vibrancy-calculator', () => {
                 popularity: 100,
             });
             assert.ok(score <= 100);
+        });
+
+        it('should apply custom weights', () => {
+            const score = computeVibrancyScore(
+                { resolutionVelocity: 100, engagementLevel: 0, popularity: 0 },
+                { resolutionVelocity: 1.0, engagementLevel: 0, popularity: 0 },
+            );
+            assert.strictEqual(score, 100);
+        });
+
+        it('should allow popularity-heavy weights', () => {
+            const score = computeVibrancyScore(
+                { resolutionVelocity: 0, engagementLevel: 0, popularity: 80 },
+                { resolutionVelocity: 0, engagementLevel: 0, popularity: 1.0 },
+            );
+            assert.strictEqual(score, 80);
+        });
+
+        it('should produce different scores with different weights', () => {
+            const params = {
+                resolutionVelocity: 90,
+                engagementLevel: 30,
+                popularity: 10,
+            };
+            const defaultScore = computeVibrancyScore(params);
+            const evenScore = computeVibrancyScore(params, {
+                resolutionVelocity: 0.33,
+                engagementLevel: 0.34,
+                popularity: 0.33,
+            });
+            assert.notStrictEqual(defaultScore, evenScore);
+        });
+
+        it('should return 0 when all inputs are 0', () => {
+            const score = computeVibrancyScore(
+                { resolutionVelocity: 0, engagementLevel: 0, popularity: 0 },
+            );
+            assert.strictEqual(score, 0);
         });
     });
 });
