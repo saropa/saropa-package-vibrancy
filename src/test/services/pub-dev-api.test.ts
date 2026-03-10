@@ -60,7 +60,7 @@ describe('pub-dev-api', () => {
         });
 
         it('should return 0 for failed requests', async () => {
-            fetchStub.resolves(new Response('', { status: 500 }));
+            fetchStub.resolves(new Response('', { status: 400 }));
             const points = await fetchPackageScore('broken');
             assert.strictEqual(points, 0);
         });

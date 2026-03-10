@@ -7,7 +7,7 @@ function makeResult(
     name: string, score: number, updateStatus?: string,
 ): VibrancyResult {
     return {
-        package: { name, version: '1.0.0', source: 'hosted', isDirect: true },
+        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
         pubDev: null,
         github: null,
         knownIssue: null,
