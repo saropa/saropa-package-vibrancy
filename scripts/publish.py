@@ -7,7 +7,14 @@ import sys
 import time
 
 from modules.constants import C, ExitCode, PROJECT_ROOT, exit_code_from_results
-from modules.display import ask_publish_stores, dim, heading, info, show_logo
+from modules.display import (
+    ask_pipeline_mode,
+    ask_publish_stores,
+    dim,
+    heading,
+    info,
+    show_logo,
+)
 from modules.utils import (
     get_installed_extension_versions,
     read_package_version,
@@ -243,6 +250,7 @@ def main() -> int:
 def _main_inner(args: argparse.Namespace, version: str) -> int:
     """Run the analysis + publish pipeline."""
     results: list[tuple[str, bool, float]] = []
+    mode = "analyze" if args.analyze_only else ask_pipeline_mode()
 
     version, passed = _run_analysis(args, results)
     if not passed:
@@ -254,12 +262,21 @@ def _main_inner(args: argparse.Namespace, version: str) -> int:
         _save_and_show_report(results, version)
         return ExitCode.PACKAGE_FAILED
 
-    if args.analyze_only:
+    if mode == "analyze":
         report = _save_and_show_report(results, version, vsix_path)
         if report:
             prompt_open_report(report)
         return ExitCode.SUCCESS
 
+    return _main_publish(version, vsix_path, results)
+
+
+def _main_publish(
+    version: str,
+    vsix_path: str,
+    results: list[tuple[str, bool, float]],
+) -> int:
+    """Handle the publish flow (confirmation, credentials, push)."""
     heading("Publish Confirmation")
     if not confirm_publish(version):
         info("Publish cancelled by user.")

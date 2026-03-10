@@ -47,6 +47,28 @@ def ask_yn(prompt: str, default: bool = False) -> bool:
     return answer.startswith("y")
 
 
+def ask_pipeline_mode() -> str:
+    """Ask whether to analyze or analyze + publish.
+
+    Returns 'analyze' or 'both'.
+    Defaults to 'both' in CI mode (PUBLISH_YES).
+    """
+    if os.environ.get("PUBLISH_YES"):
+        print("  Pipeline mode: both (auto)")
+        return "both"
+    print(f"\n  {C.YELLOW}What would you like to do?{C.RESET}")
+    print("    1 = Analyze only (build, test, package, local install)")
+    print("    2 = Analyze + Publish")
+    try:
+        raw = input("  Choice [1]: ").strip() or "1"
+    except (EOFError, KeyboardInterrupt):
+        print()
+        raise SystemExit(0)
+    if raw == "1":
+        return "analyze"
+    return "both"
+
+
 def ask_publish_stores() -> str:
     """Ask which store(s) to publish to.
 
