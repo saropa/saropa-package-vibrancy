@@ -4,6 +4,22 @@ node_modules/
 *.vsix
 .vscode-test/
 coverage/
+
+# OS
 .DS_Store
 Thumbs.db
+*.bak
+
+# IDE
+.idea/
+*.iml
+
+# AI tool configs
 .claude/
+.cursor/
+.copilot/
+.aider*
+.codeium/
+
+# Saropa Log Capture (index & cache)
+.saropa/

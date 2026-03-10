@@ -6,5 +6,13 @@
   "search.exclude": {
     "out": true,
     "dist": true
-  }
+  },
+  "mochaExplorer.files": "out/test/**/*.test.js",
+  "mochaExplorer.require": [
+    "test/register-mock.js"
+  ],
+  "mochaExplorer.timeout": 5000,
+  "cSpell.words": [
+    "pubspec"
+  ]
 }
