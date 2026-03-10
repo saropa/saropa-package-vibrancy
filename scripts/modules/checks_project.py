@@ -1,53 +1,14 @@
-"""Pre-flight and quality validation checks."""
+"""Project state validation: git, dependencies, build, quality."""
 
 import os
-import re
-import sys
 
-from .constants import C, MAX_FILE_LINES, MIN_NODE_MAJOR, PROJECT_ROOT
-from .display import ask_yn, dim, fail, info, ok, warn
+from .constants import C, MAX_FILE_LINES, PROJECT_ROOT
+from .display import ask_yn, fail, info, ok, warn
 from .utils import run
 
 
-def check_node() -> bool:
-    """Step 1a: Verify Node.js is installed and meets minimum version."""
-    result = run("node --version")
-    if result.returncode != 0:
-        fail("Node.js not found")
-        return False
-
-    version = result.stdout.strip().lstrip("v")
-    major = int(version.split(".")[0])
-    if major < MIN_NODE_MAJOR:
-        fail(f"Node.js {version} < required {MIN_NODE_MAJOR}.x")
-        return False
-
-    ok(f"Node.js {version}")
-    return True
-
-
-def check_git() -> bool:
-    """Step 1b: Verify git is installed."""
-    result = run("git --version")
-    if result.returncode != 0:
-        fail("git not found")
-        return False
-    ok(result.stdout.strip())
-    return True
-
-
-def check_vsce() -> bool:
-    """Step 1c: Verify vsce is available."""
-    result = run("npx vsce --version")
-    if result.returncode != 0:
-        fail("vsce not found — run: npm install -g @vscode/vsce")
-        return False
-    ok(f"vsce {result.stdout.strip()}")
-    return True
-
-
 def check_working_tree() -> bool:
-    """Step 2: Check for uncommitted changes."""
+    """Check for uncommitted changes."""
     result = run("git status --porcelain")
     if result.returncode != 0:
         stderr = (result.stderr or "").strip()
@@ -75,7 +36,7 @@ def _has_origin_remote() -> bool:
 
 
 def check_remote_sync() -> bool:
-    """Step 3: Fetch origin and check sync state."""
+    """Fetch origin and check sync state."""
     if not _has_origin_remote():
         warn("No remote 'origin' configured — skipping sync")
         return True
@@ -98,6 +59,11 @@ def check_remote_sync() -> bool:
         ok("Up to date with origin")
         return True
 
+    return _check_if_behind(local, remote)
+
+
+def _check_if_behind(local: str, remote: str) -> bool:
+    """Handle ahead/behind/diverged state."""
     base = run(f"git merge-base {local} {remote}").stdout.strip()
     if base == remote:
         ok("Local is ahead of origin (will push during publish)")
@@ -116,7 +82,7 @@ def check_remote_sync() -> bool:
 
 
 def ensure_dependencies() -> bool:
-    """Step 4: Run npm install if needed."""
+    """Run npm install if needed."""
     node_modules = os.path.join(PROJECT_ROOT, "node_modules")
     pkg_json = os.path.join(PROJECT_ROOT, "package.json")
     lock_file = os.path.join(PROJECT_ROOT, "package-lock.json")
@@ -141,7 +107,7 @@ def ensure_dependencies() -> bool:
 
 
 def step_lint() -> bool:
-    """Step 5: Run ESLint."""
+    """Run ESLint."""
     info("Running eslint...")
     result = run("npm run lint")
     if result.returncode != 0:
@@ -156,7 +122,7 @@ def step_lint() -> bool:
 
 
 def step_compile() -> bool:
-    """Step 5b: Type-check with tsc."""
+    """Type-check with tsc."""
     info("Running type check...")
     result = run("npm run check-types")
     if result.returncode != 0:
@@ -169,7 +135,7 @@ def step_compile() -> bool:
 
 
 def step_test() -> bool:
-    """Step 6: Run tests."""
+    """Run tests."""
     info("Running tests...")
     result = run("npm test")
     if result.returncode != 0:
@@ -182,7 +148,7 @@ def step_test() -> bool:
 
 
 def check_file_line_limits() -> bool:
-    """Step 7: Warn if .ts files exceed line limit."""
+    """Warn if .ts files exceed line limit."""
     src_dir = os.path.join(PROJECT_ROOT, "src")
     violations = []
 

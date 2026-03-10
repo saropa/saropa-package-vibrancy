@@ -6,7 +6,7 @@ import sys
 import webbrowser
 from datetime import datetime
 
-from .constants import C, MARKETPLACE_URL, PROJECT_ROOT, REPO_URL
+from .constants import C, MARKETPLACE_URL, OPENVSX_URL, PROJECT_ROOT, REPO_URL
 from .display import dim, info
 from .utils import elapsed_str
 
@@ -72,6 +72,7 @@ def ensure_utf8_stdout() -> None:
 def save_report(
     results: list[tuple[str, bool, float]],
     version: str,
+    vsix_path: str | None = None,
     is_publish: bool = False,
 ) -> str | None:
     """Save timestamped report to reports/ directory."""
@@ -86,26 +87,41 @@ def save_report(
     filename = f"{timestamp}_{version}_{kind}_report.log"
     filepath = os.path.join(reports_dir, filename)
 
-    lines = [
-        f"Saropa Package Vibrancy — {kind.title()} Report",
-        f"Version: {version}",
-        f"Timestamp: {now.isoformat()}",
-        "",
-        f"{'Step':<30} {'Result':<8} {'Time':>8}",
-        "-" * 50,
-    ]
-
-    for name, passed, elapsed in results:
-        status = "PASS" if passed else "FAIL"
-        lines.append(f"{name:<30} {status:<8} {elapsed_str(elapsed):>8}")
-
-    total = sum(e for _, _, e in results)
-    lines.append(f"\nTotal: {elapsed_str(total)}")
+    lines = _build_report_lines(kind, version, now, results, vsix_path)
 
     with open(filepath, "w", encoding="utf-8") as f:
         f.write("\n".join(lines) + "\n")
 
     return filepath
+
+
+def _build_report_lines(
+    kind: str,
+    version: str,
+    now: datetime,
+    results: list[tuple[str, bool, float]],
+    vsix_path: str | None,
+) -> list[str]:
+    """Build the text lines for a report file."""
+    lines = [
+        f"Saropa Package Vibrancy — {kind.title()} Report",
+        f"Version: {version}",
+        f"Timestamp: {now.isoformat()}",
+    ]
+    if vsix_path and os.path.isfile(vsix_path):
+        size_kb = os.path.getsize(vsix_path) / 1024
+        lines.append(f"VSIX: {os.path.basename(vsix_path)} ({size_kb:.0f} KB)")
+    lines += [
+        "",
+        f"{'Step':<30} {'Result':<8} {'Time':>8}",
+        "-" * 50,
+    ]
+    for name, passed, elapsed in results:
+        status = "PASS" if passed else "FAIL"
+        lines.append(f"{name:<30} {status:<8} {elapsed_str(elapsed):>8}")
+    total = sum(e for _, _, e in results)
+    lines.append(f"\nTotal: {elapsed_str(total)}")
+    return lines
 
 
 def print_timing(results: list[tuple[str, bool, float]]) -> None:
@@ -131,10 +147,11 @@ def print_success_banner(version: str) -> None:
     release_url = f"{REPO_URL}/releases/tag/v{version}"
     print(f"""
   {C.GREEN}{'=' * 50}
-  ✓ Published v{version} successfully!
+  Published v{version} successfully!
   {'=' * 50}{C.RESET}
 
   Marketplace: {C.CYAN}{MARKETPLACE_URL}{C.RESET}
+  Open VSX:    {C.CYAN}{OPENVSX_URL}{C.RESET}
   Release:     {C.CYAN}{release_url}{C.RESET}
 """)
     try:

@@ -1,39 +1,36 @@
 #!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-# Saropa Package Vibrancy — Publish Pipeline
-#
-# Gated analyze-then-publish for VS Code Marketplace. Requires Python 3.10+.
-#
-# Usage:
-#   python scripts/publish.py                  # full analyze + publish
-#   python scripts/publish.py --analyze-only   # analysis + dry-run only
-#   python scripts/publish.py --skip-tests     # skip test step
-#   python scripts/publish.py --yes            # non-interactive (CI)
+"""Saropa Package Vibrancy — Developer Toolkit & Publish Pipeline."""
 
 import argparse
 import os
 import sys
 import time
 
-from modules.constants import C, ExitCode, PROJECT_ROOT
-from modules.display import dim, heading, info, show_logo
-from modules.utils import is_version_tagged, read_package_version, run_step
+from modules.constants import C, ExitCode, PROJECT_ROOT, exit_code_from_results
+from modules.display import ask_publish_stores, dim, heading, info, show_logo
+from modules.utils import (
+    get_installed_extension_versions,
+    read_package_version,
+    run,
+    run_step,
+)
 from modules.report import (
     close_publish_log,
     ensure_utf8_stdout,
     open_publish_log,
+    print_success_banner,
     print_timing,
     save_report,
-    print_success_banner,
 )
-
-from modules.checks import (
-    check_node,
+from modules.checks_prereqs import check_git, check_node, check_vsce
+from modules.checks_environment import (
+    check_global_npm_packages,
+    check_vscode_cli,
+    check_vscode_extensions,
+)
+from modules.checks_project import (
     check_file_line_limits,
-    check_git,
     check_remote_sync,
-    check_vsce,
     check_working_tree,
     ensure_dependencies,
     step_compile,
@@ -42,23 +39,25 @@ from modules.checks import (
 )
 from modules.checks_version import validate_version_changelog
 from modules.publish_steps import (
-    check_gh_cli,
-    check_vsce_pat,
+    check_publish_credentials,
+    commit_and_tag,
     confirm_publish,
-    create_git_tag,
-    create_github_release,
-    git_commit_and_push,
-    publish_to_marketplace,
-    step_dry_run,
+    publish_to_stores,
+)
+from modules.packaging import step_package
+from modules.install import (
+    print_install_instructions,
+    prompt_install,
+    prompt_open_report,
 )
 
-
-# ── CLI ──────────────────────────────────────────────────────
-
 _CLI_FLAGS = [
-    ("--analyze-only", "Run analysis + dry-run. No publish."),
+    ("--analyze-only", "Build + package + local install. No publish."),
     ("--yes", "Auto-accept all prompts (CI mode)."),
     ("--skip-tests", "Skip the test step."),
+    ("--skip-extensions", "Skip VS Code extension checks."),
+    ("--skip-global-npm", "Skip global npm package checks."),
+    ("--auto-install", "Auto-install .vsix without prompting."),
     ("--no-logo", "Suppress the project banner."),
 ]
 
@@ -72,9 +71,6 @@ def parse_args() -> argparse.Namespace:
     for flag, help_text in _CLI_FLAGS:
         parser.add_argument(flag, action="store_true", help=help_text)
     return parser.parse_args()
-
-
-# ── Orchestration ─────────────────────────────────────────────
 
 
 def _print_banner(args: argparse.Namespace, version: str) -> None:
@@ -91,157 +87,140 @@ def _run_prerequisites(
     results: list[tuple[str, bool, float]],
 ) -> bool:
     """Step 1: Check prerequisite tools."""
-    heading("Step 1 - Prerequisites")
+    heading("Step 1 · Prerequisites")
     for name, fn in [
         ("Node.js", check_node),
         ("git", check_git),
         ("vsce", check_vsce),
+        ("VS Code CLI", check_vscode_cli),
     ]:
         if not run_step(name, fn, results):
             return False
     return True
 
 
-def _run_project_checks(
+def _run_dev_checks(
     args: argparse.Namespace,
     results: list[tuple[str, bool, float]],
 ) -> bool:
-    """Steps 2-7: Git state, deps, lint, compile, tests, quality."""
-    heading("Step 2 - Working Tree")
+    """Steps 2-6: Dev environment, git state, dependencies."""
+    if args.skip_global_npm:
+        heading("Step 2 · Global npm Packages (skipped)")
+    else:
+        heading("Step 2 · Global npm Packages")
+        if not run_step("Global npm pkgs",
+                        check_global_npm_packages, results):
+            return False
+
+    if args.skip_extensions:
+        heading("Step 3 · VS Code Extensions (skipped)")
+    else:
+        heading("Step 3 · VS Code Extensions")
+        if not run_step("VS Code extensions",
+                        check_vscode_extensions, results):
+            return False
+
+    heading("Step 4 · Working Tree")
     if not run_step("Working tree", check_working_tree, results):
         return False
 
-    heading("Step 3 - Remote Sync")
+    heading("Step 5 · Remote Sync")
     if not run_step("Remote sync", check_remote_sync, results):
         return False
 
-    heading("Step 4 - Dependencies")
+    heading("Step 6 · Dependencies")
     if not run_step("Dependencies", ensure_dependencies, results):
-        return False
-
-    heading("Step 5 - Lint & Compile")
-    if not run_step("Lint", step_lint, results):
-        return False
-    if not run_step("Type check", step_compile, results):
-        return False
-
-    if args.skip_tests:
-        heading("Step 6 - Tests (skipped)")
-    else:
-        heading("Step 6 - Tests")
-        if not run_step("Tests", step_test, results):
-            return False
-
-    heading("Step 7 - Quality Checks")
-    if not run_step("File line limits", check_file_line_limits, results):
         return False
 
     return True
 
 
-def _run_analysis(
+def _run_build_and_validate(
     args: argparse.Namespace,
     results: list[tuple[str, bool, float]],
 ) -> tuple[str, bool]:
-    """Run all analysis steps (1-8). Returns (version, all_passed)."""
-    if not _run_prerequisites(results):
+    """Steps 7-10: Compile, test, quality, version."""
+    heading("Step 7 · Lint & Compile")
+    if not run_step("Lint", step_lint, results):
         return "", False
-    if not _run_project_checks(args, results):
+    if not run_step("Type check", step_compile, results):
         return "", False
 
-    heading("Step 8 - Version & CHANGELOG")
+    if args.skip_tests:
+        heading("Step 8 · Tests (skipped)")
+    else:
+        heading("Step 8 · Tests")
+        if not run_step("Tests", step_test, results):
+            return "", False
+
+    heading("Step 9 · Quality Checks")
+    if not run_step("File line limits", check_file_line_limits, results):
+        return "", False
+
+    heading("Step 10 · Version & CHANGELOG")
     t0 = time.time()
     version, version_ok = validate_version_changelog()
     elapsed = time.time() - t0
     results.append(("Version validation", version_ok, elapsed))
     if not version_ok:
         return "", False
-
     return version, True
 
 
-def _run_publish(
-    version: str,
+def _run_analysis(
+    args: argparse.Namespace,
     results: list[tuple[str, bool, float]],
-) -> bool:
-    """Run publish steps (9-13). Returns True on success."""
-    heading("Step 9 - Credentials")
-    if not run_step("GitHub CLI", check_gh_cli, results):
-        return False
-    if not run_step("vsce PAT", check_vsce_pat, results):
-        return False
+) -> tuple[str, bool]:
+    """Run all analysis steps (1-10). Returns (version, passed)."""
+    if not _run_prerequisites(results):
+        return "", False
+    if not _run_dev_checks(args, results):
+        return "", False
+    return _run_build_and_validate(args, results)
 
-    if is_version_tagged(version):
-        heading("Step 10 - Git Commit & Push")
-        info(f"Tag v{version} already exists; skipping commit & tag.")
-        heading("Step 11 - Git Tag")
-        info("Skipped (tag exists).")
+
+def _package_and_install(
+    args: argparse.Namespace,
+    results: list[tuple[str, bool, float]],
+) -> str | None:
+    """Package .vsix and offer local install. Returns vsix path."""
+    heading("Package")
+    t0 = time.time()
+    vsix_path = step_package()
+    elapsed = time.time() - t0
+    results.append(("Package", vsix_path is not None, elapsed))
+    if not vsix_path:
+        return None
+
+    heading("Local Install")
+    installed = get_installed_extension_versions()
+    if installed:
+        parts = [f"{ed} v{ver}" for ed, ver in sorted(installed.items())]
+        info(f"Installed locally: {', '.join(parts)}")
     else:
-        heading("Step 10 - Git Commit & Push")
-        if not run_step("Git commit & push",
-                        lambda: git_commit_and_push(version), results):
-            return False
-        heading("Step 11 - Git Tag")
-        if not run_step("Git tag",
-                        lambda: create_git_tag(version), results):
-            return False
-
-    heading("Step 12 - Publish to Marketplace")
-    if not run_step("Marketplace publish",
-                    publish_to_marketplace, results):
-        return False
-
-    heading("Step 13 - GitHub Release")
-    if not run_step("GitHub release",
-                    lambda: create_github_release(version), results):
-        return False
-
-    return True
+        info("Not installed in VS Code or Cursor.")
+    print_install_instructions(vsix_path)
+    if args.auto_install:
+        info(f"Running: code --install-extension {os.path.basename(vsix_path)}")
+        run(["code", "--install-extension", os.path.abspath(vsix_path)])
+    else:
+        prompt_install(vsix_path)
+    return vsix_path
 
 
 def _save_and_show_report(
     results: list[tuple[str, bool, float]],
     version: str,
+    vsix_path: str | None = None,
     is_publish: bool = False,
-) -> None:
-    """Save report, print timing chart, show report path."""
-    report = save_report(results, version, is_publish=is_publish)
+) -> str | None:
+    """Save report, print timing chart, return report path."""
+    report = save_report(results, version, vsix_path, is_publish=is_publish)
     print_timing(results)
     if report:
         rel = os.path.relpath(report, PROJECT_ROOT)
         info(f"Report: {C.WHITE}{rel}{C.RESET}")
-
-
-_STEP_EXIT_CODES = {
-    "Node.js": ExitCode.PREREQUISITE_FAILED,
-    "git": ExitCode.PREREQUISITE_FAILED,
-    "vsce": ExitCode.PREREQUISITE_FAILED,
-    "GitHub CLI": ExitCode.PREREQUISITE_FAILED,
-    "vsce PAT": ExitCode.PREREQUISITE_FAILED,
-    "Working tree": ExitCode.WORKING_TREE_DIRTY,
-    "Remote sync": ExitCode.REMOTE_SYNC_FAILED,
-    "Dependencies": ExitCode.DEPENDENCY_FAILED,
-    "Lint": ExitCode.LINT_FAILED,
-    "Type check": ExitCode.LINT_FAILED,
-    "Tests": ExitCode.TEST_FAILED,
-    "File line limits": ExitCode.QUALITY_FAILED,
-    "Version validation": ExitCode.VERSION_INVALID,
-    "Git commit & push": ExitCode.GIT_FAILED,
-    "Git tag": ExitCode.GIT_FAILED,
-    "Dry run": ExitCode.PUBLISH_FAILED,
-    "Marketplace publish": ExitCode.PUBLISH_FAILED,
-    "GitHub release": ExitCode.RELEASE_FAILED,
-}
-
-
-def _exit_code_from_results(
-    results: list[tuple[str, bool, float]],
-) -> int:
-    """Derive an exit code from the last failing step name."""
-    for name, passed, _ in reversed(results):
-        if not passed:
-            return _STEP_EXIT_CODES.get(name, 1)
-    return 1
+    return report
 
 
 def main() -> int:
@@ -261,41 +240,56 @@ def main() -> int:
         close_publish_log()
 
 
-def _main_inner(
-    args: argparse.Namespace,
-    version: str,
-) -> int:
+def _main_inner(args: argparse.Namespace, version: str) -> int:
     """Run the analysis + publish pipeline."""
     results: list[tuple[str, bool, float]] = []
 
-    # ── ANALYSIS PHASE ──
     version, passed = _run_analysis(args, results)
     if not passed:
         _save_and_show_report(results, version or "unknown")
-        return _exit_code_from_results(results)
+        return exit_code_from_results(results)
 
-    # ── ANALYZE-ONLY: dry-run + stop ──
-    if args.analyze_only:
-        heading("Dry Run")
-        dry_ok = run_step("Dry run", step_dry_run, results)
+    vsix_path = _package_and_install(args, results)
+    if not vsix_path:
         _save_and_show_report(results, version)
-        if not dry_ok:
-            return _exit_code_from_results(results)
+        return ExitCode.PACKAGE_FAILED
+
+    if args.analyze_only:
+        report = _save_and_show_report(results, version, vsix_path)
+        if report:
+            prompt_open_report(report)
         return ExitCode.SUCCESS
 
-    # ── PUBLISH PHASE ──
     heading("Publish Confirmation")
     if not confirm_publish(version):
         info("Publish cancelled by user.")
         return ExitCode.USER_CANCELLED
 
-    if not _run_publish(version, results):
-        _save_and_show_report(results, version)
-        return _exit_code_from_results(results)
+    stores = "both"
+    if not get_installed_extension_versions():
+        stores = ask_publish_stores()
 
-    _save_and_show_report(results, version, is_publish=True)
+    if not _run_publish(version, vsix_path, results, stores):
+        _save_and_show_report(results, version, vsix_path)
+        return exit_code_from_results(results)
+
+    _save_and_show_report(results, version, vsix_path, is_publish=True)
     print_success_banner(version)
     return ExitCode.SUCCESS
+
+
+def _run_publish(
+    version: str,
+    vsix_path: str,
+    results: list[tuple[str, bool, float]],
+    stores: str,
+) -> bool:
+    """Run publish steps (11-15). Returns True on success."""
+    if not check_publish_credentials(results, stores):
+        return False
+    if not commit_and_tag(version, results):
+        return False
+    return publish_to_stores(version, vsix_path, results, stores)
 
 
 if __name__ == "__main__":

@@ -6,13 +6,30 @@ import sys
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 PROJECT_ROOT = os.path.abspath(os.path.join(SCRIPT_DIR, os.pardir, os.pardir))
 PROJECT_NAME = "Saropa Package Vibrancy"
+MARKETPLACE_EXTENSION_ID = "saropa.saropa-package-vibrancy"
 REPO_URL = "https://github.com/saropa/saropa-package-vibrancy"
 MARKETPLACE_URL = (
-    "https://marketplace.visualstudio.com/items?itemName=saropa.saropa-package-vibrancy"
+    "https://marketplace.visualstudio.com"
+    f"/items?itemName={MARKETPLACE_EXTENSION_ID}"
 )
+OPENVSX_URL = "https://open-vsx.org/extension/saropa/saropa-package-vibrancy"
 
 MAX_FILE_LINES = 300
 MIN_NODE_MAJOR = 18
+
+# cspell:ignore connor4312 dbaeumer
+
+# VS Code extensions required for development.
+REQUIRED_VSCODE_EXTENSIONS = [
+    "connor4312.esbuild-problem-matchers",
+    "dbaeumer.vscode-eslint",
+]
+
+# Global npm packages required for scaffolding/publishing.
+REQUIRED_GLOBAL_NPM_PACKAGES = [
+    "yo",
+    "generator-code",
+]
 
 
 class ExitCode:
@@ -30,7 +47,47 @@ class ExitCode:
     GIT_FAILED = 80
     PUBLISH_FAILED = 90
     RELEASE_FAILED = 91
+    OPENVSX_FAILED = 92
+    PACKAGE_FAILED = 93
     USER_CANCELLED = 99
+
+
+# Maps step names (used in publish.py run_step calls) to exit codes.
+STEP_EXIT_CODES = {
+    "Node.js": ExitCode.PREREQUISITE_FAILED,
+    "git": ExitCode.PREREQUISITE_FAILED,
+    "vsce": ExitCode.PREREQUISITE_FAILED,
+    "VS Code CLI": ExitCode.PREREQUISITE_FAILED,
+    "GitHub CLI": ExitCode.PREREQUISITE_FAILED,
+    "vsce PAT": ExitCode.PREREQUISITE_FAILED,
+    "OVSX PAT": ExitCode.PREREQUISITE_FAILED,
+    "Global npm pkgs": ExitCode.PREREQUISITE_FAILED,
+    "VS Code extensions": ExitCode.PREREQUISITE_FAILED,
+    "Working tree": ExitCode.WORKING_TREE_DIRTY,
+    "Remote sync": ExitCode.REMOTE_SYNC_FAILED,
+    "Dependencies": ExitCode.DEPENDENCY_FAILED,
+    "Lint": ExitCode.LINT_FAILED,
+    "Type check": ExitCode.LINT_FAILED,
+    "Tests": ExitCode.TEST_FAILED,
+    "File line limits": ExitCode.QUALITY_FAILED,
+    "Version validation": ExitCode.VERSION_INVALID,
+    "Package": ExitCode.PACKAGE_FAILED,
+    "Git commit & push": ExitCode.GIT_FAILED,
+    "Git tag": ExitCode.GIT_FAILED,
+    "Marketplace publish": ExitCode.PUBLISH_FAILED,
+    "Open VSX publish": ExitCode.OPENVSX_FAILED,
+    "GitHub release": ExitCode.RELEASE_FAILED,
+}
+
+
+def exit_code_from_results(
+    results: list[tuple[str, bool, float]],
+) -> int:
+    """Derive exit code from the last failing step."""
+    for name, passed, _ in reversed(results):
+        if not passed:
+            return STEP_EXIT_CODES.get(name, 1)
+    return 1
 
 
 # ── ANSI colours ──────────────────────────────────────────────

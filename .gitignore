@@ -24,6 +24,7 @@ Thumbs.db
 # Publish pipeline
 reports/
 __pycache__/
+.env
 
 # Saropa Log Capture (index & cache)
 .saropa/

@@ -2,7 +2,7 @@
   "name": "saropa-package-vibrancy",
   "displayName": "Saropa Package Vibrancy",
   "description": "Analyze Flutter/Dart dependency health and community vibrancy",
-  "version": "0.1.2",
+  "version": "0.1.1",
   "publisher": "saropa",
   "license": "MIT",
   "icon": "images/icon.png",

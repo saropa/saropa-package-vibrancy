@@ -2,39 +2,84 @@
 
 import re
 import os
+import shutil
+import subprocess
+import sys
 
 from .constants import C, MARKETPLACE_URL, PROJECT_ROOT, REPO_URL
-from .display import ask_yn, fail, info, ok, warn
-from .utils import run
+from .display import ask_yn, fail, heading, info, ok, warn
+from .utils import get_ovsx_pat, is_version_tagged, run, run_step
+from .packaging import (
+    get_marketplace_published_version,
+    publish_marketplace,
+    publish_openvsx,
+)
 
 
 def check_gh_cli() -> bool:
-    """Step 9a: Verify GitHub CLI is authenticated."""
-    result = run("gh auth status")
+    """Verify GitHub CLI is installed and authenticated."""
+    if not shutil.which("gh"):
+        fail("GitHub CLI (gh) is not installed")
+        info(f"  Install from {C.CYAN}https://cli.github.com/{C.RESET}")
+        return False
+    try:
+        result = run("gh auth status", timeout=10)
+    except subprocess.TimeoutExpired:
+        fail("GitHub CLI auth check timed out (10s)")
+        return False
     if result.returncode != 0:
-        fail("GitHub CLI not authenticated — run: gh auth login")
+        fail(f"GitHub CLI not authenticated — run: {C.WHITE}gh auth login{C.RESET}")
         return False
     ok("GitHub CLI authenticated")
     return True
 
 
 def check_vsce_pat() -> bool:
-    """Step 9b: Verify vsce Personal Access Token is valid."""
-    result = run("npx vsce verify-pat saropa")
+    """Verify vsce PAT; run vsce login interactively if expired."""
+    info("Checking marketplace credentials...")
+    result = run("npx @vscode/vsce verify-pat saropa")
     if result.returncode == 0:
-        ok("vsce PAT verified for publisher 'saropa'")
+        ok("Marketplace PAT verified for 'saropa'")
         return True
 
-    fail("vsce PAT is missing or expired")
-    print(f"""
-  {C.YELLOW}To fix:{C.RESET}
-    1. Go to {C.CYAN}https://dev.azure.com/saropa/_usersSettings/tokens{C.RESET}
-    2. Create a PAT with scope: {C.WHITE}Marketplace > Manage{C.RESET}
-       (click "Show all scopes" to find it)
-    3. Run: {C.WHITE}npx vsce login saropa{C.RESET}
-    4. Paste the token when prompted
-""")
+    # verify-pat may not exist in older vsce versions
+    stderr = (result.stderr or "").lower()
+    if "unknown command" in stderr or "not a vsce command" in stderr:
+        warn("Could not verify PAT (vsce verify-pat not available)")
+        return True
+
+    info("Marketplace PAT expired or missing. Running vsce login...")
+    info(f"  PAT from: {C.WHITE}https://dev.azure.com{C.RESET} → "
+         f"User Settings → Personal Access Tokens")
+    login = subprocess.run(
+        ["npx", "@vscode/vsce", "login", "saropa"],
+        cwd=PROJECT_ROOT,
+        shell=(sys.platform == "win32"),
+    )
+    if login.returncode != 0:
+        fail("vsce login failed or was cancelled")
+        return False
+
+    # Re-verify after login
+    result = run("npx @vscode/vsce verify-pat saropa")
+    if result.returncode == 0:
+        ok("Marketplace PAT verified for 'saropa'")
+        return True
+    fail("No valid PAT found for publisher 'saropa'")
     return False
+
+
+def check_ovsx_token() -> bool:
+    """Check OVSX_PAT for Open VSX. Never blocks: missing = skip step."""
+    pat = get_ovsx_pat()
+    if pat:
+        ok("OVSX_PAT set (Open VSX publish)")
+        return True
+    warn("OVSX_PAT not set; Open VSX step will be skipped")
+    info(f"  Set in shell, or add to {C.WHITE}.env{C.RESET}: "
+         f"{C.YELLOW}OVSX_PAT=your-token{C.RESET}")
+    info(f"  Token: {C.WHITE}https://open-vsx.org/user-settings/tokens{C.RESET}")
+    return True
 
 
 def confirm_publish(version: str) -> bool:
@@ -50,7 +95,8 @@ def confirm_publish(version: str) -> bool:
     1. Commit and push to origin
     2. Create git tag v{version}
     3. Publish to VS Code Marketplace
-    4. Create GitHub release
+    4. Publish to Open VSX (if token set)
+    5. Create GitHub release
 """)
     return ask_yn("Proceed with publish?")
 
@@ -73,21 +119,22 @@ def git_commit_and_push(version: str) -> bool:
 
 
 def _push_to_origin() -> bool:
-    """Push to origin, handle non-fast-forward."""
-    result = run("git push origin")
+    """Push current branch to origin (detects branch dynamically)."""
+    branch = run("git rev-parse --abbrev-ref HEAD").stdout.strip() or "main"
+    result = run(f"git push origin {branch}")
     if result.returncode == 0:
-        ok("Pushed to origin")
+        ok(f"Pushed to origin/{branch}")
         return True
 
     if "non-fast-forward" in (result.stderr or ""):
         info("Non-fast-forward — pulling and retrying...")
-        pull = run("git pull --ff-only")
+        pull = run(f"git pull origin {branch} --no-edit")
         if pull.returncode != 0:
             fail("git pull failed — resolve manually")
             return False
-        retry = run("git push origin")
+        retry = run(f"git push origin {branch}")
         if retry.returncode == 0:
-            ok("Pushed to origin (after pull)")
+            ok(f"Pushed to origin/{branch} (after pull)")
             return True
 
     fail("git push failed")
@@ -114,39 +161,6 @@ def create_git_tag(version: str) -> bool:
     return True
 
 
-def publish_to_marketplace() -> bool:
-    """Step 12: Package and publish via vsce."""
-    info("Packaging extension...")
-    pkg = run("npx vsce package")
-    if pkg.returncode != 0:
-        fail("vsce package failed")
-        if pkg.stderr:
-            print(pkg.stderr)
-        return False
-
-    info("Publishing to VS Code Marketplace...")
-    pub = run("npx vsce publish")
-    if pub.returncode != 0:
-        fail("vsce publish failed")
-        if pub.stderr:
-            print(pub.stderr)
-        _print_vsce_troubleshooting()
-        return False
-
-    ok("Published to VS Code Marketplace")
-    return True
-
-
-def _print_vsce_troubleshooting() -> None:
-    """Print hints for publish failures."""
-    print(f"""
-  {C.YELLOW}Troubleshooting:{C.RESET}
-    - Ensure you have a Personal Access Token (PAT) for Azure DevOps
-    - Run: npx vsce login saropa
-    - See: https://code.visualstudio.com/api/working-with-extensions/publishing-extension
-""")
-
-
 def extract_changelog_section(version: str) -> str:
     """Extract the CHANGELOG section for a specific version."""
     changelog = os.path.join(PROJECT_ROOT, "CHANGELOG.md")
@@ -158,23 +172,20 @@ def extract_changelog_section(version: str) -> str:
 
     pattern = rf"##\s+\[?{re.escape(version)}\]?.*?\n(.*?)(?=\n##\s|\Z)"
     match = re.search(pattern, text, re.DOTALL)
-    if match:
-        return match.group(1).strip()
-
-    return f"Release v{version}"
+    return match.group(1).strip() if match else f"Release v{version}"
 
 
-def create_github_release(version: str) -> bool:
-    """Step 13: Create GitHub release with CHANGELOG notes."""
-    # Check if release already exists
+def create_github_release(version: str, vsix_path: str | None = None) -> bool:
+    """Create GitHub release with CHANGELOG notes and optional .vsix."""
     check = run(f"gh release view v{version}")
     if check.returncode == 0:
         info(f"Release v{version} already exists — skipping")
         return True
 
     notes = extract_changelog_section(version)
+    vsix_arg = f" {vsix_path}" if vsix_path else ""
     result = run(
-        f'gh release create v{version} '
+        f'gh release create v{version}{vsix_arg} '
         f'--title "v{version}" '
         f'--notes "{notes}"',
     )
@@ -183,20 +194,103 @@ def create_github_release(version: str) -> bool:
         fail("GitHub release creation failed")
         if result.stderr:
             print(result.stderr)
+        _print_gh_troubleshooting()
         return False
 
     ok(f"GitHub release v{version} created")
     return True
 
 
-def step_dry_run() -> bool:
-    """Dry-run: package without publishing."""
-    info("Running vsce package (dry run)...")
-    result = run("npx vsce package")
-    if result.returncode != 0:
-        fail("vsce package failed")
-        if result.stderr:
-            print(result.stderr)
+def check_publish_credentials(
+    results: list[tuple[str, bool, float]],
+    stores: str = "both",
+) -> bool:
+    """Verify credentials for chosen store(s)."""
+    heading("Publish Credentials")
+    if not run_step("GitHub CLI", check_gh_cli, results):
         return False
-    ok("Dry run passed — .vsix created")
+    if stores in ("both", "vscode_only"):
+        if not run_step("vsce PAT", check_vsce_pat, results):
+            return False
+    else:
+        info("Skipping vsce PAT (Open VSX only).")
+    if stores in ("both", "openvsx_only"):
+        run_step("OVSX PAT", check_ovsx_token, results)
+    else:
+        info("Skipping OVSX PAT (Marketplace only).")
     return True
+
+
+def commit_and_tag(
+    version: str,
+    results: list[tuple[str, bool, float]],
+) -> bool:
+    """Steps 11-12: Git commit, push, and tag."""
+    if is_version_tagged(version):
+        heading("Step 11 · Git Commit & Push")
+        info(f"Tag v{version} already exists; skipping commit & tag.")
+        heading("Step 12 · Git Tag")
+        info("Skipped (tag exists).")
+        return True
+
+    heading("Step 11 · Git Commit & Push")
+    if not run_step("Git commit & push",
+                    lambda: git_commit_and_push(version), results):
+        return False
+    heading("Step 12 · Git Tag")
+    return run_step("Git tag",
+                    lambda: create_git_tag(version), results)
+
+
+def publish_to_stores(
+    version: str,
+    vsix_path: str,
+    results: list[tuple[str, bool, float]],
+    stores: str = "both",
+) -> bool:
+    """Steps 13-15: Marketplace, Open VSX, GitHub release."""
+    if not _publish_marketplace_step(version, vsix_path, results, stores):
+        return False
+
+    heading("Step 14 · Publish to Open VSX")
+    if stores == "vscode_only":
+        info("Skipping (Marketplace only).")
+    else:
+        pat = get_ovsx_pat()
+        if not pat:
+            warn("No OVSX_PAT; skipping Open VSX.")
+        elif not run_step("Open VSX publish",
+                          lambda: publish_openvsx(vsix_path), results):
+            warn("Open VSX failed; continuing to GitHub release.")
+
+    heading("Step 15 · GitHub Release")
+    if not run_step("GitHub release",
+                    lambda: create_github_release(version, vsix_path),
+                    results):
+        warn("GitHub release failed.")
+    return True
+
+
+def _publish_marketplace_step(
+    version: str,
+    vsix_path: str,
+    results: list[tuple[str, bool, float]],
+    stores: str,
+) -> bool:
+    """Step 13: Publish to VS Code Marketplace."""
+    heading("Step 13 · Publish to Marketplace")
+    if stores == "openvsx_only":
+        info("Skipping (Open VSX only).")
+        return True
+    published = get_marketplace_published_version()
+    if published == version:
+        info(f"Marketplace already has v{version}; skipping.")
+        return True
+    return run_step("Marketplace publish",
+                    lambda: publish_marketplace(vsix_path), results)
+
+
+def _print_gh_troubleshooting() -> None:
+    """Print hints for GitHub release failures."""
+    warn("Check auth: gh auth status")
+    warn("If GITHUB_TOKEN env var is set, it may conflict")

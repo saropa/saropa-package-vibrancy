@@ -47,6 +47,31 @@ def ask_yn(prompt: str, default: bool = False) -> bool:
     return answer.startswith("y")
 
 
+def ask_publish_stores() -> str:
+    """Ask which store(s) to publish to.
+
+    Returns 'vscode_only', 'openvsx_only', or 'both'.
+    Defaults to 'both' in CI mode (PUBLISH_YES).
+    """
+    if os.environ.get("PUBLISH_YES"):
+        print("  Publish to: both (auto)")
+        return "both"
+    print(f"\n  {C.YELLOW}Which store(s) to publish to?{C.RESET}")
+    print("    1 = VS Code Marketplace only")
+    print("    2 = Open VSX only (Cursor / VSCodium)")
+    print("    3 = both")
+    try:
+        raw = input("  Choice [3]: ").strip() or "3"
+    except (EOFError, KeyboardInterrupt):
+        print()
+        return "both"
+    if raw == "1":
+        return "vscode_only"
+    if raw == "2":
+        return "openvsx_only"
+    return "both"
+
+
 # cspell:disable
 def show_logo(version: str) -> None:
     """Print the Saropa ASCII logo with gradient colours."""
