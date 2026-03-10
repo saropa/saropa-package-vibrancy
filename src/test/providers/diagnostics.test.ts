@@ -25,6 +25,7 @@ function makeResult(
         resolutionVelocity: 0,
         engagementLevel: 0,
         popularity: 0,
+        publisherTrust: 0,
         updateInfo: null,
     };
 }

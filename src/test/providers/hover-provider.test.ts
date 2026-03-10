@@ -14,6 +14,7 @@ function makeResult(name: string, score: number): VibrancyResult {
             isDiscontinued: false,
             isUnlisted: false,
             pubPoints: 130,
+            publisher: null,
         },
         github: { stars: 500, openIssues: 10, closedIssuesLast90d: 5,
             mergedPrsLast90d: 3, avgCommentsPerIssue: 2,
@@ -24,6 +25,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         resolutionVelocity: 50,
         engagementLevel: 40,
         popularity: 60,
+        publisherTrust: 0,
         updateInfo: null,
     };
 }
@@ -80,7 +82,8 @@ describe('VibrancyHoverProvider', () => {
         const doc = makeMockDocument('  http: ^1.0.0');
         const hover = provider.provideHover(doc, new vscode.Position(0, 2));
         const md = hover!.contents as unknown as vscode.MarkdownString;
-        assert.ok(md.value.includes('85'));
+        assert.ok(md.value.includes('9'));
+        assert.ok(md.value.includes('/10'));
     });
 
     it('should include pub.dev link', () => {

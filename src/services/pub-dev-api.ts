@@ -39,6 +39,7 @@ export async function fetchPackageInfo(
             isDiscontinued: json.isDiscontinued ?? false,
             isUnlisted: json.isUnlisted ?? false,
             pubPoints: 0,
+            publisher: null,
         };
 
         await cache?.set(cacheKey, info);
@@ -79,5 +80,38 @@ export async function fetchPackageScore(
     } catch {
         logger?.error(`Failed to fetch pub.dev score for ${name}`);
         return 0;
+    }
+}
+
+/** Fetch verified publisher ID from pub.dev. */
+export async function fetchPublisher(
+    name: string,
+    cache?: CacheService,
+    logger?: ScanLogger,
+): Promise<string | null> {
+    const cacheKey = `pub.publisher.${name}`;
+    const cached = cache?.get<string | null>(cacheKey);
+    if (cached !== undefined) {
+        logger?.cacheHit(cacheKey);
+        return cached;
+    }
+    logger?.cacheMiss(cacheKey);
+
+    const url = `${BASE_URL}/${name}/publisher`;
+    try {
+        logger?.apiRequest('GET', url);
+        const t0 = Date.now();
+        const resp = await fetchWithRetry(url, undefined, logger);
+        logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
+        if (!resp.ok) { return null; }
+
+        const json: any = await resp.json();
+        const publisherId = json.publisherId ?? null;
+
+        await cache?.set(cacheKey, publisherId);
+        return publisherId;
+    } catch {
+        logger?.error(`Failed to fetch publisher for ${name}`);
+        return null;
     }
 }

@@ -14,6 +14,7 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
             isDiscontinued: false,
             isUnlisted: false,
             pubPoints: 130,
+            publisher: null,
         },
         github: {
             stars: 500,
@@ -31,6 +32,7 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
         resolutionVelocity: 80,
         engagementLevel: 70,
         popularity: 60,
+        publisherTrust: 0,
         updateInfo: null,
         ...overrides,
     };

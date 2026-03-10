@@ -1,7 +1,9 @@
 import { VibrancyResult, PackageDependency, GitHubMetrics } from './types';
 import { CacheService } from './services/cache-service';
 import { ScanLogger } from './services/scan-logger';
-import { fetchPackageInfo, fetchPackageScore } from './services/pub-dev-api';
+import {
+    fetchPackageInfo, fetchPackageScore, fetchPublisher,
+} from './services/pub-dev-api';
 import { extractGitHubRepo, fetchRepoMetrics } from './services/github-api';
 import { extractRepoSubpath, buildUpdateInfo } from './services/changelog-service';
 import { findKnownIssue } from './scoring/known-issues';
@@ -10,6 +12,7 @@ import {
     calcEngagementLevel,
     calcPopularity,
     calcFlaggedIssuePenalty,
+    calcPublisherTrust,
     computeVibrancyScore,
     ScoringWeights,
 } from './scoring/vibrancy-calculator';
@@ -27,6 +30,7 @@ interface AnalyzeParams {
     readonly githubToken?: string;
     readonly weights?: ScoringWeights;
     readonly repoOverrides?: Record<string, string>;
+    readonly publisherTrustBonus?: number;
 }
 
 /** Analyze a single package and compute its vibrancy result. */
@@ -38,16 +42,22 @@ export async function analyzePackage(
     const knownIssue = findKnownIssue(dep.name);
     if (knownIssue) { log?.info(`Known issue: ${knownIssue.status}`); }
 
-    const pubDev = await fetchPackageInfo(dep.name, params.cache, log);
-    const pubPoints = await fetchPackageScore(dep.name, params.cache, log);
+    const [pubDev, pubPoints, publisher] = await Promise.all([
+        fetchPackageInfo(dep.name, params.cache, log),
+        fetchPackageScore(dep.name, params.cache, log),
+        fetchPublisher(dep.name, params.cache, log),
+    ]);
 
     const repoUrl = resolveRepoUrl(dep.name, pubDev?.repositoryUrl, params);
     const { github, repoInfo } = await fetchGitHubData(repoUrl, params);
 
-    const scores = computeScores(
-        github, pubPoints, pubDev?.publishedDate ?? null, params.weights,
-    );
-    const pubDevWithPoints = pubDev ? { ...pubDev, pubPoints } : null;
+    const scores = computeScores({
+        github, pubPoints, publishedDate: pubDev?.publishedDate ?? null,
+        publisher, weights: params.weights,
+        maxPublisherBonus: params.publisherTrustBonus,
+    });
+    const pubDevWithPoints = pubDev
+        ? { ...pubDev, pubPoints, publisher } : null;
     const category = classifyStatus({
         score: scores.score, knownIssue, pubDev: pubDevWithPoints,
     });
@@ -55,7 +65,7 @@ export async function analyzePackage(
     log?.score({
         name: dep.name, total: scores.score, category,
         rv: scores.resolutionVelocity, eg: scores.engagementLevel,
-        pop: scores.popularity,
+        pop: scores.popularity, pt: scores.publisherTrust,
     });
 
     const updateInfo = pubDev
@@ -105,12 +115,15 @@ function daysSince(isoDate: string): number | undefined {
     return Math.max(0, Math.floor((Date.now() - ms) / 86_400_000));
 }
 
-function computeScores(
-    github: GitHubMetrics | null,
-    pubPoints: number,
-    publishedDate: string | null,
-    weights?: ScoringWeights,
-) {
+function computeScores(params: {
+    readonly github: GitHubMetrics | null;
+    readonly pubPoints: number;
+    readonly publishedDate: string | null;
+    readonly publisher: string | null;
+    readonly weights?: ScoringWeights;
+    readonly maxPublisherBonus?: number;
+}) {
+    const { github, pubPoints, publishedDate, publisher } = params;
     const daysSincePublish = publishedDate
         ? daysSince(publishedDate) : undefined;
     const resolutionVelocity = github
@@ -118,12 +131,18 @@ function computeScores(
     const engagementLevel = github
         ? calcEngagementLevel(github, daysSincePublish) : 0;
     const popularity = calcPopularity(pubPoints, github?.stars ?? 0);
+    const publisherTrust = calcPublisherTrust(
+        publisher, params.maxPublisherBonus,
+    );
 
     const flaggedPenalty = github
         ? calcFlaggedIssuePenalty(github.flaggedIssues?.length ?? 0) : 0;
     const score = computeVibrancyScore(
-        { resolutionVelocity, engagementLevel, popularity }, weights,
-        flaggedPenalty,
+        { resolutionVelocity, engagementLevel, popularity }, params.weights,
+        flaggedPenalty, publisherTrust,
     );
-    return { score, resolutionVelocity, engagementLevel, popularity };
+    return {
+        score, resolutionVelocity, engagementLevel,
+        popularity, publisherTrust,
+    };
 }

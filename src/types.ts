@@ -21,6 +21,7 @@ export interface PubDevPackageInfo {
     readonly isDiscontinued: boolean;
     readonly isUnlisted: boolean;
     readonly pubPoints: number;
+    readonly publisher: string | null;
 }
 
 /** A GitHub issue flagged as high-signal for compatibility/deprecation. */
@@ -90,6 +91,7 @@ export interface VibrancyResult {
     readonly resolutionVelocity: number;
     readonly engagementLevel: number;
     readonly popularity: number;
+    readonly publisherTrust: number;
     readonly updateInfo: UpdateInfo | null;
 }
 

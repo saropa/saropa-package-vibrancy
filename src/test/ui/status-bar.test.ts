@@ -4,7 +4,7 @@ import { VibrancyResult } from '../../types';
 
 function makeResult(name: string, score: number): VibrancyResult {
     return {
-        package: { name, version: '1.0.0', source: 'hosted', isDirect: true },
+        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
         pubDev: null,
         github: null,
         knownIssue: null,
@@ -13,6 +13,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         resolutionVelocity: 0,
         engagementLevel: 0,
         popularity: 0,
+        publisherTrust: 0,
         updateInfo: null,
     };
 }

@@ -5,7 +5,9 @@ import {
     calcPopularity,
     calcPublishRecency,
     calcFlaggedIssuePenalty,
+    calcPublisherTrust,
     computeVibrancyScore,
+    MAJOR_PUBLISHERS,
 } from '../../scoring/vibrancy-calculator';
 import { GitHubMetrics } from '../../types';
 
@@ -209,6 +211,68 @@ describe('vibrancy-calculator', () => {
                 popularity: 5,
             }, undefined, 50);
             assert.strictEqual(score, 0);
+        });
+    });
+
+    describe('calcPublisherTrust', () => {
+        it('should return max bonus for major publishers', () => {
+            for (const pub of MAJOR_PUBLISHERS) {
+                assert.strictEqual(calcPublisherTrust(pub), 15);
+            }
+        });
+
+        it('should return 1/3 bonus for verified publishers', () => {
+            assert.strictEqual(calcPublisherTrust('invertase.io'), 5);
+        });
+
+        it('should return negative penalty for no publisher', () => {
+            assert.strictEqual(calcPublisherTrust(null), -5);
+        });
+
+        it('should respect custom maxBonus', () => {
+            assert.strictEqual(calcPublisherTrust('dart.dev', 21), 21);
+            assert.strictEqual(calcPublisherTrust('other.dev', 21), 7);
+            assert.strictEqual(calcPublisherTrust(null, 21), -7);
+        });
+
+        it('should return 0 when maxBonus is 0', () => {
+            assert.strictEqual(calcPublisherTrust('dart.dev', 0), 0);
+            assert.strictEqual(calcPublisherTrust(null, 0), 0);
+        });
+    });
+
+    describe('computeVibrancyScore with bonus', () => {
+        it('should add bonus to score', () => {
+            const base = computeVibrancyScore({
+                resolutionVelocity: 80,
+                engagementLevel: 60,
+                popularity: 50,
+            });
+            const boosted = computeVibrancyScore({
+                resolutionVelocity: 80,
+                engagementLevel: 60,
+                popularity: 50,
+            }, undefined, 0, 15);
+            assert.strictEqual(boosted, base + 15);
+        });
+
+        it('should apply bonus and penalty together', () => {
+            const score = computeVibrancyScore({
+                resolutionVelocity: 80,
+                engagementLevel: 60,
+                popularity: 50,
+            }, undefined, 10, 15);
+            // 69 - 10 + 15 = 74
+            assert.strictEqual(score, 74);
+        });
+
+        it('should clamp bonus result to 100', () => {
+            const score = computeVibrancyScore({
+                resolutionVelocity: 100,
+                engagementLevel: 100,
+                popularity: 100,
+            }, undefined, 0, 15);
+            assert.strictEqual(score, 100);
         });
     });
 

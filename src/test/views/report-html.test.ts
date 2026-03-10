@@ -17,6 +17,7 @@ function makeResult(
             isDiscontinued: false,
             isUnlisted: false,
             pubPoints: 100,
+            publisher: null,
         },
         github: { stars: 42, openIssues: 5, closedIssuesLast90d: 3,
             mergedPrsLast90d: 2, avgCommentsPerIssue: 1.5,
@@ -27,6 +28,7 @@ function makeResult(
         resolutionVelocity: 50,
         engagementLevel: 40,
         popularity: 30,
+        publisherTrust: 0,
         updateInfo: null,
     };
 }
@@ -44,7 +46,7 @@ describe('buildReportHtml', () => {
             makeResult('bloc', 60),
         ]);
         assert.ok(html.includes('>2<'));
-        assert.ok(html.includes('>70<'));
+        assert.ok(html.includes('>7/10<'));
     });
 
     it('should include package rows in table', () => {

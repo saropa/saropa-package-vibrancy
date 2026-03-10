@@ -2,7 +2,9 @@ import * as assert from 'assert';
 import * as sinon from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
-import { fetchPackageInfo, fetchPackageScore } from '../../services/pub-dev-api';
+import {
+    fetchPackageInfo, fetchPackageScore, fetchPublisher,
+} from '../../services/pub-dev-api';
 
 const fixturesDir = path.join(__dirname, '..', '..', '..', 'src', 'test', 'fixtures');
 
@@ -44,6 +46,37 @@ describe('pub-dev-api', () => {
             assert.ok(fetchStub.calledOnce);
             assert.ok(
                 fetchStub.firstCall.args[0].includes('/packages/provider'),
+            );
+        });
+    });
+
+    describe('fetchPublisher', () => {
+        it('should return publisher ID', async () => {
+            const body = JSON.stringify({ publisherId: 'dart.dev' });
+            fetchStub.resolves(new Response(body, { status: 200 }));
+
+            const pub = await fetchPublisher('path');
+            assert.strictEqual(pub, 'dart.dev');
+        });
+
+        it('should return null for 404', async () => {
+            fetchStub.resolves(new Response('', { status: 404 }));
+            const pub = await fetchPublisher('no_publisher_pkg');
+            assert.strictEqual(pub, null);
+        });
+
+        it('should return null when publisherId is missing', async () => {
+            fetchStub.resolves(new Response('{}', { status: 200 }));
+            const pub = await fetchPublisher('empty_response');
+            assert.strictEqual(pub, null);
+        });
+
+        it('should call the correct URL', async () => {
+            fetchStub.resolves(new Response('{}', { status: 200 }));
+            await fetchPublisher('path');
+            assert.ok(fetchStub.calledOnce);
+            assert.ok(
+                fetchStub.firstCall.args[0].includes('/packages/path/publisher'),
             );
         });
     });

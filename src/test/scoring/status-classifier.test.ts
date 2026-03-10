@@ -49,6 +49,7 @@ describe('status-classifier', () => {
                     name: 'pkg', latestVersion: '1.0.0', publishedDate: '',
                     repositoryUrl: null, isDiscontinued: true, isUnlisted: false,
                     pubPoints: 100,
+                    publisher: null,
                 },
             });
             assert.strictEqual(cat, 'end-of-life');

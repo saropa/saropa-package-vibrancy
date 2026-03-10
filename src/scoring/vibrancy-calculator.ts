@@ -3,6 +3,7 @@ import { GitHubMetrics } from '../types';
 /**
  * Default scoring weights for the vibrancy formula:
  *   V_score = (W_R * Resolution) + (W_E * Engagement) + (W_P * Popularity)
+ *           + publisherBonus − penalty
  *
  * Resolution and Engagement are heavily weighted because active maintainer
  * response matters more than historical star counts. These can be overridden
@@ -67,6 +68,22 @@ export function calcPopularity(pubPoints: number, stars: number): number {
     return clamp((pointsNorm + starsNorm) / 2);
 }
 
+/** Major trusted publishers (Dart/Google ecosystem). */
+export const MAJOR_PUBLISHERS = new Set([
+    'dart.dev', 'google.dev', 'flutter.dev',
+]);
+
+/** Publisher trust bonus/penalty (−maxBonus/3 to +maxBonus). */
+export function calcPublisherTrust(
+    publisher: string | null,
+    maxBonus: number = 15,
+): number {
+    if (maxBonus <= 0) { return 0; }
+    if (!publisher) { return -Math.round(maxBonus / 3); }
+    if (MAJOR_PUBLISHERS.has(publisher)) { return maxBonus; }
+    return Math.round(maxBonus / 3);
+}
+
 /** Penalty for flagged high-signal open issues (0–15 points). */
 export function calcFlaggedIssuePenalty(flaggedCount: number): number {
     if (flaggedCount <= 0) { return 0; }
@@ -82,6 +99,7 @@ export function computeVibrancyScore(
     },
     weights?: ScoringWeights,
     penalty?: number,
+    bonus?: number,
 ): number {
     const wR = weights?.resolutionVelocity ?? DEFAULT_WEIGHT_RESOLUTION;
     const wE = weights?.engagementLevel ?? DEFAULT_WEIGHT_ENGAGEMENT;
@@ -90,6 +108,7 @@ export function computeVibrancyScore(
     const raw = (wR * params.resolutionVelocity)
         + (wE * params.engagementLevel)
         + (wP * params.popularity)
+        + (bonus ?? 0)
         - (penalty ?? 0);
     return Math.round(clamp(raw) * 10) / 10;
 }

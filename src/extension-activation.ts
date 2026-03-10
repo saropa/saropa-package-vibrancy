@@ -212,6 +212,7 @@ interface ScanConfig {
     readonly allowSet: Set<string>;
     readonly weights: ScoringWeights;
     readonly repoOverrides: Record<string, string>;
+    readonly publisherTrustBonus: number;
     readonly logger?: ScanLogger;
 }
 
@@ -226,8 +227,11 @@ function readScanConfig(): ScanConfig {
             popularity: config.get<number>('weights.popularity', 0.1),
         },
         repoOverrides: config.get<Record<string, string>>('repoOverrides', {}),
+        publisherTrustBonus: config.get<number>('publisherTrustBonus', 15),
     };
 }
+
+const CONCURRENCY = 3;
 
 async function scanPackages(
     deps: PackageDependency[],
@@ -235,22 +239,35 @@ async function scanPackages(
     scanConfig: ScanConfig,
     progress: vscode.Progress<{ message?: string; increment?: number }>,
 ): Promise<VibrancyResult[]> {
-    const results: VibrancyResult[] = [];
-    for (let i = 0; i < deps.length; i++) {
-        const dep = deps[i];
-        progress.report({
-            message: `${dep.name} (${i + 1}/${deps.length})`,
-            increment: 100 / deps.length,
-        });
-        scanConfig.logger?.info(`[${i + 1}/${deps.length}] ${dep.name}`);
-        const result = await analyzePackage(dep, {
-            cache, logger: scanConfig.logger,
-            githubToken: scanConfig.token || undefined,
-            weights: scanConfig.weights,
-            repoOverrides: scanConfig.repoOverrides,
-        });
-        results.push(result);
+    const results: VibrancyResult[] = new Array(deps.length);
+    let completed = 0;
+    let cursor = 0;
+
+    async function next(): Promise<void> {
+        while (cursor < deps.length) {
+            const idx = cursor++;
+            const dep = deps[idx];
+            scanConfig.logger?.info(`[${idx + 1}/${deps.length}] ${dep.name}`);
+            results[idx] = await analyzePackage(dep, {
+                cache, logger: scanConfig.logger,
+                githubToken: scanConfig.token || undefined,
+                weights: scanConfig.weights,
+                repoOverrides: scanConfig.repoOverrides,
+                publisherTrustBonus: scanConfig.publisherTrustBonus,
+            });
+            completed++;
+            progress.report({
+                message: `${dep.name} (${completed}/${deps.length})`,
+                increment: 100 / deps.length,
+            });
+        }
     }
+
+    const workers = Array.from(
+        { length: Math.min(CONCURRENCY, deps.length) },
+        () => next(),
+    );
+    await Promise.all(workers);
     return results;
 }
 
