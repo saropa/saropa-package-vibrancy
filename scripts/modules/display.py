@@ -9,9 +9,9 @@ def dim(text: str) -> str:
 
 
 def heading(title: str) -> None:
-    print(f"\n{'=' * 60}")
+    print(f"\n{C.BLUE}{'=' * 60}")
     print(f"  {title}")
-    print(f"{'=' * 60}")
+    print(f"{'=' * 60}{C.RESET}")
 
 
 def ok(msg: str) -> None:
@@ -47,9 +47,29 @@ def ask_yn(prompt: str, default: bool = False) -> bool:
     return answer.startswith("y")
 
 
+# cspell:disable
 def show_logo(version: str) -> None:
+    """Print the Saropa ASCII logo with gradient colours."""
     print(f"""
-  {'=' * 50}
-  {C.BOLD}{C.CYAN}Saropa Package Vibrancy{C.RESET}
-  Publish Pipeline {dim(f'v{version}')}
-  {'=' * 50}""")
+{C.ORANGE_208}                               ....{C.RESET}
+{C.ORANGE_208}                       `-+shdmNMMMMNmdhs+-{C.RESET}
+{C.ORANGE_209}                    -odMMMNyo/-..````.++:+o+/-{C.RESET}
+{C.YELLOW_215}                 `/dMMMMMM/`            ````````{C.RESET}
+{C.YELLOW_220}                `dMMMMMMMMNdhhhdddmmmNmmddhs+-{C.RESET}
+{C.YELLOW_226}                QMMMMMMMMMMMMMMMMMMMMMMMMMMMMMNhs{C.RESET}
+{C.GREEN_190}              . :sdmNNNNMMMMMNNNMMMMMMMMMMMMMMMMm+{C.RESET}
+{C.GREEN_154}              o     `..~~~::~+==+~:/+sdNMMMMMMMMMMMo{C.RESET}
+{C.GREEN_118}              m                        .+NMMMMMMMMMN{C.RESET}
+{C.CYAN_123}              m+                         :MMMMMMMMMm{C.RESET}
+{C.CYAN_87}              qN:                        :MMMMMMMMMF{C.RESET}
+{C.BLUE_51}               oNs.                    `+NMMMMMMMMo{C.RESET}
+{C.BLUE_45}                :dNy\\.              ./smMMMMMMMMm:{C.RESET}
+{C.BLUE_39}                 `TdMNmhyso+++oosydNNMMMMMMMMMdP+{C.RESET}
+{C.BLUE_33}                    .odMMMMMMMMMMMMMMMMMMMMdo-{C.RESET}
+{C.BLUE_57}                       `-+shdNNMMMMNNdhs+-{C.RESET}
+{C.BLUE_57}                               ````{C.RESET}
+
+  {C.PINK_195}Saropa Package Vibrancy{C.RESET}  {dim(f'v{version}')}
+  {C.LIGHT_BLUE_117}Analyze + Publish{C.RESET}
+""")
+# cspell:enable

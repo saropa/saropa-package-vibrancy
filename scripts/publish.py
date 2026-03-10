@@ -10,10 +10,6 @@
 #   python scripts/publish.py --analyze-only   # analysis + dry-run only
 #   python scripts/publish.py --skip-tests     # skip test step
 #   python scripts/publish.py --yes            # non-interactive (CI)
-#
-# Analysis (Steps 1-8): prerequisites, git state, deps, lint, compile,
-# tests, quality, version/CHANGELOG. Publish (Steps 9-13): credentials,
-# commit, tag, Marketplace, GitHub release.
 
 import argparse
 import os
@@ -24,7 +20,9 @@ from modules.constants import C, ExitCode, PROJECT_ROOT
 from modules.display import dim, heading, info, ok, show_logo
 from modules.utils import is_version_tagged, read_package_version, run_step
 from modules.report import (
+    close_publish_log,
     ensure_utf8_stdout,
+    open_publish_log,
     print_timing,
     save_report,
     print_success_banner,
@@ -247,12 +245,24 @@ def main() -> int:
     ensure_utf8_stdout()
     args = parse_args()
     version = read_package_version()
-    results: list[tuple[str, bool, float]] = []
 
     if args.yes:
         os.environ["PUBLISH_YES"] = "1"
 
     _print_banner(args, version)
+    open_publish_log()
+    try:
+        return _main_inner(args, version)
+    finally:
+        close_publish_log()
+
+
+def _main_inner(
+    args: argparse.Namespace,
+    version: str,
+) -> int:
+    """Run the analysis + publish pipeline."""
+    results: list[tuple[str, bool, float]] = []
 
     # ── ANALYSIS PHASE ──
     version, passed = _run_analysis(args, results)

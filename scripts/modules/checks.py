@@ -50,7 +50,8 @@ def check_working_tree() -> bool:
     """Step 2: Check for uncommitted changes."""
     result = run("git status --porcelain")
     if result.returncode != 0:
-        fail("git status failed")
+        stderr = (result.stderr or "").strip()
+        fail(f"git status failed: {stderr}" if stderr else "git status failed")
         return False
 
     changes = [
@@ -67,12 +68,23 @@ def check_working_tree() -> bool:
     return ask_yn("Continue with dirty working tree?")
 
 
+def _has_origin_remote() -> bool:
+    """Check whether a remote named 'origin' is configured."""
+    result = run("git remote get-url origin")
+    return result.returncode == 0
+
+
 def check_remote_sync() -> bool:
     """Step 3: Fetch origin and check sync state."""
+    if not _has_origin_remote():
+        warn("No remote 'origin' configured — skipping sync")
+        return True
+
     info("Fetching origin...")
     fetch = run("git fetch origin")
     if fetch.returncode != 0:
-        fail("git fetch failed")
+        stderr = (fetch.stderr or "").strip()
+        fail(f"git fetch failed: {stderr}" if stderr else "git fetch failed")
         return False
 
     local = run("git rev-parse HEAD").stdout.strip()

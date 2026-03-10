@@ -1,6 +1,7 @@
 """Reporting and output."""
 
 import os
+import re
 import sys
 import webbrowser
 from datetime import datetime
@@ -8,6 +9,58 @@ from datetime import datetime
 from .constants import C, MARKETPLACE_URL, PROJECT_ROOT
 from .display import dim, ok
 from .utils import elapsed_str
+
+# ── Publish log (tee stdout to file) ────────────────────────
+
+_ANSI_RE = re.compile(r"\033\[[0-9;]*m")
+_original_stdout = None
+_log_file = None
+
+
+class _TeeWriter:
+    """Wraps stdout to also write ANSI-stripped text to a log file."""
+
+    def __init__(self, terminal, logfile):
+        self.terminal = terminal
+        self.logfile = logfile
+
+    def write(self, text):
+        self.terminal.write(text)
+        self.logfile.write(_ANSI_RE.sub("", text))
+
+    def flush(self):
+        self.terminal.flush()
+        self.logfile.flush()
+
+
+def open_publish_log() -> None:
+    """Start teeing stdout to reports/YYYYMMDD/YYYYMMDD_publish.log."""
+    global _original_stdout, _log_file
+    now = datetime.now()
+    date_dir = os.path.join(
+        PROJECT_ROOT, "reports", now.strftime("%Y%m%d"),
+    )
+    os.makedirs(date_dir, exist_ok=True)
+    path = os.path.join(
+        date_dir, now.strftime("%Y%m%d") + "_publish.log",
+    )
+    _log_file = open(path, "w", encoding="utf-8")
+    _original_stdout = sys.stdout
+    sys.stdout = _TeeWriter(_original_stdout, _log_file)
+
+
+def close_publish_log() -> None:
+    """Stop teeing and close the log file."""
+    global _original_stdout, _log_file
+    if _original_stdout is None:
+        return
+    path = _log_file.name
+    sys.stdout = _original_stdout
+    _log_file.close()
+    _original_stdout = None
+    _log_file = None
+    rel = os.path.relpath(path, PROJECT_ROOT)
+    ok(f"Publish log: {C.WHITE}{rel}{C.RESET}")
 
 
 def ensure_utf8_stdout() -> None:

@@ -21,5 +21,9 @@ Thumbs.db
 .aider*
 .codeium/
 
+# Publish pipeline
+reports/
+__pycache__/
+
 # Saropa Log Capture (index & cache)
 .saropa/
