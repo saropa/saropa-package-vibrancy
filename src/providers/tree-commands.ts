@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { findPackageRange } from '../services/pubspec-parser';
 import { PackageItem } from './tree-items';
 
-/** Register tree-item commands (navigate, open pub.dev, update). */
+/** Register tree-item commands (navigate, open pub.dev, update, copy). */
 export function registerTreeCommands(
     context: vscode.ExtensionContext,
 ): void {
@@ -10,6 +10,7 @@ export function registerTreeCommands(
         vscode.commands.registerCommand('saropaPackageVibrancy.goToPackage', goToPackage),
         vscode.commands.registerCommand('saropaPackageVibrancy.openOnPubDev', openOnPubDev),
         vscode.commands.registerCommand('saropaPackageVibrancy.updateToLatest', updateToLatest),
+        vscode.commands.registerCommand('saropaPackageVibrancy.copyAsJson', copyAsJson),
     );
 }
 
@@ -42,7 +43,7 @@ async function updateToLatest(item: PackageItem): Promise<void> {
     if (!yamlUri) { return; }
 
     const doc = await vscode.workspace.openTextDocument(yamlUri);
-    const edit = buildVersionEdit(doc, item.result.package.name, latest);
+    const edit = buildVersionEdit(doc, item.result.package.name, `^${latest}`);
     if (!edit) {
         vscode.window.showWarningMessage(
             `Could not locate version constraint for ${item.result.package.name}`,
@@ -56,10 +57,20 @@ async function updateToLatest(item: PackageItem): Promise<void> {
     await doc.save();
 }
 
-function buildVersionEdit(
+/** Copy the package's vibrancy result to the clipboard as JSON. */
+async function copyAsJson(item: PackageItem): Promise<void> {
+    const json = JSON.stringify(item.result, null, 2);
+    await vscode.env.clipboard.writeText(json);
+    vscode.window.showInformationMessage(
+        `Copied ${item.result.package.name} vibrancy data to clipboard`,
+    );
+}
+
+/** Build a workspace edit to replace a package's version constraint. */
+export function buildVersionEdit(
     doc: vscode.TextDocument,
     packageName: string,
-    latestVersion: string,
+    newConstraint: string,
 ): { range: vscode.Range; newText: string } | null {
     const pattern = new RegExp(
         `^(\\s{2}${packageName}\\s*:\\s*)(.+)$`,
@@ -70,13 +81,29 @@ function buildVersionEdit(
         if (match) {
             const start = new vscode.Position(i, match[1].length);
             const end = new vscode.Position(i, line.text.length);
-            return { range: new vscode.Range(start, end), newText: `^${latestVersion}` };
+            return { range: new vscode.Range(start, end), newText: newConstraint };
         }
     }
     return null;
 }
 
-async function findPubspecYaml(): Promise<vscode.Uri | null> {
+/** Read the current version constraint for a package from pubspec.yaml. */
+export function readVersionConstraint(
+    doc: vscode.TextDocument,
+    packageName: string,
+): string | null {
+    const pattern = new RegExp(
+        `^\\s{2}${packageName}\\s*:\\s*(.+)$`,
+    );
+    for (let i = 0; i < doc.lineCount; i++) {
+        const match = doc.lineAt(i).text.match(pattern);
+        if (match) { return match[1].trim(); }
+    }
+    return null;
+}
+
+/** Find the first pubspec.yaml in the workspace. */
+export async function findPubspecYaml(): Promise<vscode.Uri | null> {
     const files = await vscode.workspace.findFiles(
         '**/pubspec.yaml', '**/.*/**', 1,
     );

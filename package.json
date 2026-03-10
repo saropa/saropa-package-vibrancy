@@ -91,6 +91,16 @@
         "command": "saropaPackageVibrancy.updateToLatest",
         "title": "Update to Latest",
         "icon": "$(arrow-up)"
+      },
+      {
+        "command": "saropaPackageVibrancy.copyAsJson",
+        "title": "Copy as JSON",
+        "icon": "$(clippy)"
+      },
+      {
+        "command": "saropaPackageVibrancy.upgradeAndTest",
+        "title": "Upgrade & Test",
+        "icon": "$(beaker)"
       }
     ],
     "menus": {
@@ -121,6 +131,16 @@
           "command": "saropaPackageVibrancy.updateToLatest",
           "when": "viewItem == vibrancyPackageUpdatable",
           "group": "navigation@3"
+        },
+        {
+          "command": "saropaPackageVibrancy.copyAsJson",
+          "when": "viewItem =~ /vibrancyPackage/",
+          "group": "navigation@4"
+        },
+        {
+          "command": "saropaPackageVibrancy.upgradeAndTest",
+          "when": "viewItem == vibrancyPackageUpdatable",
+          "group": "navigation@5"
         }
       ]
     },

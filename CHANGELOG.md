@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Pub.dev-inspired gem icon for sidebar activity bar and marketplace listing
+- Copy as JSON context menu action on tree view package nodes
 
 ### Changed
 
