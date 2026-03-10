@@ -1,0 +1,58 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "Flutter Package Known Issues Schema",
+  "type": "object",
+  "properties": {
+    "$schema": {
+      "type": "string",
+      "description": "Path to the JSON schema file."
+    },
+    "issues": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "The exact name of the package on pub.dev"
+          },
+          "status": {
+            "type": "string",
+            "enum": [
+              "active",
+              "commercial_trap",
+              "commercial",
+              "end_of_life",
+              "enterprise",
+              "freemium",
+              "maintenance_mode",
+              "paid"
+            ],
+            "description": "The category of the hazard."
+          },
+          "reason": {
+            "type": "string",
+            "description": "Why this package should be avoided."
+          },
+          "as_of": {
+            "type": "string",
+            "format": "date",
+            "description": "The date this issue was recorded (YYYY-MM-DD)."
+          },
+          "replacement": {
+            "type": ["string", "null"],
+            "description": "The recommended package to use instead, or null if none exists."
+          },
+          "migrationNotes": {
+            "type": ["string", "null"],
+            "description": "Steps required to move away from this package."
+          }
+        },
+        "required": ["name", "status", "as_of"],
+        "additionalProperties": false
+      }
+    }
+  },
+  "required": ["$schema", "issues"],
+  "additionalProperties": false
+}
