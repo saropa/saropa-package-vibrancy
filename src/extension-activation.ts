@@ -16,6 +16,7 @@ import { PackageDependency, VibrancyResult } from './types';
 import { ScoringWeights } from './scoring/vibrancy-calculator';
 import { countByCategory } from './scoring/status-classifier';
 import { registerTreeCommands } from './providers/tree-commands';
+import { registerUpgradeCommand } from './providers/upgrade-command';
 
 let latestResults: VibrancyResult[] = [];
 let scanInProgress = false;
@@ -52,6 +53,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     registerProviders(context, hoverProvider);
     registerCommands(context, targets);
     registerTreeCommands(context);
+    registerUpgradeCommand(context);
     registerFileWatcher(context, targets);
     autoScanIfPubspec(targets);
 }
