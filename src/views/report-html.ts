@@ -2,6 +2,7 @@ import { VibrancyResult } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
 import { getReportStyles } from './report-styles';
 import { getReportScript } from './report-script';
+import { escapeHtml } from './html-utils';
 
 /** Build the full HTML for the vibrancy report webview. */
 export function buildReportHtml(results: VibrancyResult[]): string {
@@ -67,14 +68,6 @@ export function buildReportHtml(results: VibrancyResult[]): string {
     <script>${getReportScript()}</script>
 </body>
 </html>`;
-}
-
-function escapeHtml(text: string): string {
-    return text
-        .replace(/&/g, '&amp;')
-        .replace(/</g, '&lt;')
-        .replace(/>/g, '&gt;')
-        .replace(/"/g, '&quot;');
 }
 
 function buildRow(r: VibrancyResult): string {

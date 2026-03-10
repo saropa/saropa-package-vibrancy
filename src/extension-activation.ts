@@ -6,12 +6,22 @@ import { VibrancyCodeActionProvider } from './providers/code-action-provider';
 import { VibrancyHoverProvider } from './providers/hover-provider';
 import { VibrancyStatusBar } from './ui/status-bar';
 import { VibrancyReportPanel } from './views/report-webview';
+import { KnownIssuesPanel } from './views/known-issues-webview';
 import { parsePubspecYaml, parsePubspecLock } from './services/pubspec-parser';
 import { analyzePackage } from './scan-orchestrator';
+import { exportReports } from './services/report-exporter';
+import { detectDartVersion, detectFlutterVersion } from './services/sdk-detector';
 import { PackageDependency, VibrancyResult } from './types';
+
+import { ReportMetadata } from './services/report-exporter';
 
 let latestResults: VibrancyResult[] = [];
 let scanInProgress = false;
+let lastScanMeta: ReportMetadata = {
+    flutterVersion: 'unknown',
+    dartVersion: 'unknown',
+    executionTimeMs: 0,
+};
 
 /** Get the latest scan results (used by providers). */
 export function getLatestResults(): readonly VibrancyResult[] {
@@ -109,6 +119,14 @@ function registerCommands(
                 vscode.window.showInformationMessage('Vibrancy cache cleared');
             },
         ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.exportReport',
+            () => exportScanReport(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.browseKnownIssues',
+            () => KnownIssuesPanel.createOrShow(),
+        ),
     );
 }
 
@@ -142,6 +160,8 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             cancellable: false,
         },
         async (progress) => {
+            const startTime = Date.now();
+
             const parsed = await findAndParseDeps();
             if (!parsed) {
                 vscode.window.showWarningMessage(
@@ -154,21 +174,36 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                 'saropaPackageVibrancy',
             );
             const token = config.get<string>('githubToken', '');
+            const allowlist = config.get<string[]>('allowlist', []);
+            const allowSet = new Set(allowlist);
+            const weights = {
+                resolutionVelocity: config.get<number>('weights.resolutionVelocity', 0.5),
+                engagementLevel: config.get<number>('weights.engagementLevel', 0.4),
+                popularity: config.get<number>('weights.popularity', 0.1),
+            };
+
+            const deps = parsed.deps.filter(d => !allowSet.has(d.name));
 
             const results: VibrancyResult[] = [];
-            for (let i = 0; i < parsed.deps.length; i++) {
+            for (let i = 0; i < deps.length; i++) {
                 progress.report({
-                    message: `${parsed.deps[i].name} (${i + 1}/${parsed.deps.length})`,
-                    increment: 100 / parsed.deps.length,
+                    message: `${deps[i].name} (${i + 1}/${deps.length})`,
+                    increment: 100 / deps.length,
                 });
-                const result = await analyzePackage(parsed.deps[i], {
+                const result = await analyzePackage(deps[i], {
                     cache: targets.cache,
                     githubToken: token || undefined,
+                    weights,
                 });
                 results.push(result);
             }
 
             latestResults = results;
+            lastScanMeta = {
+                flutterVersion: detectFlutterVersion(),
+                dartVersion: detectDartVersion(),
+                executionTimeMs: Date.now() - startTime,
+            };
 
             targets.tree.updateResults(results);
             targets.hover.updateResults(results);
@@ -178,6 +213,20 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             );
         },
     );
+}
+
+async function exportScanReport(): Promise<void> {
+    if (latestResults.length === 0) {
+        vscode.window.showWarningMessage('Run a scan first');
+        return;
+    }
+
+    const files = await exportReports(latestResults, lastScanMeta);
+    if (files.length > 0) {
+        vscode.window.showInformationMessage(
+            `Reports saved: ${files.length} files`,
+        );
+    }
 }
 
 interface ParsedDeps {
