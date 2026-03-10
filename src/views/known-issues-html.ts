@@ -8,7 +8,6 @@ import { escapeHtml } from './html-utils';
 export function buildKnownIssuesHtml(): string {
     const issues = Array.from(allKnownIssues().values());
     const withReplacement = issues.filter(i => i.replacement).length;
-    const withoutReplacement = issues.length - withReplacement;
 
     return `<!DOCTYPE html>
 <html lang="en">
@@ -20,13 +19,22 @@ export function buildKnownIssuesHtml(): string {
 </head>
 <body>
     <h1>Known Issues Library</h1>
-    <div class="summary">
+    ${buildSummaryCards(issues.length, withReplacement)}
+    ${buildToolbar()}
+    ${buildTable(issues)}
+    <script>${getKnownIssuesScript()}</script>
+</body>
+</html>`;
+}
+
+function buildSummaryCards(total: number, withReplacement: number): string {
+    return `<div class="summary">
         <div class="summary-card">
-            <div class="count" id="visible-count">${issues.length}</div>
+            <div class="count" id="visible-count">${total}</div>
             <div class="label">Showing</div>
         </div>
         <div class="summary-card eol">
-            <div class="count">${issues.length}</div>
+            <div class="count">${total}</div>
             <div class="label">Total</div>
         </div>
         <div class="summary-card vibrant">
@@ -34,19 +42,25 @@ export function buildKnownIssuesHtml(): string {
             <div class="label">Has Replacement</div>
         </div>
         <div class="summary-card legacy">
-            <div class="count">${withoutReplacement}</div>
+            <div class="count">${total - withReplacement}</div>
             <div class="label">No Replacement</div>
         </div>
-    </div>
-    <div class="toolbar">
+    </div>`;
+}
+
+function buildToolbar(): string {
+    return `<div class="toolbar">
         <input id="search-input" type="text"
             placeholder="Search packages..." autocomplete="off">
         <label class="filter-label">
             <input id="filter-has-replacement" type="checkbox">
             Has replacement
         </label>
-    </div>
-    <table>
+    </div>`;
+}
+
+function buildTable(issues: KnownIssue[]): string {
+    return `<table>
         <thead><tr>
             <th data-col="name">Package<span class="sort-arrow"></span></th>
             <th data-col="reason">Reason<span class="sort-arrow"></span></th>
@@ -56,10 +70,7 @@ export function buildKnownIssuesHtml(): string {
         <tbody id="pkg-body">
             ${issues.map(buildRow).join('\n')}
         </tbody>
-    </table>
-    <script>${getKnownIssuesScript()}</script>
-</body>
-</html>`;
+    </table>`;
 }
 
 function buildRow(issue: KnownIssue): string {

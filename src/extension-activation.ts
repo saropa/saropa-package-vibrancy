@@ -9,11 +9,10 @@ import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
 import { parsePubspecYaml, parsePubspecLock } from './services/pubspec-parser';
 import { analyzePackage } from './scan-orchestrator';
-import { exportReports } from './services/report-exporter';
+import { exportReports, ReportMetadata } from './services/report-exporter';
 import { detectDartVersion, detectFlutterVersion } from './services/sdk-detector';
 import { PackageDependency, VibrancyResult } from './types';
-
-import { ReportMetadata } from './services/report-exporter';
+import { ScoringWeights } from './scoring/vibrancy-calculator';
 
 let latestResults: VibrancyResult[] = [];
 let scanInProgress = false;
@@ -170,52 +169,86 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                 return;
             }
 
-            const config = vscode.workspace.getConfiguration(
-                'saropaPackageVibrancy',
+            const scanConfig = readScanConfig();
+            const deps = parsed.deps.filter(
+                d => !scanConfig.allowSet.has(d.name),
             );
-            const token = config.get<string>('githubToken', '');
-            const allowlist = config.get<string[]>('allowlist', []);
-            const allowSet = new Set(allowlist);
-            const weights = {
-                resolutionVelocity: config.get<number>('weights.resolutionVelocity', 0.5),
-                engagementLevel: config.get<number>('weights.engagementLevel', 0.4),
-                popularity: config.get<number>('weights.popularity', 0.1),
-            };
-            const repoOverrides = config.get<Record<string, string>>(
-                'repoOverrides', {},
+            const results = await scanPackages(
+                deps, targets.cache, scanConfig, progress,
             );
-
-            const deps = parsed.deps.filter(d => !allowSet.has(d.name));
-
-            const results: VibrancyResult[] = [];
-            for (let i = 0; i < deps.length; i++) {
-                progress.report({
-                    message: `${deps[i].name} (${i + 1}/${deps.length})`,
-                    increment: 100 / deps.length,
-                });
-                const result = await analyzePackage(deps[i], {
-                    cache: targets.cache,
-                    githubToken: token || undefined,
-                    weights,
-                    repoOverrides,
-                });
-                results.push(result);
-            }
 
             latestResults = results;
-            lastScanMeta = {
-                flutterVersion: detectFlutterVersion(),
-                dartVersion: detectDartVersion(),
-                executionTimeMs: Date.now() - startTime,
-            };
-
-            targets.tree.updateResults(results);
-            targets.hover.updateResults(results);
-            targets.statusBar.update(results);
-            targets.diagnostics.update(
-                parsed.yamlUri, parsed.yamlContent, results,
-            );
+            lastScanMeta = await buildScanMeta(startTime);
+            publishResults(targets, results, parsed);
         },
+    );
+}
+
+interface ScanConfig {
+    readonly token: string;
+    readonly allowSet: Set<string>;
+    readonly weights: ScoringWeights;
+    readonly repoOverrides: Record<string, string>;
+}
+
+function readScanConfig(): ScanConfig {
+    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+    return {
+        token: config.get<string>('githubToken', ''),
+        allowSet: new Set(config.get<string[]>('allowlist', [])),
+        weights: {
+            resolutionVelocity: config.get<number>('weights.resolutionVelocity', 0.5),
+            engagementLevel: config.get<number>('weights.engagementLevel', 0.4),
+            popularity: config.get<number>('weights.popularity', 0.1),
+        },
+        repoOverrides: config.get<Record<string, string>>('repoOverrides', {}),
+    };
+}
+
+async function scanPackages(
+    deps: PackageDependency[],
+    cache: CacheService,
+    scanConfig: ScanConfig,
+    progress: vscode.Progress<{ message?: string; increment?: number }>,
+): Promise<VibrancyResult[]> {
+    const results: VibrancyResult[] = [];
+    for (let i = 0; i < deps.length; i++) {
+        progress.report({
+            message: `${deps[i].name} (${i + 1}/${deps.length})`,
+            increment: 100 / deps.length,
+        });
+        const result = await analyzePackage(deps[i], {
+            cache,
+            githubToken: scanConfig.token || undefined,
+            weights: scanConfig.weights,
+            repoOverrides: scanConfig.repoOverrides,
+        });
+        results.push(result);
+    }
+    return results;
+}
+
+async function buildScanMeta(startTime: number): Promise<ReportMetadata> {
+    const [flutterVer, dartVer] = await Promise.all([
+        detectFlutterVersion(), detectDartVersion(),
+    ]);
+    return {
+        flutterVersion: flutterVer,
+        dartVersion: dartVer,
+        executionTimeMs: Date.now() - startTime,
+    };
+}
+
+function publishResults(
+    targets: ScanTargets,
+    results: VibrancyResult[],
+    parsed: ParsedDeps,
+): void {
+    targets.tree.updateResults(results);
+    targets.hover.updateResults(results);
+    targets.statusBar.update(results);
+    targets.diagnostics.update(
+        parsed.yamlUri, parsed.yamlContent, results,
     );
 }
 

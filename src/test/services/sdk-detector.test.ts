@@ -2,21 +2,20 @@ import * as assert from 'assert';
 import { detectDartVersion, detectFlutterVersion } from '../../services/sdk-detector';
 
 /**
- * sdk-detector calls execSync internally. Since child_process.execSync
- * is non-configurable, we can't stub it with sinon. Instead, we test
- * the functions as integration tests — they return real SDK versions
- * when available, or 'unknown' if not installed.
+ * sdk-detector calls execFile internally. We test the functions as
+ * integration tests — they return real SDK versions when available,
+ * or 'unknown' if not installed.
  */
 describe('sdk-detector', () => {
     describe('detectDartVersion', () => {
-        it('should return a string', () => {
-            const version = detectDartVersion();
+        it('should return a string', async () => {
+            const version = await detectDartVersion();
             assert.strictEqual(typeof version, 'string');
             assert.ok(version.length > 0);
         });
 
-        it('should return a version number or unknown', () => {
-            const version = detectDartVersion();
+        it('should return a version number or unknown', async () => {
+            const version = await detectDartVersion();
             const isVersion = /^\d+\.\d+\.\d+/.test(version);
             const isUnknown = version === 'unknown';
             assert.ok(
@@ -27,14 +26,14 @@ describe('sdk-detector', () => {
     });
 
     describe('detectFlutterVersion', () => {
-        it('should return a string', () => {
-            const version = detectFlutterVersion();
+        it('should return a string', async () => {
+            const version = await detectFlutterVersion();
             assert.strictEqual(typeof version, 'string');
             assert.ok(version.length > 0);
         });
 
-        it('should return a version number or unknown', () => {
-            const version = detectFlutterVersion();
+        it('should return a version number or unknown', async () => {
+            const version = await detectFlutterVersion();
             const isVersion = /^\d+\.\d+\.\d+/.test(version);
             const isUnknown = version === 'unknown';
             assert.ok(
