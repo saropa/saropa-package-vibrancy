@@ -33,7 +33,8 @@ describe('status-classifier', () => {
                 score: 90,
                 knownIssue: {
                     name: 'pkg', status: 'end_of_life',
-                    reason: 'bad', as_of: '2024-01-01', replacement: null,
+                    reason: 'bad', as_of: '2024-01-01',
+                    replacement: null, migrationNotes: null,
                 },
                 pubDev: null,
             });

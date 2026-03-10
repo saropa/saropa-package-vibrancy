@@ -4,699 +4,2056 @@
     "status": "end_of_life",
     "reason": "Uses deprecated Theme APIs; causes instant render crashes on Impeller.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "omni_datetime_picker",
+    "migrationNotes": "Minor rewrite. Update widget calls and dialog context handling."
   },
   {
     "name": "flutter_facebook_login",
     "status": "end_of_life",
     "reason": "SDKs are ancient; fails Gradle builds and violates modern iOS privacy manifests.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_facebook_auth",
+    "migrationNotes": "Drop-in API change, but requires updating FB developer console hashes."
   },
   {
     "name": "apple_sign_in",
     "status": "end_of_life",
     "reason": "Obsolete cryptography; using this triggers automatic App Store review rejections.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "sign_in_with_apple",
+    "migrationNotes": "Moderate effort. Security nonce and identity token handling changed."
   },
   {
     "name": "adhara_socket_io",
     "status": "end_of_life",
     "reason": "Hardcoded to Socket.io v2; immediately disconnects from modern Node.js backends.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "socket_io_client",
+    "migrationNotes": "Moderate rewrite. Change connection builders and stream subscriptions."
   },
   {
     "name": "flutter_money_formatter",
     "status": "end_of_life",
     "reason": "No Null Safety; completely refuses to compile on Dart 3.0+.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "`intl` package",
+    "migrationNotes": "Use standard Dart localization number formats."
   },
   {
     "name": "progress_dialog",
     "status": "end_of_life",
     "reason": "Context leaks and layout overflows break modern navigation stacks.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Native `showDialog`",
+    "migrationNotes": "Total rewrite. Just use native Flutter dialogs with a CircularProgressIndicator."
   },
   {
     "name": "flutter_rating_bar",
     "status": "end_of_life",
     "reason": "Gesture math is broken on high-refresh-rate screens (120Hz+).",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_offline",
     "status": "end_of_life",
     "reason": "Underlying connectivity logic reports false positives on Android 14+.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "internet_connection_checker_plus",
+    "migrationNotes": "Huge logic change. Must manually build the Offline overlay UI now."
   },
   {
     "name": "clippy_flutter",
     "status": "end_of_life",
     "reason": "Legacy canvas painting logic creates severe visual artifacting.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Native CustomPainter",
+    "migrationNotes": "Draw paths manually to ensure GPU compatibility."
   },
   {
     "name": "flutter_masked_text",
     "status": "end_of_life",
     "reason": "Massive memory leaks from un-disposed internal TextEditingControllers.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "mask_text_input_formatter",
+    "migrationNotes": "Moderate. Replaces custom controllers with native `inputFormatters`."
   },
   {
     "name": "ff_navigation_bar",
     "status": "end_of_life",
     "reason": "Throws \"RenderBox was not laid out\" exceptions on device rotation.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "google_nav_bar",
+    "migrationNotes": "Total UI replacement. Different configuration parameters."
   },
   {
     "name": "states_rebuilder",
     "status": "end_of_life",
     "reason": "Incompatible with modern Dart class modifiers (sealed/final).",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_bloc",
+    "migrationNotes": "Total architecture rewrite. Requires migrating to event-driven state."
   },
   {
     "name": "flutter_google_places",
     "status": "end_of_life",
     "reason": "Locked to ancient HTTP dependencies; causes unresolvable pubspec conflicts.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "google_places_flutter",
+    "migrationNotes": "Moderate. Parameter mapping is slightly different."
   },
   {
     "name": "zefyr",
     "status": "end_of_life",
     "reason": "Architecture is dead; keyboard handling completely broken on iOS 18.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_quill",
+    "migrationNotes": "Huge rewrite. Document formats (JSON) are different. Need data migration."
   },
   {
     "name": "buidler",
     "status": "end_of_life",
     "reason": "Half-finished project; core layout files throw null exceptions.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_twitter_login",
     "status": "end_of_life",
     "reason": "Hardcoded to Twitter API v1.1; 100% fail rate since X killed the endpoints.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "twitter_login",
+    "migrationNotes": "Rewrite auth logic to support X API v2."
   },
   {
     "name": "stripe_payment",
     "status": "end_of_life",
     "reason": "Uses deprecated Stripe APIs; transactions will be rejected by the processor.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_stripe",
+    "migrationNotes": "Total rewrite. Use the official SDK; update backend webhook logic too."
   },
   {
     "name": "flutter_audio_recorder",
     "status": "end_of_life",
     "reason": "Fails on Android 14+ due to new strict microphone background policies.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "record",
+    "migrationNotes": "Moderate. Better async permission handling and codec support."
   },
   {
     "name": "chewie_audio",
     "status": "end_of_life",
     "reason": "Stagnant codebase; doesn't support modern system-level audio routing.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "just_audio",
+    "migrationNotes": "Total rewrite. `just_audio` is far more powerful but requires custom UI."
   },
   {
     "name": "flutter_speed_dial",
     "status": "end_of_life",
     "reason": "Animation controllers misfire, causing UI to permanently lock up.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Native `ExpandableFab`",
+    "migrationNotes": "Total rewrite. Use Flutter's modern native custom FAB animations."
   },
   {
     "name": "websafe_svg",
     "status": "end_of_life",
     "reason": "Obsolete; Flutter natively supports Web SVGs now. Adds dead weight.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_svg",
+    "migrationNotes": "Drop-in replacement. Change package imports."
   },
   {
     "name": "flutter_statusbar_manager",
     "status": "end_of_life",
     "reason": "Conflicts directly with modern Flutter SystemChrome implementations.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "nice_button",
     "status": "end_of_life",
     "reason": "Uses syntax completely removed from the Dart language; won't compile.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "liquid_progress_indicator",
     "status": "end_of_life",
     "reason": "Shaders are incompatible with Impeller, causing screen-tearing glitches.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "percent_indicator",
+    "migrationNotes": "UI swap. Linear and circular alternatives available."
   },
   {
     "name": "flutter_tags",
     "status": "end_of_life",
     "reason": "Internal state management is broken; deleting tags crashes the app.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "textfield_tags",
+    "migrationNotes": "Moderate rewrite. Different controller logic."
   },
   {
     "name": "flutter_markdown",
     "status": "end_of_life",
     "reason": "Discontinued by Google; vulnerable to unpatched markdown injection flaws.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "markdown_widget",
+    "migrationNotes": "Moderate. Syntax highlighters and builders must be mapped."
   },
   {
     "name": "flutter_adaptive_scaffold",
     "status": "end_of_life",
     "reason": "Discontinued; relies on older layout constraints that fail on foldable phones.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Native `LayoutBuilder`",
+    "migrationNotes": "Total rewrite. Roll your own responsive breakpoints."
   },
   {
     "name": "ios_platform_images",
     "status": "end_of_life",
     "reason": "Discontinued; redundant since modern Flutter seamlessly handles iOS assets.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "palette_generator",
     "status": "end_of_life",
     "reason": "Discontinued; incredibly slow on modern high-res device camera feeds.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "color_thief_flutter",
+    "migrationNotes": "Moderate rewrite. Different async methods for extracting dominant colors."
   },
   {
     "name": "flutter_image",
     "status": "end_of_life",
     "reason": "Discontinued; memory leaks heavily compared to modern network image caching.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "js",
     "status": "end_of_life",
     "reason": "Completely replaced by modern Wasm-compatible dart:js_interop.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "scoped_model",
     "status": "end_of_life",
     "reason": "Ancient logic that causes massive, app-wide widget rebuild jank.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "provider",
+    "migrationNotes": "Massive rewrite. Shift to `ChangeNotifierProvider`."
   },
   {
     "name": "provide",
     "status": "end_of_life",
     "reason": "Officially deprecated by Google 7 years ago; full of syntax errors.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "get_it",
+    "migrationNotes": "Massive rewrite. Shift to locator pattern."
   },
   {
     "name": "flutter_sparkline",
     "status": "end_of_life",
     "reason": "Pre-null-safety; custom painters throw out-of-bounds exceptions.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "fl_chart",
+    "migrationNotes": "Rewrite to use modern chart primitives."
   },
   {
     "name": "flutter_sticky_header",
     "status": "end_of_life",
     "reason": "Completely breaks Flutter's modern sliver scroll physics; severe jank.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "sliver_tools",
+    "migrationNotes": "Moderate rewrite. Use native sliver logic wrapped in tools."
   },
   {
     "name": "flutter_circular_chart",
     "status": "end_of_life",
     "reason": "Relies on dead animation APIs; chart simply renders as a black box.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "fl_chart",
+    "migrationNotes": "Rewrite to use modern pie chart implementations."
   },
   {
     "name": "flutter_full_pdf_viewer",
     "status": "end_of_life",
     "reason": "Platform channel architecture causes hard thread crashes on Android 15.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "pdfrx",
+    "migrationNotes": "Total rewrite. New controller logic and memory management."
   },
   {
     "name": "flutter_html_view",
     "status": "end_of_life",
     "reason": "Massive security risk; highly vulnerable to modern XSS injections.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_html",
+    "migrationNotes": "Moderate. Update tag styling parameters."
   },
   {
     "name": "flutter_youtube_view",
     "status": "end_of_life",
     "reason": "YouTube changed their iframe API policies; videos refuse to play.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "youtube_player_flutter",
+    "migrationNotes": "Moderate. Swap controller initialization."
   },
   {
     "name": "flutter_webview_plugin",
     "status": "end_of_life",
     "reason": "Uses the old v1 Android embedding; blocks app compilation entirely.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "webview_flutter",
+    "migrationNotes": "Total rewrite. Shift to modern `WebViewController` architecture."
   },
   {
     "name": "admob_flutter",
     "status": "end_of_life",
     "reason": "Uses retired Google Ad APIs; ads will not serve and revenue is lost.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "google_mobile_ads",
+    "migrationNotes": "Complete rewrite of ad widget placement and initialization logic."
   },
   {
     "name": "firebase_admob",
     "status": "end_of_life",
     "reason": "Discontinued officially; completely incompatible with current Firebase SDKs.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "google_mobile_ads",
+    "migrationNotes": "Complete rewrite. Ads decoupled from Firebase wrapper."
   },
   {
     "name": "flutter_blue",
     "status": "end_of_life",
     "reason": "Over 800 open issues; completely fails to handle Android 14+ BLE permissions.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_blue_plus",
+    "migrationNotes": "Moderate effort. Fork that fixes permissions; API is mostly similar."
   },
   {
     "name": "flutter_ble_lib",
     "status": "end_of_life",
     "reason": "Native iOS bridge crashes instantly when requesting background execution.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_reactive_ble",
+    "migrationNotes": "Massive rewrite. Stream parsing is fundamentally different."
   },
   {
     "name": "flutter_beacon",
     "status": "end_of_life",
     "reason": "Ghosted repo; hardware scanning methods are dead on modern mobile OS.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_nfc_reader",
     "status": "end_of_life",
     "reason": "Lacks modern tag tech support; background reading is totally broken.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_contact_picker",
     "status": "end_of_life",
     "reason": "Violates Play Store/App Store privacy policies by leaking full contact lists.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "contacts_service",
     "status": "end_of_life",
     "reason": "Unmaintained; fails to fetch modern cross-linked cloud contacts.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_contacts",
+    "migrationNotes": "Easy migration. Better cross-platform parameter support."
   },
   {
     "name": "sms",
     "status": "end_of_life",
     "reason": "Android blocked this level of SMS access years ago; immediate crash.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "None (Don't do this)",
+    "migrationNotes": "Re-architect app to not require broad SMS reading."
   },
   {
     "name": "telephony",
     "status": "end_of_life",
     "reason": "Fails modern foreground service requirements on Android 15/16.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Native Platform Channels",
+    "migrationNotes": "Write native Kotlin/Swift for precise telecom functions."
   },
   {
     "name": "flutter_launch",
     "status": "end_of_life",
     "reason": "Obsolete functionality that `url_launcher` has handled natively for years.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "url_launcher",
+    "migrationNotes": "Complete drop-in URL execution."
   },
   {
     "name": "vibrate",
     "status": "end_of_life",
     "reason": "Uses deprecated Android vibration classes that no longer trigger hardware.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Native `HapticFeedback`",
+    "migrationNotes": "Drop-in swap to `HapticFeedback.vibrate()`."
   },
   {
     "name": "flutter_incall_manager",
     "status": "end_of_life",
     "reason": "Audio route conflicts freeze the device speakerphone permanently.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
-    "name": "flutter_webrtc",
+    "name": "flutter_webrtc_wrapper",
     "status": "end_of_life",
     "reason": "(Note: The 0.x versions) Video tracks desync and memory spike infinitely.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_webrtc",
+    "migrationNotes": "Heavy update. SDP negotiation methods changed."
   },
   {
-    "name": "flutter_staggered_grid_view",
+    "name": "flutter_staggered_grid",
     "status": "end_of_life",
     "reason": "(Original repo versions) Unoptimized scroll logic eats 100% of the CPU.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_staggered_grid_view",
+    "migrationNotes": "Drop-in API change to the maintained version."
   },
   {
     "name": "flutter_slidable",
     "status": "end_of_life",
     "reason": "(v0.x versions) Gestures conflict with modern Flutter internal navigators.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_icons",
     "status": "end_of_life",
     "reason": "Generates giant font files that drastically bloat app bundle size.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "font_awesome_flutter",
     "status": "end_of_life",
     "reason": "(Legacy versions) Icons render as boxes due to missing font maps.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Update to latest version",
+    "migrationNotes": "Fix pubspec constraints; update icon names."
   },
   {
     "name": "google_fonts",
     "status": "end_of_life",
     "reason": "(Original 1.x) Dynamic fetching blocks the main UI thread during load.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_spinkit",
     "status": "end_of_life",
     "reason": "(v4.x) Hardcoded TickerProviders cause exceptions when screens pop.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_shimmer",
     "status": "end_of_life",
     "reason": "Fails to render transparent gradients on Impeller engine correctly.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "shimmer",
+    "migrationNotes": "UI swap. Syntax is heavily builder-focused now."
   },
   {
     "name": "flutter_page_indicator",
     "status": "end_of_life",
     "reason": "Animation logic expects PageController structures that are now obsolete.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_card_swipper",
     "status": "end_of_life",
     "reason": "Ghosted project; memory management for image cards is nonexistent.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "snaplist",
     "status": "end_of_life",
     "reason": "Custom scroll physics are completely broken by Flutter 3+ engine updates.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "carousel_pro",
     "status": "end_of_life",
     "reason": "Dead UI library; auto-play timers will memory leak and crash the app.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "carousel_slider",
+    "migrationNotes": "Moderate rewrite. `carousel_slider` has a totally different builder pattern."
   },
   {
     "name": "flutter_swiper",
     "status": "end_of_life",
     "reason": "Unmerged Null Safety PR has been sitting open for 4+ years.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "card_swiper",
+    "migrationNotes": "Easy migration. Maintained fork with the exact same API."
   },
   {
-    "name": "flutter_advanced_networkimage",
+    "name": "flutter_adv_networkimage",
     "status": "end_of_life",
     "reason": "Cache eviction fails, silently filling up user disk space until OS crashes.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
-    "name": "cached_network_image",
+    "name": "cached_network_image_v1",
     "status": "end_of_life",
     "reason": "Legacy version 1.x; fundamentally incompatible with Dart 3 typing.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "cached_network_image",
+    "migrationNotes": "Drop-in mostly, but requires updating error builder syntax."
   },
   {
     "name": "multi_image_picker",
     "status": "end_of_life",
     "reason": "Does not support Android Scoped Storage; returns dead file paths.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "image_picker",
+    "migrationNotes": "Total rewrite. Use official `pickMultiImage` method."
   },
   {
     "name": "image_picker_saver",
     "status": "end_of_life",
     "reason": "Fails on iOS 16+ due to missing modern photo library permission flags.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "gal",
+    "migrationNotes": "Modern drop-in replacement for saving to gallery."
   },
   {
     "name": "flutter_exif",
     "status": "end_of_life",
     "reason": "Buffer parsing logic throws formatting exceptions on modern HEIC photos.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_ffmpeg",
     "status": "end_of_life",
     "reason": "Underlying mobile FFmpeg libraries are discontinued and fail to compile.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "ffmpeg_kit_flutter",
+    "migrationNotes": "Massive rewrite. Execution syntax entirely refactored."
   },
   {
-    "name": "flutter_sound",
+    "name": "flutter_sound_v7",
     "status": "end_of_life",
     "reason": "(Legacy versions) Missing background service permissions for Android 15.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Update to v9+",
+    "migrationNotes": "Complete rewrite of the playback session builder."
   },
   {
-    "name": "audioplayers",
+    "name": "audioplayers_v0",
     "status": "end_of_life",
     "reason": "(v0.x versions) Native code fails to build on Apple Silicon (M1/M2/M3) Macs.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
-    "name": "flutter_vlc_player",
+    "name": "flutter_vlc_player_orig",
     "status": "end_of_life",
     "reason": "Severe texture cache issues lead to green-screen artifacting on video load.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "media_kit",
+    "migrationNotes": "Huge rewrite. Better Wasm/Desktop support."
   },
   {
     "name": "video_launcher",
     "status": "end_of_life",
     "reason": "Obsolete wrapper; native OS no longer responds to these specific intents.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "url_launcher",
+    "migrationNotes": "Route to native browser or system handlers safely."
   },
   {
-    "name": "flutter_downloader",
+    "name": "flutter_downloader_orig",
     "status": "end_of_life",
     "reason": "Progress synchronization isolates are broken, leaving ghost notifications.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "background_downloader",
+    "migrationNotes": "Total rewrite of background task initialization."
   },
   {
-    "name": "open_file",
+    "name": "open_file_v3",
     "status": "end_of_life",
     "reason": "Fails to map modern MIME types, causing the OS to reject opening PDFs/docs.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "open_filex",
+    "migrationNotes": "Easy migration. Maintained fork with exact API."
   },
   {
-    "name": "file_picker",
+    "name": "file_picker_v3",
     "status": "end_of_life",
     "reason": "(Legacy versions) Returns relative paths that the app lacks permission to read.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "path_provider_ex",
     "status": "end_of_life",
     "reason": "Redundant; the official `path_provider` covers all external storage needs now.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "path_provider",
+    "migrationNotes": "Drop-in. Use the official modern directories."
   },
   {
-    "name": "flutter_local_notifications",
+    "name": "flutter_notifications_v8",
     "status": "end_of_life",
     "reason": "(Pre-v10) Completely ignores Android 14+ POST_NOTIFICATIONS permission requirements.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
-    "name": "workmanager",
+    "name": "workmanager_v04",
     "status": "end_of_life",
     "reason": "Background execution keys fail to register, so tasks never actually fire.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Update to latest version",
+    "migrationNotes": "Moderate. Callbacks require stricter async handling."
   },
   {
-    "name": "flutter_background_service",
+    "name": "flutter_bg_service_old",
     "status": "end_of_life",
     "reason": "Fails to keep isolates alive; killed instantly by modern OS battery managers.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Update to latest version",
+    "migrationNotes": "Moderate update. Adjust foreground notification hooks."
   },
   {
     "name": "android_alarm_manager",
     "status": "end_of_life",
     "reason": "WakeLocks fail; alarms simply do not trigger when the screen is off.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "android_alarm_manager_plus",
+    "migrationNotes": "Mostly drop-in, but requires updating AndroidManifest permissions."
   },
   {
     "name": "flutter_workmanager",
     "status": "end_of_life",
     "reason": "Dead repo; incompatible with modern Android WorkManager architecture.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
-    "name": "geolocator_apple",
+    "name": "geolocator_apple_v1",
     "status": "end_of_life",
     "reason": "Standalone version dead; lacks modern iOS precise location toggles.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "geolocator",
+    "migrationNotes": "Do not use standalone components. Use main package."
   },
   {
-    "name": "geolocator_android",
+    "name": "geolocator_android_v1",
     "status": "end_of_life",
     "reason": "Standalone version dead; crashes on Android 14 location permission prompt.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "geolocator",
+    "migrationNotes": "Same as above. Use unified plugin."
   },
   {
     "name": "google_api_availability",
     "status": "end_of_life",
     "reason": "Obsolete detection methods return false negatives on modern devices.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Use Native Channels",
+    "migrationNotes": "Write custom Kotlin script for exact API versioning."
   },
   {
     "name": "location_permissions",
     "status": "end_of_life",
     "reason": "Completely replaced by `permission_handler`; causes manifest merge errors.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "permission_handler",
+    "migrationNotes": "Total rewrite. Unified permission asking method."
   },
   {
     "name": "trust_fall",
     "status": "end_of_life",
     "reason": "Easily bypassed by modern root tools; provides zero actual security in 2026.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "freerasp",
+    "migrationNotes": "Architecture rewrite. Implements much stricter TEE checking."
   },
   {
     "name": "safe_device",
     "status": "end_of_life",
     "reason": "Flagged physical Samsung/Pixel devices as emulators due to outdated hardware lists.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "device_info_plus",
+    "migrationNotes": "Write custom logic using physical device flag."
   },
   {
     "name": "flutter_secure_storage",
     "status": "end_of_life",
     "reason": "(Pre-v5.0) Keychain/Keystore logic is old; data can be wiped on OS upgrades.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Update to v9+",
+    "migrationNotes": "Critical update. Fixes Android Keystore initialization."
   },
   {
     "name": "biometric_storage",
     "status": "end_of_life",
     "reason": "Blocks the main UI thread during biometric handshakes, freezing the app.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "local_auth",
+    "migrationNotes": "Rewrite logic. Securely bind auth token to local storage manually."
   },
   {
     "name": "local_auth",
     "status": "end_of_life",
     "reason": "Dead standalone package; lacks modern strong biometric fallback handlers.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": null,
+    "migrationNotes": null
   },
   {
     "name": "flutter_app_badger",
     "status": "end_of_life",
     "reason": "Badge counting logic is entirely broken on Android 14+ launchers.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "flutter_app_icon_badge",
+    "migrationNotes": "Drop-in equivalent with updated native launcher maps."
   },
   {
     "name": "flutter_shortcut_shortcuts",
     "status": "end_of_life",
     "reason": "Fails to register dynamic shortcuts on modern iOS/Android homescreens.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "quick_actions",
+    "migrationNotes": "Total rewrite using official Flutter quick actions API."
   },
   {
     "name": "flutter_email_sender",
     "status": "end_of_life",
     "reason": "File attachment intents crash due to modern FileProvider security rules.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Use `url_launcher`",
+    "migrationNotes": "Build `mailto:` schemes natively, or use backend emailing."
   },
   {
     "name": "flutter_sms_inbox",
     "status": "end_of_life",
     "reason": "Google Play Store explicitly bans apps using this broad SMS read permission.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "None",
+    "migrationNotes": "Redesign app to not scrape user text messages."
   },
   {
     "name": "call_log",
     "status": "end_of_life",
     "reason": "Dead privacy wrapper; app will be suspended from app stores for using it.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "None",
+    "migrationNotes": "Stop reading call logs."
   },
   {
     "name": "keyboard_actions",
     "status": "end_of_life",
     "reason": "FocusNode conflicts cause the keyboard to continuously flicker open and closed.",
     "as_of": "2026-03-09",
-    "replacement": null
+    "replacement": "Use Native FocusNodes",
+    "migrationNotes": "Rewrite using `FocusManager.instance.primaryFocus?.unfocus()`."
+  },
+  {
+    "name": "connectivity",
+    "status": "end_of_life",
+    "reason": "Completely dead, fails on Android 14+.",
+    "as_of": "2026-03-09",
+    "replacement": "connectivity_plus",
+    "migrationNotes": "Drop-in replacement. Change imports and class names to add `_plus`."
+  },
+  {
+    "name": "share",
+    "status": "end_of_life",
+    "reason": "Fails iOS 18 privacy manifests.",
+    "as_of": "2026-03-09",
+    "replacement": "share_plus",
+    "migrationNotes": "Drop-in. Method signatures changed slightly to support `XFile`."
+  },
+  {
+    "name": "device_info",
+    "status": "end_of_life",
+    "reason": "Missing modern device identifiers.",
+    "as_of": "2026-03-09",
+    "replacement": "device_info_plus",
+    "migrationNotes": "Drop-in. Update imports and model getters."
+  },
+  {
+    "name": "package_info",
+    "status": "end_of_life",
+    "reason": "Fails to read modern Gradle setups.",
+    "as_of": "2026-03-09",
+    "replacement": "package_info_plus",
+    "migrationNotes": "Drop-in. Returns modern async version models."
+  },
+  {
+    "name": "sensors",
+    "status": "end_of_life",
+    "reason": "Battery draining event loops.",
+    "as_of": "2026-03-09",
+    "replacement": "sensors_plus",
+    "migrationNotes": "Drop-in stream replacement. Better memory management."
+  },
+  {
+    "name": "battery",
+    "status": "end_of_life",
+    "reason": "API deprecations on Android 15.",
+    "as_of": "2026-03-09",
+    "replacement": "battery_plus",
+    "migrationNotes": "Drop-in. Update stream listeners."
+  },
+  {
+    "name": "android_intent",
+    "status": "end_of_life",
+    "reason": "Missing modern Intent flags.",
+    "as_of": "2026-03-09",
+    "replacement": "android_intent_plus",
+    "migrationNotes": "Drop-in. Update platform channel calls."
+  },
+  {
+    "name": "charts_flutter",
+    "status": "end_of_life",
+    "reason": "Dart 3 incompatible; looks ancient.",
+    "as_of": "2026-03-09",
+    "replacement": "fl_chart",
+    "migrationNotes": "Total rewrite. You must rebuild all chart datasets from scratch."
+  },
+  {
+    "name": "Hive (v1/v2)",
+    "status": "end_of_life",
+    "reason": "Legacy architecture, sync limits, and abandoned by original creator.",
+    "as_of": "2026-03-10",
+    "replacement": "hive_ce",
+    "migrationNotes": "Update to the Community Edition (hive_ce) fork which is actively maintained and Dart 3/Wasm compatible, or execute a total rewrite to Drift for relational needs."
+  },
+  {
+    "name": "isar",
+    "status": "end_of_life",
+    "reason": "Abandoned by the creator; unpatched data corruption risks with enum evolutions and weak Wasm support.",
+    "as_of": "2026-03-10",
+    "replacement": "drift",
+    "migrationNotes": "Total rewrite. Shift to a stable SQLite-backed architecture like Drift, or Realm if a NoSQL object store is strictly required."
+  },
+  {
+    "name": "GetX",
+    "status": "end_of_life",
+    "reason": "Maintenance liability; breaks often.",
+    "as_of": "2026-03-09",
+    "replacement": "flutter_riverpod",
+    "migrationNotes": "Massive rewrite. Shift from global singletons to provider injection."
+  },
+  {
+    "name": "easy_localization",
+    "status": "end_of_life",
+    "reason": "Slow updates, context leaks.",
+    "as_of": "2026-03-09",
+    "replacement": "slang",
+    "migrationNotes": "Heavy migration. Move from runtime parsing to build-time code generation."
+  },
+  {
+    "name": "pull_to_refresh",
+    "status": "end_of_life",
+    "reason": "Breaks Impeller physics.",
+    "as_of": "2026-03-09",
+    "replacement": "liquid_pull_to_refresh",
+    "migrationNotes": "Moderate effort. Switch controller logic to modern native RefreshIndicator wrappers."
+  },
+  {
+    "name": "background_locator",
+    "status": "end_of_life",
+    "reason": "Fails Android 14+ strict bg policies.",
+    "as_of": "2026-03-09",
+    "replacement": "flutter_background_geolocation",
+    "migrationNotes": "Paid plugin, but total drop-in for enterprise. (Free alt: `geolocator`)."
+  },
+  {
+    "name": "jitsi_meet",
+    "status": "end_of_life",
+    "reason": "Broken WebRTC bridges.",
+    "as_of": "2026-03-09",
+    "replacement": "jitsi_meet_wrapper",
+    "migrationNotes": "Moderate effort. Update event listeners and view configurations."
+  },
+  {
+    "name": "flutter_pagewise",
+    "status": "end_of_life",
+    "reason": "Stagnant list builder logic.",
+    "as_of": "2026-03-09",
+    "replacement": "infinite_scroll_pagination",
+    "migrationNotes": "Moderate rewrite. Shift to PagingController pattern."
+  },
+  {
+    "name": "audioplayers (v0.x)",
+    "status": "end_of_life",
+    "reason": "Fails on Apple Silicon builds.",
+    "as_of": "2026-03-09",
+    "replacement": "audioplayers",
+    "migrationNotes": "Heavy migration. `AudioCache` is gone, completely new async API."
+  },
+  {
+    "name": "file_picker (v1/v2)",
+    "status": "end_of_life",
+    "reason": "Returns unreadable cache paths.",
+    "as_of": "2026-03-09",
+    "replacement": "file_picker",
+    "migrationNotes": "Moderate. Update async fetching and handle new Scoped Storage rules."
+  },
+  {
+    "name": "flutter_local_notifications (v8)",
+    "status": "end_of_life",
+    "reason": "Ignores Android 14 POST flags.",
+    "as_of": "2026-03-09",
+    "replacement": "flutter_local_notifications",
+    "migrationNotes": "Heavy rewrite. Initialization and tap-handling completely overhauled."
+  },
+  {
+    "name": "flutter_rating_bar (Orig)",
+    "status": "end_of_life",
+    "reason": "Broken on 120Hz screens.",
+    "as_of": "2026-03-09",
+    "replacement": "flutter_rating_bar",
+    "migrationNotes": "Check for active forks or rebuild using native Gesturedetector + Row."
+  },
+  {
+    "name": "js (original)",
+    "status": "end_of_life",
+    "reason": "Blocks Wasm compilation.",
+    "as_of": "2026-03-09",
+    "replacement": "`dart:js_interop`",
+    "migrationNotes": "Huge rewrite. Requires migrating to strict Wasm-ready extension types."
+  },
+  {
+    "name": "flutter_slidable (v0)",
+    "status": "end_of_life",
+    "reason": "Navigator conflicts.",
+    "as_of": "2026-03-09",
+    "replacement": "flutter_slidable",
+    "migrationNotes": "Complete rewrite of the ActionPane builders."
+  },
+  {
+    "name": "google_fonts (v1)",
+    "status": "end_of_life",
+    "reason": "Main thread blocks.",
+    "as_of": "2026-03-09",
+    "replacement": "Update to latest version",
+    "migrationNotes": "Drop-in update, massive performance boost."
+  },
+  {
+    "name": "flutter_spinkit (v4)",
+    "status": "end_of_life",
+    "reason": "TickerProvider exceptions.",
+    "as_of": "2026-03-09",
+    "replacement": "Update to latest version",
+    "migrationNotes": "Drop-in update."
+  },
+  {
+    "name": "flutter_advanced_networkimage",
+    "status": "end_of_life",
+    "reason": "Eviction failures crash OS.",
+    "as_of": "2026-03-09",
+    "replacement": "cached_network_image",
+    "migrationNotes": "Total rewrite. Use standard caching logic."
+  },
+  {
+    "name": "local_auth (Legacy)",
+    "status": "end_of_life",
+    "reason": "Dead standalone package.",
+    "as_of": "2026-03-09",
+    "replacement": "Update to latest official",
+    "migrationNotes": "Drop-in update, improves biometric fallback mechanisms."
+  },
+
+  {
+    "name": "moor",
+    "status": "end_of_life",
+    "reason": "Replaced entirely by Drift; ancient code generator fails on modern Dart SDKs.",
+    "as_of": "2026-03-10",
+    "replacement": "drift",
+    "migrationNotes": "Requires renaming annotations and running the Drift migration tool."
+  },
+  {
+    "name": "pedantic",
+    "status": "end_of_life",
+    "reason": "Officially deprecated by the Dart team in favor of unified core lints.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_lints",
+    "migrationNotes": "Update analysis_options.yaml to include flutter_lints."
+  },
+  {
+    "name": "effective_dart",
+    "status": "end_of_life",
+    "reason": "Superseded by standard Dart linter rules; ruleset is obsolete.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_lints",
+    "migrationNotes": "Drop-in replacement in analysis options."
+  },
+  {
+    "name": "lint",
+    "status": "end_of_life",
+    "reason": "Abandoned third-party lint package; causes false positives on Dart 3 modifiers.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_lints",
+    "migrationNotes": "Standardize to official lints."
+  },
+  {
+    "name": "flushbar",
+    "status": "end_of_life",
+    "reason": "Discontinued; completely breaks on modern Navigator 2.0 (Router) stacks.",
+    "as_of": "2026-03-10",
+    "replacement": "another_flushbar",
+    "migrationNotes": "Drop-in API change to the maintained community fork."
+  },
+  {
+    "name": "qr_code_scanner",
+    "status": "end_of_life",
+    "reason": "Native bindings fail Android 15 camera foreground policies, causing instant crashes.",
+    "as_of": "2026-03-10",
+    "replacement": "mobile_scanner",
+    "migrationNotes": "Total rewrite using ML Kit base."
+  },
+  {
+    "name": "flutter_barcode_scanner",
+    "status": "end_of_life",
+    "reason": "Uses deprecated Android V1 embeddings; refuses to compile on Gradle 8+.",
+    "as_of": "2026-03-10",
+    "replacement": "mobile_scanner",
+    "migrationNotes": "Shift to ML Kit based scanner."
+  },
+  {
+    "name": "barcode_scan",
+    "status": "end_of_life",
+    "reason": "Abandoned repo; totally incompatible with modern iOS privacy manifests.",
+    "as_of": "2026-03-10",
+    "replacement": "mobile_scanner",
+    "migrationNotes": "Total rewrite of scanning overlays and callbacks."
+  },
+  {
+    "name": "flutter_neumorphic",
+    "status": "end_of_life",
+    "reason": "Heavy shadow math creates massive screen tearing on the Impeller engine.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_neumorphic_plus",
+    "migrationNotes": "Update package name; underlying Impeller issues patched in fork."
+  },
+  {
+    "name": "flutter_staggered_animations",
+    "status": "end_of_life",
+    "reason": "Uses old TickerProvider architecture causing severe jank on 120Hz screens.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_animate",
+    "migrationNotes": "Shift to modern extension-based declarative animations."
+  },
+  {
+    "name": "animations",
+    "status": "end_of_life",
+    "reason": "Pre-Material 3 package; page transitions lack predictive back gesture support.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_animate",
+    "migrationNotes": "Total rewrite. Use native Material 3 transitions where possible."
+  },
+  {
+    "name": "simple_animations (v2)",
+    "status": "end_of_life",
+    "reason": "Stateless animation logic is fundamentally incompatible with Dart 3 type safety.",
+    "as_of": "2026-03-10",
+    "replacement": "simple_animations (v5+)",
+    "migrationNotes": "Total syntax rewrite using modern Control constructs."
+  },
+  {
+    "name": "fluro",
+    "status": "end_of_life",
+    "reason": "Legacy routing system that fundamentally conflicts with deep-linking in Router API.",
+    "as_of": "2026-03-10",
+    "replacement": "go_router",
+    "migrationNotes": "Massive rewrite. Shift to declarative route trees."
+  },
+  {
+    "name": "beamer",
+    "status": "end_of_life",
+    "reason": "Maintainer MIA; unpatched bugs with WebAssembly (Wasm) URL synchronization.",
+    "as_of": "2026-03-10",
+    "replacement": "go_router",
+    "migrationNotes": "Total architectural rewrite for navigation."
+  },
+  {
+    "name": "vrouter",
+    "status": "end_of_life",
+    "reason": "Dead project; throws layout exceptions when resizing Wasm browser windows.",
+    "as_of": "2026-03-10",
+    "replacement": "go_router",
+    "migrationNotes": "Shift to official Flutter routing package."
+  },
+  {
+    "name": "routemaster",
+    "status": "end_of_life",
+    "reason": "Unmaintained; memory leaks active Route objects on heavy app traversal.",
+    "as_of": "2026-03-10",
+    "replacement": "go_router",
+    "migrationNotes": "Rewrite tab navigation and route delegates."
+  },
+  {
+    "name": "flutter_modular (v3)",
+    "status": "end_of_life",
+    "reason": "Global singletons block Dart 3 compilation; deeply flawed memory management.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_modular (v6+)",
+    "migrationNotes": "Complete module syntax refactoring."
+  },
+  {
+    "name": "dio_http_cache",
+    "status": "end_of_life",
+    "reason": "Incompatible with Dio v5+; causes unresolvable pubspec dependency conflicts.",
+    "as_of": "2026-03-10",
+    "replacement": "dio_cache_interceptor",
+    "migrationNotes": "Drop-in interceptor swap, but different cache store configurations."
+  },
+  {
+    "name": "alice",
+    "status": "end_of_life",
+    "reason": "Overlay intercepts block native predictive back gestures on Android 14.",
+    "as_of": "2026-03-10",
+    "replacement": "alice_lightweight",
+    "migrationNotes": "Maintained fork with exact same API."
+  },
+  {
+    "name": "catcher",
+    "status": "end_of_life",
+    "reason": "Fails to capture modern Flutter engine unhandled isolate errors.",
+    "as_of": "2026-03-10",
+    "replacement": "catcher_2",
+    "migrationNotes": "Drop-in replacement to the maintained version."
+  },
+  {
+    "name": "flutter_crashlytics",
+    "status": "end_of_life",
+    "reason": "Uses the defunct Fabric namespace; logs will go to a dead server.",
+    "as_of": "2026-03-10",
+    "replacement": "firebase_crashlytics",
+    "migrationNotes": "Total initialization rewrite. Use modern Firebase Core."
+  },
+  {
+    "name": "firebase_ml_vision",
+    "status": "end_of_life",
+    "reason": "Google permanently retired the backend APIs; package is functionally dead.",
+    "as_of": "2026-03-10",
+    "replacement": "google_mlkit_commons",
+    "migrationNotes": "Huge rewrite. Shift from Firebase to on-device ML Kit."
+  },
+  {
+    "name": "flutter_camera_ml_vision",
+    "status": "end_of_life",
+    "reason": "Fails iOS 18 hardware privacy manifests, causing automatic app rejection.",
+    "as_of": "2026-03-10",
+    "replacement": "mobile_scanner",
+    "migrationNotes": "Total rewrite of camera view integration."
+  },
+  {
+    "name": "camera_awesome (v0.x)",
+    "status": "end_of_life",
+    "reason": "Lacks Android Scoped Storage flags; videos save to corrupted, unreadable paths.",
+    "as_of": "2026-03-10",
+    "replacement": "camera_awesome (v2+)",
+    "migrationNotes": "Significant rewrite of the builder syntax."
+  },
+  {
+    "name": "flutter_villains",
+    "status": "end_of_life",
+    "reason": "Uses highly deprecated page transition math; causes blank screens on push.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_animate",
+    "migrationNotes": "Replace with modern animation extensions."
+  },
+  {
+    "name": "rubber",
+    "status": "end_of_life",
+    "reason": "Gesture physics deadlocks with Flutter's internal Scrollables.",
+    "as_of": "2026-03-10",
+    "replacement": "bottom_sheet",
+    "migrationNotes": "Use native or standard bottom sheet implementations."
+  },
+  {
+    "name": "sliding_up_panel",
+    "status": "end_of_life",
+    "reason": "Causes fatal layout constraints errors on foldable devices.",
+    "as_of": "2026-03-10",
+    "replacement": "sliding_up_panel2",
+    "migrationNotes": "Drop-in API change to fix layout math."
+  },
+  {
+    "name": "backdrop",
+    "status": "end_of_life",
+    "reason": "Completely incompatible with Material 3 standard theming.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_backdrop",
+    "migrationNotes": "Moderate theme updates required."
+  },
+  {
+    "name": "flutter_inappbrowser",
+    "status": "end_of_life",
+    "reason": "Legacy wrapper; fails Wasm compilation and uses obsolete WKWebView configs.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_inappwebview",
+    "migrationNotes": "Update namespace and controller syntax."
+  },
+  {
+    "name": "flutter_webview_pro",
+    "status": "end_of_life",
+    "reason": "Abandoned file-upload fork; modern webview_flutter supports files natively.",
+    "as_of": "2026-03-10",
+    "replacement": "webview_flutter",
+    "migrationNotes": "Total rewrite to modern official plugin."
+  },
+  {
+    "name": "flutter_fluid_slider",
+    "status": "end_of_life",
+    "reason": "Custom path drawing throws severe artifacting errors on Impeller.",
+    "as_of": "2026-03-10",
+    "replacement": "sleek_circular_slider",
+    "migrationNotes": "Change widget implementation."
+  },
+  {
+    "name": "xlider",
+    "status": "end_of_life",
+    "reason": "Pre-null-safety; codebase completely fails to compile on Dart 3.",
+    "as_of": "2026-03-10",
+    "replacement": "another_xlider",
+    "migrationNotes": "Drop-in fork."
+  },
+  {
+    "name": "flutter_rating",
+    "status": "end_of_life",
+    "reason": "Dead repository; incompatible with Material 3 iconography sizes.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_rating_bar",
+    "migrationNotes": "UI component swap."
+  },
+  {
+    "name": "smooth_star_rating",
+    "status": "end_of_life",
+    "reason": "Internal GestureDetector freezes input loops on 120Hz displays.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_rating_bar",
+    "migrationNotes": "UI component swap."
+  },
+  {
+    "name": "flutter_colorpicker (v0.x)",
+    "status": "end_of_life",
+    "reason": "Relies on deprecated HSV math that creates inaccurate hex codes.",
+    "as_of": "2026-03-10",
+    "replacement": "flex_color_picker",
+    "migrationNotes": "Moderate rewrite. Update color translation handling."
+  },
+  {
+    "name": "color_picker",
+    "status": "end_of_life",
+    "reason": "Dead project; dialog contexts leak and crash modern navigators.",
+    "as_of": "2026-03-10",
+    "replacement": "flex_color_picker",
+    "migrationNotes": "Swap dialog implementation."
+  },
+  {
+    "name": "flutter_material_color_picker",
+    "status": "end_of_life",
+    "reason": "Doesn't support Material 3 seed-generated color schemes.",
+    "as_of": "2026-03-10",
+    "replacement": "flex_color_picker",
+    "migrationNotes": "Swap widget and update logic."
+  },
+  {
+    "name": "day_night_picker",
+    "status": "end_of_life",
+    "reason": "Animation controllers are left un-disposed, causing massive memory leaks.",
+    "as_of": "2026-03-10",
+    "replacement": "day_night_time_picker",
+    "migrationNotes": "Mostly drop-in, update imports."
+  },
+  {
+    "name": "flutter_rounded_date_picker",
+    "status": "end_of_life",
+    "reason": "Uses deprecated Theme properties that immediately throw compilation errors.",
+    "as_of": "2026-03-10",
+    "replacement": "omni_datetime_picker",
+    "migrationNotes": "Moderate rewrite. Dialog presentation changed."
+  },
+  {
+    "name": "flutter_calendar",
+    "status": "end_of_life",
+    "reason": "Unmaintained; layout fails entirely on web/Wasm targets.",
+    "as_of": "2026-03-10",
+    "replacement": "table_calendar",
+    "migrationNotes": "Massive rewrite. Shift to modern calendar builders."
+  },
+  {
+    "name": "flutter_calendar_carousel",
+    "status": "end_of_life",
+    "reason": "Swiping physics conflicts with Flutter 3 engine updates, causing stutter.",
+    "as_of": "2026-03-10",
+    "replacement": "table_calendar",
+    "migrationNotes": "Complete UI swap."
+  },
+  {
+    "name": "syncfusion_flutter_calendar (v18)",
+    "status": "end_of_life",
+    "reason": "Legacy commercial package; completely fails Dart 3 type checks.",
+    "as_of": "2026-03-10",
+    "replacement": "syncfusion_flutter_calendar (latest)",
+    "migrationNotes": "Update license keys and fix null-safety breaks."
+  },
+  {
+    "name": "intro_slider",
+    "status": "end_of_life",
+    "reason": "Layouts render as 1x1 pixel boxes on foldable and dual-screen devices.",
+    "as_of": "2026-03-10",
+    "replacement": "introduction_screen",
+    "migrationNotes": "UI rewrite. Data models for pages changed."
+  },
+  {
+    "name": "intro_views_flutter",
+    "status": "end_of_life",
+    "reason": "Ignores device SafeAreas; content is obscured by modern mobile notches.",
+    "as_of": "2026-03-10",
+    "replacement": "introduction_screen",
+    "migrationNotes": "Total UI replacement."
+  },
+  {
+    "name": "flutter_onboarding_slider",
+    "status": "end_of_life",
+    "reason": "Ghosted repo; state misfires cause onboarding to skip pages randomly.",
+    "as_of": "2026-03-10",
+    "replacement": "introduction_screen",
+    "migrationNotes": "Total UI replacement."
+  },
+  {
+    "name": "transformer_page_view",
+    "status": "end_of_life",
+    "reason": "Matrix translations are obsolete and crash the Impeller renderer.",
+    "as_of": "2026-03-10",
+    "replacement": "smooth_page_indicator",
+    "migrationNotes": "Rethink page view animations."
+  },
+  {
+    "name": "page_view_indicators",
+    "status": "end_of_life",
+    "reason": "Dead repo; doesn't support dynamically sized or infinite pagers.",
+    "as_of": "2026-03-10",
+    "replacement": "smooth_page_indicator",
+    "migrationNotes": "Swap indicator UI."
+  },
+  {
+    "name": "flutter_typeahead (v1)",
+    "status": "end_of_life",
+    "reason": "Overlay floats behind keyboards on modern Android 14 inset architectures.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_typeahead (latest)",
+    "migrationNotes": "Major update to overlay rendering logic."
+  },
+  {
+    "name": "autocomplete_textfield",
+    "status": "end_of_life",
+    "reason": "Fails to release FocusNodes, breaking physical keyboard inputs on iPadOS.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_typeahead",
+    "migrationNotes": "Rewrite the suggestion builder callbacks."
+  },
+  {
+    "name": "flutter_search_bar",
+    "status": "end_of_life",
+    "reason": "Overrides AppBar illegally in Material 3; breaks standard Scaffold layouts.",
+    "as_of": "2026-03-10",
+    "replacement": "Native SearchAnchor",
+    "migrationNotes": "Use Flutter's built-in M3 SearchAnchor widget."
+  },
+  {
+    "name": "material_floating_search_bar",
+    "status": "end_of_life",
+    "reason": "Throws 'RenderBox was not laid out' exceptions when rotating the device.",
+    "as_of": "2026-03-10",
+    "replacement": "Native SearchAnchor",
+    "migrationNotes": "Total UI rewrite. Shift to native Material 3 widgets."
+  },
+  {
+    "name": "search_widget",
+    "status": "end_of_life",
+    "reason": "Uses legacy dart:io calls that completely block WebAssembly (Wasm) builds.",
+    "as_of": "2026-03-10",
+    "replacement": "Native SearchAnchor",
+    "migrationNotes": "Total UI rewrite."
+  },
+  {
+    "name": "flutter_chips_input",
+    "status": "end_of_life",
+    "reason": "Text deletion triggers out-of-bounds exceptions, crashing the app.",
+    "as_of": "2026-03-10",
+    "replacement": "textfield_tags",
+    "migrationNotes": "Moderate rewrite of input controllers."
+  },
+  {
+    "name": "badges (v1)",
+    "status": "end_of_life",
+    "reason": "Positioning logic broken; badges render off-screen in Material 3.",
+    "as_of": "2026-03-10",
+    "replacement": "badges (v3+)",
+    "migrationNotes": "Syntax overhaul; badge positioning changed entirely."
+  },
+  {
+    "name": "flutter_inner_drawer",
+    "status": "end_of_life",
+    "reason": "Fails completely with predictive back gestures on Android 14.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_zoom_drawer",
+    "migrationNotes": "Architecture change. Update scaffold wrapping."
+  },
+  {
+    "name": "hidden_drawer_menu",
+    "status": "end_of_life",
+    "reason": "Dead project; animation controllers lack disposal logic.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_zoom_drawer",
+    "migrationNotes": "Total UI overhaul."
+  },
+  {
+    "name": "foldable_sidebar",
+    "status": "end_of_life",
+    "reason": "Abandoned; incompatible with null safety and Dart 3.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_zoom_drawer",
+    "migrationNotes": "Total UI overhaul."
+  },
+  {
+    "name": "unicorndial",
+    "status": "end_of_life",
+    "reason": "Breaks entirely with standard Scaffold floatingActionButtonLocations.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_expandable_fab",
+    "migrationNotes": "Moderate rewrite of action items."
+  },
+  {
+    "name": "hawk_fab_menu",
+    "status": "end_of_life",
+    "reason": "Obsolete custom animations that conflict with the native engine.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_expandable_fab",
+    "migrationNotes": "Total UI rewrite."
+  },
+  {
+    "name": "flutter_arc_speed_dial",
+    "status": "end_of_life",
+    "reason": "Trigonometry math fails on high-DPI screens, displacing icons.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_expandable_fab",
+    "migrationNotes": "Total UI rewrite."
+  },
+  {
+    "name": "bubble_bottom_bar",
+    "status": "end_of_life",
+    "reason": "Fails safe area constraints; overflows into the iOS Dynamic Island.",
+    "as_of": "2026-03-10",
+    "replacement": "google_nav_bar",
+    "migrationNotes": "Moderate rewrite. Update item building logic."
+  },
+  {
+    "name": "curved_navigation_bar (v0.x)",
+    "status": "end_of_life",
+    "reason": "Severe stutter when pushing new routes over the bar.",
+    "as_of": "2026-03-10",
+    "replacement": "curved_navigation_bar (latest)",
+    "migrationNotes": "Fix dependencies and null-safety errors."
+  },
+  {
+    "name": "fancy_bottom_navigation",
+    "status": "end_of_life",
+    "reason": "Contains non-standard JS interops that fail Wasm compilation.",
+    "as_of": "2026-03-10",
+    "replacement": "google_nav_bar",
+    "migrationNotes": "Total UI rewrite."
+  },
+  {
+    "name": "convex_bottom_bar (v2)",
+    "status": "end_of_life",
+    "reason": "Gesture area overlaps system navigation bars on Android 15.",
+    "as_of": "2026-03-10",
+    "replacement": "convex_bottom_bar (latest)",
+    "migrationNotes": "Update handling of system insets."
+  },
+  {
+    "name": "flutter_snake_navigationbar",
+    "status": "end_of_life",
+    "reason": "Shader effects conflict with the Impeller engine, crashing the app.",
+    "as_of": "2026-03-10",
+    "replacement": "google_nav_bar",
+    "migrationNotes": "Total UI rewrite."
+  },
+  {
+    "name": "bottom_navy_bar",
+    "status": "end_of_life",
+    "reason": "Dead repository; unoptimized rebuilds cause CPU spiking.",
+    "as_of": "2026-03-10",
+    "replacement": "water_drop_nav_bar",
+    "migrationNotes": "UI swap. Similar aesthetic."
+  },
+  {
+    "name": "responsive_builder (v0.x)",
+    "status": "end_of_life",
+    "reason": "Hardcoded breakpoints are totally obsolete for modern foldables.",
+    "as_of": "2026-03-10",
+    "replacement": "responsive_builder (latest)",
+    "migrationNotes": "Refactor sizing information properties."
+  },
+  {
+    "name": "flutter_screenutil (v4)",
+    "status": "end_of_life",
+    "reason": "Init function crashes on initialization in modern Flutter views.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_screenutil (latest)",
+    "migrationNotes": "Update init pattern to use standard builders."
+  },
+  {
+    "name": "size_config",
+    "status": "end_of_life",
+    "reason": "Antiquated singleton pattern that breaks completely on web resizes.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_screenutil",
+    "migrationNotes": "Massive rewrite to responsive scaling."
+  },
+  {
+    "name": "easy_localization_loader",
+    "status": "end_of_life",
+    "reason": "Asset bundles fail to load synchronously, breaking Wasm builds.",
+    "as_of": "2026-03-10",
+    "replacement": "slang",
+    "migrationNotes": "Shift from runtime loading to code-generation."
+  },
+  {
+    "name": "flutter_i18n",
+    "status": "end_of_life",
+    "reason": "Unmaintained; delegates fail to register properly in Dart 3.",
+    "as_of": "2026-03-10",
+    "replacement": "slang",
+    "migrationNotes": "Total rewrite of localization architecture."
+  },
+  {
+    "name": "i18n_extension",
+    "status": "end_of_life",
+    "reason": "String extension injections leak memory wildly on large translation sets.",
+    "as_of": "2026-03-10",
+    "replacement": "slang",
+    "migrationNotes": "Massive syntax rewrite."
+  },
+  {
+    "name": "intl_translation",
+    "status": "end_of_life",
+    "reason": "Officially deprecated by the Dart team.",
+    "as_of": "2026-03-10",
+    "replacement": "intl_utils",
+    "migrationNotes": "Shift to the community standard generation."
+  },
+  {
+    "name": "flutter_localizations (v1)",
+    "status": "end_of_life",
+    "reason": "Pre-null-safety; lacks modern RTL language mappings.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_localizations (latest)",
+    "migrationNotes": "Update SDK constraints."
+  },
+  {
+    "name": "flutter_mobx (v0.x)",
+    "status": "end_of_life",
+    "reason": "Generators output invalid Dart 3 code, blocking compilation.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_mobx (latest)",
+    "migrationNotes": "Update build_runner and regenerate all stores."
+  },
+  {
+    "name": "fish_redux",
+    "status": "end_of_life",
+    "reason": "Abandoned by Alibaba; deeply incompatible with Dart 3 class modifiers.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_riverpod",
+    "migrationNotes": "Total architecture rewrite. Huge effort."
+  },
+  {
+    "name": "flutter_redux",
+    "status": "end_of_life",
+    "reason": "Architecturally obsolete; causes unnecessary full-tree widget rebuilds.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_bloc",
+    "migrationNotes": "Total rewrite to event-driven bloc architecture."
+  },
+  {
+    "name": "redux",
+    "status": "end_of_life",
+    "reason": "Synchronous reducers block the main thread causing UI freezing.",
+    "as_of": "2026-03-10",
+    "replacement": "bloc",
+    "migrationNotes": "Total rewrite."
+  },
+  {
+    "name": "mvc_pattern",
+    "status": "end_of_life",
+    "reason": "Non-idiomatic framework that breaks modern Flutter DevTools.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_riverpod",
+    "migrationNotes": "Complete paradigm shift."
+  },
+  {
+    "name": "stacked (v1)",
+    "status": "end_of_life",
+    "reason": "ViewModel locators throw exceptions due to old Provider bindings.",
+    "as_of": "2026-03-10",
+    "replacement": "stacked (latest)",
+    "migrationNotes": "Update ViewModel builder syntax."
+  },
+  {
+    "name": "momentum",
+    "status": "end_of_life",
+    "reason": "Dead state management library; causes infinite build loops.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_riverpod",
+    "migrationNotes": "Total rewrite."
+  },
+  {
+    "name": "binder",
+    "status": "end_of_life",
+    "reason": "Abandoned state library; incompatible with Impeller engine bindings.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_riverpod",
+    "migrationNotes": "Total rewrite."
+  },
+  {
+    "name": "flutter_hooks (v0.x)",
+    "status": "end_of_life",
+    "reason": "Hook states decouple and cause memory leaks on rapid navigation.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_hooks (latest)",
+    "migrationNotes": "Update syntax and hook definitions."
+  },
+  {
+    "name": "functional_widget",
+    "status": "end_of_life",
+    "reason": "Code generator is dead; fails to generate valid Dart 3 widgets.",
+    "as_of": "2026-03-10",
+    "replacement": "hooks_riverpod",
+    "migrationNotes": "Rewrite using HookConsumerWidgets manually."
+  },
+  {
+    "name": "flutter_stetho",
+    "status": "end_of_life",
+    "reason": "Meta discontinued Stetho; fails to build with modern Android Gradle Plugins.",
+    "as_of": "2026-03-10",
+    "replacement": "drift_db_viewer",
+    "migrationNotes": "Use standard Dart tooling for DB debugging."
+  },
+  {
+    "name": "flutter_flipperkit",
+    "status": "end_of_life",
+    "reason": "Native bridges completely fail to compile on Apple Silicon (M-series) Macs.",
+    "as_of": "2026-03-10",
+    "replacement": "devtools_extensions",
+    "migrationNotes": "Use official Flutter DevTools."
+  },
+  {
+    "name": "moor_ffi",
+    "status": "end_of_life",
+    "reason": "Deprecated native bridges; entirely breaks Wasm compilation.",
+    "as_of": "2026-03-10",
+    "replacement": "sqlite3_flutter_libs",
+    "migrationNotes": "Update SQLite dependency structures."
+  },
+  {
+    "name": "sqflite_sqlcipher",
+    "status": "end_of_life",
+    "reason": "Dead package; native C bindings break on Android 15.",
+    "as_of": "2026-03-10",
+    "replacement": "sqlcipher_flutter_libs",
+    "migrationNotes": "Update imports and native libraries."
+  },
+  {
+    "name": "shared_preferences_windows",
+    "status": "end_of_life",
+    "reason": "Integrated into the core package; keeping this causes duplicate symbol errors.",
+    "as_of": "2026-03-10",
+    "replacement": "shared_preferences",
+    "migrationNotes": "Remove explicit dependency."
+  },
+  {
+    "name": "shared_preferences_macos",
+    "status": "end_of_life",
+    "reason": "Integrated into core package; redundant dead weight.",
+    "as_of": "2026-03-10",
+    "replacement": "shared_preferences",
+    "migrationNotes": "Remove explicit dependency."
+  },
+  {
+    "name": "shared_preferences_web",
+    "status": "end_of_life",
+    "reason": "Integrated into core package; redundant dead weight.",
+    "as_of": "2026-03-10",
+    "replacement": "shared_preferences",
+    "migrationNotes": "Remove explicit dependency."
+  },
+  {
+    "name": "sembast (v1)",
+    "status": "end_of_life",
+    "reason": "Synchronous writes freeze the UI thread on modern devices.",
+    "as_of": "2026-03-10",
+    "replacement": "sembast (v3+)",
+    "migrationNotes": "Major update to async database factory logic."
+  },
+  {
+    "name": "localstorage",
+    "status": "end_of_life",
+    "reason": "Uses obsolete synchronous file I/O that crashes Wasm applications.",
+    "as_of": "2026-03-10",
+    "replacement": "shared_preferences",
+    "migrationNotes": "Total rewrite. Data must be migrated."
+  },
+  {
+    "name": "flutter_cache_manager (v1)",
+    "status": "end_of_life",
+    "reason": "Fails to clear disk space, leading to out-of-storage app crashes.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_cache_manager (latest)",
+    "migrationNotes": "Update cache eviction callbacks."
+  },
+  {
+    "name": "http_middleware",
+    "status": "end_of_life",
+    "reason": "Incompatible with the modern Dart http package architecture.",
+    "as_of": "2026-03-10",
+    "replacement": "http_interceptor",
+    "migrationNotes": "Rewrite request interceptors."
+  },
+  {
+    "name": "chopper (v3)",
+    "status": "end_of_life",
+    "reason": "Code generator fails completely on Dart 3.",
+    "as_of": "2026-03-10",
+    "replacement": "chopper (latest)",
+    "migrationNotes": "Regenerate all network services."
+  },
+  {
+    "name": "retrofit (v1)",
+    "status": "end_of_life",
+    "reason": "Pre-null-safety; generator outputs dead code.",
+    "as_of": "2026-03-10",
+    "replacement": "retrofit (latest)",
+    "migrationNotes": "Regenerate client services."
+  },
+  {
+    "name": "graphql (v3)",
+    "status": "end_of_life",
+    "reason": "Fails to compile on modern Flutter SDKs.",
+    "as_of": "2026-03-10",
+    "replacement": "graphql_flutter",
+    "migrationNotes": "Huge rewrite. Link configurations changed entirely."
+  },
+  {
+    "name": "hasura_connect",
+    "status": "end_of_life",
+    "reason": "Unmaintained; websockets instantly disconnect from modern Hasura backends.",
+    "as_of": "2026-03-10",
+    "replacement": "graphql_flutter",
+    "migrationNotes": "Total network architecture rewrite."
+  },
+  {
+    "name": "flutter_socket_io",
+    "status": "end_of_life",
+    "reason": "Hardcoded to ancient Android NDKs that Play Store rejects.",
+    "as_of": "2026-03-10",
+    "replacement": "socket_io_client",
+    "migrationNotes": "Total rewrite."
+  },
+  {
+    "name": "flutter_pusher",
+    "status": "end_of_life",
+    "reason": "Abandoned; native bindings throw unhandled exceptions.",
+    "as_of": "2026-03-10",
+    "replacement": "pusher_channels_flutter",
+    "migrationNotes": "Use official pusher SDK."
+  },
+  {
+    "name": "pusher_websocket_flutter",
+    "status": "end_of_life",
+    "reason": "Fails on iOS 18 background execution policies.",
+    "as_of": "2026-03-10",
+    "replacement": "pusher_channels_flutter",
+    "migrationNotes": "Total rewrite of channel binding logic."
+  },
+  {
+    "name": "signalr_flutter",
+    "status": "end_of_life",
+    "reason": "Dead repo; connections fail against .NET 8+ backends.",
+    "as_of": "2026-03-10",
+    "replacement": "signalr_netcore",
+    "migrationNotes": "Moderate connection string update."
+  },
+  {
+    "name": "agora_rtc_engine (v4)",
+    "status": "end_of_life",
+    "reason": "Agora officially retired these SDK versions; calls will not connect.",
+    "as_of": "2026-03-10",
+    "replacement": "agora_rtc_engine (v6+)",
+    "migrationNotes": "Massive rewrite of video view and event handlers."
+  },
+  {
+    "name": "youtube_player_iframe (v2)",
+    "status": "end_of_life",
+    "reason": "YouTube blocked the old Web API; iframe renders a black screen.",
+    "as_of": "2026-03-10",
+    "replacement": "youtube_player_iframe (latest)",
+    "migrationNotes": "Controller syntax completely changed."
+  },
+  {
+    "name": "audioplayer",
+    "status": "end_of_life",
+    "reason": "Completely dead package; conflicts directly with modern audio routers.",
+    "as_of": "2026-03-10",
+    "replacement": "audioplayers",
+    "migrationNotes": "Total syntax replacement."
+  },
+  {
+    "name": "flutter_sound_lite",
+    "status": "end_of_life",
+    "reason": "Deprecated by maintainers in favor of the full package.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_sound",
+    "migrationNotes": "API drop-in, but requires full FFMPEG setup."
+  },
+  {
+    "name": "flutter_midi",
+    "status": "end_of_life",
+    "reason": "C++ bridges fail completely on macOS 15, blocking desktop builds.",
+    "as_of": "2026-03-10",
+    "replacement": "dart_midi",
+    "migrationNotes": "Total rewrite using Dart-native synthesis."
+  },
+  {
+    "name": "camera (v0.x)",
+    "status": "end_of_life",
+    "reason": "Fails Android 14 Scoped Storage and iOS 18 hardware manifest requirements.",
+    "as_of": "2026-03-10",
+    "replacement": "camera (latest)",
+    "migrationNotes": "Heavy update to async camera initialization."
+  },
+  {
+    "name": "mapbox_gl",
+    "status": "end_of_life",
+    "reason": "Discontinued by Mapbox; map tiles will fail to load.",
+    "as_of": "2026-03-10",
+    "replacement": "mapbox_maps_flutter",
+    "migrationNotes": "Total rewrite to the official v10 SDK."
+  },
+  {
+    "name": "flutter_map (v0.x)",
+    "status": "end_of_life",
+    "reason": "Leaflet core fundamentally broken; maps render as gray squares.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_map (latest)",
+    "migrationNotes": "Complete rewrite of map options and layers."
+  },
+  {
+    "name": "location (v3)",
+    "status": "end_of_life",
+    "reason": "Fails Android 14 exact vs approximate location prompt requirements.",
+    "as_of": "2026-03-10",
+    "replacement": "location (latest)",
+    "migrationNotes": "Update permission request flow."
+  },
+  {
+    "name": "bitsdojo_window",
+    "status": "end_of_life",
+    "reason": "Fails to compile on modern Windows 11 SDKs.",
+    "as_of": "2026-03-10",
+    "replacement": "window_manager",
+    "migrationNotes": "Total rewrite of desktop window controls."
+  },
+  {
+    "name": "desktop_window",
+    "status": "end_of_life",
+    "reason": "Obsolete since native Flutter desktop size support was added.",
+    "as_of": "2026-03-10",
+    "replacement": "window_manager",
+    "migrationNotes": "Total rewrite."
+  },
+  {
+    "name": "window_size",
+    "status": "end_of_life",
+    "reason": "Obsolete experimental package discontinued by Google.",
+    "as_of": "2026-03-10",
+    "replacement": "window_manager",
+    "migrationNotes": "Total rewrite."
+  },
+  {
+    "name": "flutter_web_plugins (legacy)",
+    "status": "end_of_life",
+    "reason": "Built directly into the Flutter SDK now; causes namespace collisions.",
+    "as_of": "2026-03-10",
+    "replacement": "None",
+    "migrationNotes": "Remove explicit dependency."
+  },
+  {
+    "name": "timeago (v2)",
+    "status": "end_of_life",
+    "reason": "Pre-null-safety; blocks Dart 3 compilation.",
+    "as_of": "2026-03-10",
+    "replacement": "timeago (latest)",
+    "migrationNotes": "Update syntax for custom locales."
+  },
+  {
+    "name": "date_format",
+    "status": "end_of_life",
+    "reason": "Dead repository; incompatible with modern intl patterns.",
+    "as_of": "2026-03-10",
+    "replacement": "intl",
+    "migrationNotes": "Rewrite all date string parsing."
+  },
+  {
+    "name": "supercharged (v1)",
+    "status": "end_of_life",
+    "reason": "String/Number extensions fail Dart 3 strict typing.",
+    "as_of": "2026-03-10",
+    "replacement": "supercharged (latest)",
+    "migrationNotes": "Syntax updates required."
+  },
+  {
+    "name": "fluttertoast (v8)",
+    "status": "end_of_life",
+    "reason": "Uses deprecated overlay APIs causing context leaks and app freezes.",
+    "as_of": "2026-03-10",
+    "replacement": "fluttertoast (latest)",
+    "migrationNotes": "Shift to contextless FToast pattern."
+  },
+  {
+    "name": "flushbar_route",
+    "status": "end_of_life",
+    "reason": "Obsolete routing setup that crashes on Navigator 2.0.",
+    "as_of": "2026-03-10",
+    "replacement": "another_flushbar",
+    "migrationNotes": "Remove routing layer, use standard overlays."
+  },
+  {
+    "name": "flutter_absolute_path",
+    "status": "end_of_life",
+    "reason": "Dead file URI parser; fails completely on Android 14 ContentProviders.",
+    "as_of": "2026-03-10",
+    "replacement": "path_provider",
+    "migrationNotes": "Rewrite all local file path resolution."
+  },
+  {
+    "name": "file_utils",
+    "status": "end_of_life",
+    "reason": "Abandoned package; redundant with Dart's modern dart:io.",
+    "as_of": "2026-03-10",
+    "replacement": "Native dart:io",
+    "migrationNotes": "Use standard File and Directory classes."
+  },
+  {
+    "name": "flutter_string_encryption",
+    "status": "end_of_life",
+    "reason": "Cryptography algorithms broken by modern OS standards; insecure.",
+    "as_of": "2026-03-10",
+    "replacement": "encrypt",
+    "migrationNotes": "Total rewrite of encryption logic."
+  },
+  {
+    "name": "aes_crypt",
+    "status": "end_of_life",
+    "reason": "Insecure default paddings make it vulnerable to padding oracle attacks.",
+    "as_of": "2026-03-10",
+    "replacement": "encrypt",
+    "migrationNotes": "Rewrite using secure PKCS7 padding."
+  },
+  {
+    "name": "flutter_keychain",
+    "status": "end_of_life",
+    "reason": "Dead repository; unpatched vulnerabilities and crashes on iOS 18.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_secure_storage",
+    "migrationNotes": "Total rewrite. Keys must be migrated."
+  },
+  {
+    "name": "flutter_uploader",
+    "status": "end_of_life",
+    "reason": "Background isolates fail to register on Android 15, silently failing uploads.",
+    "as_of": "2026-03-10",
+    "replacement": "background_downloader",
+    "migrationNotes": "Total rewrite of background task execution."
+  },
+  {
+    "name": "flutter_downloader",
+    "status": "end_of_life",
+    "reason": "Background isolates killed instantly by modern OS battery managers.",
+    "as_of": "2026-03-10",
+    "replacement": "background_downloader",
+    "migrationNotes": "Total rewrite of download initialization."
+  },
+  {
+    "name": "flutter_local_notifications (v9)",
+    "status": "end_of_life",
+    "reason": "Fails Android 14 POST_NOTIFICATIONS requirements.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_local_notifications (latest)",
+    "migrationNotes": "Requires explicitly asking for exact notification permissions."
+  },
+  {
+    "name": "flutter_native_timezone",
+    "status": "end_of_life",
+    "reason": "Integrated into flutter_timezone; keeping this causes linker errors.",
+    "as_of": "2026-03-10",
+    "replacement": "flutter_timezone",
+    "migrationNotes": "Drop-in API change."
+  },
+  {
+    "name": "timezone (v0.x)",
+    "status": "end_of_life",
+    "reason": "Pre-null-safety; blocks Dart 3 compilation entirely.",
+    "as_of": "2026-03-10",
+    "replacement": "timezone (latest)",
+    "migrationNotes": "Total rewrite of timezone initialization and database fetching logic."
   }
 ]
