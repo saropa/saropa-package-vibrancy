@@ -4,6 +4,7 @@ import {
     calcEngagementLevel,
     calcPopularity,
     calcPublishRecency,
+    calcFlaggedIssuePenalty,
     computeVibrancyScore,
 } from '../../scoring/vibrancy-calculator';
 import { GitHubMetrics } from '../../types';
@@ -17,6 +18,7 @@ function makeMetrics(overrides: Partial<GitHubMetrics> = {}): GitHubMetrics {
         avgCommentsPerIssue: 2,
         daysSinceLastUpdate: 10,
         daysSinceLastClose: 5,
+        flaggedIssues: [],
         ...overrides,
     };
 }
@@ -184,6 +186,52 @@ describe('vibrancy-calculator', () => {
                 { resolutionVelocity: 0, engagementLevel: 0, popularity: 0 },
             );
             assert.strictEqual(score, 0);
+        });
+
+        it('should subtract penalty from score', () => {
+            const base = computeVibrancyScore({
+                resolutionVelocity: 80,
+                engagementLevel: 60,
+                popularity: 50,
+            });
+            const penalized = computeVibrancyScore({
+                resolutionVelocity: 80,
+                engagementLevel: 60,
+                popularity: 50,
+            }, undefined, 10);
+            assert.strictEqual(penalized, base - 10);
+        });
+
+        it('should clamp penalty result to 0', () => {
+            const score = computeVibrancyScore({
+                resolutionVelocity: 5,
+                engagementLevel: 5,
+                popularity: 5,
+            }, undefined, 50);
+            assert.strictEqual(score, 0);
+        });
+    });
+
+    describe('calcFlaggedIssuePenalty', () => {
+        it('should return 0 for no flagged issues', () => {
+            assert.strictEqual(calcFlaggedIssuePenalty(0), 0);
+        });
+
+        it('should return 5 for 1 flagged issue', () => {
+            assert.strictEqual(calcFlaggedIssuePenalty(1), 5);
+        });
+
+        it('should return 7 for 2 flagged issues', () => {
+            assert.strictEqual(calcFlaggedIssuePenalty(2), 7);
+        });
+
+        it('should cap at 15 for many flagged issues', () => {
+            assert.strictEqual(calcFlaggedIssuePenalty(6), 15);
+            assert.strictEqual(calcFlaggedIssuePenalty(20), 15);
+        });
+
+        it('should return 0 for negative input', () => {
+            assert.strictEqual(calcFlaggedIssuePenalty(-1), 0);
         });
     });
 });

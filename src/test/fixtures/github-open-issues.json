@@ -1,0 +1,42 @@
+[
+  {
+    "number": 60,
+    "title": "Warning about obsolete java version (8)",
+    "state": "open",
+    "labels": [{"name": "bug"}],
+    "comments": 12,
+    "created_at": "2026-03-07T00:00:00Z"
+  },
+  {
+    "number": 61,
+    "title": "Add dark mode support",
+    "state": "open",
+    "labels": [{"name": "enhancement"}],
+    "comments": 8,
+    "created_at": "2026-02-01T00:00:00Z"
+  },
+  {
+    "number": 62,
+    "title": "Build fails with Dart 3.5",
+    "state": "open",
+    "labels": [{"name": "breaking-change"}],
+    "comments": 25,
+    "created_at": "2026-01-15T00:00:00Z"
+  },
+  {
+    "number": 63,
+    "title": "Crash on iOS 18 when calling directly",
+    "state": "open",
+    "labels": [],
+    "comments": 5,
+    "created_at": "2026-03-01T00:00:00Z"
+  },
+  {
+    "number": 64,
+    "title": "Please update documentation",
+    "state": "open",
+    "labels": [{"name": "documentation"}],
+    "comments": 1,
+    "created_at": "2026-02-15T00:00:00Z"
+  }
+]

@@ -67,6 +67,12 @@ export function calcPopularity(pubPoints: number, stars: number): number {
     return clamp((pointsNorm + starsNorm) / 2);
 }
 
+/** Penalty for flagged high-signal open issues (0–15 points). */
+export function calcFlaggedIssuePenalty(flaggedCount: number): number {
+    if (flaggedCount <= 0) { return 0; }
+    return Math.min(15, 5 + (flaggedCount - 1) * 2);
+}
+
 /** Compute overall vibrancy score (0-100). */
 export function computeVibrancyScore(
     params: {
@@ -75,6 +81,7 @@ export function computeVibrancyScore(
         popularity: number;
     },
     weights?: ScoringWeights,
+    penalty?: number,
 ): number {
     const wR = weights?.resolutionVelocity ?? DEFAULT_WEIGHT_RESOLUTION;
     const wE = weights?.engagementLevel ?? DEFAULT_WEIGHT_ENGAGEMENT;
@@ -82,6 +89,7 @@ export function computeVibrancyScore(
 
     const raw = (wR * params.resolutionVelocity)
         + (wE * params.engagementLevel)
-        + (wP * params.popularity);
+        + (wP * params.popularity)
+        - (penalty ?? 0);
     return Math.round(clamp(raw) * 10) / 10;
 }

@@ -1,4 +1,5 @@
-import { GitHubMetrics } from '../types';
+import { FlaggedIssue, GitHubMetrics } from '../types';
+import { flagHighSignalIssues } from '../scoring/issue-signals';
 import { CacheService } from './cache-service';
 import { ScanLogger } from './scan-logger';
 import { fetchWithRetry } from './fetch-retry';
@@ -59,21 +60,22 @@ export async function fetchRepoMetrics(
         const repoUrl = `${GITHUB_API}/repos/${owner}/${repo}`;
         const issuesUrl = `${repoUrl}/issues?state=closed&since=${cutoff}&per_page=100`;
         const pullsUrl = `${repoUrl}/pulls?state=closed&per_page=100`;
+        const openUrl = `${repoUrl}/issues?state=open&sort=comments&direction=desc&per_page=50`;
 
         log?.apiRequest('GET', repoUrl);
         log?.apiRequest('GET', issuesUrl);
         log?.apiRequest('GET', pullsUrl);
+        log?.apiRequest('GET', openUrl);
         const t0 = Date.now();
 
-        const [repoResp, issuesResp, pullsResp] = await Promise.all([
+        const [repoResp, issuesResp, pullsResp, openResp] = await Promise.all([
             fetchWithRetry(repoUrl, { headers }, log),
             fetchWithRetry(issuesUrl, { headers }, log),
             fetchWithRetry(pullsUrl, { headers }, log),
+            fetchWithRetry(openUrl, { headers }, log),
         ]);
         const elapsed = Date.now() - t0;
-        log?.apiResponse(repoResp.status, repoResp.statusText, elapsed);
-        log?.apiResponse(issuesResp.status, issuesResp.statusText, elapsed);
-        log?.apiResponse(pullsResp.status, pullsResp.statusText, elapsed);
+        logResponses(log, [repoResp, issuesResp, pullsResp, openResp], elapsed);
 
         if (!repoResp.ok) { return null; }
 
@@ -82,13 +84,18 @@ export async function fetchRepoMetrics(
             ? await issuesResp.json() as any[] : [];
         const pulls: any[] = pullsResp.ok
             ? await pullsResp.json() as any[] : [];
+        const rawOpen: any[] = openResp.ok
+            ? await openResp.json() as any[] : [];
 
-        // GitHub /issues endpoint includes PRs — filter them out
-        const issues = rawIssues.filter(
-            (i: any) => !i.pull_request,
+        const filterPrs = (i: any) => !i.pull_request;
+        const issues = rawIssues.filter(filterPrs);
+        const openIssues = rawOpen.filter(filterPrs);
+
+        const htmlUrl = repoData.html_url ?? `https://github.com/${owner}/${repo}`;
+        const flagged = flagHighSignalIssues(openIssues, htmlUrl);
+        const metrics = buildMetrics(
+            { repoData, closedIssues: issues, pulls, flagged }, now,
         );
-
-        const metrics = buildMetrics(repoData, issues, pulls, now);
         await params?.cache?.set(cacheKey, metrics);
         return metrics;
     } catch {
@@ -97,26 +104,38 @@ export async function fetchRepoMetrics(
     }
 }
 
-function buildMetrics(
-    repoData: any,
-    issues: any[],
-    pulls: any[],
-    now: number,
-): GitHubMetrics {
+function logResponses(
+    log: ScanLogger | undefined,
+    responses: Response[],
+    elapsed: number,
+): void {
+    for (const r of responses) {
+        log?.apiResponse(r.status, r.statusText, elapsed);
+    }
+}
+
+interface RawRepoData {
+    readonly repoData: any;
+    readonly closedIssues: any[];
+    readonly pulls: any[];
+    readonly flagged: FlaggedIssue[];
+}
+
+function buildMetrics(raw: RawRepoData, now: number): GitHubMetrics {
     const cutoff = now - NINETY_DAYS_MS;
 
-    const closedRecent = issues.filter(
+    const closedRecent = raw.closedIssues.filter(
         (i: any) => i.closed_at && new Date(i.closed_at).getTime() > cutoff,
     );
-    const mergedRecent = pulls.filter(
+    const mergedRecent = raw.pulls.filter(
         (p: any) => p.merged_at && new Date(p.merged_at).getTime() > cutoff,
     );
 
-    const totalComments = issues.reduce(
+    const totalComments = raw.closedIssues.reduce(
         (sum: number, i: any) => sum + (i.comments ?? 0), 0,
     );
-    const avgComments = issues.length > 0
-        ? totalComments / issues.length : 0;
+    const avgComments = raw.closedIssues.length > 0
+        ? totalComments / raw.closedIssues.length : 0;
 
     const lastClose = closedRecent.length > 0
         ? Math.max(...closedRecent.map(
@@ -127,18 +146,19 @@ function buildMetrics(
     const daysSinceClose = lastClose > 0
         ? Math.floor((now - lastClose) / ONE_DAY_MS) : NO_CLOSE_DAYS;
 
-    const updatedAt = new Date(repoData.updated_at ?? 0).getTime();
+    const updatedAt = new Date(raw.repoData.updated_at ?? 0).getTime();
     const daysSinceUpdate = Math.floor(
         (now - updatedAt) / ONE_DAY_MS,
     );
 
     return {
-        stars: repoData.stargazers_count ?? 0,
-        openIssues: repoData.open_issues_count ?? 0,
+        stars: raw.repoData.stargazers_count ?? 0,
+        openIssues: raw.repoData.open_issues_count ?? 0,
         closedIssuesLast90d: closedRecent.length,
         mergedPrsLast90d: mergedRecent.length,
         avgCommentsPerIssue: Math.round(avgComments * 10) / 10,
         daysSinceLastUpdate: Math.max(0, daysSinceUpdate),
         daysSinceLastClose: daysSinceClose,
+        flaggedIssues: raw.flagged,
     };
 }

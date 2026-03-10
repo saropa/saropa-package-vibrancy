@@ -5,7 +5,7 @@ import { countByCategory } from '../../scoring/status-classifier';
 
 function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
     return {
-        package: { name: 'test_pkg', version: '1.0.0', source: 'hosted', isDirect: true },
+        package: { name: 'test_pkg', version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
         pubDev: {
             name: 'test_pkg',
             latestVersion: '2.0.0',
@@ -23,6 +23,7 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
             avgCommentsPerIssue: 2,
             daysSinceLastUpdate: 10,
             daysSinceLastClose: 5,
+            flaggedIssues: [],
         },
         knownIssue: null,
         score: 75,

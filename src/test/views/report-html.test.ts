@@ -20,7 +20,7 @@ function makeResult(
         },
         github: { stars: 42, openIssues: 5, closedIssuesLast90d: 3,
             mergedPrsLast90d: 2, avgCommentsPerIssue: 1.5,
-            daysSinceLastUpdate: 3, daysSinceLastClose: 7 },
+            daysSinceLastUpdate: 3, daysSinceLastClose: 7, flaggedIssues: [] },
         knownIssue: null,
         score,
         category,

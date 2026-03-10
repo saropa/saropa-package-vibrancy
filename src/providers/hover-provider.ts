@@ -64,7 +64,9 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
         appendChangelogSection(md, result.updateInfo);
     }
 
-    if (result.knownIssue) {
+    appendFlaggedIssues(md, result);
+
+    if (result.knownIssue?.reason) {
         md.appendMarkdown(
             `\n---\n**Known Issue:** ${result.knownIssue.reason}\n`,
         );
@@ -75,6 +77,30 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
     );
 
     return md;
+}
+
+function appendFlaggedIssues(
+    md: vscode.MarkdownString,
+    result: VibrancyResult,
+): void {
+    const flagged = result.github?.flaggedIssues;
+    if (!flagged?.length) { return; }
+    md.appendMarkdown(`\n---\n`);
+    md.appendMarkdown(
+        `**Flagged Issues** (${flagged.length}):\n\n`,
+    );
+    for (const issue of flagged.slice(0, 3)) {
+        const title = truncateBody(issue.title);
+        const signals = issue.matchedSignals.join(', ');
+        md.appendMarkdown(
+            `- [#${issue.number}](${issue.url}) ${title} *(${signals})*\n`,
+        );
+    }
+    if (flagged.length > 3) {
+        md.appendMarkdown(
+            `- *...and ${flagged.length - 3} more*\n`,
+        );
+    }
 }
 
 function appendChangelogSection(

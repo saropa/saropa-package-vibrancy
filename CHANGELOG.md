@@ -9,6 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Flagged issues detection: scans open GitHub issues for high-signal keywords (deprecated, obsolete, breaking change, build failure, null safety, etc.) and surfaces them in hover tooltips, tree view, and diagnostics
+- Scoring penalty for flagged issues (5–15 points based on count)
 - Pub.dev-inspired gem icon for sidebar activity bar and marketplace listing
 - Copy as JSON context menu action on tree view package nodes
 

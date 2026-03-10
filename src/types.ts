@@ -4,7 +4,10 @@ export type VibrancyCategory = 'vibrant' | 'quiet' | 'legacy-locked' | 'end-of-l
 /** A dependency extracted from pubspec.lock. */
 export interface PackageDependency {
     readonly name: string;
+    /** Resolved version from pubspec.lock (e.g. "3.0.7"). */
     readonly version: string;
+    /** Version constraint from pubspec.yaml (e.g. "^3.0.3"). */
+    readonly constraint: string;
     readonly source: string;
     readonly isDirect: boolean;
 }
@@ -20,6 +23,15 @@ export interface PubDevPackageInfo {
     readonly pubPoints: number;
 }
 
+/** A GitHub issue flagged as high-signal for compatibility/deprecation. */
+export interface FlaggedIssue {
+    readonly number: number;
+    readonly title: string;
+    readonly url: string;
+    readonly matchedSignals: readonly string[];
+    readonly commentCount: number;
+}
+
 /** GitHub repository metrics. */
 export interface GitHubMetrics {
     readonly stars: number;
@@ -29,16 +41,17 @@ export interface GitHubMetrics {
     readonly avgCommentsPerIssue: number;
     readonly daysSinceLastUpdate: number;
     readonly daysSinceLastClose: number;
+    readonly flaggedIssues: readonly FlaggedIssue[];
 }
 
 /** Known issue entry from bundled JSON. */
 export interface KnownIssue {
     readonly name: string;
     readonly status: string;
-    readonly reason: string;
-    readonly as_of: string;
-    readonly replacement: string | null;
-    readonly migrationNotes: string | null;
+    readonly reason?: string;
+    readonly as_of?: string;
+    readonly replacement?: string;
+    readonly migrationNotes?: string;
 }
 
 /** Granularity of available update. */

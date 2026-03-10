@@ -78,12 +78,17 @@ function buildMessage(result: VibrancyResult): string {
         msg = `Monitor ${name}`;
     }
 
-    if (result.knownIssue) {
+    if (result.knownIssue?.reason) {
         msg += ` — ${result.knownIssue.reason}`;
     }
     if (result.updateInfo
         && result.updateInfo.updateStatus !== 'up-to-date') {
         msg += ` | Update: ${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion}`;
+    }
+
+    const flaggedCount = result.github?.flaggedIssues?.length ?? 0;
+    if (flaggedCount > 0) {
+        msg += ` | ${flaggedCount} flagged issue(s)`;
     }
 
     return `${msg} (${score}/10)`;

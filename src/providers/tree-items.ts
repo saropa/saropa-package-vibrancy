@@ -45,7 +45,7 @@ export class DetailItem extends vscode.TreeItem {
 /** Build child detail items for a package node. */
 export function buildDetailItems(result: VibrancyResult): DetailItem[] {
     const items: DetailItem[] = [
-        new DetailItem('Version', `${result.package.version}`),
+        new DetailItem('Version', `${result.package.constraint}`),
         new DetailItem('Score', `${result.score}/100`),
         new DetailItem('Category', categoryLabel(result.category)),
     ];
@@ -95,9 +95,29 @@ export function buildDetailItems(result: VibrancyResult): DetailItem[] {
         items.push(new DetailItem('Open Issues', `${result.github.openIssues}`));
     }
 
-    if (result.knownIssue) {
+    appendFlaggedItems(items, result);
+
+    if (result.knownIssue?.reason) {
         items.push(new DetailItem('Known Issue', result.knownIssue.reason));
     }
 
     return items;
+}
+
+function appendFlaggedItems(
+    items: DetailItem[],
+    result: VibrancyResult,
+): void {
+    const flagged = result.github?.flaggedIssues;
+    if (!flagged?.length) { return; }
+    items.push(new DetailItem(
+        'Flagged Issues', `${flagged.length} high-signal`,
+    ));
+    for (const issue of flagged.slice(0, 3)) {
+        const title = issue.title.length > 50
+            ? issue.title.substring(0, 47) + '...' : issue.title;
+        items.push(new DetailItem(
+            `  #${issue.number}`, `${title} (${issue.matchedSignals[0]})`,
+        ));
+    }
 }

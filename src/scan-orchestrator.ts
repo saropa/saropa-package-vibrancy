@@ -9,6 +9,7 @@ import {
     calcResolutionVelocity,
     calcEngagementLevel,
     calcPopularity,
+    calcFlaggedIssuePenalty,
     computeVibrancyScore,
     ScoringWeights,
 } from './scoring/vibrancy-calculator';
@@ -118,8 +119,11 @@ function computeScores(
         ? calcEngagementLevel(github, daysSincePublish) : 0;
     const popularity = calcPopularity(pubPoints, github?.stars ?? 0);
 
+    const flaggedPenalty = github
+        ? calcFlaggedIssuePenalty(github.flaggedIssues?.length ?? 0) : 0;
     const score = computeVibrancyScore(
         { resolutionVelocity, engagementLevel, popularity }, weights,
+        flaggedPenalty,
     );
     return { score, resolutionVelocity, engagementLevel, popularity };
 }

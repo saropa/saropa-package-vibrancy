@@ -17,7 +17,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         },
         github: { stars: 500, openIssues: 10, closedIssuesLast90d: 5,
             mergedPrsLast90d: 3, avgCommentsPerIssue: 2,
-            daysSinceLastUpdate: 1, daysSinceLastClose: 2 },
+            daysSinceLastUpdate: 1, daysSinceLastClose: 2, flaggedIssues: [] },
         knownIssue: null,
         score,
         category: 'vibrant',

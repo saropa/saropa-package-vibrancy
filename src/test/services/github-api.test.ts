@@ -73,6 +73,19 @@ describe('github-api', () => {
     describe('fetchRepoMetrics', () => {
         let fetchStub: sinon.SinonStub;
 
+        function loadFixture(name: string): string {
+            return fs.readFileSync(path.join(fixturesDir, name), 'utf8');
+        }
+
+        function stubAllEndpoints(openStatus = 200): void {
+            fetchStub.onCall(0).resolves(new Response(loadFixture('github-repo.json'), { status: 200 }));
+            fetchStub.onCall(1).resolves(new Response(loadFixture('github-issues.json'), { status: 200 }));
+            fetchStub.onCall(2).resolves(new Response(loadFixture('github-pulls.json'), { status: 200 }));
+            const openBody = openStatus === 200
+                ? loadFixture('github-open-issues.json') : '';
+            fetchStub.onCall(3).resolves(new Response(openBody, { status: openStatus }));
+        }
+
         beforeEach(() => {
             fetchStub = sinon.stub(globalThis, 'fetch');
         });
@@ -82,18 +95,28 @@ describe('github-api', () => {
         });
 
         it('should parse fixture responses into metrics', async () => {
-            const repoData = fs.readFileSync(path.join(fixturesDir, 'github-repo.json'), 'utf8');
-            const issuesData = fs.readFileSync(path.join(fixturesDir, 'github-issues.json'), 'utf8');
-            const pullsData = fs.readFileSync(path.join(fixturesDir, 'github-pulls.json'), 'utf8');
-
-            fetchStub.onCall(0).resolves(new Response(repoData, { status: 200 }));
-            fetchStub.onCall(1).resolves(new Response(issuesData, { status: 200 }));
-            fetchStub.onCall(2).resolves(new Response(pullsData, { status: 200 }));
-
+            stubAllEndpoints();
             const metrics = await fetchRepoMetrics('dart-lang', 'http');
             assert.ok(metrics);
             assert.strictEqual(metrics.stars, 890);
             assert.strictEqual(metrics.openIssues, 42);
+        });
+
+        it('should include flagged issues from open issues', async () => {
+            stubAllEndpoints();
+            const metrics = await fetchRepoMetrics('dart-lang', 'http');
+            assert.ok(metrics);
+            assert.ok(metrics.flaggedIssues.length > 0);
+            assert.ok(metrics.flaggedIssues.some(
+                f => f.matchedSignals.includes('obsolete'),
+            ));
+        });
+
+        it('should return empty flaggedIssues when open issues fetch fails', async () => {
+            stubAllEndpoints(403);
+            const metrics = await fetchRepoMetrics('dart-lang', 'http');
+            assert.ok(metrics);
+            assert.deepStrictEqual(metrics.flaggedIssues, []);
         });
 
         it('should return null when repo request fails', async () => {
