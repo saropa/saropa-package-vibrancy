@@ -265,6 +265,7 @@ export const window = {
     showErrorMessage: async (msg: string) => {
         messageMock.errors.push(msg);
     },
+    showTextDocument: async (_doc: any, _options?: any) => ({}),
 };
 
 export const commands = {
@@ -277,9 +278,10 @@ export const commands = {
     },
 };
 
-export const workspace = {
+export const workspace: Record<string, any> = {
     getConfiguration: (_section?: string) => ({
         get: <T>(_key: string, defaultValue?: T): T | undefined => defaultValue,
+        update: async (_key: string, _value: any, _target?: any): Promise<void> => {},
     }),
     findFiles: async (_include: any, _exclude?: any): Promise<any[]> => [],
     createFileSystemWatcher: (_glob: string) => ({
@@ -288,6 +290,8 @@ export const workspace = {
         onDidDelete: () => ({ dispose: () => { /* no-op */ } }),
         dispose: () => { /* no-op */ },
     }),
+    openTextDocument: async (_uri: any) => null,
+    applyEdit: async () => true,
     fs: {
         readFile: async () => new Uint8Array(),
     },
@@ -307,6 +311,36 @@ export const languages = {
     },
 };
 
+export class Selection {
+    readonly start: Position;
+    readonly end: Position;
+    constructor(anchor: Position, active: Position) {
+        this.start = anchor;
+        this.end = active;
+    }
+}
+
+export const clipboardMock = {
+    text: '',
+    reset() { this.text = ''; },
+};
+
+export const envMock = {
+    openedUrls: [] as string[],
+    reset() { this.openedUrls.length = 0; clipboardMock.text = ''; },
+};
+
+export const env = {
+    clipboard: {
+        writeText: async (text: string) => { clipboardMock.text = text; },
+        readText: async () => clipboardMock.text,
+    },
+    openExternal: async (uri: any) => {
+        envMock.openedUrls.push(uri.toString());
+        return true;
+    },
+};
+
 export const Uri = {
     parse: (v: string) => ({ toString: () => v, scheme: 'http', path: v, fsPath: v }),
     file: (p: string) => ({ toString: () => p, scheme: 'file', path: p, fsPath: p }),
@@ -320,6 +354,12 @@ export enum ViewColumn {
 
 export enum ProgressLocation {
     Notification = 15,
+}
+
+export enum ConfigurationTarget {
+    Global = 1,
+    Workspace = 2,
+    WorkspaceFolder = 3,
 }
 
 export enum StatusBarAlignment {
@@ -341,6 +381,7 @@ export function resetMocks(): void {
     createdTreeViews.length = 0;
     createdDiagnosticCollections.length = 0;
     messageMock.reset();
+    envMock.reset();
     for (const key of Object.keys(registeredCommands)) {
         delete registeredCommands[key];
     }

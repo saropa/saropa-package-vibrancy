@@ -3,7 +3,9 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-**pub.dev** — [saropa_drift_viewer](https://pub.dev/packages/saropa_drift_viewer)
+**VSCode Marketplace** — [Saropa Package Vibrancy](https://marketplace.visualstudio.com/items?itemName=saropa.saropa-package-vibrancy)
+
+**Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
 
 ## [0.1.1] - Unreleased
 
@@ -14,11 +16,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pub.dev-inspired gem icon for sidebar activity bar and marketplace listing
 - Copy as JSON context menu action on tree view package nodes
 - Expanded known issues database to 472 entries covering top 100 Flutter packages (active, maintenance, freemium, commercial statuses)
+- Tree view click-to-navigate: clicking a package opens its line in pubspec.yaml; context menu to open on pub.dev and update to latest version
+- Suppress package: right-click any package to suppress it from diagnostics and hover; suppressed packages appear dimmed in a collapsible "Suppressed" group at the bottom of the tree view
+- Upgrade-and-test command: upgrades a dependency, runs flutter test, and auto-rolls back if tests fail
+- Export vibrancy report as timestamped Markdown and JSON files to a report/ directory
+- Retry with exponential backoff for API calls (handles 429 rate-limits and 5xx errors)
+- Pub.dev changelog fallback when GitHub API is unavailable
 - Publish pipeline reports known issues summary: entry counts by status, duplicate check, oldest as_of date
 
 ### Fixed
 
 - Stable packages with low GitHub activity but recent pub.dev publishes no longer falsely classified as End of Life
+- Known issues loader normalizes "N/A" and empty strings as unset values
 
 ### Changed
 

@@ -1,6 +1,11 @@
 import * as assert from 'assert';
+import * as sinon from 'sinon';
+import * as vscode from 'vscode';
+import { workspace } from '../vscode-mock';
 import { VibrancyTreeProvider } from '../../providers/tree-data-provider';
-import { PackageItem, DetailItem } from '../../providers/tree-items';
+import {
+    PackageItem, DetailItem, SuppressedGroupItem, SuppressedPackageItem,
+} from '../../providers/tree-items';
 import { VibrancyResult } from '../../types';
 
 function makeResult(
@@ -71,6 +76,74 @@ describe('VibrancyTreeProvider', () => {
     });
 });
 
+describe('suppressed grouping', () => {
+    let provider: VibrancyTreeProvider;
+    let sandbox: sinon.SinonSandbox;
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        provider = new VibrancyTreeProvider();
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    function stubSuppressed(names: string[]): void {
+        sandbox.stub(workspace, 'getConfiguration').returns({
+            get: <T>(_key: string, _defaultValue?: T): T | undefined =>
+                names as unknown as T,
+            update: async () => {},
+        });
+    }
+
+    it('should show SuppressedGroupItem when packages are suppressed', () => {
+        stubSuppressed(['bad']);
+        provider.updateResults([makeResult('bad', 20), makeResult('good', 90)]);
+        const children = provider.getChildren();
+        assert.strictEqual(children.length, 2);
+        assert.ok(children[0] instanceof PackageItem);
+        assert.ok(children[1] instanceof SuppressedGroupItem);
+    });
+
+    it('should return SuppressedPackageItems as children of group', () => {
+        stubSuppressed(['bad']);
+        provider.updateResults([makeResult('bad', 20), makeResult('good', 90)]);
+        const group = provider.getChildren().find(
+            c => c instanceof SuppressedGroupItem,
+        )!;
+        const suppressed = provider.getChildren(group);
+        assert.strictEqual(suppressed.length, 1);
+        assert.ok(suppressed[0] instanceof SuppressedPackageItem);
+    });
+
+    it('should show no group when none suppressed', () => {
+        stubSuppressed([]);
+        provider.updateResults([makeResult('good', 90)]);
+        const children = provider.getChildren();
+        assert.strictEqual(children.length, 1);
+        assert.ok(children[0] instanceof PackageItem);
+    });
+
+    it('should show correct count in group label', () => {
+        stubSuppressed(['a', 'b']);
+        provider.updateResults([
+            makeResult('a', 20), makeResult('b', 30), makeResult('c', 90),
+        ]);
+        const group = provider.getChildren().find(
+            c => c instanceof SuppressedGroupItem,
+        ) as SuppressedGroupItem;
+        assert.strictEqual(group.label, 'Suppressed (2)');
+    });
+
+    it('should fire onDidChangeTreeData on refresh', () => {
+        let fired = false;
+        provider.onDidChangeTreeData(() => { fired = true; });
+        provider.refresh();
+        assert.ok(fired);
+    });
+});
+
 describe('PackageItem', () => {
     it('should set contextValue to vibrancyPackage when no update', () => {
         const item = new PackageItem(makeResult('http', 80));
@@ -91,5 +164,23 @@ describe('PackageItem', () => {
         const item = new PackageItem(makeResult('http', 80));
         assert.strictEqual(item.command?.command, 'saropaPackageVibrancy.goToPackage');
         assert.deepStrictEqual(item.command?.arguments, ['http']);
+    });
+});
+
+describe('SuppressedPackageItem', () => {
+    it('should set suppressed contextValue when no update', () => {
+        const item = new SuppressedPackageItem(makeResult('http', 80));
+        assert.strictEqual(item.contextValue, 'vibrancyPackageSuppressed');
+    });
+
+    it('should set suppressed updatable contextValue when update available', () => {
+        const item = new SuppressedPackageItem(makeResult('http', 50, 'minor'));
+        assert.strictEqual(item.contextValue, 'vibrancyPackageSuppressedUpdatable');
+    });
+
+    it('should use eye-closed icon', () => {
+        const item = new SuppressedPackageItem(makeResult('http', 80));
+        const icon = item.iconPath as vscode.ThemeIcon;
+        assert.strictEqual(icon.id, 'eye-closed');
     });
 });

@@ -16,7 +16,8 @@ export class PackageItem extends vscode.TreeItem {
         super(result.package.name, vscode.TreeItemCollapsibleState.Collapsed);
         const hasUpdate = result.updateInfo?.updateStatus
             && result.updateInfo.updateStatus !== 'up-to-date';
-        let desc = `${result.score} — ${categoryLabel(result.category)}`;
+        const displayScore = Math.round(result.score / 10);
+        let desc = `${displayScore}/10 — ${categoryLabel(result.category)}`;
         if (hasUpdate) {
             desc += ` → ${result.updateInfo!.latestVersion}`;
         }
@@ -35,6 +36,32 @@ export class PackageItem extends vscode.TreeItem {
     }
 }
 
+export class SuppressedGroupItem extends vscode.TreeItem {
+    constructor(count: number) {
+        super(`Suppressed (${count})`, vscode.TreeItemCollapsibleState.Collapsed);
+        this.iconPath = new vscode.ThemeIcon(
+            'eye-closed',
+            new vscode.ThemeColor('disabledForeground'),
+        );
+        this.contextValue = 'vibrancySuppressedGroup';
+    }
+}
+
+export class SuppressedPackageItem extends PackageItem {
+    constructor(result: VibrancyResult) {
+        super(result);
+        this.iconPath = new vscode.ThemeIcon(
+            'eye-closed',
+            new vscode.ThemeColor('disabledForeground'),
+        );
+        const hasUpdate = result.updateInfo?.updateStatus
+            && result.updateInfo.updateStatus !== 'up-to-date';
+        this.contextValue = hasUpdate
+            ? 'vibrancyPackageSuppressedUpdatable'
+            : 'vibrancyPackageSuppressed';
+    }
+}
+
 export class DetailItem extends vscode.TreeItem {
     constructor(label: string, detail: string) {
         super(label, vscode.TreeItemCollapsibleState.None);
@@ -46,7 +73,7 @@ export class DetailItem extends vscode.TreeItem {
 export function buildDetailItems(result: VibrancyResult): DetailItem[] {
     const items: DetailItem[] = [
         new DetailItem('Version', `${result.package.constraint}`),
-        new DetailItem('Score', `${result.score}/100`),
+        new DetailItem('Score', `${Math.round(result.score / 10)}/10`),
         new DetailItem('Category', categoryLabel(result.category)),
     ];
 

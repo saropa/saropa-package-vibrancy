@@ -120,6 +120,59 @@ describe('tree-commands', () => {
         });
     });
 
+    describe('suppressPackage', () => {
+        it('should add package name to suppressedPackages setting', async () => {
+            let updatedValue: any = null;
+            sandbox.stub(workspace, 'getConfiguration').returns({
+                get: <T>(_key: string, _defaultValue?: T) =>
+                    [] as unknown as T,
+                update: async (_key: string, value: any) => {
+                    updatedValue = value;
+                },
+            });
+
+            const item = new PackageItem(makeResult('http', 80));
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.suppressPackage', item,
+            );
+            assert.deepStrictEqual(updatedValue, ['http']);
+        });
+
+        it('should not duplicate already-suppressed package', async () => {
+            let updateCalled = false;
+            sandbox.stub(workspace, 'getConfiguration').returns({
+                get: <T>(_key: string, _defaultValue?: T) =>
+                    ['http'] as unknown as T,
+                update: async () => { updateCalled = true; },
+            });
+
+            const item = new PackageItem(makeResult('http', 80));
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.suppressPackage', item,
+            );
+            assert.strictEqual(updateCalled, false);
+        });
+    });
+
+    describe('unsuppressPackage', () => {
+        it('should remove package name from suppressedPackages', async () => {
+            let updatedValue: any = null;
+            sandbox.stub(workspace, 'getConfiguration').returns({
+                get: <T>(_key: string, _defaultValue?: T) =>
+                    ['http', 'bloc'] as unknown as T,
+                update: async (_key: string, value: any) => {
+                    updatedValue = value;
+                },
+            });
+
+            const item = new PackageItem(makeResult('http', 80));
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.unsuppressPackage', item,
+            );
+            assert.deepStrictEqual(updatedValue, ['bloc']);
+        });
+    });
+
     describe('updateToLatest', () => {
         it('should do nothing when no latest version', async () => {
             const item = new PackageItem(makeResult('http', 80));

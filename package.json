@@ -101,6 +101,16 @@
         "command": "saropaPackageVibrancy.upgradeAndTest",
         "title": "Upgrade & Test",
         "icon": "$(beaker)"
+      },
+      {
+        "command": "saropaPackageVibrancy.suppressPackage",
+        "title": "Suppress Package",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "saropaPackageVibrancy.unsuppressPackage",
+        "title": "Unsuppress Package",
+        "icon": "$(eye)"
       }
     ],
     "menus": {
@@ -141,6 +151,16 @@
           "command": "saropaPackageVibrancy.upgradeAndTest",
           "when": "viewItem == vibrancyPackageUpdatable",
           "group": "navigation@5"
+        },
+        {
+          "command": "saropaPackageVibrancy.suppressPackage",
+          "when": "viewItem =~ /^vibrancyPackage(Updatable)?$/",
+          "group": "2_suppress@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.unsuppressPackage",
+          "when": "viewItem =~ /Suppressed/",
+          "group": "2_suppress@1"
         }
       ]
     },
@@ -168,6 +188,14 @@
           "minimum": 1,
           "maximum": 168,
           "description": "Cache TTL in hours for API responses"
+        },
+        "saropaPackageVibrancy.suppressedPackages": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Package names to suppress from vibrancy diagnostics and hover (still scanned, shown dimmed in tree)"
         },
         "saropaPackageVibrancy.allowlist": {
           "type": "array",

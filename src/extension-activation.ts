@@ -19,6 +19,7 @@ import { registerTreeCommands } from './providers/tree-commands';
 import { registerUpgradeCommand } from './providers/upgrade-command';
 
 let latestResults: VibrancyResult[] = [];
+let lastParsedDeps: ParsedDeps | null = null;
 let scanInProgress = false;
 let lastScanMeta: ReportMetadata = {
     flutterVersion: 'unknown',
@@ -55,6 +56,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     registerTreeCommands(context);
     registerUpgradeCommand(context);
     registerFileWatcher(context, targets);
+    registerSuppressListener(context, targets);
     autoScanIfPubspec(targets);
 }
 
@@ -65,6 +67,23 @@ function registerFileWatcher(
     const watcher = vscode.workspace.createFileSystemWatcher('**/pubspec.lock');
     watcher.onDidChange(() => runScan(targets));
     context.subscriptions.push(watcher);
+}
+
+function registerSuppressListener(
+    context: vscode.ExtensionContext,
+    targets: ScanTargets,
+): void {
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (!e.affectsConfiguration('saropaPackageVibrancy.suppressedPackages')) {
+                return;
+            }
+            targets.tree.refresh();
+            if (lastParsedDeps && latestResults.length > 0) {
+                republishFiltered(targets, latestResults, lastParsedDeps);
+            }
+        }),
+    );
 }
 
 function registerTreeView(
@@ -187,6 +206,7 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             );
 
             latestResults = results;
+            lastParsedDeps = parsed;
             lastScanMeta = await buildScanMeta(startTime);
 
             const counts = countByCategory(results);
@@ -282,17 +302,33 @@ async function buildScanMeta(startTime: number): Promise<ReportMetadata> {
     };
 }
 
+function getSuppressedSet(): Set<string> {
+    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+    return new Set(config.get<string[]>('suppressedPackages', []));
+}
+
 function publishResults(
     targets: ScanTargets,
     results: VibrancyResult[],
     parsed: ParsedDeps,
 ): void {
+    const suppressed = getSuppressedSet();
+    const active = results.filter(r => !suppressed.has(r.package.name));
     targets.tree.updateResults(results);
-    targets.hover.updateResults(results);
+    targets.hover.updateResults(active);
     targets.statusBar.update(results);
-    targets.diagnostics.update(
-        parsed.yamlUri, parsed.yamlContent, results,
-    );
+    targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
+}
+
+function republishFiltered(
+    targets: ScanTargets,
+    results: VibrancyResult[],
+    parsed: ParsedDeps,
+): void {
+    const suppressed = getSuppressedSet();
+    const active = results.filter(r => !suppressed.has(r.package.name));
+    targets.hover.updateResults(active);
+    targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
 }
 
 async function exportScanReport(): Promise<void> {

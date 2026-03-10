@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { findPackageRange } from '../services/pubspec-parser';
 import { PackageItem } from './tree-items';
 
-/** Register tree-item commands (navigate, open pub.dev, update, copy). */
+/** Register tree-item commands (navigate, open, update, copy, suppress). */
 export function registerTreeCommands(
     context: vscode.ExtensionContext,
 ): void {
@@ -11,6 +11,8 @@ export function registerTreeCommands(
         vscode.commands.registerCommand('saropaPackageVibrancy.openOnPubDev', openOnPubDev),
         vscode.commands.registerCommand('saropaPackageVibrancy.updateToLatest', updateToLatest),
         vscode.commands.registerCommand('saropaPackageVibrancy.copyAsJson', copyAsJson),
+        vscode.commands.registerCommand('saropaPackageVibrancy.suppressPackage', suppressPackage),
+        vscode.commands.registerCommand('saropaPackageVibrancy.unsuppressPackage', unsuppressPackage),
     );
 }
 
@@ -63,6 +65,30 @@ async function copyAsJson(item: PackageItem): Promise<void> {
     await vscode.env.clipboard.writeText(json);
     vscode.window.showInformationMessage(
         `Copied ${item.result.package.name} vibrancy data to clipboard`,
+    );
+}
+
+/** Add a package to the suppressed list in workspace settings. */
+async function suppressPackage(item: PackageItem): Promise<void> {
+    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+    const current = config.get<string[]>('suppressedPackages', []);
+    const name = item.result.package.name;
+    if (current.includes(name)) { return; }
+    await config.update(
+        'suppressedPackages',
+        [...current, name],
+        vscode.ConfigurationTarget.Workspace,
+    );
+}
+
+/** Remove a package from the suppressed list in workspace settings. */
+async function unsuppressPackage(item: PackageItem): Promise<void> {
+    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+    const current = config.get<string[]>('suppressedPackages', []);
+    await config.update(
+        'suppressedPackages',
+        current.filter(n => n !== item.result.package.name),
+        vscode.ConfigurationTarget.Workspace,
     );
 }
 
