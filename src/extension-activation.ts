@@ -10,9 +10,11 @@ import { KnownIssuesPanel } from './views/known-issues-webview';
 import { parsePubspecYaml, parsePubspecLock } from './services/pubspec-parser';
 import { analyzePackage } from './scan-orchestrator';
 import { exportReports, ReportMetadata } from './services/report-exporter';
+import { ScanLogger } from './services/scan-logger';
 import { detectDartVersion, detectFlutterVersion } from './services/sdk-detector';
 import { PackageDependency, VibrancyResult } from './types';
 import { ScoringWeights } from './scoring/vibrancy-calculator';
+import { countByCategory } from './scoring/status-classifier';
 import { registerTreeCommands } from './providers/tree-commands';
 
 let latestResults: VibrancyResult[] = [];
@@ -171,17 +173,34 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                 return;
             }
 
-            const scanConfig = readScanConfig();
+            const logger = new ScanLogger();
+            const scanConfig = { ...readScanConfig(), logger };
             const deps = parsed.deps.filter(
                 d => !scanConfig.allowSet.has(d.name),
             );
+            logger.info(`Scan started — ${deps.length} packages`);
+
             const results = await scanPackages(
                 deps, targets.cache, scanConfig, progress,
             );
 
             latestResults = results;
             lastScanMeta = await buildScanMeta(startTime);
+
+            const counts = countByCategory(results);
+            logger.info(
+                `Scan complete — ${logger.elapsedMs}ms — ` +
+                `vibrant:${counts.vibrant} quiet:${counts.quiet} ` +
+                `legacy:${counts.legacy} eol:${counts.eol}`,
+            );
+
             publishResults(targets, results, parsed);
+
+            try {
+                await logger.writeToFile();
+            } catch {
+                // Log write is best-effort — never block scan results
+            }
         },
     );
 }
@@ -191,6 +210,7 @@ interface ScanConfig {
     readonly allowSet: Set<string>;
     readonly weights: ScoringWeights;
     readonly repoOverrides: Record<string, string>;
+    readonly logger?: ScanLogger;
 }
 
 function readScanConfig(): ScanConfig {
@@ -215,12 +235,14 @@ async function scanPackages(
 ): Promise<VibrancyResult[]> {
     const results: VibrancyResult[] = [];
     for (let i = 0; i < deps.length; i++) {
+        const dep = deps[i];
         progress.report({
-            message: `${deps[i].name} (${i + 1}/${deps.length})`,
+            message: `${dep.name} (${i + 1}/${deps.length})`,
             increment: 100 / deps.length,
         });
-        const result = await analyzePackage(deps[i], {
-            cache,
+        scanConfig.logger?.info(`[${i + 1}/${deps.length}] ${dep.name}`);
+        const result = await analyzePackage(dep, {
+            cache, logger: scanConfig.logger,
             githubToken: scanConfig.token || undefined,
             weights: scanConfig.weights,
             repoOverrides: scanConfig.repoOverrides,
@@ -290,9 +312,9 @@ async function findAndParseDeps(): Promise<ParsedDeps | null> {
     const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
     const includeDevDeps = config.get<boolean>('includeDevDependencies', false);
 
-    const { directDeps, devDeps } = parsePubspecYaml(yamlContent);
+    const { directDeps, devDeps, constraints } = parsePubspecYaml(yamlContent);
     const allDirect = includeDevDeps ? [...directDeps, ...devDeps] : directDeps;
-    const deps = parsePubspecLock(lockContent, allDirect)
+    const deps = parsePubspecLock(lockContent, allDirect, constraints)
         .filter(d => d.isDirect && d.source === 'hosted');
 
     return { deps, yamlUri: yamlFiles[0], yamlContent };

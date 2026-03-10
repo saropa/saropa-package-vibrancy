@@ -1,5 +1,7 @@
 import { PubDevPackageInfo } from '../types';
 import { CacheService } from './cache-service';
+import { ScanLogger } from './scan-logger';
+import { fetchWithRetry } from './fetch-retry';
 
 const BASE_URL = 'https://pub.dev/api/packages';
 
@@ -7,13 +9,22 @@ const BASE_URL = 'https://pub.dev/api/packages';
 export async function fetchPackageInfo(
     name: string,
     cache?: CacheService,
+    logger?: ScanLogger,
 ): Promise<PubDevPackageInfo | null> {
     const cacheKey = `pub.info.${name}`;
     const cached = cache?.get<PubDevPackageInfo>(cacheKey);
-    if (cached) { return cached; }
+    if (cached) {
+        logger?.cacheHit(cacheKey);
+        return cached;
+    }
+    logger?.cacheMiss(cacheKey);
 
+    const url = `${BASE_URL}/${name}`;
     try {
-        const resp = await fetch(`${BASE_URL}/${name}`);
+        logger?.apiRequest('GET', url);
+        const t0 = Date.now();
+        const resp = await fetchWithRetry(url, undefined, logger);
+        logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
         if (!resp.ok) { return null; }
 
         const json: any = await resp.json();
@@ -33,6 +44,7 @@ export async function fetchPackageInfo(
         await cache?.set(cacheKey, info);
         return info;
     } catch {
+        logger?.error(`Failed to fetch pub.dev info for ${name}`);
         return null;
     }
 }
@@ -41,13 +53,22 @@ export async function fetchPackageInfo(
 export async function fetchPackageScore(
     name: string,
     cache?: CacheService,
+    logger?: ScanLogger,
 ): Promise<number> {
     const cacheKey = `pub.score.${name}`;
     const cached = cache?.get<number>(cacheKey);
-    if (cached !== null && cached !== undefined) { return cached; }
+    if (cached !== null && cached !== undefined) {
+        logger?.cacheHit(cacheKey);
+        return cached;
+    }
+    logger?.cacheMiss(cacheKey);
 
+    const url = `${BASE_URL}/${name}/score`;
     try {
-        const resp = await fetch(`${BASE_URL}/${name}/score`);
+        logger?.apiRequest('GET', url);
+        const t0 = Date.now();
+        const resp = await fetchWithRetry(url, undefined, logger);
+        logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
         if (!resp.ok) { return 0; }
 
         const json: any = await resp.json();
@@ -56,6 +77,7 @@ export async function fetchPackageScore(
         await cache?.set(cacheKey, points);
         return points;
     } catch {
+        logger?.error(`Failed to fetch pub.dev score for ${name}`);
         return 0;
     }
 }

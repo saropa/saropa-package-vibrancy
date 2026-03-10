@@ -1,5 +1,6 @@
 import { VibrancyResult, PackageDependency, GitHubMetrics } from './types';
 import { CacheService } from './services/cache-service';
+import { ScanLogger } from './services/scan-logger';
 import { fetchPackageInfo, fetchPackageScore } from './services/pub-dev-api';
 import { extractGitHubRepo, fetchRepoMetrics } from './services/github-api';
 import { extractRepoSubpath, buildUpdateInfo } from './services/changelog-service';
@@ -21,6 +22,7 @@ interface RepoInfo {
 
 interface AnalyzeParams {
     readonly cache: CacheService;
+    readonly logger?: ScanLogger;
     readonly githubToken?: string;
     readonly weights?: ScoringWeights;
     readonly repoOverrides?: Record<string, string>;
@@ -31,9 +33,12 @@ export async function analyzePackage(
     dep: PackageDependency,
     params: AnalyzeParams,
 ): Promise<VibrancyResult> {
+    const log = params.logger;
     const knownIssue = findKnownIssue(dep.name);
-    const pubDev = await fetchPackageInfo(dep.name, params.cache);
-    const pubPoints = await fetchPackageScore(dep.name, params.cache);
+    if (knownIssue) { log?.info(`Known issue: ${knownIssue.status}`); }
+
+    const pubDev = await fetchPackageInfo(dep.name, params.cache, log);
+    const pubPoints = await fetchPackageScore(dep.name, params.cache, log);
 
     const repoUrl = resolveRepoUrl(dep.name, pubDev?.repositoryUrl, params);
     const { github, repoInfo } = await fetchGitHubData(repoUrl, params);
@@ -42,6 +47,12 @@ export async function analyzePackage(
     const pubDevWithPoints = pubDev ? { ...pubDev, pubPoints } : null;
     const category = classifyStatus({
         score: scores.score, knownIssue, pubDev: pubDevWithPoints,
+    });
+
+    log?.score({
+        name: dep.name, total: scores.score, category,
+        rv: scores.resolutionVelocity, eg: scores.engagementLevel,
+        pop: scores.popularity,
     });
 
     const updateInfo = pubDev
@@ -77,19 +88,29 @@ async function fetchGitHubData(
     const repoInfo = { ...parsed, subpath: extractRepoSubpath(repoUrl) };
     const github = await fetchRepoMetrics(parsed.owner, parsed.repo, {
         token: params.githubToken, cache: params.cache,
+        logger: params.logger,
     });
     return { github, repoInfo };
+}
+
+function daysSince(isoDate: string): number | undefined {
+    const ms = Date.parse(isoDate);
+    if (isNaN(ms)) { return undefined; }
+    return Math.max(0, Math.floor((Date.now() - ms) / 86_400_000));
 }
 
 function computeScores(
     github: GitHubMetrics | null,
     pubPoints: number,
+    publishedDate: string | null,
     weights?: ScoringWeights,
 ) {
+    const daysSincePublish = publishedDate
+        ? daysSince(publishedDate) : undefined;
     const resolutionVelocity = github
         ? calcResolutionVelocity(github) : 0;
     const engagementLevel = github
-        ? calcEngagementLevel(github) : 0;
+        ? calcEngagementLevel(github, daysSincePublish) : 0;
     const popularity = calcPopularity(pubPoints, github?.stars ?? 0);
 
     const score = computeVibrancyScore(

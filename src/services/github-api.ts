@@ -1,5 +1,7 @@
 import { GitHubMetrics } from '../types';
 import { CacheService } from './cache-service';
+import { ScanLogger } from './scan-logger';
+import { fetchWithRetry } from './fetch-retry';
 
 /** GitHub REST API v3 base URL. */
 const GITHUB_API = 'https://api.github.com';
@@ -39,28 +41,39 @@ function buildHeaders(token?: string): Record<string, string> {
 export async function fetchRepoMetrics(
     owner: string,
     repo: string,
-    params?: { token?: string; cache?: CacheService },
+    params?: { token?: string; cache?: CacheService; logger?: ScanLogger },
 ): Promise<GitHubMetrics | null> {
+    const log = params?.logger;
     const cacheKey = `gh.${owner}.${repo}`;
     const cached = params?.cache?.get<GitHubMetrics>(cacheKey);
-    if (cached) { return cached; }
+    if (cached) {
+        log?.cacheHit(cacheKey);
+        return cached;
+    }
+    log?.cacheMiss(cacheKey);
 
     try {
         const headers = buildHeaders(params?.token);
         const now = Date.now();
         const cutoff = new Date(now - NINETY_DAYS_MS).toISOString();
+        const repoUrl = `${GITHUB_API}/repos/${owner}/${repo}`;
+        const issuesUrl = `${repoUrl}/issues?state=closed&since=${cutoff}&per_page=100`;
+        const pullsUrl = `${repoUrl}/pulls?state=closed&per_page=100`;
+
+        log?.apiRequest('GET', repoUrl);
+        log?.apiRequest('GET', issuesUrl);
+        log?.apiRequest('GET', pullsUrl);
+        const t0 = Date.now();
 
         const [repoResp, issuesResp, pullsResp] = await Promise.all([
-            fetch(`${GITHUB_API}/repos/${owner}/${repo}`, { headers }),
-            fetch(
-                `${GITHUB_API}/repos/${owner}/${repo}/issues?state=closed&since=${cutoff}&per_page=100`,
-                { headers },
-            ),
-            fetch(
-                `${GITHUB_API}/repos/${owner}/${repo}/pulls?state=closed&per_page=100`,
-                { headers },
-            ),
+            fetchWithRetry(repoUrl, { headers }, log),
+            fetchWithRetry(issuesUrl, { headers }, log),
+            fetchWithRetry(pullsUrl, { headers }, log),
         ]);
+        const elapsed = Date.now() - t0;
+        log?.apiResponse(repoResp.status, repoResp.statusText, elapsed);
+        log?.apiResponse(issuesResp.status, issuesResp.statusText, elapsed);
+        log?.apiResponse(pullsResp.status, pullsResp.statusText, elapsed);
 
         if (!repoResp.ok) { return null; }
 
@@ -79,6 +92,7 @@ export async function fetchRepoMetrics(
         await params?.cache?.set(cacheKey, metrics);
         return metrics;
     } catch {
+        log?.error(`Failed to fetch GitHub metrics for ${owner}/${repo}`);
         return null;
     }
 }
