@@ -3,6 +3,7 @@ import {
     calcResolutionVelocity,
     calcEngagementLevel,
     calcPopularity,
+    calcPublishRecency,
     computeVibrancyScore,
 } from '../../scoring/vibrancy-calculator';
 import { GitHubMetrics } from '../../types';
@@ -65,6 +66,54 @@ describe('vibrancy-calculator', () => {
                 daysSinceLastUpdate: 500,
             }));
             assert.ok(score < 10);
+        });
+
+        it('should boost stale repos with recent publish date', () => {
+            const without = calcEngagementLevel(makeMetrics({
+                avgCommentsPerIssue: 1,
+                daysSinceLastUpdate: 300,
+            }));
+            const with180d = calcEngagementLevel(makeMetrics({
+                avgCommentsPerIssue: 1,
+                daysSinceLastUpdate: 300,
+            }), 180);
+            assert.ok(with180d > without,
+                `publish recency should boost: ${with180d} > ${without}`);
+        });
+
+        it('should not boost when publish date is older than 365 days', () => {
+            const without = calcEngagementLevel(makeMetrics({
+                avgCommentsPerIssue: 0,
+                daysSinceLastUpdate: 500,
+            }));
+            const withOld = calcEngagementLevel(makeMetrics({
+                avgCommentsPerIssue: 0,
+                daysSinceLastUpdate: 500,
+            }), 400);
+            assert.strictEqual(withOld, without);
+        });
+
+        it('should not change score when publish date is absent', () => {
+            const metrics = makeMetrics({ daysSinceLastUpdate: 200 });
+            const withUndef = calcEngagementLevel(metrics, undefined);
+            const without = calcEngagementLevel(metrics);
+            assert.strictEqual(withUndef, without);
+        });
+    });
+
+    describe('calcPublishRecency', () => {
+        it('should return 100 for just-published packages', () => {
+            assert.strictEqual(calcPublishRecency(0), 100);
+        });
+
+        it('should return ~50 for 6-month-old packages', () => {
+            const score = calcPublishRecency(180);
+            assert.ok(score > 45 && score < 55, `expected ~50, got ${score}`);
+        });
+
+        it('should return 0 for packages older than 365 days', () => {
+            assert.strictEqual(calcPublishRecency(365), 0);
+            assert.strictEqual(calcPublishRecency(500), 0);
         });
     });
 

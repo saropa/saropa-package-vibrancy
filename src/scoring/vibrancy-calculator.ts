@@ -41,10 +41,22 @@ export function calcResolutionVelocity(metrics: GitHubMetrics): number {
     return clamp((normalize(closureRate, 50) + recencyBonus) / 2);
 }
 
+/** Publish recency on a 365-day window (vs GitHub's 100-day window). */
+export function calcPublishRecency(daysSinceLastPublish: number): number {
+    return clamp(100 - (daysSinceLastPublish * 100 / 365));
+}
+
 /** Engagement Level: comment volume + recency. */
-export function calcEngagementLevel(metrics: GitHubMetrics): number {
+export function calcEngagementLevel(
+    metrics: GitHubMetrics,
+    daysSinceLastPublish?: number,
+): number {
     const commentScore = normalize(metrics.avgCommentsPerIssue, 10);
-    const recencyScore = clamp(100 - metrics.daysSinceLastUpdate);
+    const gitRecency = clamp(100 - metrics.daysSinceLastUpdate);
+    const pubRecency = daysSinceLastPublish !== undefined
+        ? calcPublishRecency(daysSinceLastPublish)
+        : 0;
+    const recencyScore = Math.max(gitRecency, pubRecency);
     return clamp((commentScore + recencyScore) / 2);
 }
 

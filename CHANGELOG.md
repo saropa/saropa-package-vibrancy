@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Pub.dev-inspired gem icon for sidebar activity bar and marketplace listing
 - Copy as JSON context menu action on tree view package nodes
 
+### Fixed
+
+- Stable packages with low GitHub activity but recent pub.dev publishes no longer falsely classified as End of Life
+
 ### Changed
 
 - Diagnostic messages now lead with actionable verbs (Replace, Review, Monitor) instead of category labels

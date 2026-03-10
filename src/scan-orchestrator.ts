@@ -43,7 +43,9 @@ export async function analyzePackage(
     const repoUrl = resolveRepoUrl(dep.name, pubDev?.repositoryUrl, params);
     const { github, repoInfo } = await fetchGitHubData(repoUrl, params);
 
-    const scores = computeScores(github, pubPoints, params.weights);
+    const scores = computeScores(
+        github, pubPoints, pubDev?.publishedDate ?? null, params.weights,
+    );
     const pubDevWithPoints = pubDev ? { ...pubDev, pubPoints } : null;
     const category = classifyStatus({
         score: scores.score, knownIssue, pubDev: pubDevWithPoints,
@@ -58,7 +60,10 @@ export async function analyzePackage(
     const updateInfo = pubDev
         ? await buildUpdateInfo(
             dep.version, pubDev.latestVersion, repoInfo,
-            { token: params.githubToken, cache: params.cache },
+            {
+                token: params.githubToken, cache: params.cache,
+                packageName: dep.name,
+            },
         )
         : null;
 
