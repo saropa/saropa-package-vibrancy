@@ -18,8 +18,18 @@ def run(
     cwd: str | None = None,
     timeout: int | None = None,
 ) -> subprocess.CompletedProcess[str]:
-    """Run a shell command. Uses shell=True on Windows for .cmd resolution."""
+    """Run a shell command. Uses shell=True on Windows for .cmd resolution.
+
+    On Windows, applies STARTF_USESHOWWINDOW + SW_HIDE to suppress
+    console/editor windows that CLI tools like `code` may briefly spawn.
+    """
     use_shell = isinstance(cmd, str) or sys.platform == "win32"
+    kwargs: dict = {}
+    if sys.platform == "win32":
+        si = subprocess.STARTUPINFO()
+        si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+        si.wShowWindow = subprocess.SW_HIDE
+        kwargs["startupinfo"] = si
     return subprocess.run(
         cmd,
         capture_output=capture,
@@ -27,6 +37,7 @@ def run(
         cwd=cwd or PROJECT_ROOT,
         shell=use_shell,
         timeout=timeout,
+        **kwargs,
     )
 
 
@@ -125,9 +136,6 @@ def list_editor_extensions(editor: str = "code") -> set[str]:
     if not shutil.which(editor):
         _extensions_cache[editor] = set()
         return set()
-    if sys.platform == "win32":
-        label = "VS Code" if editor == "code" else editor.capitalize()
-        info(f"Querying {label} CLI (a window may briefly appear)...")
     result = run([editor, "--list-extensions", "--show-versions"])
     if result.returncode != 0:
         _extensions_cache[editor] = set()

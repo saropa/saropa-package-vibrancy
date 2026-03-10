@@ -90,8 +90,6 @@ def check_vscode_extensions() -> bool:
 def _install_vscode_extension(ext: str) -> bool:
     """Auto-install a single VS Code extension."""
     fix(f"Installing VS Code extension: {C.WHITE}{ext}{C.RESET}")
-    if sys.platform == "win32":
-        info("A VS Code window may briefly appear...")
     result = run(["code", "--install-extension", ext])
     if result.returncode != 0:
         fail(f"Failed to install {ext}: {(result.stderr or '').strip()}")
