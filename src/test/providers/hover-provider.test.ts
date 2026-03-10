@@ -24,6 +24,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         resolutionVelocity: 50,
         engagementLevel: 40,
         popularity: 60,
+        updateInfo: null,
     };
 }
 

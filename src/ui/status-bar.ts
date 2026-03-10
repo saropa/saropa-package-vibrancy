@@ -26,8 +26,17 @@ export class VibrancyStatusBar implements vscode.Disposable {
         const rounded = Math.round(avg);
         const icon = rounded >= 70 ? '$(pass)' : rounded >= 40 ? '$(info)' : '$(warning)';
 
+        const updateCount = results.filter(
+            r => r.updateInfo && r.updateInfo.updateStatus !== 'up-to-date',
+        ).length;
+
         this._item.text = `${icon} Vibrancy: ${rounded}`;
-        this._item.tooltip = `${results.length} packages scanned. Click for report.`;
+        let tooltip = `${results.length} packages scanned.`;
+        if (updateCount > 0) {
+            tooltip += ` ${updateCount} update(s) available.`;
+        }
+        tooltip += ' Click for report.';
+        this._item.tooltip = tooltip;
         this._item.show();
     }
 

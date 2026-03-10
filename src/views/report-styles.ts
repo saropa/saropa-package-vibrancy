@@ -43,5 +43,9 @@ export function getReportStyles(): string {
             text-decoration: none;
         }
         a:hover { text-decoration: underline; }
+        .update-major { color: var(--vscode-editorError-foreground); font-weight: bold; }
+        .update-minor { color: var(--vscode-editorWarning-foreground); }
+        .update-patch { color: var(--vscode-editorInfo-foreground); }
+        .updates .count { color: var(--vscode-textLink-foreground); }
     `;
 }

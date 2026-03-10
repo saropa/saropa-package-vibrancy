@@ -38,6 +38,32 @@ export interface KnownIssue {
     readonly reason: string;
     readonly as_of: string;
     readonly replacement: string | null;
+    readonly migrationNotes: string | null;
+}
+
+/** Granularity of available update. */
+export type UpdateStatus = 'up-to-date' | 'patch' | 'minor' | 'major' | 'unknown';
+
+/** A single version entry from CHANGELOG.md. */
+export interface ChangelogEntry {
+    readonly version: string;
+    readonly date?: string;
+    readonly body: string;
+}
+
+/** Parsed changelog entries between current and latest versions. */
+export interface ChangelogInfo {
+    readonly entries: readonly ChangelogEntry[];
+    readonly truncated: boolean;
+    readonly unavailableReason?: string;
+}
+
+/** Update information for a package. */
+export interface UpdateInfo {
+    readonly currentVersion: string;
+    readonly latestVersion: string;
+    readonly updateStatus: UpdateStatus;
+    readonly changelog: ChangelogInfo | null;
 }
 
 /** Computed vibrancy result for one package. */
@@ -51,6 +77,7 @@ export interface VibrancyResult {
     readonly resolutionVelocity: number;
     readonly engagementLevel: number;
     readonly popularity: number;
+    readonly updateInfo: UpdateInfo | null;
 }
 
 /** Cache entry with TTL. */

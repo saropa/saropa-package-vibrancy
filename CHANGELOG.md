@@ -3,6 +3,10 @@
 ## [0.1.0] - Unreleased
 
 ### Added
+- Pub update check: detects outdated dependencies by comparing current vs latest versions
+- Changelog fetching from GitHub (with monorepo subpath support) and parsing
+- Update indicators in tree view, hover tooltips, diagnostics, report, and status bar
+- Report "Updates" summary card and sortable "Update" column with severity coloring
 - Tree view sidebar showing package vibrancy scores, sorted worst-first
 - Diagnostics (error/warning/info squiggles) in pubspec.yaml
 - Quick-fix code actions for known-bad packages with replacements

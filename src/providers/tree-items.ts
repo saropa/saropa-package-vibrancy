@@ -14,7 +14,12 @@ function categoryColor(cat: VibrancyCategory): vscode.ThemeColor {
 export class PackageItem extends vscode.TreeItem {
     constructor(public readonly result: VibrancyResult) {
         super(result.package.name, vscode.TreeItemCollapsibleState.Collapsed);
-        this.description = `${result.score} — ${categoryLabel(result.category)}`;
+        let desc = `${result.score} — ${categoryLabel(result.category)}`;
+        if (result.updateInfo?.updateStatus
+            && result.updateInfo.updateStatus !== 'up-to-date') {
+            desc += ` → ${result.updateInfo.latestVersion}`;
+        }
+        this.description = desc;
         this.iconPath = new vscode.ThemeIcon(
             categoryIcon(result.category),
             categoryColor(result.category),
@@ -37,6 +42,36 @@ export function buildDetailItems(result: VibrancyResult): DetailItem[] {
         new DetailItem('Score', `${result.score}/100`),
         new DetailItem('Category', categoryLabel(result.category)),
     ];
+
+    if (result.updateInfo
+        && result.updateInfo.updateStatus !== 'up-to-date') {
+        const arrow = `${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion} (${result.updateInfo.updateStatus})`;
+        items.push(new DetailItem('Update Available', arrow));
+
+        if (result.updateInfo.changelog?.entries.length) {
+            for (const entry of result.updateInfo.changelog.entries) {
+                const dateStr = entry.date ? ` (${entry.date})` : '';
+                const firstLine = entry.body.split('\n').find(
+                    l => l.trim(),
+                ) ?? '';
+                const preview = firstLine.length > 60
+                    ? firstLine.substring(0, 57) + '...'
+                    : firstLine;
+                items.push(new DetailItem(
+                    `  v${entry.version}${dateStr}`, preview,
+                ));
+            }
+            if (result.updateInfo.changelog.truncated) {
+                items.push(new DetailItem(
+                    '  ...', 'More entries available on GitHub',
+                ));
+            }
+        } else if (result.updateInfo.changelog?.unavailableReason) {
+            items.push(new DetailItem(
+                '  Changelog', result.updateInfo.changelog.unavailableReason,
+            ));
+        }
+    }
 
     if (result.pubDev) {
         items.push(new DetailItem('Latest', result.pubDev.latestVersion));

@@ -45,6 +45,10 @@ export function buildReportHtml(results: VibrancyResult[]): string {
             <div class="count">${counts.eol}</div>
             <div class="label">End of Life</div>
         </div>
+        <div class="summary-card updates">
+            <div class="count">${counts.updatesAvailable}</div>
+            <div class="label">Updates</div>
+        </div>
     </div>
     <table>
         <thead><tr>
@@ -54,6 +58,7 @@ export function buildReportHtml(results: VibrancyResult[]): string {
             <th data-col="category">Category<span class="sort-arrow"></span></th>
             <th data-col="published">Published<span class="sort-arrow"></span></th>
             <th data-col="stars">Stars<span class="sort-arrow"></span></th>
+            <th data-col="update">Update<span class="sort-arrow"></span></th>
         </tr></thead>
         <tbody id="pkg-body">
             ${results.map(buildRow).join('\n')}
@@ -78,20 +83,33 @@ function buildRow(r: VibrancyResult): string {
     const date = r.pubDev?.publishedDate.split('T')[0] ?? '';
     const stars = r.github?.stars ?? '';
     const url = `https://pub.dev/packages/${encodeURIComponent(r.package.name)}`;
+
+    const hasUpdate = r.updateInfo
+        && r.updateInfo.updateStatus !== 'up-to-date';
+    const updateText = hasUpdate
+        ? `→ ${escapeHtml(r.updateInfo!.latestVersion)}`
+        : '✓';
+    const updateClass = r.updateInfo?.updateStatus === 'major' ? 'update-major'
+        : r.updateInfo?.updateStatus === 'minor' ? 'update-minor'
+        : r.updateInfo?.updateStatus === 'patch' ? 'update-patch'
+        : '';
+
     return `<tr data-name="${name}" data-version="${version}"
         data-score="${r.score}" data-category="${r.category}"
-        data-published="${date}" data-stars="${stars}">
+        data-published="${date}" data-stars="${stars}"
+        data-update="${r.updateInfo?.updateStatus ?? 'unknown'}">
         <td><a href="${url}">${name}</a></td>
         <td>${version}</td>
         <td>${r.score}</td>
         <td>${categoryLabel(r.category)}</td>
         <td>${date}</td>
         <td>${stars}</td>
+        <td class="${updateClass}">${updateText}</td>
     </tr>`;
 }
 
 function countCategories(results: VibrancyResult[]) {
-    let vibrant = 0, quiet = 0, legacy = 0, eol = 0;
+    let vibrant = 0, quiet = 0, legacy = 0, eol = 0, updatesAvailable = 0;
     for (const r of results) {
         switch (r.category) {
             case 'vibrant': vibrant++; break;
@@ -99,6 +117,10 @@ function countCategories(results: VibrancyResult[]) {
             case 'legacy-locked': legacy++; break;
             case 'end-of-life': eol++; break;
         }
+        if (r.updateInfo
+            && r.updateInfo.updateStatus !== 'up-to-date') {
+            updatesAvailable++;
+        }
     }
-    return { vibrant, quiet, legacy, eol };
+    return { vibrant, quiet, legacy, eol, updatesAvailable };
 }

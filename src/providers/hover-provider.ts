@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { VibrancyResult } from '../types';
+import { VibrancyResult, UpdateInfo } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
 
 export class VibrancyHoverProvider implements vscode.HoverProvider {
@@ -55,6 +55,15 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
         md.appendMarkdown(`| Open Issues | ${result.github.openIssues} |\n`);
     }
 
+    if (result.updateInfo
+        && result.updateInfo.updateStatus !== 'up-to-date') {
+        md.appendMarkdown(`\n---\n`);
+        md.appendMarkdown(
+            `**Update Available:** ${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion} (${result.updateInfo.updateStatus})\n\n`,
+        );
+        appendChangelogSection(md, result.updateInfo);
+    }
+
     if (result.knownIssue) {
         md.appendMarkdown(
             `\n---\n**Known Issue:** ${result.knownIssue.reason}\n`,
@@ -66,4 +75,36 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
     );
 
     return md;
+}
+
+function appendChangelogSection(
+    md: vscode.MarkdownString,
+    updateInfo: UpdateInfo,
+): void {
+    if (updateInfo.changelog?.entries.length) {
+        md.appendMarkdown(`**Changelog:**\n\n`);
+        const entriesToShow = updateInfo.changelog.entries.slice(0, 5);
+        for (const entry of entriesToShow) {
+            const dateStr = entry.date ? ` - ${entry.date}` : '';
+            md.appendMarkdown(`**v${entry.version}**${dateStr}\n\n`);
+            const body = truncateBody(entry.body);
+            if (body) {
+                md.appendMarkdown(`${body}\n\n`);
+            }
+        }
+        if (updateInfo.changelog.entries.length > 5) {
+            md.appendMarkdown(
+                `*...and ${updateInfo.changelog.entries.length - 5} more version(s)*\n\n`,
+            );
+        }
+    } else if (updateInfo.changelog?.unavailableReason) {
+        md.appendMarkdown(
+            `*Changelog: ${updateInfo.changelog.unavailableReason}*\n\n`,
+        );
+    }
+}
+
+function truncateBody(body: string): string {
+    if (!body) { return ''; }
+    return body.length > 200 ? body.substring(0, 197) + '...' : body;
 }

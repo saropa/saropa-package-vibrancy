@@ -25,6 +25,7 @@ function makeResult(
         resolutionVelocity: 0,
         engagementLevel: 0,
         popularity: 0,
+        updateInfo: null,
     };
 }
 
@@ -83,6 +84,7 @@ describe('VibrancyDiagnostics', () => {
                 reason: 'No longer maintained',
                 as_of: '2024-01-01',
                 replacement: 'new_pkg',
+                migrationNotes: 'Use new_pkg instead.',
             },
         };
         diagnostics.update(uri, PUBSPEC_CONTENT, [result]);

@@ -2,28 +2,39 @@ import { VibrancyResult, PackageDependency } from './types';
 import { CacheService } from './services/cache-service';
 import { fetchPackageInfo, fetchPackageScore } from './services/pub-dev-api';
 import { extractGitHubRepo, fetchRepoMetrics } from './services/github-api';
+import { extractRepoSubpath, buildUpdateInfo } from './services/changelog-service';
 import { findKnownIssue } from './scoring/known-issues';
 import {
     calcResolutionVelocity,
     calcEngagementLevel,
     calcPopularity,
     computeVibrancyScore,
+    ScoringWeights,
 } from './scoring/vibrancy-calculator';
 import { classifyStatus } from './scoring/status-classifier';
 
 /** Analyze a single package and compute its vibrancy result. */
 export async function analyzePackage(
     dep: PackageDependency,
-    params: { cache: CacheService; githubToken?: string },
+    params: {
+        cache: CacheService;
+        githubToken?: string;
+        weights?: ScoringWeights;
+    },
 ): Promise<VibrancyResult> {
     const knownIssue = findKnownIssue(dep.name);
     const pubDev = await fetchPackageInfo(dep.name, params.cache);
     const pubPoints = await fetchPackageScore(dep.name, params.cache);
 
     let github = null;
+    let repoInfo: { owner: string; repo: string; subpath: string | null } | null = null;
     if (pubDev?.repositoryUrl) {
         const parsed = extractGitHubRepo(pubDev.repositoryUrl);
         if (parsed) {
+            repoInfo = {
+                ...parsed,
+                subpath: extractRepoSubpath(pubDev.repositoryUrl),
+            };
             github = await fetchRepoMetrics(parsed.owner, parsed.repo, {
                 token: params.githubToken,
                 cache: params.cache,
@@ -41,7 +52,7 @@ export async function analyzePackage(
         resolutionVelocity,
         engagementLevel,
         popularity,
-    });
+    }, params.weights);
 
     const pubDevWithPoints = pubDev
         ? { ...pubDev, pubPoints } : null;
@@ -51,6 +62,15 @@ export async function analyzePackage(
         knownIssue,
         pubDev: pubDevWithPoints,
     });
+
+    const updateInfo = pubDev
+        ? await buildUpdateInfo(
+            dep.version,
+            pubDev.latestVersion,
+            repoInfo,
+            { token: params.githubToken, cache: params.cache },
+        )
+        : null;
 
     return {
         package: dep,
@@ -62,5 +82,6 @@ export async function analyzePackage(
         resolutionVelocity,
         engagementLevel,
         popularity,
+        updateInfo,
     };
 }
