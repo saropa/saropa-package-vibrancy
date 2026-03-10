@@ -13,6 +13,7 @@ import { exportReports, ReportMetadata } from './services/report-exporter';
 import { detectDartVersion, detectFlutterVersion } from './services/sdk-detector';
 import { PackageDependency, VibrancyResult } from './types';
 import { ScoringWeights } from './scoring/vibrancy-calculator';
+import { registerTreeCommands } from './providers/tree-commands';
 
 let latestResults: VibrancyResult[] = [];
 let scanInProgress = false;
@@ -48,6 +49,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     registerTreeView(context, treeProvider);
     registerProviders(context, hoverProvider);
     registerCommands(context, targets);
+    registerTreeCommands(context);
     registerFileWatcher(context, targets);
     autoScanIfPubspec(targets);
 }
@@ -273,12 +275,10 @@ interface ParsedDeps {
 }
 
 async function findAndParseDeps(): Promise<ParsedDeps | null> {
-    const yamlFiles = await vscode.workspace.findFiles(
-        '**/pubspec.yaml', '**/.*/**', 1,
-    );
-    const lockFiles = await vscode.workspace.findFiles(
-        '**/pubspec.lock', '**/.*/**', 1,
-    );
+    const [yamlFiles, lockFiles] = await Promise.all([
+        vscode.workspace.findFiles('**/pubspec.yaml', '**/.*/**', 1),
+        vscode.workspace.findFiles('**/pubspec.lock', '**/.*/**', 1),
+    ]);
     if (yamlFiles.length === 0 || lockFiles.length === 0) { return null; }
 
     const yamlBytes = await vscode.workspace.fs.readFile(yamlFiles[0]);

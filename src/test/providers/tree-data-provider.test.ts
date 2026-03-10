@@ -3,7 +3,9 @@ import { VibrancyTreeProvider } from '../../providers/tree-data-provider';
 import { PackageItem, DetailItem } from '../../providers/tree-items';
 import { VibrancyResult } from '../../types';
 
-function makeResult(name: string, score: number): VibrancyResult {
+function makeResult(
+    name: string, score: number, updateStatus?: string,
+): VibrancyResult {
     return {
         package: { name, version: '1.0.0', source: 'hosted', isDirect: true },
         pubDev: null,
@@ -14,7 +16,12 @@ function makeResult(name: string, score: number): VibrancyResult {
         resolutionVelocity: 0,
         engagementLevel: 0,
         popularity: 0,
-        updateInfo: null,
+        updateInfo: updateStatus ? {
+            currentVersion: '1.0.0',
+            latestVersion: '2.0.0',
+            updateStatus: updateStatus as any,
+            changelog: null,
+        } : null,
     };
 }
 
@@ -60,5 +67,28 @@ describe('VibrancyTreeProvider', () => {
         provider.onDidChangeTreeData(() => { fired = true; });
         provider.updateResults([makeResult('http', 80)]);
         assert.ok(fired);
+    });
+});
+
+describe('PackageItem', () => {
+    it('should set contextValue to vibrancyPackage when no update', () => {
+        const item = new PackageItem(makeResult('http', 80));
+        assert.strictEqual(item.contextValue, 'vibrancyPackage');
+    });
+
+    it('should set contextValue to vibrancyPackageUpdatable when update available', () => {
+        const item = new PackageItem(makeResult('http', 50, 'minor'));
+        assert.strictEqual(item.contextValue, 'vibrancyPackageUpdatable');
+    });
+
+    it('should set contextValue to vibrancyPackage when up-to-date', () => {
+        const item = new PackageItem(makeResult('http', 80, 'up-to-date'));
+        assert.strictEqual(item.contextValue, 'vibrancyPackage');
+    });
+
+    it('should set goToPackage command with package name', () => {
+        const item = new PackageItem(makeResult('http', 80));
+        assert.strictEqual(item.command?.command, 'saropaPackageVibrancy.goToPackage');
+        assert.deepStrictEqual(item.command?.arguments, ['http']);
     });
 });

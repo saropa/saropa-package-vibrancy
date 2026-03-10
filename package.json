@@ -2,7 +2,7 @@
   "name": "saropa-package-vibrancy",
   "displayName": "Saropa Package Vibrancy",
   "description": "Analyze Flutter/Dart dependency health and community vibrancy",
-  "version": "0.1.0",
+  "version": "0.1.2",
   "publisher": "saropa",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -76,6 +76,21 @@
         "command": "saropaPackageVibrancy.browseKnownIssues",
         "title": "Saropa: Browse Known Issues Library",
         "icon": "$(library)"
+      },
+      {
+        "command": "saropaPackageVibrancy.goToPackage",
+        "title": "Go to pubspec.yaml",
+        "icon": "$(go-to-file)"
+      },
+      {
+        "command": "saropaPackageVibrancy.openOnPubDev",
+        "title": "Open on pub.dev",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "saropaPackageVibrancy.updateToLatest",
+        "title": "Update to Latest",
+        "icon": "$(arrow-up)"
       }
     ],
     "menus": {
@@ -84,6 +99,28 @@
           "command": "saropaPackageVibrancy.scan",
           "when": "view == saropaPackageVibrancy.packages",
           "group": "navigation"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "saropaPackageVibrancy.goToPackage",
+          "when": "viewItem =~ /vibrancyPackage/",
+          "group": "inline"
+        },
+        {
+          "command": "saropaPackageVibrancy.goToPackage",
+          "when": "viewItem =~ /vibrancyPackage/",
+          "group": "navigation@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.openOnPubDev",
+          "when": "viewItem =~ /vibrancyPackage/",
+          "group": "navigation@2"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateToLatest",
+          "when": "viewItem == vibrancyPackageUpdatable",
+          "group": "navigation@3"
         }
       ]
     },
@@ -114,7 +151,9 @@
         },
         "saropaPackageVibrancy.allowlist": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "default": [],
           "description": "Package names to skip during vibrancy scan (e.g. internal packages)"
         },
@@ -122,7 +161,9 @@
           "type": "object",
           "default": {},
           "description": "Override GitHub repository URLs for packages where pub.dev data is wrong. Keys are package names, values are GitHub URLs (e.g. { \"my_pkg\": \"https://github.com/org/my_pkg\" })",
-          "additionalProperties": { "type": "string" }
+          "additionalProperties": {
+            "type": "string"
+          }
         },
         "saropaPackageVibrancy.weights.resolutionVelocity": {
           "type": "number",

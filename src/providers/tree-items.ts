@@ -14,17 +14,24 @@ function categoryColor(cat: VibrancyCategory): vscode.ThemeColor {
 export class PackageItem extends vscode.TreeItem {
     constructor(public readonly result: VibrancyResult) {
         super(result.package.name, vscode.TreeItemCollapsibleState.Collapsed);
+        const hasUpdate = result.updateInfo?.updateStatus
+            && result.updateInfo.updateStatus !== 'up-to-date';
         let desc = `${result.score} — ${categoryLabel(result.category)}`;
-        if (result.updateInfo?.updateStatus
-            && result.updateInfo.updateStatus !== 'up-to-date') {
-            desc += ` → ${result.updateInfo.latestVersion}`;
+        if (hasUpdate) {
+            desc += ` → ${result.updateInfo!.latestVersion}`;
         }
         this.description = desc;
         this.iconPath = new vscode.ThemeIcon(
             categoryIcon(result.category),
             categoryColor(result.category),
         );
-        this.contextValue = 'vibrancyPackage';
+        this.contextValue = hasUpdate
+            ? 'vibrancyPackageUpdatable' : 'vibrancyPackage';
+        this.command = {
+            command: 'saropaPackageVibrancy.goToPackage',
+            title: 'Go to pubspec.yaml',
+            arguments: [result.package.name],
+        };
     }
 }
 
