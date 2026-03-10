@@ -6,9 +6,11 @@ import { PackageDependency, PackageRange } from '../types';
 export function parsePubspecYaml(content: string): {
     directDeps: string[];
     devDeps: string[];
+    constraints: Record<string, string>;
 } {
     const directDeps: string[] = [];
     const devDeps: string[] = [];
+    const constraints: Record<string, string> = {};
     const lines = content.split('\n');
 
     let section: 'none' | 'deps' | 'dev' = 'none';
@@ -29,13 +31,16 @@ export function parsePubspecYaml(content: string): {
         }
         if (section === 'none') { continue; }
 
-        const match = trimmed.match(/^\s{2}(\w[\w_]*)\s*:/);
+        const match = trimmed.match(/^\s{2}(\w[\w_]*)\s*:\s*(.*)/);
         if (match) {
-            (section === 'deps' ? directDeps : devDeps).push(match[1]);
+            const name = match[1];
+            (section === 'deps' ? directDeps : devDeps).push(name);
+            const value = match[2].trim();
+            if (value) { constraints[name] = value; }
         }
     }
 
-    return { directDeps, devDeps };
+    return { directDeps, devDeps, constraints };
 }
 
 /**
@@ -44,6 +49,7 @@ export function parsePubspecYaml(content: string): {
 export function parsePubspecLock(
     lockContent: string,
     directDeps: string[],
+    constraints: Record<string, string> = {},
 ): PackageDependency[] {
     const packages: PackageDependency[] = [];
     const lines = lockContent.split('\n');
@@ -61,6 +67,7 @@ export function parsePubspecLock(
                 packages.push({
                     name: currentName,
                     version: currentVersion,
+                    constraint: constraints[currentName] ?? currentVersion,
                     source: currentSource,
                     isDirect: directSet.has(currentName),
                 });
@@ -88,6 +95,7 @@ export function parsePubspecLock(
         packages.push({
             name: currentName,
             version: currentVersion,
+            constraint: constraints[currentName] ?? currentVersion,
             source: currentSource,
             isDirect: directSet.has(currentName),
         });

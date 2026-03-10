@@ -38,10 +38,23 @@ describe('pubspec-parser', () => {
             assert.ok(!all.includes('sdk'));
         });
 
+        it('should extract version constraints', () => {
+            const { constraints } = parsePubspecYaml(yamlContent);
+            assert.strictEqual(constraints['http'], '^1.2.0');
+            assert.strictEqual(constraints['provider'], '^6.1.0');
+            assert.strictEqual(constraints['mockito'], '^5.4.0');
+        });
+
+        it('should not include constraints for sdk deps', () => {
+            const { constraints } = parsePubspecYaml(yamlContent);
+            assert.strictEqual(constraints['flutter'], undefined);
+        });
+
         it('should handle empty content', () => {
-            const { directDeps, devDeps } = parsePubspecYaml('');
+            const { directDeps, devDeps, constraints } = parsePubspecYaml('');
             assert.strictEqual(directDeps.length, 0);
             assert.strictEqual(devDeps.length, 0);
+            assert.deepStrictEqual(constraints, {});
         });
     });
 
@@ -67,6 +80,22 @@ describe('pubspec-parser', () => {
         it('should parse all packages in lock file', () => {
             const packages = parsePubspecLock(lockContent, []);
             assert.strictEqual(packages.length, 5);
+        });
+
+        it('should populate constraint from yaml constraints', () => {
+            const { directDeps, constraints } = parsePubspecYaml(yamlContent);
+            const packages = parsePubspecLock(lockContent, directDeps, constraints);
+            const http = packages.find(p => p.name === 'http');
+            assert.ok(http);
+            assert.strictEqual(http.constraint, '^1.2.0');
+            assert.strictEqual(http.version, '1.2.0');
+        });
+
+        it('should fall back to resolved version when no constraint', () => {
+            const packages = parsePubspecLock(lockContent, []);
+            const meta = packages.find(p => p.name === 'meta');
+            assert.ok(meta);
+            assert.strictEqual(meta.constraint, '1.11.0');
         });
 
         it('should handle empty lock content', () => {
