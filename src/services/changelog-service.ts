@@ -1,5 +1,7 @@
 import { UpdateStatus, UpdateInfo, ChangelogInfo, ChangelogEntry } from '../types';
 import { CacheService } from './cache-service';
+import { fetchWithRetry } from './fetch-retry';
+import { fetchPubDevChangelog } from './pubdev-changelog';
 
 const GITHUB_API = 'https://api.github.com';
 const MAX_CHANGELOG_SIZE = 500_000;
@@ -90,7 +92,7 @@ export async function fetchChangelog(
     for (const filePath of paths) {
         try {
             const url = `${GITHUB_API}/repos/${owner}/${repo}/contents/${filePath}`;
-            const resp = await fetch(url, { headers });
+            const resp = await fetchWithRetry(url, { headers });
             if (!resp.ok) { continue; }
 
             let text = await resp.text();
@@ -195,7 +197,7 @@ export async function buildUpdateInfo(
     currentVersion: string,
     latestVersion: string,
     repoInfo: { owner: string; repo: string; subpath: string | null } | null,
-    params?: { token?: string; cache?: CacheService },
+    params?: { token?: string; cache?: CacheService; packageName?: string },
 ): Promise<UpdateInfo> {
     const updateStatus = compareVersions(currentVersion, latestVersion);
 
@@ -203,28 +205,39 @@ export async function buildUpdateInfo(
         return { currentVersion, latestVersion, updateStatus, changelog: null };
     }
 
-    if (!repoInfo) {
-        return {
-            currentVersion, latestVersion, updateStatus,
-            changelog: {
-                entries: [], truncated: false,
-                unavailableReason: 'No GitHub repository available',
-            },
-        };
-    }
-
-    const content = await fetchChangelog(repoInfo.owner, repoInfo.repo, {
-        subpath: repoInfo.subpath,
-        token: params?.token,
-        cache: params?.cache,
-    });
+    const content = await fetchChangelogWithFallback(
+        repoInfo, params?.packageName, params,
+    );
 
     const changelog = content
         ? parseChangelog(content, currentVersion, latestVersion)
         : {
             entries: [] as ChangelogEntry[], truncated: false,
-            unavailableReason: 'CHANGELOG.md not found in repository',
+            unavailableReason: 'Changelog not found',
         };
 
     return { currentVersion, latestVersion, updateStatus, changelog };
+}
+
+async function fetchChangelogWithFallback(
+    repoInfo: { owner: string; repo: string; subpath: string | null } | null,
+    packageName: string | undefined,
+    params?: { token?: string; cache?: CacheService },
+): Promise<string | null> {
+    // Try GitHub API first
+    if (repoInfo) {
+        const ghContent = await fetchChangelog(repoInfo.owner, repoInfo.repo, {
+            subpath: repoInfo.subpath,
+            token: params?.token,
+            cache: params?.cache,
+        });
+        if (ghContent) { return ghContent; }
+    }
+
+    // Fallback to pub.dev HTML scrape
+    if (packageName) {
+        return fetchPubDevChangelog(packageName, params?.cache);
+    }
+
+    return null;
 }

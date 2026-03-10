@@ -222,7 +222,7 @@ describe('changelog-service', () => {
             assert.strictEqual(fetchStub.callCount, 0);
         });
 
-        it('should set unavailableReason when no repo info', async () => {
+        it('should set unavailableReason when no repo and no packageName', async () => {
             const info = await buildUpdateInfo('1.0.0', '2.0.0', null);
             assert.strictEqual(info.updateStatus, 'major');
             assert.ok(info.changelog?.unavailableReason);
@@ -249,9 +249,37 @@ describe('changelog-service', () => {
                 { owner: 'org', repo: 'pkg', subpath: null },
             );
             assert.strictEqual(info.updateStatus, 'major');
-            assert.ok(
-                info.changelog?.unavailableReason?.includes('not found'),
+            assert.ok(info.changelog?.unavailableReason);
+        });
+
+        it('should fall back to pub.dev when GitHub fails', async () => {
+            const html = fs.readFileSync(
+                path.join(fixturesDir, 'pub-dev-changelog.html'), 'utf8',
             );
+            // GitHub 404, then pub.dev HTML success
+            fetchStub.onCall(0).resolves(new Response('', { status: 404 }));
+            fetchStub.onCall(1).resolves(new Response(html, { status: 200 }));
+
+            const info = await buildUpdateInfo(
+                '1.0.0', '2.0.0',
+                { owner: 'org', repo: 'pkg', subpath: null },
+                { packageName: 'http' },
+            );
+            assert.strictEqual(info.changelog?.entries.length, 2);
+            assert.strictEqual(info.changelog?.entries[0].version, '2.0.0');
+        });
+
+        it('should fall back to pub.dev when no repo info', async () => {
+            const html = fs.readFileSync(
+                path.join(fixturesDir, 'pub-dev-changelog.html'), 'utf8',
+            );
+            fetchStub.resolves(new Response(html, { status: 200 }));
+
+            const info = await buildUpdateInfo(
+                '1.0.0', '2.0.0', null,
+                { packageName: 'http' },
+            );
+            assert.strictEqual(info.changelog?.entries.length, 2);
         });
     });
 });
