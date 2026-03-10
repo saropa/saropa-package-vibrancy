@@ -1,3 +1,5 @@
+![Saropa Package Vibrancy](images/banner.png)
+
 # Saropa Package Vibrancy
 
 Analyze Flutter/Dart dependency health and community vibrancy directly in VS Code.
