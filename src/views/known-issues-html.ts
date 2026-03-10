@@ -75,7 +75,7 @@ function buildTable(issues: KnownIssue[]): string {
 
 function buildRow(issue: KnownIssue): string {
     const name = escapeHtml(issue.name);
-    const reason = escapeHtml(issue.reason);
+    const reason = issue.reason ? escapeHtml(issue.reason) : '';
     const replacement = issue.replacement
         ? escapeHtml(issue.replacement) : '';
     const migration = issue.migrationNotes
@@ -85,7 +85,7 @@ function buildRow(issue: KnownIssue): string {
         ? formatReplacement(issue.replacement) : '';
 
     const searchText = [
-        issue.name, issue.reason,
+        issue.name, issue.reason ?? '',
         issue.replacement ?? '', issue.migrationNotes ?? '',
     ].join(' ').toLowerCase();
 

@@ -4,7 +4,7 @@ import { findKnownIssue, allKnownIssues } from '../../scoring/known-issues';
 
 describe('known-issues', () => {
     it('should have unique names', () => {
-        const names = (knownIssuesData as Array<{ name: string }>).map(
+        const names = (knownIssuesData as { issues: Array<{ name: string }> }).issues.map(
             (e) => e.name,
         );
         const dupes = names.filter(
@@ -38,6 +38,19 @@ describe('known-issues', () => {
             assert.ok(name.length > 0, `empty name`);
             assert.ok(issue.status.length > 0, `${name}: missing status`);
         }
+    });
+
+    it('should find an active status package', () => {
+        const issue = findKnownIssue('http');
+        assert.ok(issue);
+        assert.strictEqual(issue.status, 'active');
+    });
+
+    it('should normalize N/A replacement to undefined', () => {
+        const issue = findKnownIssue('http');
+        assert.ok(issue);
+        assert.strictEqual(issue.replacement, undefined);
+        assert.strictEqual(issue.migrationNotes, undefined);
     });
 
     it('should have migrationNotes when replacement is present', () => {

@@ -34,7 +34,7 @@ describe('status-classifier', () => {
                 knownIssue: {
                     name: 'pkg', status: 'end_of_life',
                     reason: 'bad', as_of: '2024-01-01',
-                    replacement: null, migrationNotes: null,
+                    replacement: undefined, migrationNotes: undefined,
                 },
                 pubDev: null,
             });
