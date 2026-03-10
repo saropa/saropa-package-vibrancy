@@ -1,9 +1,16 @@
 import { GitHubMetrics } from '../types';
 import { CacheService } from './cache-service';
 
+/** GitHub REST API v3 base URL. */
 const GITHUB_API = 'https://api.github.com';
+
+/** Window for "recent" activity — issues/PRs closed within this period count. */
 const NINETY_DAYS_MS = 90 * 24 * 60 * 60 * 1000;
+
+/** Milliseconds in one day, used for recency calculations. */
 const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+
+/** Sentinel value when no issue/PR has ever been closed in the repo. */
 const NO_CLOSE_DAYS = 999;
 
 /** Extract owner/repo from a GitHub URL. */
