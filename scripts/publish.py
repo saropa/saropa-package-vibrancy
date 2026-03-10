@@ -17,7 +17,7 @@ import sys
 import time
 
 from modules.constants import C, ExitCode, PROJECT_ROOT
-from modules.display import dim, heading, info, ok, show_logo
+from modules.display import dim, heading, info, show_logo
 from modules.utils import is_version_tagged, read_package_version, run_step
 from modules.report import (
     close_publish_log,
@@ -43,6 +43,7 @@ from modules.checks import (
 from modules.checks_version import validate_version_changelog
 from modules.publish_steps import (
     check_gh_cli,
+    check_vsce_pat,
     confirm_publish,
     create_git_tag,
     create_github_release,
@@ -167,6 +168,8 @@ def _run_publish(
     heading("Step 9 - Credentials")
     if not run_step("GitHub CLI", check_gh_cli, results):
         return False
+    if not run_step("vsce PAT", check_vsce_pat, results):
+        return False
 
     if is_version_tagged(version):
         heading("Step 10 - Git Commit & Push")
@@ -206,7 +209,7 @@ def _save_and_show_report(
     print_timing(results)
     if report:
         rel = os.path.relpath(report, PROJECT_ROOT)
-        ok(f"Report: {C.WHITE}{rel}{C.RESET}")
+        info(f"Report: {C.WHITE}{rel}{C.RESET}")
 
 
 _STEP_EXIT_CODES = {
@@ -214,6 +217,7 @@ _STEP_EXIT_CODES = {
     "git": ExitCode.PREREQUISITE_FAILED,
     "vsce": ExitCode.PREREQUISITE_FAILED,
     "GitHub CLI": ExitCode.PREREQUISITE_FAILED,
+    "vsce PAT": ExitCode.PREREQUISITE_FAILED,
     "Working tree": ExitCode.WORKING_TREE_DIRTY,
     "Remote sync": ExitCode.REMOTE_SYNC_FAILED,
     "Dependencies": ExitCode.DEPENDENCY_FAILED,

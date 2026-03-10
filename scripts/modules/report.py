@@ -6,8 +6,8 @@ import sys
 import webbrowser
 from datetime import datetime
 
-from .constants import C, MARKETPLACE_URL, PROJECT_ROOT
-from .display import dim, ok
+from .constants import C, MARKETPLACE_URL, PROJECT_ROOT, REPO_URL
+from .display import dim, info
 from .utils import elapsed_str
 
 # ── Publish log (tee stdout to file) ────────────────────────
@@ -60,7 +60,7 @@ def close_publish_log() -> None:
     _original_stdout = None
     _log_file = None
     rel = os.path.relpath(path, PROJECT_ROOT)
-    ok(f"Publish log: {C.WHITE}{rel}{C.RESET}")
+    info(f"Publish log: {C.WHITE}{rel}{C.RESET}")
 
 
 def ensure_utf8_stdout() -> None:
@@ -128,12 +128,14 @@ def print_timing(results: list[tuple[str, bool, float]]) -> None:
 
 def print_success_banner(version: str) -> None:
     """Print success summary with links."""
+    release_url = f"{REPO_URL}/releases/tag/v{version}"
     print(f"""
   {C.GREEN}{'=' * 50}
   ✓ Published v{version} successfully!
   {'=' * 50}{C.RESET}
 
   Marketplace: {C.CYAN}{MARKETPLACE_URL}{C.RESET}
+  Release:     {C.CYAN}{release_url}{C.RESET}
 """)
     try:
         webbrowser.open(MARKETPLACE_URL)

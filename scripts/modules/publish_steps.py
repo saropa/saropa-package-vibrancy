@@ -9,13 +9,32 @@ from .utils import run
 
 
 def check_gh_cli() -> bool:
-    """Step 9: Verify GitHub CLI is authenticated."""
+    """Step 9a: Verify GitHub CLI is authenticated."""
     result = run("gh auth status")
     if result.returncode != 0:
         fail("GitHub CLI not authenticated — run: gh auth login")
         return False
     ok("GitHub CLI authenticated")
     return True
+
+
+def check_vsce_pat() -> bool:
+    """Step 9b: Verify vsce Personal Access Token is valid."""
+    result = run("npx vsce verify-pat saropa")
+    if result.returncode == 0:
+        ok("vsce PAT verified for publisher 'saropa'")
+        return True
+
+    fail("vsce PAT is missing or expired")
+    print(f"""
+  {C.YELLOW}To fix:{C.RESET}
+    1. Go to {C.CYAN}https://dev.azure.com/saropa/_usersSettings/tokens{C.RESET}
+    2. Create a PAT with scope: {C.WHITE}Marketplace > Manage{C.RESET}
+       (click "Show all scopes" to find it)
+    3. Run: {C.WHITE}npx vsce login saropa{C.RESET}
+    4. Paste the token when prompted
+""")
+    return False
 
 
 def confirm_publish(version: str) -> bool:
