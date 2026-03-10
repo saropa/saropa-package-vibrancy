@@ -13,6 +13,19 @@
   ],
   "mochaExplorer.timeout": 5000,
   "cSpell.words": [
-    "pubspec"
+    "prereqs",
+    "pubspec",
+    "Unsuppress"
+  ],
+  "cSpell.ignorePaths": [
+    "src/data/knownIssues.json"
+  ],
+  "json.schemas": [
+    {
+      "fileMatch": [
+        "**/knownIssues.json"
+      ],
+      "url": "./src/data/known_issues_schema.json"
+    }
   ]
 }

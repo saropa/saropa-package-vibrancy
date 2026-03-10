@@ -15,3 +15,8 @@ eslint.config.mjs
 **/*.ts
 coverage/**
 *.vsix
+PLAN.md
+CLAUDE.md
+MIGRATION_STATUS.md
+ABOUT_SAROPA.md
+reports/**
