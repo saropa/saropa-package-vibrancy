@@ -1,4 +1,18 @@
-import { VibrancyCategory, KnownIssue, PubDevPackageInfo } from '../types';
+import { VibrancyCategory, KnownIssue, PubDevPackageInfo, VibrancyResult } from '../types';
+
+/** Count results by vibrancy category. */
+export function countByCategory(results: readonly VibrancyResult[]) {
+    let vibrant = 0, quiet = 0, legacy = 0, eol = 0;
+    for (const r of results) {
+        switch (r.category) {
+            case 'vibrant': vibrant++; break;
+            case 'quiet': quiet++; break;
+            case 'legacy-locked': legacy++; break;
+            case 'end-of-life': eol++; break;
+        }
+    }
+    return { vibrant, quiet, legacy, eol };
+}
 
 /** Classify a package into a vibrancy category. */
 export function classifyStatus(params: {

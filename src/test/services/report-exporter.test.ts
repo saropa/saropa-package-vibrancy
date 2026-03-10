@@ -1,18 +1,7 @@
 import * as assert from 'assert';
 import { VibrancyResult, VibrancyCategory } from '../../types';
 import { ReportMetadata } from '../../services/report-exporter';
-
-/**
- * We can't call exportReports() directly because it depends on vscode.workspace.
- * Instead we test the pure logic that builds report content. Since buildMarkdownReport
- * and buildJsonReport are private, we re-implement the category counting and validate
- * the contract. If the functions are ever extracted, these tests transfer directly.
- *
- * For now, we test the public interface indirectly by verifying:
- * - category counting logic
- * - report metadata shape
- * - result-to-output mapping
- */
+import { countByCategory } from '../../scoring/status-classifier';
 
 function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
     return {
@@ -44,19 +33,6 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
         updateInfo: null,
         ...overrides,
     };
-}
-
-function countByCategory(results: VibrancyResult[]) {
-    let vibrant = 0, quiet = 0, legacy = 0, eol = 0;
-    for (const r of results) {
-        switch (r.category) {
-            case 'vibrant': vibrant++; break;
-            case 'quiet': quiet++; break;
-            case 'legacy-locked': legacy++; break;
-            case 'end-of-life': eol++; break;
-        }
-    }
-    return { vibrant, quiet, legacy, eol };
 }
 
 describe('report-exporter', () => {

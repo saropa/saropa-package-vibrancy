@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { VibrancyResult } from '../types';
-import { categoryLabel } from '../scoring/status-classifier';
+import { categoryLabel, countByCategory } from '../scoring/status-classifier';
 
 /**
  * Export scan results as timestamped markdown and JSON files
@@ -13,13 +13,15 @@ export async function exportReports(
     const folder = await resolveReportFolder();
     if (!folder) { return []; }
 
-    const timestamp = formatTimestamp(new Date());
+    const now = new Date();
+    const timestamp = formatTimestamp(now);
+    const isoTimestamp = now.toISOString();
     const written: string[] = [];
 
     const mdUri = vscode.Uri.joinPath(
         folder, `${timestamp}_saropa_vibrancy.md`,
     );
-    const mdContent = buildMarkdownReport(results, metadata);
+    const mdContent = buildMarkdownReport(results, metadata, isoTimestamp);
     await vscode.workspace.fs.writeFile(
         mdUri, Buffer.from(mdContent, 'utf-8'),
     );
@@ -28,7 +30,7 @@ export async function exportReports(
     const jsonUri = vscode.Uri.joinPath(
         folder, `${timestamp}_saropa_vibrancy.json`,
     );
-    const jsonContent = buildJsonReport(results, metadata);
+    const jsonContent = buildJsonReport(results, metadata, isoTimestamp);
     await vscode.workspace.fs.writeFile(
         jsonUri, Buffer.from(jsonContent, 'utf-8'),
     );
@@ -64,92 +66,94 @@ function formatTimestamp(date: Date): string {
     ].join('');
 }
 
-function countByCategory(results: VibrancyResult[]) {
-    let vibrant = 0, quiet = 0, legacy = 0, eol = 0;
-    for (const r of results) {
-        switch (r.category) {
-            case 'vibrant': vibrant++; break;
-            case 'quiet': quiet++; break;
-            case 'legacy-locked': legacy++; break;
-            case 'end-of-life': eol++; break;
-        }
-    }
-    return { vibrant, quiet, legacy, eol };
-}
-
 function buildMarkdownReport(
     results: VibrancyResult[],
     meta: ReportMetadata,
+    isoTimestamp: string,
 ): string {
     const counts = countByCategory(results);
-    const lines: string[] = [
-        '# Saropa Package Vibrancy Report',
-        '',
-        `| | |`,
-        `|---|---|`,
-        `| Timestamp | ${new Date().toISOString()} |`,
+    const lines = [
+        ...mdHeader(meta, isoTimestamp),
+        ...mdSummary(results.length, counts),
+        ...mdPackageRows(results),
+    ];
+    return lines.join('\n') + '\n';
+}
+
+function mdHeader(meta: ReportMetadata, isoTimestamp: string): string[] {
+    return [
+        '# Saropa Package Vibrancy Report', '',
+        `| | |`, `|---|---|`,
+        `| Timestamp | ${isoTimestamp} |`,
         `| Flutter | ${meta.flutterVersion} |`,
         `| Dart | ${meta.dartVersion} |`,
         `| Execution | ${meta.executionTimeMs}ms |`,
-        '',
-        '## Summary',
-        '',
+    ];
+}
+
+function mdSummary(
+    total: number,
+    counts: { vibrant: number; quiet: number; legacy: number; eol: number },
+): string[] {
+    return [
+        '', '## Summary', '',
         `| Total | Vibrant | Quiet | Legacy-Locked | End of Life |`,
         `|-------|---------|-------|---------------|-------------|`,
-        `| ${results.length} | ${counts.vibrant} | ${counts.quiet} | ${counts.legacy} | ${counts.eol} |`,
-        '',
-        '## Packages',
-        '',
+        `| ${total} | ${counts.vibrant} | ${counts.quiet} | ${counts.legacy} | ${counts.eol} |`,
+    ];
+}
+
+function mdPackageRows(results: VibrancyResult[]): string[] {
+    const rows = ['', '## Packages', '',
         '| Name | Version | Latest | Status | Score |',
         '|------|---------|--------|--------|-------|',
     ];
-
     for (const r of results) {
         const latest = r.pubDev?.latestVersion ?? '';
         const label = categoryLabel(r.category);
-        lines.push(
+        rows.push(
             `| ${r.package.name} | ${r.package.version} | ${latest} | ${label} | ${r.score} |`,
         );
     }
-
-    return lines.join('\n') + '\n';
+    return rows;
 }
 
 function buildJsonReport(
     results: VibrancyResult[],
     meta: ReportMetadata,
+    isoTimestamp: string,
 ): string {
     const counts = countByCategory(results);
-
     const report = {
         audit_metadata: {
-            timestamp: new Date().toISOString(),
+            timestamp: isoTimestamp,
             flutter_version: meta.flutterVersion,
             dart_version: meta.dartVersion,
             total_packages_scanned: results.length,
             execution_time_ms: meta.executionTimeMs,
         },
         summary: {
-            total: results.length,
-            vibrant: counts.vibrant,
-            quiet: counts.quiet,
-            legacy_locked: counts.legacy,
+            total: results.length, vibrant: counts.vibrant,
+            quiet: counts.quiet, legacy_locked: counts.legacy,
             end_of_life: counts.eol,
         },
-        packages: results.map(r => ({
-            name: r.package.name,
-            installed_version: r.package.version,
-            latest_version: r.pubDev?.latestVersion ?? '',
-            status: categoryLabel(r.category),
-            vibrancy_score: r.score,
-            pub_points: r.pubDev?.pubPoints ?? 0,
-            stars: r.github?.stars ?? 0,
-            is_discontinued: r.pubDev?.isDiscontinued ?? false,
-            is_unlisted: r.pubDev?.isUnlisted ?? false,
-            pub_dev_url: `https://pub.dev/packages/${r.package.name}`,
-            repository_url: r.pubDev?.repositoryUrl ?? '',
-        })),
+        packages: results.map(mapPackageToJson),
     };
-
     return JSON.stringify(report, null, 2) + '\n';
+}
+
+function mapPackageToJson(r: VibrancyResult) {
+    return {
+        name: r.package.name,
+        installed_version: r.package.version,
+        latest_version: r.pubDev?.latestVersion ?? '',
+        status: categoryLabel(r.category),
+        vibrancy_score: r.score,
+        pub_points: r.pubDev?.pubPoints ?? 0,
+        stars: r.github?.stars ?? 0,
+        is_discontinued: r.pubDev?.isDiscontinued ?? false,
+        is_unlisted: r.pubDev?.isUnlisted ?? false,
+        pub_dev_url: `https://pub.dev/packages/${r.package.name}`,
+        repository_url: r.pubDev?.repositoryUrl ?? '',
+    };
 }
