@@ -1,6 +1,8 @@
 """Project state validation: git, dependencies, build, quality."""
 
+import json
 import os
+from collections import Counter
 
 from .constants import C, MAX_FILE_LINES, PROJECT_ROOT
 from .display import ask_yn, fail, info, ok, warn
@@ -174,3 +176,39 @@ def check_file_line_limits() -> bool:
         ok(f"All .ts files within {MAX_FILE_LINES}-line limit")
 
     return True  # warnings, not blocking
+
+
+def check_known_issues_data() -> bool:
+    """Validate knownIssues.json: counts, duplicates, oldest as_of."""
+    json_path = os.path.join(
+        PROJECT_ROOT, "src", "data", "knownIssues.json",
+    )
+    with open(json_path, encoding="utf-8") as f:
+        data = json.load(f)
+    entries = data.get("issues", data) if isinstance(data, dict) else data
+
+    # Count by status
+    status_counts = Counter(e["status"] for e in entries)
+    info(f"Known issues: {len(entries)} entries")
+    for status, count in sorted(status_counts.items()):
+        print(f"           {status}: {C.WHITE}{count}{C.RESET}")
+
+    # Check duplicates
+    name_counts = Counter(e["name"] for e in entries)
+    dupes = {n: c for n, c in name_counts.items() if c > 1}
+    if dupes:
+        for name, count in sorted(dupes.items()):
+            fail(f"Duplicate: {name} ({count} occurrences)")
+        return False
+
+    ok("No duplicate names")
+
+    # Oldest as_of
+    dates = [e["as_of"] for e in entries if e.get("as_of")]
+    if dates:
+        oldest = min(dates)
+        info(f"Oldest as_of: {C.WHITE}{oldest}{C.RESET}")
+    else:
+        warn("No entries have as_of dates")
+
+    return True

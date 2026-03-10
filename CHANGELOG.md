@@ -13,6 +13,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Scoring penalty for flagged issues (5–15 points based on count)
 - Pub.dev-inspired gem icon for sidebar activity bar and marketplace listing
 - Copy as JSON context menu action on tree view package nodes
+- Expanded known issues database to 472 entries covering top 100 Flutter packages (active, maintenance, freemium, commercial statuses)
+- Publish pipeline reports known issues summary: entry counts by status, duplicate check, oldest as_of date
 
 ### Fixed
 

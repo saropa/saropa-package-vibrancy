@@ -70,6 +70,7 @@ STEP_EXIT_CODES = {
     "Type check": ExitCode.LINT_FAILED,
     "Tests": ExitCode.TEST_FAILED,
     "File line limits": ExitCode.QUALITY_FAILED,
+    "Known issues data": ExitCode.QUALITY_FAILED,
     "Version validation": ExitCode.VERSION_INVALID,
     "Package": ExitCode.PACKAGE_FAILED,
     "Git commit & push": ExitCode.GIT_FAILED,

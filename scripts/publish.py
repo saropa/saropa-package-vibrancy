@@ -37,6 +37,7 @@ from modules.checks_environment import (
 )
 from modules.checks_project import (
     check_file_line_limits,
+    check_known_issues_data,
     check_remote_sync,
     check_working_tree,
     ensure_dependencies,
@@ -162,6 +163,8 @@ def _run_build_and_validate(
 
     heading("Step 9 · Quality Checks")
     if not run_step("File line limits", check_file_line_limits, results):
+        return "", False
+    if not run_step("Known issues data", check_known_issues_data, results):
         return "", False
 
     heading("Step 10 · Version & CHANGELOG")
