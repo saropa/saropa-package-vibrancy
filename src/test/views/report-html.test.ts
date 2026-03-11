@@ -18,6 +18,7 @@ function makeResult(
             isUnlisted: false,
             pubPoints: 100,
             publisher: null,
+            license: null,
         },
         github: { stars: 42, openIssues: 5, closedIssuesLast90d: 3,
             mergedPrsLast90d: 2, avgCommentsPerIssue: 1.5,
@@ -32,6 +33,7 @@ function makeResult(
         updateInfo: null,
         archiveSizeBytes: null,
         bloatRating: null,
+        license: null,
         isUnused: false,
     };
 }

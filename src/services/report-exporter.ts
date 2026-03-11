@@ -115,8 +115,8 @@ function mdSummary(
 
 function mdPackageRows(results: VibrancyResult[]): string[] {
     const rows = ['', '## Packages', '',
-        '| Name | Version | Latest | Status | Score | Size |',
-        '|------|---------|--------|--------|-------|------|',
+        '| Name | Version | Latest | Status | Score | License | Size |',
+        '|------|---------|--------|--------|-------|---------|------|',
     ];
     for (const r of results) {
         const latest = r.pubDev?.latestVersion ?? '';
@@ -124,8 +124,9 @@ function mdPackageRows(results: VibrancyResult[]): string[] {
         const displayScore = Math.round(r.score / 10);
         const size = r.archiveSizeBytes !== null
             ? formatSizeMB(r.archiveSizeBytes) : '—';
+        const license = r.license ?? '—';
         rows.push(
-            `| ${r.package.name} | ${r.package.version} | ${latest} | ${label} | ${displayScore}/10 | ${size} |`,
+            `| ${r.package.name} | ${r.package.version} | ${latest} | ${label} | ${displayScore}/10 | ${license} | ${size} |`,
         );
     }
     return rows;
@@ -168,6 +169,7 @@ function mapPackageToJson(r: VibrancyResult) {
         is_unlisted: r.pubDev?.isUnlisted ?? false,
         pub_dev_url: `https://pub.dev/packages/${r.package.name}`,
         repository_url: r.pubDev?.repositoryUrl ?? '',
+        license: r.license,
         archive_size_bytes: r.archiveSizeBytes,
         bloat_rating: r.bloatRating,
     };

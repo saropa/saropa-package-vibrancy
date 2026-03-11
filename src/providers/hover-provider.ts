@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { VibrancyResult, UpdateInfo } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
+import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
 
 export class VibrancyHoverProvider implements vscode.HoverProvider {
     private _results = new Map<string, VibrancyResult>();
@@ -47,6 +48,13 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
     if (result.isUnused) {
         md.appendMarkdown(
             `| Status | **Unused** — no imports detected |\n`,
+        );
+    }
+
+    if (result.license) {
+        const tier = classifyLicense(result.license);
+        md.appendMarkdown(
+            `| License | ${licenseEmoji(tier)} ${result.license} |\n`,
         );
     }
 

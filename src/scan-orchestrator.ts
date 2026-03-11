@@ -87,8 +87,9 @@ export async function analyzePackage(
 
     return {
         package: dep, pubDev: pubDevWithPoints, github, knownIssue,
-        ...scores, category, updateInfo, archiveSizeBytes, bloatRating,
-        isUnused: false,
+        ...scores, category, updateInfo,
+        license: pubDevWithPoints?.license ?? null,
+        archiveSizeBytes, bloatRating, isUnused: false,
     };
 }
 

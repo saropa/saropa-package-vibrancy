@@ -50,6 +50,7 @@ describe('status-classifier', () => {
                     repositoryUrl: null, isDiscontinued: true, isUnlisted: false,
                     pubPoints: 100,
                     publisher: null,
+                    license: null,
                 },
             });
             assert.strictEqual(cat, 'end-of-life');

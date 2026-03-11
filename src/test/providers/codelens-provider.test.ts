@@ -21,6 +21,7 @@ function makeResult(
         updateInfo: null,
         archiveSizeBytes: null,
         bloatRating: null,
+        license: null,
         isUnused: false,
         ...overrides,
     };

@@ -61,6 +61,7 @@ function buildReportTable(results: VibrancyResult[]): string {
             <th data-col="published">Published<span class="sort-arrow"></span></th>
             <th data-col="stars">Stars<span class="sort-arrow"></span></th>
             <th data-col="size">Size<span class="sort-arrow"></span></th>
+            <th data-col="license">License<span class="sort-arrow"></span></th>
             <th data-col="update">Update<span class="sort-arrow"></span></th>
             <th data-col="status">Status<span class="sort-arrow"></span></th>
         </tr></thead>
@@ -93,6 +94,7 @@ function buildRow(r: VibrancyResult): string {
         data-score="${r.score}" data-category="${r.category}"
         data-published="${date}" data-stars="${stars}"
         data-size="${r.archiveSizeBytes ?? 0}"
+        data-license="${escapeHtml(r.license ?? '')}"
         data-update="${r.updateInfo?.updateStatus ?? 'unknown'}"
         data-status="${r.isUnused ? 'unused' : 'ok'}">
         <td><a href="${url}">${name}</a></td>
@@ -102,6 +104,7 @@ function buildRow(r: VibrancyResult): string {
         <td>${date}</td>
         <td>${stars}</td>
         <td>${sizeText}</td>
+        <td>${escapeHtml(r.license ?? '—')}</td>
         <td class="${updateClass}">${updateText}</td>
         <td>${r.isUnused ? '<span class="badge-unused">Unused</span>' : '—'}</td>
     </tr>`;

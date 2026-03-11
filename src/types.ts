@@ -22,6 +22,7 @@ export interface PubDevPackageInfo {
     readonly isUnlisted: boolean;
     readonly pubPoints: number;
     readonly publisher: string | null;
+    readonly license: string | null;
 }
 
 /** A GitHub issue flagged as high-signal for compatibility/deprecation. */
@@ -94,6 +95,7 @@ export interface VibrancyResult {
     readonly popularity: number;
     readonly publisherTrust: number;
     readonly updateInfo: UpdateInfo | null;
+    readonly license: string | null;
     readonly archiveSizeBytes: number | null;
     readonly bloatRating: number | null;
     readonly isUnused: boolean;

@@ -40,6 +40,7 @@ export async function fetchPackageInfo(
             isUnlisted: json.isUnlisted ?? false,
             pubPoints: 0,
             publisher: null,
+            license: pubspec.license ?? null,
         };
 
         const archiveUrl = latest.archive_url ?? null;

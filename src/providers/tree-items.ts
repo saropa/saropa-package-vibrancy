@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { VibrancyResult, VibrancyCategory, UpdateInfo } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
+import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
 
 function categoryColor(cat: VibrancyCategory): vscode.ThemeColor {
     switch (cat) {
@@ -142,6 +143,13 @@ function buildVersionGroup(result: VibrancyResult): GroupItem {
                 versionUrl,
             ));
         }
+    }
+    if (result.license) {
+        const tier = classifyLicense(result.license);
+        const emoji = licenseEmoji(tier);
+        items.push(new DetailItem(
+            `${emoji} License`, result.license,
+        ));
     }
     return new GroupItem('📦 Version', items);
 }

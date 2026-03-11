@@ -11,7 +11,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         category: score >= 70 ? 'vibrant' : 'quiet',
         resolutionVelocity: 0, engagementLevel: 0, popularity: 0,
         publisherTrust: 0, updateInfo: null,
-        archiveSizeBytes: null, bloatRating: null, isUnused: false,
+        archiveSizeBytes: null, bloatRating: null, license: null, isUnused: false,
     };
 }
 
@@ -20,7 +20,7 @@ function stubPubDev(repoUrl: string | null = null): PubDevPackageInfo {
         name: 'http', latestVersion: '2.0.0',
         publishedDate: '2025-01-01T00:00:00Z',
         repositoryUrl: repoUrl, isDiscontinued: false,
-        isUnlisted: false, pubPoints: 100, publisher: null,
+        isUnlisted: false, pubPoints: 100, publisher: null, license: null,
     };
 }
 
