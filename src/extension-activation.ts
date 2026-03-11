@@ -15,6 +15,8 @@ import { countByCategory } from './scoring/status-classifier';
 import { registerTreeCommands } from './providers/tree-commands';
 import { registerUpgradeCommand } from './providers/upgrade-command';
 import { readScanConfig, scanPackages, buildScanMeta, ParsedDeps, findAndParseDeps } from './scan-helpers';
+import { scanDartImports } from './services/import-scanner';
+import { detectUnused } from './scoring/unused-detector';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
@@ -206,8 +208,19 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             );
             logger.info(`Scan started — ${deps.length} packages`);
 
-            const results = await scanPackages(
+            const rawResults = await scanPackages(
                 deps, targets.cache, scanConfig, progress,
+            );
+
+            progress.report({ message: 'Scanning imports...' });
+            const workspaceRoot = vscode.Uri.joinPath(parsed.yamlUri, '..');
+            const imported = await scanDartImports(workspaceRoot);
+            const unusedNames = new Set(detectUnused(
+                deps.map(d => d.name), imported,
+            ));
+            const results = rawResults.map(r =>
+                unusedNames.has(r.package.name)
+                    ? { ...r, isUnused: true } : r,
             );
 
             latestResults = results;

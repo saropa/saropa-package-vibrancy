@@ -47,6 +47,12 @@ export function getReportStyles(): string {
         .update-minor { color: var(--vscode-editorWarning-foreground); }
         .update-patch { color: var(--vscode-editorInfo-foreground); }
         .updates .count { color: var(--vscode-textLink-foreground); }
+        .unused .count { color: var(--vscode-editorWarning-foreground); }
+        .badge-unused {
+            background: var(--vscode-editorWarning-foreground);
+            color: var(--vscode-editor-background);
+            padding: 2px 6px; border-radius: 3px; font-size: 0.85em;
+        }
         .caveat { font-size: 0.8em; opacity: 0.6; margin-top: 4px; }
     `;
 }

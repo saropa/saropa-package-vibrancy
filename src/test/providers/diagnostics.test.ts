@@ -29,6 +29,7 @@ function makeResult(
         updateInfo: null,
         archiveSizeBytes: null,
         bloatRating: null,
+        isUnused: false,
     };
 }
 
@@ -138,6 +139,32 @@ describe('VibrancyDiagnostics', () => {
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
         const diags = collection.get(uri)!;
         assert.strictEqual(diags[0].source, 'Saropa Package Vibrancy');
+    });
+
+    it('should create Hint diagnostic for unused packages', () => {
+        const result: VibrancyResult = {
+            ...makeResult('http', 80, 'vibrant'),
+            isUnused: true,
+        };
+        diagnostics.update(uri, PUBSPEC_CONTENT, [result]);
+        const diags = collection.get(uri)!;
+        assert.strictEqual(diags.length, 1);
+        assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Hint);
+        assert.strictEqual(diags[0].code, 'unused-dependency');
+        assert.ok(diags[0].message.includes('Unused dependency'));
+        assert.ok(diags[0].message.includes('http'));
+    });
+
+    it('should add unused diagnostic alongside category diagnostic', () => {
+        const result: VibrancyResult = {
+            ...makeResult('old_pkg', 5, 'end-of-life'),
+            isUnused: true,
+        };
+        diagnostics.update(uri, PUBSPEC_CONTENT, [result]);
+        const diags = collection.get(uri)!;
+        assert.strictEqual(diags.length, 2);
+        assert.strictEqual(diags[0].code, 'end-of-life');
+        assert.strictEqual(diags[1].code, 'unused-dependency');
     });
 
     it('should clear diagnostics', () => {

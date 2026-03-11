@@ -120,6 +120,7 @@ export const workspace: Record<string, any> = {
     applyEdit: async () => true,
     fs: {
         readFile: async () => new Uint8Array(),
+        writeFile: async () => { /* no-op */ },
     },
 };
 
@@ -161,7 +162,18 @@ export const env = {
 export const Uri = {
     parse: (v: string) => ({ toString: () => v, scheme: 'http', path: v, fsPath: v }),
     file: (p: string) => ({ toString: () => p, scheme: 'file', path: p, fsPath: p }),
+    joinPath: (base: any, ...segments: string[]) => {
+        const joined = [base.fsPath ?? base.path, ...segments].join('/');
+        return { toString: () => joined, scheme: 'file', path: joined, fsPath: joined };
+    },
 };
+
+export class RelativePattern {
+    constructor(
+        public readonly base: any,
+        public readonly pattern: string,
+    ) {}
+}
 
 export enum ViewColumn {
     Active = -1,

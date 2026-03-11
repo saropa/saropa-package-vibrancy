@@ -5,7 +5,7 @@ import {
     clipboardMock, envMock, messageMock, resetMocks, workspace,
 } from '../vscode-mock';
 import { registerTreeCommands } from '../../providers/tree-commands';
-import { PackageItem } from '../../providers/tree-items';
+import { DetailItem, PackageItem } from '../../providers/tree-items';
 import { VibrancyResult } from '../../types';
 
 function makeResult(
@@ -30,6 +30,7 @@ function makeResult(
         } : null,
         archiveSizeBytes: null,
         bloatRating: null,
+        isUnused: false,
     };
 }
 
@@ -172,6 +173,40 @@ describe('tree-commands', () => {
                 'saropaPackageVibrancy.unsuppressPackage', item,
             );
             assert.deepStrictEqual(updatedValue, ['bloc']);
+        });
+    });
+
+    describe('openUrl', () => {
+        it('should open the given URL in external browser', async () => {
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.openUrl',
+                'https://pub.dev/packages/http/changelog#253',
+            );
+            assert.strictEqual(envMock.openedUrls.length, 1);
+            assert.ok(envMock.openedUrls[0].includes('changelog#253'));
+        });
+
+        it('should accept a DetailItem with url property', async () => {
+            const item = new DetailItem('Latest', '2.0.0', 'https://pub.dev/packages/http/versions/2.0.0');
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.openUrl', item,
+            );
+            assert.strictEqual(envMock.openedUrls.length, 1);
+            assert.ok(envMock.openedUrls[0].includes('versions/2.0.0'));
+        });
+
+        it('should do nothing when URL is empty', async () => {
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.openUrl', '',
+            );
+            assert.strictEqual(envMock.openedUrls.length, 0);
+        });
+
+        it('should do nothing when argument is undefined', async () => {
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.openUrl', undefined,
+            );
+            assert.strictEqual(envMock.openedUrls.length, 0);
         });
     });
 

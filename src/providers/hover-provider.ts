@@ -44,6 +44,11 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
     md.appendMarkdown(
         `| Category | ${categoryLabel(result.category)} |\n`,
     );
+    if (result.isUnused) {
+        md.appendMarkdown(
+            `| Status | **Unused** — no imports detected |\n`,
+        );
+    }
 
     if (result.pubDev) {
         const date = result.pubDev.publishedDate.split('T')[0];

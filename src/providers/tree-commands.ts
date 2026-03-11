@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { findPackageRange } from '../services/pubspec-parser';
-import { PackageItem } from './tree-items';
+import { DetailItem, PackageItem } from './tree-items';
 
 /** Register tree-item commands (navigate, open, update, copy, suppress). */
 export function registerTreeCommands(
@@ -13,6 +13,9 @@ export function registerTreeCommands(
         vscode.commands.registerCommand('saropaPackageVibrancy.copyAsJson', copyAsJson),
         vscode.commands.registerCommand('saropaPackageVibrancy.suppressPackage', suppressPackage),
         vscode.commands.registerCommand('saropaPackageVibrancy.unsuppressPackage', unsuppressPackage),
+        vscode.commands.registerCommand('saropaPackageVibrancy.openUrl', openUrl),
+        vscode.commands.registerCommand('saropaPackageVibrancy.commentOutUnused', commentOutUnused),
+        vscode.commands.registerCommand('saropaPackageVibrancy.deleteUnused', deleteUnused),
     );
 }
 
@@ -33,6 +36,14 @@ async function goToPackage(packageName: string): Promise<void> {
 /** Open a package's pub.dev page in the browser. */
 async function openOnPubDev(item: PackageItem): Promise<void> {
     const url = `https://pub.dev/packages/${item.result.package.name}`;
+    await vscode.env.openExternal(vscode.Uri.parse(url));
+}
+
+/** Open a URL in the default browser (from click or inline action). */
+async function openUrl(urlOrItem: string | DetailItem): Promise<void> {
+    if (!urlOrItem) { return; }
+    const url = typeof urlOrItem === 'string' ? urlOrItem : urlOrItem.url;
+    if (!url) { return; }
     await vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
@@ -126,6 +137,84 @@ export function readVersionConstraint(
         if (match) { return match[1].trim(); }
     }
     return null;
+}
+
+/** Comment out an unused dependency in pubspec.yaml. */
+async function commentOutUnused(item: PackageItem): Promise<void> {
+    const yamlUri = await findPubspecYaml();
+    if (!yamlUri) { return; }
+
+    const doc = await vscode.workspace.openTextDocument(yamlUri);
+    const lines = findPackageLines(doc, item.result.package.name);
+    if (!lines) { return; }
+
+    const wsEdit = new vscode.WorkspaceEdit();
+    for (let i = lines.start; i < lines.end; i++) {
+        wsEdit.insert(yamlUri, new vscode.Position(i, 0), '# ');
+    }
+    await vscode.workspace.applyEdit(wsEdit);
+    await doc.save();
+}
+
+/** Delete an unused dependency from pubspec.yaml, creating a backup. */
+async function deleteUnused(item: PackageItem): Promise<void> {
+    const yamlUri = await findPubspecYaml();
+    if (!yamlUri) { return; }
+
+    const doc = await vscode.workspace.openTextDocument(yamlUri);
+    const lines = findPackageLines(doc, item.result.package.name);
+    if (!lines) { return; }
+
+    const backupUri = buildBackupUri(yamlUri);
+    const content = new TextEncoder().encode(doc.getText());
+    await vscode.workspace.fs.writeFile(backupUri, content);
+
+    const wsEdit = new vscode.WorkspaceEdit();
+    const range = new vscode.Range(
+        new vscode.Position(lines.start, 0),
+        new vscode.Position(lines.end, 0),
+    );
+    wsEdit.delete(yamlUri, range);
+    await vscode.workspace.applyEdit(wsEdit);
+    await doc.save();
+
+    const backupName = backupUri.path.split('/').pop();
+    vscode.window.showInformationMessage(
+        `Deleted ${item.result.package.name} from pubspec.yaml (backup: ${backupName})`,
+    );
+}
+
+/**
+ * Find the line range of a package entry in pubspec.yaml.
+ * Includes the header line and any continuation lines (deeper indent).
+ */
+export function findPackageLines(
+    doc: vscode.TextDocument,
+    packageName: string,
+): { start: number; end: number } | null {
+    const header = new RegExp(`^\\s{2}${packageName}\\s*:`);
+    for (let i = 0; i < doc.lineCount; i++) {
+        if (!header.test(doc.lineAt(i).text)) { continue; }
+        let end = i + 1;
+        while (end < doc.lineCount) {
+            const text = doc.lineAt(end).text;
+            if (text.trim() === '' || /^\s{4,}\S/.test(text)) {
+                end++;
+            } else {
+                break;
+            }
+        }
+        return { start: i, end };
+    }
+    return null;
+}
+
+function buildBackupUri(yamlUri: vscode.Uri): vscode.Uri {
+    const now = new Date();
+    const pad = (n: number) => String(n).padStart(2, '0');
+    const stamp = `${now.getFullYear()}${pad(now.getMonth() + 1)}${pad(now.getDate())}`
+        + `_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+    return vscode.Uri.joinPath(yamlUri, '..', `pubspec.yaml.bak.${stamp}`);
 }
 
 /** Find the first pubspec.yaml in the workspace. */

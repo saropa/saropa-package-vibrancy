@@ -40,6 +40,16 @@ export class VibrancyDiagnostics {
                 diagnostics.push(diag);
             }
 
+            if (result.isUnused) {
+                const unusedMsg = `Unused dependency — no imports found for ${result.package.name} in lib/, bin/, or test/`;
+                const unusedDiag = new vscode.Diagnostic(
+                    vscodeRange, unusedMsg, vscode.DiagnosticSeverity.Hint,
+                );
+                unusedDiag.source = 'Saropa Package Vibrancy';
+                unusedDiag.code = 'unused-dependency';
+                diagnostics.push(unusedDiag);
+            }
+
             // Vibrant packages skip the vibrancy diagnostic above,
             // so show a standalone Hint when an update is available.
             if (result.category === 'vibrant'

@@ -46,6 +46,7 @@ function buildReportSummary(results: VibrancyResult[]): string {
         <div class="summary-card legacy"><div class="count">${counts.legacy}</div><div class="label">Legacy</div></div>
         <div class="summary-card eol"><div class="count">${counts.eol}</div><div class="label">End of Life</div></div>
         <div class="summary-card updates"><div class="count">${updates}</div><div class="label">Updates</div></div>
+        <div class="summary-card unused"><div class="count">${results.filter(r => r.isUnused).length}</div><div class="label">Unused</div></div>
     </div>
     <p class="caveat">*Archive sizes before tree shaking. Actual app size will be smaller.</p>`;
 }
@@ -61,6 +62,7 @@ function buildReportTable(results: VibrancyResult[]): string {
             <th data-col="stars">Stars<span class="sort-arrow"></span></th>
             <th data-col="size">Size<span class="sort-arrow"></span></th>
             <th data-col="update">Update<span class="sort-arrow"></span></th>
+            <th data-col="status">Status<span class="sort-arrow"></span></th>
         </tr></thead>
         <tbody id="pkg-body">
             ${results.map(buildRow).join('\n')}
@@ -91,7 +93,8 @@ function buildRow(r: VibrancyResult): string {
         data-score="${r.score}" data-category="${r.category}"
         data-published="${date}" data-stars="${stars}"
         data-size="${r.archiveSizeBytes ?? 0}"
-        data-update="${r.updateInfo?.updateStatus ?? 'unknown'}">
+        data-update="${r.updateInfo?.updateStatus ?? 'unknown'}"
+        data-status="${r.isUnused ? 'unused' : 'ok'}">
         <td><a href="${url}">${name}</a></td>
         <td>${version}</td>
         <td>${Math.round(r.score / 10)}/10</td>
@@ -100,6 +103,7 @@ function buildRow(r: VibrancyResult): string {
         <td>${stars}</td>
         <td>${sizeText}</td>
         <td class="${updateClass}">${updateText}</td>
+        <td>${r.isUnused ? '<span class="badge-unused">Unused</span>' : '—'}</td>
     </tr>`;
 }
 

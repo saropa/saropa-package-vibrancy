@@ -42,8 +42,9 @@ export class PackageItem extends vscode.TreeItem {
             categoryIcon(result.category),
             categoryColor(result.category),
         );
-        this.contextValue = hasUpdate
-            ? 'vibrancyPackageUpdatable' : 'vibrancyPackage';
+        const base = result.isUnused
+            ? 'vibrancyPackageUnused' : 'vibrancyPackage';
+        this.contextValue = hasUpdate ? base + 'Updatable' : base;
         this.command = {
             command: 'saropaPackageVibrancy.goToPackage',
             title: 'Go to pubspec.yaml',
@@ -79,9 +80,21 @@ export class SuppressedPackageItem extends PackageItem {
 }
 
 export class DetailItem extends vscode.TreeItem {
-    constructor(label: string, detail: string) {
+    readonly url?: string;
+
+    constructor(label: string, detail: string, url?: string) {
         super(label, vscode.TreeItemCollapsibleState.None);
         this.description = detail;
+        if (url) {
+            this.url = url;
+            this.command = {
+                command: 'saropaPackageVibrancy.openUrl',
+                title: 'Open Link',
+                arguments: [url],
+            };
+            this.tooltip = url;
+            this.contextValue = 'vibrancyDetailLink';
+        }
     }
 }
 
@@ -119,10 +132,14 @@ function buildVersionGroup(result: VibrancyResult): GroupItem {
         new DetailItem('Version', result.package.constraint),
     ];
     if (result.pubDev) {
-        items.push(new DetailItem('Latest', result.pubDev.latestVersion));
+        const name = result.package.name;
+        const ver = result.pubDev.latestVersion;
+        const versionUrl = `https://pub.dev/packages/${name}/versions/${ver}`;
+        items.push(new DetailItem('Latest', ver, versionUrl));
         if (result.pubDev.publishedDate) {
             items.push(new DetailItem(
                 'Published', result.pubDev.publishedDate.split('T')[0],
+                versionUrl,
             ));
         }
     }
@@ -142,13 +159,14 @@ function buildUpdateGroup(result: VibrancyResult): GroupItem | null {
             `(${ui.updateStatus})`,
         ),
     ];
-    appendChangelogItems(items, ui);
+    appendChangelogItems(items, ui, result.package.name);
     return new GroupItem('⬆️ Update', items);
 }
 
 function appendChangelogItems(
     items: DetailItem[],
     ui: UpdateInfo,
+    packageName: string,
 ): void {
     if (ui.changelog?.entries.length) {
         for (const entry of ui.changelog.entries) {
@@ -159,13 +177,16 @@ function appendChangelogItems(
             const preview = firstLine.length > 60
                 ? firstLine.substring(0, 57) + '...'
                 : firstLine;
+            const anchor = entry.version.replace(/\./g, '');
+            const url = `https://pub.dev/packages/${packageName}/changelog#${anchor}`;
             items.push(new DetailItem(
-                `v${entry.version}${dateStr}`, preview,
+                `v${entry.version}${dateStr}`, preview, url,
             ));
         }
         if (ui.changelog.truncated) {
+            const url = `https://pub.dev/packages/${packageName}/changelog`;
             items.push(new DetailItem(
-                '...', 'More entries available on GitHub',
+                '...', 'More entries available on GitHub', url,
             ));
         }
     } else if (ui.changelog?.unavailableReason) {
@@ -177,9 +198,16 @@ function appendChangelogItems(
 
 function buildCommunityGroup(result: VibrancyResult): GroupItem | null {
     if (!result.github) { return null; }
+    const repoUrl = result.pubDev?.repositoryUrl?.replace(/\/+$/, '');
     return new GroupItem('📊 Community', [
-        new DetailItem('⭐ Stars', `${result.github.stars}`),
-        new DetailItem('Open Issues', `${result.github.openIssues}`),
+        new DetailItem(
+            '⭐ Stars', `${result.github.stars}`,
+            repoUrl ?? undefined,
+        ),
+        new DetailItem(
+            'Open Issues', `${result.github.openIssues}`,
+            repoUrl ? `${repoUrl}/issues` : undefined,
+        ),
     ]);
 }
 
@@ -199,6 +227,11 @@ function buildSizeGroup(result: VibrancyResult): GroupItem | null {
 
 function buildAlertsGroup(result: VibrancyResult): GroupItem | null {
     const items: DetailItem[] = [];
+    if (result.isUnused) {
+        items.push(new DetailItem(
+            '⚠️ Unused', 'No imports found in lib/, bin/, or test/',
+        ));
+    }
     appendFlaggedItems(items, result);
     if (result.knownIssue?.reason) {
         items.push(new DetailItem('❌ Known Issue', result.knownIssue.reason));
@@ -221,6 +254,7 @@ function appendFlaggedItems(
             ? issue.title.substring(0, 47) + '...' : issue.title;
         items.push(new DetailItem(
             `  #${issue.number}`, `${title} (${issue.matchedSignals[0]})`,
+            issue.url || undefined,
         ));
     }
 }

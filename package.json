@@ -116,6 +116,21 @@
         "command": "saropaPackageVibrancy.unsuppressPackage",
         "title": "Unsuppress Package",
         "icon": "$(eye)"
+      },
+      {
+        "command": "saropaPackageVibrancy.openUrl",
+        "title": "Open Link",
+        "icon": "$(link-external)"
+      },
+      {
+        "command": "saropaPackageVibrancy.commentOutUnused",
+        "title": "Comment Out Unused Dependency",
+        "icon": "$(comment)"
+      },
+      {
+        "command": "saropaPackageVibrancy.deleteUnused",
+        "title": "Delete Unused Dependency (with backup)",
+        "icon": "$(trash)"
       }
     ],
     "menus": {
@@ -171,6 +186,21 @@
           "command": "saropaPackageVibrancy.unsuppressPackage",
           "when": "viewItem =~ /Suppressed/",
           "group": "2_suppress@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.openUrl",
+          "when": "viewItem == vibrancyDetailLink",
+          "group": "inline"
+        },
+        {
+          "command": "saropaPackageVibrancy.commentOutUnused",
+          "when": "viewItem =~ /vibrancyPackageUnused/",
+          "group": "3_unused@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.deleteUnused",
+          "when": "viewItem =~ /vibrancyPackageUnused/",
+          "group": "3_unused@2"
         }
       ]
     },
