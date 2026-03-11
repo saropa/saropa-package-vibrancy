@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
 
+## [Unreleased]
+
+### Changed
+
+- Enriched About panel with full company profile, consumer apps, developer ecosystem, social links, and company details from ABOUT_SAROPA.md
+
+---
+
 ## [0.1.2]
 
 ### Added
@@ -17,6 +25,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Redesigned extension and sidebar icons to match Saropa family style (cream background, gem hexagon, centered pulse line, status pills)
+
+---
 
 ## [0.1.1]
 
