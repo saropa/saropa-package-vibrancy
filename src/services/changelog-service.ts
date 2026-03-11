@@ -30,6 +30,38 @@ function isGreaterThan(a: SemverParts, b: SemverParts): boolean {
     return a.patch > b.patch;
 }
 
+function isGreaterOrEqual(a: SemverParts, b: SemverParts): boolean {
+    return !isGreaterThan(b, a);
+}
+
+/** Check if a Dart pub version constraint allows the given version. */
+export function constraintAllowsVersion(
+    constraint: string,
+    version: string,
+): boolean {
+    if (constraint === 'any') { return true; }
+    const v = parseSemver(version);
+    if (!v) { return false; }
+
+    const caretMatch = constraint.match(/^\^(\d+\.\d+\.\d+)/);
+    if (caretMatch) {
+        return caretAllows(parseSemver(caretMatch[1])!, v);
+    }
+    return false;
+}
+
+function caretAllows(base: SemverParts, target: SemverParts): boolean {
+    if (!isGreaterOrEqual(target, base)) { return false; }
+    if (base.major > 0) {
+        return target.major === base.major;
+    }
+    if (base.minor > 0) {
+        return target.major === 0 && target.minor === base.minor;
+    }
+    return target.major === 0 && target.minor === 0
+        && target.patch === base.patch;
+}
+
 /** Compare two semver strings and return the update status. */
 export function compareVersions(
     current: string,
@@ -196,10 +228,14 @@ export function parseChangelog(
 export async function buildUpdateInfo(
     currentVersion: string,
     latestVersion: string,
+    constraint: string,
     repoInfo: { owner: string; repo: string; subpath: string | null } | null,
     params?: { token?: string; cache?: CacheService; packageName?: string },
 ): Promise<UpdateInfo> {
-    const updateStatus = compareVersions(currentVersion, latestVersion);
+    const constraintCovers = constraintAllowsVersion(constraint, latestVersion);
+    const updateStatus = constraintCovers
+        ? 'up-to-date' as UpdateStatus
+        : compareVersions(currentVersion, latestVersion);
 
     if (updateStatus === 'up-to-date') {
         return { currentVersion, latestVersion, updateStatus, changelog: null };

@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
     compareVersions,
+    constraintAllowsVersion,
     extractRepoSubpath,
     parseChangelog,
     fetchChangelog,
@@ -40,6 +41,49 @@ describe('changelog-service', () => {
 
         it('should handle versions with pre-release suffixes', () => {
             assert.strictEqual(compareVersions('1.0.0-beta.1', '1.0.0'), 'up-to-date');
+        });
+    });
+
+    describe('constraintAllowsVersion', () => {
+        it('should allow minor bump within caret range', () => {
+            assert.strictEqual(constraintAllowsVersion('^1.2.3', '1.3.0'), true);
+        });
+
+        it('should allow patch bump within caret range', () => {
+            assert.strictEqual(constraintAllowsVersion('^1.2.3', '1.2.4'), true);
+        });
+
+        it('should allow exact version match', () => {
+            assert.strictEqual(constraintAllowsVersion('^1.2.3', '1.2.3'), true);
+        });
+
+        it('should reject next major version', () => {
+            assert.strictEqual(constraintAllowsVersion('^1.2.3', '2.0.0'), false);
+        });
+
+        it('should reject version below constraint', () => {
+            assert.strictEqual(constraintAllowsVersion('^1.2.3', '1.2.2'), false);
+        });
+
+        it('should handle ^0.x.y caret (minor is ceiling)', () => {
+            assert.strictEqual(constraintAllowsVersion('^0.5.0', '0.5.1'), true);
+            assert.strictEqual(constraintAllowsVersion('^0.5.0', '0.6.0'), false);
+        });
+
+        it('should allow any version for "any" constraint', () => {
+            assert.strictEqual(constraintAllowsVersion('any', '99.0.0'), true);
+        });
+
+        it('should return false for unparseable constraint', () => {
+            assert.strictEqual(constraintAllowsVersion('>=1.0.0 <2.0.0', '1.5.0'), false);
+        });
+
+        it('should return false for unparseable version', () => {
+            assert.strictEqual(constraintAllowsVersion('^1.0.0', 'not-a-version'), false);
+        });
+
+        it('should handle real-world constraint like ^8.0.11 with 8.1.0', () => {
+            assert.strictEqual(constraintAllowsVersion('^8.0.11', '8.1.0'), true);
         });
     });
 
@@ -216,14 +260,21 @@ describe('changelog-service', () => {
         });
 
         it('should return up-to-date with no changelog when current', async () => {
-            const info = await buildUpdateInfo('1.0.0', '1.0.0', null);
+            const info = await buildUpdateInfo('1.0.0', '1.0.0', '^1.0.0', null);
+            assert.strictEqual(info.updateStatus, 'up-to-date');
+            assert.strictEqual(info.changelog, null);
+            assert.strictEqual(fetchStub.callCount, 0);
+        });
+
+        it('should return up-to-date when constraint covers latest', async () => {
+            const info = await buildUpdateInfo('8.0.11', '8.1.0', '^8.0.11', null);
             assert.strictEqual(info.updateStatus, 'up-to-date');
             assert.strictEqual(info.changelog, null);
             assert.strictEqual(fetchStub.callCount, 0);
         });
 
         it('should set unavailableReason when no repo and no packageName', async () => {
-            const info = await buildUpdateInfo('1.0.0', '2.0.0', null);
+            const info = await buildUpdateInfo('1.0.0', '2.0.0', '^1.0.0', null);
             assert.strictEqual(info.updateStatus, 'major');
             assert.ok(info.changelog?.unavailableReason);
         });
@@ -233,7 +284,7 @@ describe('changelog-service', () => {
             fetchStub.resolves(new Response(changelog, { status: 200 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0',
+                '1.0.0', '2.0.0', '^1.0.0',
                 { owner: 'org', repo: 'pkg', subpath: null },
             );
             assert.strictEqual(info.updateStatus, 'major');
@@ -245,7 +296,7 @@ describe('changelog-service', () => {
             fetchStub.resolves(new Response('', { status: 404 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0',
+                '1.0.0', '2.0.0', '^1.0.0',
                 { owner: 'org', repo: 'pkg', subpath: null },
             );
             assert.strictEqual(info.updateStatus, 'major');
@@ -261,7 +312,7 @@ describe('changelog-service', () => {
             fetchStub.onCall(1).resolves(new Response(html, { status: 200 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0',
+                '1.0.0', '2.0.0', '^1.0.0',
                 { owner: 'org', repo: 'pkg', subpath: null },
                 { packageName: 'http' },
             );
@@ -276,7 +327,7 @@ describe('changelog-service', () => {
             fetchStub.resolves(new Response(html, { status: 200 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0', null,
+                '1.0.0', '2.0.0', '^1.0.0', null,
                 { packageName: 'http' },
             );
             assert.strictEqual(info.changelog?.entries.length, 2);
