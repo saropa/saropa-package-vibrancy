@@ -179,7 +179,7 @@
         },
         {
           "command": "saropaPackageVibrancy.suppressPackage",
-          "when": "viewItem =~ /^vibrancyPackage(Updatable)?$/",
+          "when": "viewItem =~ /^vibrancyPackage(Unused)?(Updatable)?$/",
           "group": "2_suppress@1"
         },
         {

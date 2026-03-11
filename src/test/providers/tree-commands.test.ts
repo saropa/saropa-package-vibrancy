@@ -4,7 +4,9 @@ import * as vscode from 'vscode';
 import {
     clipboardMock, envMock, messageMock, resetMocks, workspace,
 } from '../vscode-mock';
-import { registerTreeCommands } from '../../providers/tree-commands';
+import {
+    registerTreeCommands, findPackageLines,
+} from '../../providers/tree-commands';
 import { DetailItem, PackageItem } from '../../providers/tree-items';
 import { VibrancyResult } from '../../types';
 
@@ -216,31 +218,82 @@ describe('tree-commands', () => {
             await vscode.commands.executeCommand(
                 'saropaPackageVibrancy.updateToLatest', item,
             );
-            // No error — graceful no-op since updateInfo is null
         });
 
         it('should show warning when package line not found', async () => {
             const result = makeResult('http', 50, '2.0.0');
             const item = new PackageItem(result);
-
             const fakeUri = vscode.Uri.file('/test/pubspec.yaml');
             sandbox.stub(workspace, 'findFiles').resolves([fakeUri]);
-
-            const fakeDoc = {
+            sandbox.stub(workspace, 'openTextDocument').resolves({
                 getText: () => 'dependencies:\n  bloc: ^1.0.0',
                 lineCount: 2,
                 lineAt: (i: number) => ({
                     text: ['dependencies:', '  bloc: ^1.0.0'][i] ?? '',
                 }),
-            };
-            sandbox.stub(workspace, 'openTextDocument').resolves(fakeDoc);
-
+            });
             await vscode.commands.executeCommand(
                 'saropaPackageVibrancy.updateToLatest', item,
             );
-
             assert.strictEqual(messageMock.warnings.length, 1);
             assert.ok(messageMock.warnings[0].includes('http'));
         });
+    });
+
+    describe('commentOutUnused', () => {
+        it('should do nothing when no pubspec.yaml found', async () => {
+            sandbox.stub(workspace, 'findFiles').resolves([]);
+            const r = { ...makeResult('http', 80), isUnused: true };
+            const item = new PackageItem(r);
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.commentOutUnused', item,
+            );
+        });
+    });
+
+    describe('deleteUnused', () => {
+        it('should do nothing when no pubspec.yaml found', async () => {
+            sandbox.stub(workspace, 'findFiles').resolves([]);
+            const r = { ...makeResult('http', 80), isUnused: true };
+            const item = new PackageItem(r);
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.deleteUnused', item,
+            );
+        });
+    });
+});
+
+function makeFakeDoc(lines: string[]) {
+    return {
+        lineCount: lines.length,
+        lineAt: (i: number) => ({ text: lines[i] ?? '' }),
+    } as any;
+}
+
+describe('findPackageLines', () => {
+    it('should find a single-line dependency', () => {
+        const doc = makeFakeDoc(['dependencies:', '  http: ^1.0.0', '  bloc: ^2.0.0']);
+        const result = findPackageLines(doc, 'http');
+        assert.deepStrictEqual(result, { start: 1, end: 2 });
+    });
+
+    it('should include continuation lines for multi-line deps', () => {
+        const doc = makeFakeDoc([
+            'dependencies:', '  my_pkg:', '    git:',
+            '      url: https://github.com/foo/bar', '  bloc: ^2.0.0',
+        ]);
+        const result = findPackageLines(doc, 'my_pkg');
+        assert.deepStrictEqual(result, { start: 1, end: 4 });
+    });
+
+    it('should return null when package not found', () => {
+        const doc = makeFakeDoc(['dependencies:', '  bloc: ^2.0.0']);
+        assert.strictEqual(findPackageLines(doc, 'http'), null);
+    });
+
+    it('should handle package at end of file', () => {
+        const doc = makeFakeDoc(['dependencies:', '  http: ^1.0.0']);
+        const result = findPackageLines(doc, 'http');
+        assert.deepStrictEqual(result, { start: 1, end: 2 });
     });
 });
