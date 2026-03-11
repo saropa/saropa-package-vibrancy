@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, VibrancyCategory, UpdateInfo } from '../types';
+import { VibrancyResult, VibrancyCategory, UpdateInfo, FamilySplit } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
@@ -151,6 +151,14 @@ function buildVersionGroup(result: VibrancyResult): GroupItem {
             `${emoji} License`, result.license,
         ));
     }
+    if (result.drift) {
+        const d = result.drift;
+        const behind = d.releasesBehind === 0
+            ? 'Current' : `${d.releasesBehind} Flutter releases behind`;
+        items.push(new DetailItem(
+            '🕐 Drift', `${behind} (${d.label})`,
+        ));
+    }
     return new GroupItem('📦 Version', items);
 }
 
@@ -265,4 +273,44 @@ function appendFlaggedItems(
             issue.url || undefined,
         ));
     }
+}
+
+export class FamilyConflictGroupItem extends vscode.TreeItem {
+    constructor(public readonly splits: readonly FamilySplit[]) {
+        super(
+            `Family Conflicts (${splits.length})`,
+            vscode.TreeItemCollapsibleState.Expanded,
+        );
+        this.iconPath = new vscode.ThemeIcon(
+            'warning',
+            new vscode.ThemeColor('editorWarning.foreground'),
+        );
+        this.contextValue = 'vibrancyFamilyConflictGroup';
+    }
+}
+
+export class FamilySplitItem extends vscode.TreeItem {
+    constructor(public readonly split: FamilySplit) {
+        super(
+            `${split.familyLabel} — version split`,
+            vscode.TreeItemCollapsibleState.Collapsed,
+        );
+        this.iconPath = new vscode.ThemeIcon(
+            'git-compare',
+            new vscode.ThemeColor('editorWarning.foreground'),
+        );
+    }
+}
+
+/** Build detail items for a family split node. */
+export function buildFamilySplitDetails(split: FamilySplit): DetailItem[] {
+    const items: DetailItem[] = [];
+    for (const group of split.versionGroups) {
+        items.push(new DetailItem(
+            `Major v${group.majorVersion}`,
+            group.packages.join(', '),
+        ));
+    }
+    items.push(new DetailItem('💡 Suggestion', split.suggestion));
+    return items;
 }

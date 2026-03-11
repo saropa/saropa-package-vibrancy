@@ -11,7 +11,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         category: score >= 70 ? 'vibrant' : 'quiet',
         resolutionVelocity: 0, engagementLevel: 0, popularity: 0,
         publisherTrust: 0, updateInfo: null,
-        archiveSizeBytes: null, bloatRating: null, license: null, isUnused: false,
+        archiveSizeBytes: null, bloatRating: null, license: null, drift: null, isUnused: false,
     };
 }
 

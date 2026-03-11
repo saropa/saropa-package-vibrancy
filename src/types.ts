@@ -82,6 +82,14 @@ export interface UpdateInfo {
     readonly changelog: ChangelogInfo | null;
 }
 
+/** Ecosystem drift relative to Flutter stable releases. */
+export interface DriftInfo {
+    readonly releasesBehind: number;
+    readonly driftScore: number;
+    readonly label: 'current' | 'recent' | 'drifting' | 'stale' | 'abandoned';
+    readonly latestFlutterVersion: string;
+}
+
 /** Computed vibrancy result for one package. */
 export interface VibrancyResult {
     readonly package: PackageDependency;
@@ -96,6 +104,7 @@ export interface VibrancyResult {
     readonly publisherTrust: number;
     readonly updateInfo: UpdateInfo | null;
     readonly license: string | null;
+    readonly drift: DriftInfo | null;
     readonly archiveSizeBytes: number | null;
     readonly bloatRating: number | null;
     readonly isUnused: boolean;
@@ -112,4 +121,18 @@ export interface PackageRange {
     readonly line: number;
     readonly startChar: number;
     readonly endChar: number;
+}
+
+/** A version group within a family split. */
+export interface FamilyVersionGroup {
+    readonly majorVersion: number;
+    readonly packages: readonly string[];
+}
+
+/** Detected version split within a package family. */
+export interface FamilySplit {
+    readonly familyId: string;
+    readonly familyLabel: string;
+    readonly versionGroups: readonly FamilyVersionGroup[];
+    readonly suggestion: string;
 }

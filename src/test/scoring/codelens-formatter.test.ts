@@ -20,6 +20,7 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
         archiveSizeBytes: null,
         bloatRating: null,
         license: null,
+        drift: null,
         isUnused: false,
         ...overrides,
     };

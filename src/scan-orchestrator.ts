@@ -6,6 +6,8 @@ import {
     fetchArchiveSize,
 } from './services/pub-dev-api';
 import { calcBloatRating } from './scoring/bloat-calculator';
+import { calcDrift } from './scoring/drift-calculator';
+import { FlutterRelease } from './services/flutter-releases';
 import { extractGitHubRepo, fetchRepoMetrics } from './services/github-api';
 import { extractRepoSubpath, buildUpdateInfo } from './services/changelog-service';
 import { findKnownIssue } from './scoring/known-issues';
@@ -33,6 +35,7 @@ interface AnalyzeParams {
     readonly weights?: ScoringWeights;
     readonly repoOverrides?: Record<string, string>;
     readonly publisherTrustBonus?: number;
+    readonly flutterReleases?: readonly FlutterRelease[];
 }
 
 /** Analyze a single package and compute its vibrancy result. */
@@ -85,11 +88,15 @@ export async function analyzePackage(
     const bloatRating = archiveSizeBytes !== null
         ? calcBloatRating(archiveSizeBytes) : null;
 
+    const drift = calcDrift(
+        pubDev?.publishedDate ?? null, params.flutterReleases ?? [],
+    );
+
     return {
         package: dep, pubDev: pubDevWithPoints, github, knownIssue,
         ...scores, category, updateInfo,
         license: pubDevWithPoints?.license ?? null,
-        archiveSizeBytes, bloatRating, isUnused: false,
+        drift, archiveSizeBytes, bloatRating, isUnused: false,
     };
 }
 

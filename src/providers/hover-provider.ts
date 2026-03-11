@@ -1,17 +1,30 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, UpdateInfo } from '../types';
+import { VibrancyResult, UpdateInfo, FamilySplit } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
 
 export class VibrancyHoverProvider implements vscode.HoverProvider {
     private _results = new Map<string, VibrancyResult>();
+    private _splitsByPackage = new Map<string, FamilySplit>();
 
     /** Update cached results (called after scan). */
     updateResults(results: VibrancyResult[]): void {
         this._results.clear();
         for (const r of results) {
             this._results.set(r.package.name, r);
+        }
+    }
+
+    /** Update detected family splits for hover display. */
+    updateFamilySplits(splits: FamilySplit[]): void {
+        this._splitsByPackage.clear();
+        for (const split of splits) {
+            for (const group of split.versionGroups) {
+                for (const pkg of group.packages) {
+                    this._splitsByPackage.set(pkg, split);
+                }
+            }
         }
     }
 
@@ -28,11 +41,17 @@ export class VibrancyHoverProvider implements vscode.HoverProvider {
         const result = this._results.get(word);
         if (!result) { return null; }
 
-        return new vscode.Hover(buildHoverContent(result), wordRange);
+        const split = this._splitsByPackage.get(word);
+        return new vscode.Hover(
+            buildHoverContent(result, split), wordRange,
+        );
     }
 }
 
-function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
+function buildHoverContent(
+    result: VibrancyResult,
+    split?: FamilySplit,
+): vscode.MarkdownString {
     const md = new vscode.MarkdownString();
     md.isTrusted = true;
 
@@ -45,6 +64,15 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
     md.appendMarkdown(
         `| Category | ${categoryLabel(result.category)} |\n`,
     );
+    if (split) {
+        const ownGroup = split.versionGroups.find(
+            g => g.packages.includes(result.package.name),
+        );
+        const ver = ownGroup ? `v${ownGroup.majorVersion}` : '?';
+        md.appendMarkdown(
+            `| Family | ${split.familyLabel} (${ver} — split detected) |\n`,
+        );
+    }
     if (result.isUnused) {
         md.appendMarkdown(
             `| Status | **Unused** — no imports detected |\n`,
@@ -68,6 +96,13 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
     if (result.github) {
         md.appendMarkdown(`| GitHub Stars | ${result.github.stars} |\n`);
         md.appendMarkdown(`| Open Issues | ${result.github.openIssues} |\n`);
+    }
+
+    if (result.drift) {
+        const d = result.drift;
+        const behind = d.releasesBehind === 0
+            ? 'Current' : `${d.releasesBehind} Flutter releases behind`;
+        md.appendMarkdown(`| Ecosystem Drift | ${behind} (${d.label}) |\n`);
     }
 
     if (result.bloatRating !== null && result.archiveSizeBytes !== null) {

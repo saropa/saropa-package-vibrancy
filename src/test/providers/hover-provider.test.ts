@@ -31,6 +31,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         archiveSizeBytes: null,
         bloatRating: null,
         license: null,
+        drift: null,
         isUnused: false,
     };
 }

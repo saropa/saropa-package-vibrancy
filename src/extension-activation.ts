@@ -18,6 +18,8 @@ import { registerUpgradeCommand } from './providers/upgrade-command';
 import { readScanConfig, scanPackages, buildScanMeta, ParsedDeps, findAndParseDeps } from './scan-helpers';
 import { scanDartImports } from './services/import-scanner';
 import { detectUnused } from './scoring/unused-detector';
+import { fetchFlutterReleases } from './services/flutter-releases';
+import { detectFamilySplits } from './scoring/family-conflict-detector';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
@@ -207,7 +209,12 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             }
 
             const logger = new ScanLogger();
-            const scanConfig = { ...readScanConfig(), logger };
+            const flutterReleases = await fetchFlutterReleases(
+                targets.cache, logger,
+            );
+            const scanConfig = {
+                ...readScanConfig(), logger, flutterReleases,
+            };
             const deps = parsed.deps.filter(
                 d => !scanConfig.allowSet.has(d.name),
             );
@@ -262,11 +269,15 @@ function publishResults(
 ): void {
     const suppressed = getSuppressedSet();
     const active = results.filter(r => !suppressed.has(r.package.name));
+    const splits = detectFamilySplits(active);
     targets.tree.updateResults(results);
+    targets.tree.updateFamilySplits(splits);
     targets.hover.updateResults(active);
+    targets.hover.updateFamilySplits(splits);
     targets.codeLens.updateResults(active);
     targets.statusBar.update(results);
     targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
+    targets.diagnostics.updateFamilySplits(splits);
 }
 
 function republishFiltered(
@@ -276,9 +287,13 @@ function republishFiltered(
 ): void {
     const suppressed = getSuppressedSet();
     const active = results.filter(r => !suppressed.has(r.package.name));
+    const splits = detectFamilySplits(active);
+    targets.tree.updateFamilySplits(splits);
     targets.hover.updateResults(active);
+    targets.hover.updateFamilySplits(splits);
     targets.codeLens.updateResults(active);
     targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
+    targets.diagnostics.updateFamilySplits(splits);
 }
 
 async function exportScanReport(): Promise<void> {

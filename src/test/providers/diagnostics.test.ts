@@ -30,6 +30,7 @@ function makeResult(
         archiveSizeBytes: null,
         bloatRating: null,
         license: null,
+        drift: null,
         isUnused: false,
     };
 }
