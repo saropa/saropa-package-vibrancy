@@ -127,14 +127,15 @@ def _push_to_origin() -> bool:
         return True
 
     if "non-fast-forward" in (result.stderr or ""):
-        info("Non-fast-forward — pulling and retrying...")
-        pull = run(f"git pull origin {branch} --no-edit")
+        info("Non-fast-forward — rebasing and retrying...")
+        pull = run(f"git pull --rebase origin {branch}")
         if pull.returncode != 0:
-            fail("git pull failed — resolve manually")
+            run("git rebase --abort")
+            fail("git pull --rebase failed — resolve manually")
             return False
         retry = run(f"git push origin {branch}")
         if retry.returncode == 0:
-            ok(f"Pushed to origin/{branch} (after pull)")
+            ok(f"Pushed to origin/{branch} (after rebase)")
             return True
 
     fail("git push failed")

@@ -50,6 +50,20 @@ def _changelog_has_unpublished() -> bool:
     return bool(_UNPUBLISHED_RE.search(text))
 
 
+def _max_version_is_unpublished() -> bool:
+    """Check if the highest versioned CHANGELOG heading has an Unreleased marker."""
+    changelog = os.path.join(PROJECT_ROOT, "CHANGELOG.md")
+    if not os.path.isfile(changelog):
+        return False
+    with open(changelog, encoding="utf-8") as f:
+        for line in f:
+            if re.match(r"^##\s+\[?\d+\.\d+\.\d+", line):
+                return bool(re.search(
+                    r"Unreleased|Unpublished|Undefined", line, re.IGNORECASE,
+                ))
+    return False
+
+
 _FIRST_RELEASE_RE = re.compile(r"^##\s*\[\d+\.\d+\.\d+\]", re.MULTILINE)
 
 
@@ -170,19 +184,22 @@ def validate_version_changelog() -> tuple[str, bool]:
 
 def _resolve_version_conflict(version: str, max_cl: str) -> str | None:
     """Handle version <= CHANGELOG max. Returns resolved version or None."""
-    next_ver = bump_patch(max_cl)
+    # If the max version heading is itself marked unreleased, the user
+    # planned to release at that version — target it, not the next patch.
+    target = max_cl if _max_version_is_unpublished() else bump_patch(max_cl)
+
     if is_version_tagged(version):
         warn(f"v{version} is already released (tag exists)")
         if _changelog_has_unpublished():
-            version, ok_ = _offer_bump(version, next_ver, "Bump to release changelog")
+            version, ok_ = _offer_bump(version, target, "Bump to release changelog")
             return version if ok_ else None
         # No unreleased section — offer publish-as-is
         if ask_yn(f"Publish v{version} as-is (e.g. sync to Open VSX)?"):
             ok(f"Publishing v{version} as-is")
             return version
-        version, ok_ = _offer_bump(version, next_ver, "Version conflict not resolved")
+        version, ok_ = _offer_bump(version, target, "Version conflict not resolved")
         return version if ok_ else None
 
     warn(f"package.json v{version} <= CHANGELOG max v{max_cl}")
-    version, ok_ = _offer_bump(version, next_ver, "Version conflict not resolved")
+    version, ok_ = _offer_bump(version, target, "Version conflict not resolved")
     return version if ok_ else None
