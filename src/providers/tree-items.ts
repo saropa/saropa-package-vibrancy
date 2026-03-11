@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, VibrancyCategory } from '../types';
+import { VibrancyResult, VibrancyCategory, UpdateInfo } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 
@@ -10,6 +10,21 @@ function categoryColor(cat: VibrancyCategory): vscode.ThemeColor {
         case 'legacy-locked': return new vscode.ThemeColor('editorWarning.foreground');
         case 'end-of-life': return new vscode.ThemeColor('editorError.foreground');
     }
+}
+
+function updateEmoji(status: string): string {
+    switch (status) {
+        case 'patch': return '🟢';
+        case 'minor': return '🟡';
+        case 'major': return '🔴';
+        default: return '🟡';
+    }
+}
+
+function bloatEmoji(rating: number): string {
+    if (rating <= 3) { return '🟢'; }
+    if (rating <= 6) { return '🟡'; }
+    return '🔴';
 }
 
 export class PackageItem extends vscode.TreeItem {
@@ -70,73 +85,126 @@ export class DetailItem extends vscode.TreeItem {
     }
 }
 
-/** Build child detail items for a package node. */
-export function buildDetailItems(result: VibrancyResult): DetailItem[] {
-    const items: DetailItem[] = [
-        new DetailItem('Version', `${result.package.constraint}`),
-        new DetailItem('Score', `${Math.round(result.score / 10)}/10`),
-        new DetailItem('Category', categoryLabel(result.category)),
-    ];
-
-    if (result.updateInfo
-        && result.updateInfo.updateStatus !== 'up-to-date') {
-        const arrow = `${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion} (${result.updateInfo.updateStatus})`;
-        items.push(new DetailItem('Update Available', arrow));
-
-        if (result.updateInfo.changelog?.entries.length) {
-            for (const entry of result.updateInfo.changelog.entries) {
-                const dateStr = entry.date ? ` (${entry.date})` : '';
-                const firstLine = entry.body.split('\n').find(
-                    l => l.trim(),
-                ) ?? '';
-                const preview = firstLine.length > 60
-                    ? firstLine.substring(0, 57) + '...'
-                    : firstLine;
-                items.push(new DetailItem(
-                    `  v${entry.version}${dateStr}`, preview,
-                ));
-            }
-            if (result.updateInfo.changelog.truncated) {
-                items.push(new DetailItem(
-                    '  ...', 'More entries available on GitHub',
-                ));
-            }
-        } else if (result.updateInfo.changelog?.unavailableReason) {
-            items.push(new DetailItem(
-                '  Changelog', result.updateInfo.changelog.unavailableReason,
-            ));
-        }
+export class GroupItem extends vscode.TreeItem {
+    constructor(
+        label: string,
+        public readonly children: DetailItem[],
+    ) {
+        super(label, vscode.TreeItemCollapsibleState.Expanded);
     }
+}
 
+/** Build grouped child items for a package node. */
+export function buildGroupItems(result: VibrancyResult): GroupItem[] {
+    const groups: GroupItem[] = [];
+    groups.push(buildVersionGroup(result));
+
+    const update = buildUpdateGroup(result);
+    if (update) { groups.push(update); }
+
+    const community = buildCommunityGroup(result);
+    if (community) { groups.push(community); }
+
+    const size = buildSizeGroup(result);
+    if (size) { groups.push(size); }
+
+    const alerts = buildAlertsGroup(result);
+    if (alerts) { groups.push(alerts); }
+
+    return groups;
+}
+
+function buildVersionGroup(result: VibrancyResult): GroupItem {
+    const items: DetailItem[] = [
+        new DetailItem('Version', result.package.constraint),
+    ];
     if (result.pubDev) {
         items.push(new DetailItem('Latest', result.pubDev.latestVersion));
         if (result.pubDev.publishedDate) {
             items.push(new DetailItem(
-                'Published',
-                result.pubDev.publishedDate.split('T')[0],
+                'Published', result.pubDev.publishedDate.split('T')[0],
             ));
         }
     }
+    return new GroupItem('📦 Version', items);
+}
 
-    if (result.github) {
-        items.push(new DetailItem('Stars', `${result.github.stars}`));
-        items.push(new DetailItem('Open Issues', `${result.github.openIssues}`));
+function buildUpdateGroup(result: VibrancyResult): GroupItem | null {
+    if (!result.updateInfo
+        || result.updateInfo.updateStatus === 'up-to-date') {
+        return null;
     }
+    const ui = result.updateInfo;
+    const emoji = updateEmoji(ui.updateStatus);
+    const items: DetailItem[] = [
+        new DetailItem(
+            `${emoji} ${ui.currentVersion} → ${ui.latestVersion}`,
+            `(${ui.updateStatus})`,
+        ),
+    ];
+    appendChangelogItems(items, ui);
+    return new GroupItem('⬆️ Update', items);
+}
 
-    if (result.bloatRating !== null && result.archiveSizeBytes !== null) {
-        const sizeMB = formatSizeMB(result.archiveSizeBytes);
+function appendChangelogItems(
+    items: DetailItem[],
+    ui: UpdateInfo,
+): void {
+    if (ui.changelog?.entries.length) {
+        for (const entry of ui.changelog.entries) {
+            const dateStr = entry.date ? ` (${entry.date})` : '';
+            const firstLine = entry.body.split('\n').find(
+                l => l.trim(),
+            ) ?? '';
+            const preview = firstLine.length > 60
+                ? firstLine.substring(0, 57) + '...'
+                : firstLine;
+            items.push(new DetailItem(
+                `v${entry.version}${dateStr}`, preview,
+            ));
+        }
+        if (ui.changelog.truncated) {
+            items.push(new DetailItem(
+                '...', 'More entries available on GitHub',
+            ));
+        }
+    } else if (ui.changelog?.unavailableReason) {
         items.push(new DetailItem(
-            'Archive Size', `${sizeMB} (${result.bloatRating}/10 bloat)`,
+            'Changelog', ui.changelog.unavailableReason,
         ));
     }
+}
 
-    appendFlaggedItems(items, result);
+function buildCommunityGroup(result: VibrancyResult): GroupItem | null {
+    if (!result.github) { return null; }
+    return new GroupItem('📊 Community', [
+        new DetailItem('⭐ Stars', `${result.github.stars}`),
+        new DetailItem('Open Issues', `${result.github.openIssues}`),
+    ]);
+}
 
-    if (result.knownIssue?.reason) {
-        items.push(new DetailItem('Known Issue', result.knownIssue.reason));
+function buildSizeGroup(result: VibrancyResult): GroupItem | null {
+    if (result.bloatRating === null || result.archiveSizeBytes === null) {
+        return null;
     }
+    const emoji = bloatEmoji(result.bloatRating);
+    const sizeMB = formatSizeMB(result.archiveSizeBytes);
+    return new GroupItem('📏 Size', [
+        new DetailItem(
+            `${emoji} Archive Size`,
+            `${sizeMB} (${result.bloatRating}/10 bloat)`,
+        ),
+    ]);
+}
 
-    return items;
+function buildAlertsGroup(result: VibrancyResult): GroupItem | null {
+    const items: DetailItem[] = [];
+    appendFlaggedItems(items, result);
+    if (result.knownIssue?.reason) {
+        items.push(new DetailItem('❌ Known Issue', result.knownIssue.reason));
+    }
+    if (items.length === 0) { return null; }
+    return new GroupItem('🚨 Alerts', items);
 }
 
 function appendFlaggedItems(
@@ -146,7 +214,7 @@ function appendFlaggedItems(
     const flagged = result.github?.flaggedIssues;
     if (!flagged?.length) { return; }
     items.push(new DetailItem(
-        'Flagged Issues', `${flagged.length} high-signal`,
+        '🚩 Flagged Issues', `${flagged.length} high-signal`,
     ));
     for (const issue of flagged.slice(0, 3)) {
         const title = issue.title.length > 50

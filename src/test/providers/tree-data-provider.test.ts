@@ -4,9 +4,10 @@ import * as vscode from 'vscode';
 import { workspace } from '../vscode-mock';
 import { VibrancyTreeProvider } from '../../providers/tree-data-provider';
 import {
-    PackageItem, DetailItem, SuppressedGroupItem, SuppressedPackageItem,
+    PackageItem, GroupItem, DetailItem, SuppressedGroupItem,
+    SuppressedPackageItem, buildGroupItems,
 } from '../../providers/tree-items';
-import { VibrancyResult } from '../../types';
+import { VibrancyResult, GitHubMetrics } from '../../types';
 
 function makeResult(
     name: string, score: number, updateStatus?: string,
@@ -62,10 +63,19 @@ describe('VibrancyTreeProvider', () => {
         assert.strictEqual(children[2].result.package.name, 'good');
     });
 
-    it('should return DetailItems as children of PackageItem', () => {
+    it('should return GroupItems as children of PackageItem', () => {
         provider.updateResults([makeResult('http', 80)]);
         const root = provider.getChildren() as PackageItem[];
-        const details = provider.getChildren(root[0]);
+        const groups = provider.getChildren(root[0]);
+        assert.ok(groups.length > 0);
+        assert.ok(groups[0] instanceof GroupItem);
+    });
+
+    it('should return DetailItems as children of GroupItem', () => {
+        provider.updateResults([makeResult('http', 80)]);
+        const root = provider.getChildren() as PackageItem[];
+        const groups = provider.getChildren(root[0]) as GroupItem[];
+        const details = provider.getChildren(groups[0]);
         assert.ok(details.length > 0);
         assert.ok(details[0] instanceof DetailItem);
     });
@@ -184,5 +194,113 @@ describe('SuppressedPackageItem', () => {
         const item = new SuppressedPackageItem(makeResult('http', 80));
         const icon = item.iconPath as vscode.ThemeIcon;
         assert.strictEqual(icon.id, 'eye-closed');
+    });
+});
+
+const stubGithub: GitHubMetrics = {
+    stars: 500, openIssues: 10, closedIssuesLast90d: 5,
+    mergedPrsLast90d: 3, avgCommentsPerIssue: 2,
+    daysSinceLastUpdate: 7, daysSinceLastClose: 3, flaggedIssues: [],
+};
+
+describe('buildGroupItems', () => {
+    function groupLabels(result: VibrancyResult): string[] {
+        return buildGroupItems(result).map(g => `${g.label}`);
+    }
+
+    it('should return only Version group for minimal result', () => {
+        const labels = groupLabels(makeResult('http', 80));
+        assert.deepStrictEqual(labels, ['📦 Version']);
+    });
+
+    it('should include Update group when update available', () => {
+        const labels = groupLabels(makeResult('http', 50, 'minor'));
+        assert.ok(labels.includes('⬆️ Update'));
+    });
+
+    it('should not include Update group when up-to-date', () => {
+        const labels = groupLabels(makeResult('http', 80, 'up-to-date'));
+        assert.ok(!labels.includes('⬆️ Update'));
+    });
+
+    it('should include Community group when github data present', () => {
+        const result = { ...makeResult('http', 80), github: stubGithub };
+        const labels = groupLabels(result);
+        assert.ok(labels.includes('📊 Community'));
+    });
+
+    it('should include Size group when bloat data present', () => {
+        const result = {
+            ...makeResult('http', 80),
+            archiveSizeBytes: 1_000_000, bloatRating: 5,
+        };
+        const labels = groupLabels(result);
+        assert.ok(labels.includes('📏 Size'));
+    });
+
+    it('should include Alerts group when known issue present', () => {
+        const result = {
+            ...makeResult('http', 20),
+            knownIssue: { name: 'http', status: 'end_of_life', reason: 'Deprecated' },
+        };
+        const labels = groupLabels(result);
+        assert.ok(labels.includes('🚨 Alerts'));
+    });
+
+    it('should not include Alerts group when no issues', () => {
+        const labels = groupLabels(makeResult('http', 80));
+        assert.ok(!labels.includes('🚨 Alerts'));
+    });
+
+    it('should use green emoji for patch update', () => {
+        const groups = buildGroupItems(makeResult('http', 50, 'patch'));
+        const update = groups.find(g => g.label === '⬆️ Update')!;
+        assert.ok(`${update.children[0].label}`.includes('🟢'));
+    });
+
+    it('should use red emoji for major update', () => {
+        const groups = buildGroupItems(makeResult('http', 50, 'major'));
+        const update = groups.find(g => g.label === '⬆️ Update')!;
+        assert.ok(`${update.children[0].label}`.includes('🔴'));
+    });
+
+    it('should use green emoji for low bloat', () => {
+        const result = {
+            ...makeResult('http', 80),
+            archiveSizeBytes: 50_000, bloatRating: 2,
+        };
+        const groups = buildGroupItems(result);
+        const size = groups.find(g => g.label === '📏 Size')!;
+        assert.ok(`${size.children[0].label}`.includes('🟢'));
+    });
+
+    it('should use red emoji for high bloat', () => {
+        const result = {
+            ...makeResult('http', 80),
+            archiveSizeBytes: 50_000_000, bloatRating: 9,
+        };
+        const groups = buildGroupItems(result);
+        const size = groups.find(g => g.label === '📏 Size')!;
+        assert.ok(`${size.children[0].label}`.includes('🔴'));
+    });
+
+    it('should include all groups when full data present', () => {
+        const result: VibrancyResult = {
+            ...makeResult('http', 50, 'minor'),
+            github: {
+                ...stubGithub,
+                flaggedIssues: [{
+                    number: 1, title: 'Bug', url: '',
+                    matchedSignals: ['crash'], commentCount: 0,
+                }],
+            },
+            archiveSizeBytes: 1_000_000, bloatRating: 5,
+            knownIssue: { name: 'http', status: 'active', reason: 'Slow' },
+        };
+        const labels = groupLabels(result);
+        assert.deepStrictEqual(labels, [
+            '📦 Version', '⬆️ Update', '📊 Community',
+            '📏 Size', '🚨 Alerts',
+        ]);
     });
 });

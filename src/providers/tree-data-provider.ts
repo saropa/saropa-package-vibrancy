@@ -1,11 +1,11 @@
 import * as vscode from 'vscode';
 import { VibrancyResult } from '../types';
 import {
-    PackageItem, DetailItem, SuppressedGroupItem,
-    SuppressedPackageItem, buildDetailItems,
+    PackageItem, DetailItem, GroupItem, SuppressedGroupItem,
+    SuppressedPackageItem, buildGroupItems,
 } from './tree-items';
 
-type TreeNode = PackageItem | DetailItem | SuppressedGroupItem;
+type TreeNode = PackageItem | GroupItem | DetailItem | SuppressedGroupItem;
 
 export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     private _results: VibrancyResult[] = [];
@@ -41,7 +41,10 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
             );
         }
         if (element instanceof PackageItem) {
-            return buildDetailItems(element.result);
+            return buildGroupItems(element.result);
+        }
+        if (element instanceof GroupItem) {
+            return element.children;
         }
         return [];
     }
