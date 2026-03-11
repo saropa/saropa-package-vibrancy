@@ -23,6 +23,7 @@ export interface PubDevPackageInfo {
     readonly pubPoints: number;
     readonly publisher: string | null;
     readonly license: string | null;
+    readonly description: string | null;
 }
 
 /** A GitHub issue flagged as high-signal for compatibility/deprecation. */
@@ -55,6 +56,20 @@ export interface KnownIssue {
     readonly replacement?: string;
     readonly migrationNotes?: string;
     readonly archiveSizeBytes?: number;
+    readonly archiveSizeMB?: number;
+    readonly license?: string;
+    readonly lastUpdated?: string;
+    readonly pubPoints?: number;
+    readonly wasmReady?: boolean;
+    readonly verifiedPublisher?: boolean;
+    readonly platforms?: readonly string[];
+}
+
+/** Live metrics from pub.dev /metrics endpoint. Null wasmReady = API failed. */
+export interface PubDevMetrics {
+    readonly pubPoints: number;
+    readonly platforms: readonly string[];
+    readonly wasmReady: boolean | null;
 }
 
 /** Granularity of available update. */
@@ -108,6 +123,73 @@ export interface VibrancyResult {
     readonly archiveSizeBytes: number | null;
     readonly bloatRating: number | null;
     readonly isUnused: boolean;
+    readonly platforms: readonly string[] | null;
+    readonly verifiedPublisher: boolean;
+    readonly wasmReady: boolean | null;
+    readonly blocker: BlockerInfo | null;
+    readonly upgradeBlockStatus: UpgradeBlockStatus;
+}
+
+/** A single package entry from `dart pub outdated --json`. */
+export interface PubOutdatedEntry {
+    readonly package: string;
+    readonly current: string | null;
+    readonly upgradable: string | null;
+    readonly resolvable: string | null;
+    readonly latest: string | null;
+}
+
+/** How a package's upgrade is blocked or available. */
+export type UpgradeBlockStatus =
+    | 'up-to-date'
+    | 'upgradable'
+    | 'blocked'
+    | 'constrained';
+
+/** Information about what blocks a package upgrade. */
+export interface BlockerInfo {
+    readonly blockedPackage: string;
+    readonly currentVersion: string;
+    readonly latestVersion: string;
+    readonly blockerPackage: string;
+    readonly blockerVibrancyScore: number | null;
+    readonly blockerCategory: VibrancyCategory | null;
+}
+
+/** A single step in an upgrade plan. */
+export interface UpgradeStep {
+    readonly packageName: string;
+    readonly currentVersion: string;
+    readonly targetVersion: string;
+    readonly updateType: UpdateStatus;
+    readonly familyId: string | null;
+    readonly order: number;
+}
+
+/** Outcome of executing one upgrade step. */
+export type StepOutcome =
+    | 'success'
+    | 'pub-get-failed'
+    | 'test-failed'
+    | 'skipped';
+
+/** Result of executing one upgrade step. */
+export interface UpgradeStepResult {
+    readonly step: UpgradeStep;
+    readonly outcome: StepOutcome;
+    readonly output: string;
+}
+
+/** Summary report of an upgrade execution. */
+export interface UpgradeReport {
+    readonly steps: readonly UpgradeStepResult[];
+    readonly completedCount: number;
+    readonly failedAt: string | null;
+}
+
+/** A reverse-dependency edge: "dependentPackage depends on the target". */
+export interface DepEdge {
+    readonly dependentPackage: string;
 }
 
 /** Cache entry with TTL. */

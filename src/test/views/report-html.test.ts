@@ -19,6 +19,7 @@ function makeResult(
             pubPoints: 100,
             publisher: null,
             license: null,
+            description: null,
         },
         github: { stars: 42, openIssues: 5, closedIssuesLast90d: 3,
             mergedPrsLast90d: 2, avgCommentsPerIssue: 1.5,
@@ -35,7 +36,7 @@ function makeResult(
         bloatRating: null,
         license: null,
         drift: null,
-        isUnused: false,
+        isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
     };
 }
 

@@ -3,7 +3,7 @@ import * as sinon from 'sinon';
 import * as fs from 'fs';
 import * as path from 'path';
 import {
-    fetchPackageInfo, fetchPackageScore, fetchPublisher,
+    fetchPackageInfo, fetchPackageMetrics, fetchPublisher,
     fetchArchiveSize,
 } from '../../services/pub-dev-api';
 
@@ -32,6 +32,7 @@ describe('pub-dev-api', () => {
             assert.strictEqual(info.name, 'http');
             assert.strictEqual(info.latestVersion, '1.2.0');
             assert.strictEqual(info.repositoryUrl, 'https://github.com/dart-lang/http');
+            assert.strictEqual(info.description, 'A composable, multi-platform, Future-based API for HTTP requests.');
             assert.strictEqual(info.isDiscontinued, false);
         });
 
@@ -82,21 +83,51 @@ describe('pub-dev-api', () => {
         });
     });
 
-    describe('fetchPackageScore', () => {
-        it('should return granted points', async () => {
+    describe('fetchPackageMetrics', () => {
+        it('should return points and platforms', async () => {
             const fixture = fs.readFileSync(
-                path.join(fixturesDir, 'pub-dev-score.json'), 'utf8',
+                path.join(fixturesDir, 'pub-dev-metrics.json'), 'utf8',
             );
             fetchStub.resolves(new Response(fixture, { status: 200 }));
 
-            const points = await fetchPackageScore('http');
-            assert.strictEqual(points, 140);
+            const metrics = await fetchPackageMetrics('http');
+            assert.strictEqual(metrics.pubPoints, 140);
+            assert.deepStrictEqual(
+                metrics.platforms,
+                ['android', 'ios', 'linux', 'macos', 'web', 'windows'],
+            );
+            assert.strictEqual(metrics.wasmReady, false);
         });
 
-        it('should return 0 for failed requests', async () => {
+        it('should return fallback for failed requests', async () => {
             fetchStub.resolves(new Response('', { status: 400 }));
-            const points = await fetchPackageScore('broken');
-            assert.strictEqual(points, 0);
+            const metrics = await fetchPackageMetrics('broken');
+            assert.strictEqual(metrics.pubPoints, 0);
+            assert.deepStrictEqual(metrics.platforms, []);
+            assert.strictEqual(metrics.wasmReady, null);
+        });
+
+        it('should call the /metrics endpoint', async () => {
+            fetchStub.resolves(new Response('{}', { status: 200 }));
+            await fetchPackageMetrics('provider');
+            assert.ok(fetchStub.calledOnce);
+            assert.ok(
+                fetchStub.firstCall.args[0].includes('/packages/provider/metrics'),
+            );
+        });
+
+        it('should detect WASM readiness from tags', async () => {
+            const body = JSON.stringify({
+                score: {
+                    grantedPoints: 100,
+                    tags: ['platform:web', 'is:wasm-ready'],
+                },
+            });
+            fetchStub.resolves(new Response(body, { status: 200 }));
+
+            const metrics = await fetchPackageMetrics('wasm_pkg');
+            assert.strictEqual(metrics.wasmReady, true);
+            assert.deepStrictEqual(metrics.platforms, ['web']);
         });
     });
 

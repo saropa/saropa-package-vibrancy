@@ -19,6 +19,21 @@ function normalizeIssue(raw: Record<string, unknown>): KnownIssue {
         migrationNotes: normalizeOptional(raw.migrationNotes),
         archiveSizeBytes: typeof raw.archiveSizeBytes === 'number'
             ? raw.archiveSizeBytes : undefined,
+        archiveSizeMB: typeof raw.archiveSizeMB === 'number'
+            ? raw.archiveSizeMB : undefined,
+        license: normalizeOptional(raw.license),
+        lastUpdated: normalizeOptional(raw.lastUpdated),
+        pubPoints: typeof raw.pubPoints === 'number'
+            ? raw.pubPoints : undefined,
+        wasmReady: typeof raw.wasmReady === 'boolean'
+            ? raw.wasmReady : undefined,
+        verifiedPublisher: typeof raw.verifiedPublisher === 'boolean'
+            ? raw.verifiedPublisher : undefined,
+        platforms: Array.isArray(raw.platforms)
+            ? raw.platforms.filter(
+                (p: unknown): p is string => typeof p === 'string',
+            )
+            : undefined,
     };
 }
 

@@ -1,4 +1,4 @@
-import { PubDevPackageInfo } from '../types';
+import { PubDevPackageInfo, PubDevMetrics } from '../types';
 import { CacheService } from './cache-service';
 import { ScanLogger } from './scan-logger';
 import { fetchWithRetry } from './fetch-retry';
@@ -41,6 +41,7 @@ export async function fetchPackageInfo(
             pubPoints: 0,
             publisher: null,
             license: pubspec.license ?? null,
+            description: pubspec.description ?? null,
         };
 
         const archiveUrl = latest.archive_url ?? null;
@@ -56,37 +57,54 @@ export async function fetchPackageInfo(
     }
 }
 
-/** Fetch pub.dev score and return granted points. */
-export async function fetchPackageScore(
+const WASM_TAGS = ['is:wasm-ready', 'sdk:wasm'];
+
+/** Fetch pub.dev metrics: points, platforms, and WASM readiness. */
+export async function fetchPackageMetrics(
     name: string,
     cache?: CacheService,
     logger?: ScanLogger,
-): Promise<number> {
-    const cacheKey = `pub.score.${name}`;
-    const cached = cache?.get<number>(cacheKey);
-    if (cached !== null && cached !== undefined) {
+): Promise<PubDevMetrics> {
+    const fallback: PubDevMetrics = {
+        pubPoints: 0, platforms: [], wasmReady: null,
+    };
+    const cacheKey = `pub.metrics.${name}`;
+    const cached = cache?.get<PubDevMetrics>(cacheKey);
+    if (cached) {
         logger?.cacheHit(cacheKey);
         return cached;
     }
     logger?.cacheMiss(cacheKey);
 
-    const url = `${BASE_URL}/${name}/score`;
+    const url = `${BASE_URL}/${name}/metrics`;
     try {
         logger?.apiRequest('GET', url);
         const t0 = Date.now();
         const resp = await fetchWithRetry(url, undefined, logger);
         logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
-        if (!resp.ok) { return 0; }
+        if (!resp.ok) { return fallback; }
 
         const json: any = await resp.json();
-        const points = json.grantedPoints ?? 0;
+        const tags: string[] = json.score?.tags ?? [];
+        const result: PubDevMetrics = {
+            pubPoints: json.score?.grantedPoints ?? 0,
+            platforms: extractPlatforms(tags),
+            wasmReady: tags.some(t => WASM_TAGS.includes(t)),
+        };
 
-        await cache?.set(cacheKey, points);
-        return points;
+        await cache?.set(cacheKey, result);
+        return result;
     } catch {
-        logger?.error(`Failed to fetch pub.dev score for ${name}`);
-        return 0;
+        logger?.error(`Failed to fetch pub.dev metrics for ${name}`);
+        return fallback;
     }
+}
+
+function extractPlatforms(tags: string[]): string[] {
+    return tags
+        .filter(t => t.startsWith('platform:'))
+        .map(t => t.slice('platform:'.length))
+        .sort();
 }
 
 /** Fetch verified publisher ID from pub.dev. */

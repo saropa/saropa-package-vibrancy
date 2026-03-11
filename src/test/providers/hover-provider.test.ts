@@ -16,6 +16,7 @@ function makeResult(name: string, score: number): VibrancyResult {
             pubPoints: 130,
             publisher: null,
             license: null,
+            description: null,
         },
         github: { stars: 500, openIssues: 10, closedIssuesLast90d: 5,
             mergedPrsLast90d: 3, avgCommentsPerIssue: 2,
@@ -32,7 +33,8 @@ function makeResult(name: string, score: number): VibrancyResult {
         bloatRating: null,
         license: null,
         drift: null,
-        isUnused: false,
+        isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null,
+        blocker: null, upgradeBlockStatus: 'up-to-date',
     };
 }
 

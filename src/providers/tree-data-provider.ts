@@ -2,9 +2,11 @@ import * as vscode from 'vscode';
 import { VibrancyResult, FamilySplit } from '../types';
 import {
     PackageItem, DetailItem, GroupItem, SuppressedGroupItem,
-    SuppressedPackageItem, FamilyConflictGroupItem, FamilySplitItem,
-    buildGroupItems, buildFamilySplitDetails,
+    SuppressedPackageItem, buildGroupItems,
 } from './tree-items';
+import {
+    FamilyConflictGroupItem, FamilySplitItem, buildFamilySplitDetails,
+} from './family-tree-items';
 
 type TreeNode =
     | PackageItem | GroupItem | DetailItem

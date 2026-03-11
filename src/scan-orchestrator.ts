@@ -1,8 +1,11 @@
-import { VibrancyResult, PackageDependency, GitHubMetrics, KnownIssue } from './types';
+import {
+    VibrancyResult, PackageDependency, GitHubMetrics, KnownIssue,
+    PubDevMetrics,
+} from './types';
 import { CacheService } from './services/cache-service';
 import { ScanLogger } from './services/scan-logger';
 import {
-    fetchPackageInfo, fetchPackageScore, fetchPublisher,
+    fetchPackageInfo, fetchPackageMetrics, fetchPublisher,
     fetchArchiveSize,
 } from './services/pub-dev-api';
 import { calcBloatRating } from './scoring/bloat-calculator';
@@ -47,15 +50,16 @@ export async function analyzePackage(
     const knownIssue = findKnownIssue(dep.name);
     if (knownIssue) { log?.info(`Known issue: ${knownIssue.status}`); }
 
-    const [pubDev, pubPoints, publisher] = await Promise.all([
+    const [pubDev, metrics, publisher] = await Promise.all([
         fetchPackageInfo(dep.name, params.cache, log),
-        fetchPackageScore(dep.name, params.cache, log),
+        fetchPackageMetrics(dep.name, params.cache, log),
         fetchPublisher(dep.name, params.cache, log),
     ]);
 
     const repoUrl = resolveRepoUrl(dep.name, pubDev?.repositoryUrl, params);
     const { github, repoInfo } = await fetchGitHubData(repoUrl, params);
 
+    const pubPoints = metrics.pubPoints;
     const scores = computeScores({
         github, pubPoints, publishedDate: pubDev?.publishedDate ?? null,
         publisher, weights: params.weights,
@@ -92,11 +96,19 @@ export async function analyzePackage(
         pubDev?.publishedDate ?? null, params.flutterReleases ?? [],
     );
 
+    const merged = mergeMetrics(metrics, knownIssue, publisher);
+    logDataGaps(dep.name, metrics, knownIssue, log);
+
     return {
         package: dep, pubDev: pubDevWithPoints, github, knownIssue,
         ...scores, category, updateInfo,
-        license: pubDevWithPoints?.license ?? null,
+        license: pubDevWithPoints?.license ?? knownIssue?.license ?? null,
         drift, archiveSizeBytes, bloatRating, isUnused: false,
+        platforms: merged.platforms,
+        verifiedPublisher: merged.verifiedPublisher,
+        wasmReady: merged.wasmReady,
+        blocker: null,
+        upgradeBlockStatus: 'up-to-date',
     };
 }
 
@@ -130,8 +142,40 @@ async function resolveArchiveSize(
     knownIssue: KnownIssue | null,
     params: AnalyzeParams,
 ): Promise<number | null> {
-    if (knownIssue?.archiveSizeBytes != null) { return knownIssue.archiveSizeBytes; }
-    return fetchArchiveSize(name, params.cache, params.logger);
+    const live = await fetchArchiveSize(name, params.cache, params.logger);
+    if (live !== null) { return live; }
+    return knownIssue?.archiveSizeBytes ?? null;
+}
+
+function mergeMetrics(
+    live: PubDevMetrics,
+    ki: KnownIssue | null,
+    publisher: string | null,
+): { platforms: readonly string[] | null; verifiedPublisher: boolean; wasmReady: boolean | null } {
+    const platforms = live.platforms.length > 0
+        ? live.platforms
+        : ki?.platforms ?? null;
+    const verifiedPublisher = publisher !== null
+        || (ki?.verifiedPublisher ?? false);
+    const wasmReady = live.wasmReady !== null
+        ? live.wasmReady
+        : ki?.wasmReady ?? null;
+    return { platforms, verifiedPublisher, wasmReady };
+}
+
+function logDataGaps(
+    name: string,
+    live: PubDevMetrics,
+    ki: KnownIssue | null,
+    log?: ScanLogger,
+): void {
+    if (!ki || !log) { return; }
+    if (ki.platforms?.length && live.platforms.length === 0) {
+        log.info(`${name}: platforms missing from API, using known issue`);
+    }
+    if (ki.pubPoints !== undefined && live.pubPoints === 0) {
+        log.info(`${name}: pubPoints missing from API, known issue has ${ki.pubPoints}`);
+    }
 }
 
 function daysSince(isoDate: string): number | undefined {

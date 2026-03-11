@@ -34,7 +34,8 @@ function makeResult(
         bloatRating: null,
         license: null,
         drift: null,
-        isUnused: false,
+        isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null,
+        blocker: null, upgradeBlockStatus: 'up-to-date',
     };
 }
 

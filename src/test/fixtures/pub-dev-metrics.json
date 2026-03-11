@@ -1,0 +1,18 @@
+{
+  "score": {
+    "grantedPoints": 140,
+    "maxPoints": 160,
+    "tags": [
+      "platform:android",
+      "platform:ios",
+      "platform:linux",
+      "platform:macos",
+      "platform:web",
+      "platform:windows",
+      "sdk:dart",
+      "sdk:flutter",
+      "is:dart3-compatible",
+      "is:null-safe"
+    ]
+  }
+}

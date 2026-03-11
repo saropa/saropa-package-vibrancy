@@ -22,7 +22,7 @@ function makeResult(
         bloatRating: null,
         license: null,
         drift: null,
-        isUnused: false,
+        isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
         ...overrides,
     };
 }
@@ -129,6 +129,7 @@ describe('sbom-generator', () => {
                     isDiscontinued: false, isUnlisted: false,
                     pubPoints: 130, publisher: 'dart.dev',
                     license: 'BSD-3-Clause',
+                    description: null,
                 },
             })];
             const bom = generateSbom(results, META);

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, VibrancyCategory, UpdateInfo, FamilySplit } from '../types';
+import { VibrancyResult, VibrancyCategory, UpdateInfo } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
@@ -151,6 +151,16 @@ function buildVersionGroup(result: VibrancyResult): GroupItem {
             `${emoji} License`, result.license,
         ));
     }
+    if (result.platforms?.length) {
+        items.push(new DetailItem(
+            '🖥️ Platforms', result.platforms.join(', '),
+        ));
+    }
+    if (result.wasmReady !== null && result.wasmReady !== undefined) {
+        items.push(new DetailItem(
+            '🌐 WASM', result.wasmReady ? 'Ready' : 'Not ready',
+        ));
+    }
     if (result.drift) {
         const d = result.drift;
         const behind = d.releasesBehind === 0
@@ -175,69 +185,78 @@ function buildUpdateGroup(result: VibrancyResult): GroupItem | null {
             `(${ui.updateStatus})`,
         ),
     ];
+    if (result.blocker) {
+        const b = result.blocker;
+        items.push(new DetailItem(
+            '🔒 Blocked by', b.blockerPackage,
+        ));
+        if (b.blockerVibrancyScore !== null) {
+            const score = Math.round(b.blockerVibrancyScore / 10);
+            const cat = b.blockerCategory ?? 'unknown';
+            items.push(new DetailItem(
+                '  vibrancy', `${score}/10 (${cat})`,
+            ));
+        }
+    }
     appendChangelogItems(items, ui, result.package.name);
     return new GroupItem('⬆️ Update', items);
 }
 
 function appendChangelogItems(
-    items: DetailItem[],
-    ui: UpdateInfo,
-    packageName: string,
+    items: DetailItem[], ui: UpdateInfo, packageName: string,
 ): void {
-    if (ui.changelog?.entries.length) {
-        for (const entry of ui.changelog.entries) {
+    const cl = ui.changelog;
+    if (cl?.entries.length) {
+        const baseUrl = `https://pub.dev/packages/${packageName}/changelog`;
+        for (const entry of cl.entries) {
             const dateStr = entry.date ? ` (${entry.date})` : '';
-            const firstLine = entry.body.split('\n').find(
-                l => l.trim(),
-            ) ?? '';
+            const firstLine = entry.body.split('\n').find(l => l.trim()) ?? '';
             const preview = firstLine.length > 60
-                ? firstLine.substring(0, 57) + '...'
-                : firstLine;
+                ? firstLine.substring(0, 57) + '...' : firstLine;
             const anchor = entry.version.replace(/\./g, '');
-            const url = `https://pub.dev/packages/${packageName}/changelog#${anchor}`;
             items.push(new DetailItem(
-                `v${entry.version}${dateStr}`, preview, url,
+                `v${entry.version}${dateStr}`, preview, `${baseUrl}#${anchor}`,
             ));
         }
-        if (ui.changelog.truncated) {
-            const url = `https://pub.dev/packages/${packageName}/changelog`;
-            items.push(new DetailItem(
-                '...', 'More entries available on GitHub', url,
-            ));
+        if (cl.truncated) {
+            items.push(new DetailItem('...', 'More entries on pub.dev', baseUrl));
         }
-    } else if (ui.changelog?.unavailableReason) {
-        items.push(new DetailItem(
-            'Changelog', ui.changelog.unavailableReason,
-        ));
+    } else if (cl?.unavailableReason) {
+        items.push(new DetailItem('Changelog', cl.unavailableReason));
     }
 }
 
 function buildCommunityGroup(result: VibrancyResult): GroupItem | null {
-    if (!result.github) { return null; }
-    const repoUrl = result.pubDev?.repositoryUrl?.replace(/\/+$/, '');
-    return new GroupItem('📊 Community', [
-        new DetailItem(
+    const items: DetailItem[] = [];
+    if (result.github) {
+        const repoUrl = result.pubDev?.repositoryUrl?.replace(/\/+$/, '');
+        items.push(new DetailItem(
             '⭐ Stars', `${result.github.stars}`,
             repoUrl ?? undefined,
-        ),
-        new DetailItem(
+        ));
+        items.push(new DetailItem(
             'Open Issues', `${result.github.openIssues}`,
             repoUrl ? `${repoUrl}/issues` : undefined,
-        ),
-    ]);
+        ));
+    }
+    if (result.pubDev?.pubPoints !== undefined) {
+        items.push(new DetailItem(
+            '📊 Pub Points', `${result.pubDev.pubPoints}/160`,
+        ));
+    }
+    if (result.verifiedPublisher) {
+        items.push(new DetailItem('✅ Publisher', 'Verified'));
+    }
+    if (items.length === 0) { return null; }
+    return new GroupItem('📊 Community', items);
 }
 
 function buildSizeGroup(result: VibrancyResult): GroupItem | null {
-    if (result.bloatRating === null || result.archiveSizeBytes === null) {
-        return null;
-    }
+    if (result.bloatRating === null || result.archiveSizeBytes === null) { return null; }
     const emoji = bloatEmoji(result.bloatRating);
     const sizeMB = formatSizeMB(result.archiveSizeBytes);
     return new GroupItem('📏 Size', [
-        new DetailItem(
-            `${emoji} Archive Size`,
-            `${sizeMB} (${result.bloatRating}/10 bloat)`,
-        ),
+        new DetailItem(`${emoji} Archive Size`, `${sizeMB} (${result.bloatRating}/10 bloat)`),
     ]);
 }
 
@@ -275,42 +294,3 @@ function appendFlaggedItems(
     }
 }
 
-export class FamilyConflictGroupItem extends vscode.TreeItem {
-    constructor(public readonly splits: readonly FamilySplit[]) {
-        super(
-            `Family Conflicts (${splits.length})`,
-            vscode.TreeItemCollapsibleState.Expanded,
-        );
-        this.iconPath = new vscode.ThemeIcon(
-            'warning',
-            new vscode.ThemeColor('editorWarning.foreground'),
-        );
-        this.contextValue = 'vibrancyFamilyConflictGroup';
-    }
-}
-
-export class FamilySplitItem extends vscode.TreeItem {
-    constructor(public readonly split: FamilySplit) {
-        super(
-            `${split.familyLabel} — version split`,
-            vscode.TreeItemCollapsibleState.Collapsed,
-        );
-        this.iconPath = new vscode.ThemeIcon(
-            'git-compare',
-            new vscode.ThemeColor('editorWarning.foreground'),
-        );
-    }
-}
-
-/** Build detail items for a family split node. */
-export function buildFamilySplitDetails(split: FamilySplit): DetailItem[] {
-    const items: DetailItem[] = [];
-    for (const group of split.versionGroups) {
-        items.push(new DetailItem(
-            `Major v${group.majorVersion}`,
-            group.packages.join(', '),
-        ));
-    }
-    items.push(new DetailItem('💡 Suggestion', split.suggestion));
-    return items;
-}

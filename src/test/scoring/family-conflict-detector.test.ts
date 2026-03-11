@@ -27,7 +27,7 @@ function makeResult(
         drift: null,
         archiveSizeBytes: null,
         bloatRating: null,
-        isUnused: false,
+        isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
     };
 }
 

@@ -71,6 +71,30 @@ describe('known-issues', () => {
         assert.ok(foundUndefined, 'expected at least one entry with undefined archiveSizeBytes');
     });
 
+    it('should parse license field when present', () => {
+        const issue = findKnownIssue('flutter_datetime_picker');
+        assert.ok(issue);
+        assert.strictEqual(issue.license, 'MIT');
+    });
+
+    it('should parse platforms array when present', () => {
+        const issue = findKnownIssue('flutter_datetime_picker');
+        assert.ok(issue);
+        assert.ok(Array.isArray(issue.platforms));
+    });
+
+    it('should parse pubPoints when present', () => {
+        const issue = findKnownIssue('flutter_datetime_picker');
+        assert.ok(issue);
+        assert.strictEqual(typeof issue.pubPoints, 'number');
+    });
+
+    it('should parse verifiedPublisher when present', () => {
+        const issue = findKnownIssue('flutter_datetime_picker');
+        assert.ok(issue);
+        assert.strictEqual(typeof issue.verifiedPublisher, 'boolean');
+    });
+
     it('should have migrationNotes when replacement is present', () => {
         for (const [name, issue] of allKnownIssues()) {
             if (issue.replacement) {
