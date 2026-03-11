@@ -10,6 +10,7 @@ import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
 import { AboutPanel } from './views/about-webview';
 import { exportReports, ReportMetadata } from './services/report-exporter';
+import { exportSbomReport } from './services/sbom-exporter';
 import { ScanLogger } from './services/scan-logger';
 import { VibrancyResult } from './types';
 import { countByCategory } from './scoring/status-classifier';
@@ -166,6 +167,10 @@ function registerCommands(
                 context.extension.packageJSON.version,
             ),
         ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.exportSbom',
+            () => runSbomExport(context),
+        ),
     );
 }
 
@@ -310,6 +315,20 @@ async function exportScanReport(): Promise<void> {
         vscode.window.showInformationMessage(
             `Reports saved: ${files.length} files`,
         );
+    }
+}
+
+async function runSbomExport(
+    context: vscode.ExtensionContext,
+): Promise<void> {
+    if (latestResults.length === 0) {
+        vscode.window.showWarningMessage('Run a scan first');
+        return;
+    }
+    const version = context.extension.packageJSON.version;
+    const path = await exportSbomReport(latestResults, version);
+    if (path) {
+        vscode.window.showInformationMessage(`SBOM exported: ${path}`);
     }
 }
 

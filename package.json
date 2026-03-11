@@ -83,6 +83,11 @@
         "icon": "$(info)"
       },
       {
+        "command": "saropaPackageVibrancy.exportSbom",
+        "title": "Saropa: Export SBOM (CycloneDX)",
+        "icon": "$(shield)"
+      },
+      {
         "command": "saropaPackageVibrancy.goToPackage",
         "title": "Go to pubspec.yaml",
         "icon": "$(go-to-file)"
