@@ -136,12 +136,6 @@ def list_editor_extensions(editor: str = "code") -> set[str]:
     if not shutil.which(editor):
         _extensions_cache[editor] = set()
         return set()
-    if sys.platform == "win32":
-        label = "VS Code" if editor == "code" else editor.capitalize()
-        warn(f"Querying {label} CLI may briefly open a window.")
-        if not ask_yn(f"Query {label} extensions?", default=True):
-            _extensions_cache[editor] = set()
-            return set()
     result = run([editor, "--list-extensions", "--show-versions"])
     if result.returncode != 0:
         _extensions_cache[editor] = set()

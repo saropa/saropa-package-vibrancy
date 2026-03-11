@@ -68,9 +68,12 @@ def _install_npm_package(pkg: str) -> bool:
 def check_vscode_extensions() -> bool:
     """Check and install required VS Code extensions.
 
-    Skips silently if the 'code' CLI isn't available. Uses the cached
-    extension list to avoid spawning extra VS Code windows on Windows.
+    Skips on Windows to avoid spawning VS Code windows. Skips if the
+    'code' CLI isn't available. These are dev conveniences, not requirements.
     """
+    if sys.platform == "win32":
+        info("Skipping VS Code extension check on Windows (avoids popups).")
+        return True
     if not shutil.which("code"):
         warn("Skipping VS Code extension check — 'code' CLI not available.")
         return True
@@ -88,12 +91,7 @@ def check_vscode_extensions() -> bool:
 
 
 def _install_vscode_extension(ext: str) -> bool:
-    """Auto-install a single VS Code extension (prompts on Windows)."""
-    if sys.platform == "win32":
-        warn("Installing an extension may briefly open a VS Code window.")
-        if not ask_yn(f"Install {ext}?", default=True):
-            warn(f"Skipped {ext}")
-            return True  # non-blocking: skip is not a failure
+    """Auto-install a single VS Code extension."""
     fix(f"Installing VS Code extension: {C.WHITE}{ext}{C.RESET}")
     result = run(["code", "--install-extension", ext])
     if result.returncode != 0:
