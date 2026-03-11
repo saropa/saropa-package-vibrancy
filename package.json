@@ -189,7 +189,7 @@
         },
         "saropaPackageVibrancy.includeDevDependencies": {
           "type": "boolean",
-          "default": false,
+          "default": true,
           "description": "Include dev_dependencies in the vibrancy scan"
         },
         "saropaPackageVibrancy.cacheTtlHours": {

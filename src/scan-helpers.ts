@@ -103,7 +103,7 @@ export async function findAndParseDeps(): Promise<ParsedDeps | null> {
     const lockContent = Buffer.from(lockBytes).toString('utf8');
 
     const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
-    const includeDevDeps = config.get<boolean>('includeDevDependencies', false);
+    const includeDevDeps = config.get<boolean>('includeDevDependencies', true);
 
     const { directDeps, devDeps, constraints } = parsePubspecYaml(yamlContent);
     const allDirect = includeDevDeps ? [...directDeps, ...devDeps] : directDeps;
