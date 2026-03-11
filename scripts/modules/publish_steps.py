@@ -1,7 +1,8 @@
 """Irreversible publish operations."""
 
-import re
+import getpass
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -70,15 +71,14 @@ def check_vsce_pat() -> bool:
 
 
 def check_ovsx_token() -> bool:
-    """Check OVSX_PAT for Open VSX. Never blocks: missing = skip step."""
+    """Check OVSX_PAT for Open VSX. Non-blocking: will prompt at publish."""
     pat = get_ovsx_pat()
     if pat:
         ok("OVSX_PAT set (Open VSX publish)")
         return True
-    warn("OVSX_PAT not set; Open VSX step will be skipped")
-    info(f"  Set in shell, or add to {C.WHITE}.env{C.RESET}: "
-         f"{C.YELLOW}OVSX_PAT=your-token{C.RESET}")
-    info(f"  Token: {C.WHITE}https://open-vsx.org/user-settings/tokens{C.RESET}")
+    warn("OVSX_PAT not set; will prompt at publish time or skip.")
+    info(f"  To avoid prompt: add {C.YELLOW}OVSX_PAT=your-token{C.RESET}"
+         f" to {C.WHITE}.env{C.RESET}")
     return True
 
 
@@ -257,12 +257,7 @@ def publish_to_stores(
     if stores == "vscode_only":
         info("Skipping (Marketplace only).")
     else:
-        pat = get_ovsx_pat()
-        if not pat:
-            warn("No OVSX_PAT; skipping Open VSX.")
-        elif not run_step("Open VSX publish",
-                          lambda: publish_openvsx(vsix_path), results):
-            warn("Open VSX failed; continuing to GitHub release.")
+        _publish_openvsx_step(vsix_path, results)
 
     heading("Step 15 · GitHub Release")
     if not run_step("GitHub release",
@@ -289,6 +284,52 @@ def _publish_marketplace_step(
         return True
     return run_step("Marketplace publish",
                     lambda: publish_marketplace(vsix_path), results)
+
+
+def _publish_openvsx_step(
+    vsix_path: str,
+    results: list[tuple[str, bool, float]],
+) -> None:
+    """Publish to Open VSX, prompting for token if missing."""
+    pat = get_ovsx_pat()
+    if not pat:
+        try:
+            info(f"Token page: {C.WHITE}"
+                 f"https://open-vsx.org/user-settings/tokens{C.RESET}")
+            pat = (getpass.getpass(
+                prompt="  Paste Open VSX token or Enter to skip: ",
+            ) or "").strip()
+            if pat:
+                os.environ["OVSX_PAT"] = pat
+                _save_ovsx_pat_to_env(pat)
+        except (EOFError, KeyboardInterrupt):
+            pat = ""
+    if not pat:
+        info("No token; skipping Open VSX.")
+        return
+    if not run_step("Open VSX publish",
+                    lambda: publish_openvsx(vsix_path), results):
+        warn("Open VSX publish failed; continuing to GitHub release.")
+
+
+def _save_ovsx_pat_to_env(pat: str) -> None:
+    """Append OVSX_PAT to .env so it persists across runs."""
+    env_path = os.path.join(PROJECT_ROOT, ".env")
+    try:
+        existing = ""
+        if os.path.exists(env_path):
+            with open(env_path, encoding="utf-8") as f:
+                existing = f.read()
+        if "OVSX_PAT=" in existing:
+            info("OVSX_PAT already in .env — not overwriting.")
+            return
+        with open(env_path, "a", encoding="utf-8") as f:
+            if existing and not existing.endswith("\n"):
+                f.write("\n")
+            f.write(f"OVSX_PAT={pat}\n")
+        info(f"Saved OVSX_PAT to {C.WHITE}.env{C.RESET}")
+    except OSError:
+        warn("Could not save OVSX_PAT to .env")
 
 
 def _print_gh_troubleshooting() -> None:
