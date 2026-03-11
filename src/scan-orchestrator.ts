@@ -73,7 +73,7 @@ export async function analyzePackage(
     const [updateInfo, archiveSizeBytes] = await Promise.all([
         pubDev
             ? buildUpdateInfo(
-                dep.version, pubDev.latestVersion, dep.constraint,
+                { current: dep.version, latest: pubDev.latestVersion, constraint: dep.constraint },
                 repoInfo, {
                     token: params.githubToken, cache: params.cache,
                     packageName: dep.name,

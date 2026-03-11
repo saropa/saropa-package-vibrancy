@@ -226,12 +226,11 @@ export function parseChangelog(
 
 /** Build complete UpdateInfo for a package. */
 export async function buildUpdateInfo(
-    currentVersion: string,
-    latestVersion: string,
-    constraint: string,
+    versions: { current: string; latest: string; constraint: string },
     repoInfo: { owner: string; repo: string; subpath: string | null } | null,
     params?: { token?: string; cache?: CacheService; packageName?: string },
 ): Promise<UpdateInfo> {
+    const { current: currentVersion, latest: latestVersion, constraint } = versions;
     const constraintCovers = constraintAllowsVersion(constraint, latestVersion);
     const updateStatus = constraintCovers
         ? 'up-to-date' as UpdateStatus

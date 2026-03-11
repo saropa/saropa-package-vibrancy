@@ -260,21 +260,21 @@ describe('changelog-service', () => {
         });
 
         it('should return up-to-date with no changelog when current', async () => {
-            const info = await buildUpdateInfo('1.0.0', '1.0.0', '^1.0.0', null);
+            const info = await buildUpdateInfo({ current: '1.0.0', latest: '1.0.0', constraint: '^1.0.0' }, null);
             assert.strictEqual(info.updateStatus, 'up-to-date');
             assert.strictEqual(info.changelog, null);
             assert.strictEqual(fetchStub.callCount, 0);
         });
 
         it('should return up-to-date when constraint covers latest', async () => {
-            const info = await buildUpdateInfo('8.0.11', '8.1.0', '^8.0.11', null);
+            const info = await buildUpdateInfo({ current: '8.0.11', latest: '8.1.0', constraint: '^8.0.11' }, null);
             assert.strictEqual(info.updateStatus, 'up-to-date');
             assert.strictEqual(info.changelog, null);
             assert.strictEqual(fetchStub.callCount, 0);
         });
 
         it('should set unavailableReason when no repo and no packageName', async () => {
-            const info = await buildUpdateInfo('1.0.0', '2.0.0', '^1.0.0', null);
+            const info = await buildUpdateInfo({ current: '1.0.0', latest: '2.0.0', constraint: '^1.0.0' }, null);
             assert.strictEqual(info.updateStatus, 'major');
             assert.ok(info.changelog?.unavailableReason);
         });
@@ -284,7 +284,7 @@ describe('changelog-service', () => {
             fetchStub.resolves(new Response(changelog, { status: 200 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0', '^1.0.0',
+                { current: '1.0.0', latest: '2.0.0', constraint: '^1.0.0' },
                 { owner: 'org', repo: 'pkg', subpath: null },
             );
             assert.strictEqual(info.updateStatus, 'major');
@@ -296,7 +296,7 @@ describe('changelog-service', () => {
             fetchStub.resolves(new Response('', { status: 404 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0', '^1.0.0',
+                { current: '1.0.0', latest: '2.0.0', constraint: '^1.0.0' },
                 { owner: 'org', repo: 'pkg', subpath: null },
             );
             assert.strictEqual(info.updateStatus, 'major');
@@ -312,7 +312,7 @@ describe('changelog-service', () => {
             fetchStub.onCall(1).resolves(new Response(html, { status: 200 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0', '^1.0.0',
+                { current: '1.0.0', latest: '2.0.0', constraint: '^1.0.0' },
                 { owner: 'org', repo: 'pkg', subpath: null },
                 { packageName: 'http' },
             );
@@ -327,7 +327,8 @@ describe('changelog-service', () => {
             fetchStub.resolves(new Response(html, { status: 200 }));
 
             const info = await buildUpdateInfo(
-                '1.0.0', '2.0.0', '^1.0.0', null,
+                { current: '1.0.0', latest: '2.0.0', constraint: '^1.0.0' },
+                null,
                 { packageName: 'http' },
             );
             assert.strictEqual(info.changelog?.entries.length, 2);
