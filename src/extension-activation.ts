@@ -3,6 +3,7 @@ import { CacheService } from './services/cache-service';
 import { VibrancyTreeProvider } from './providers/tree-data-provider';
 import { VibrancyDiagnostics } from './providers/diagnostics';
 import { VibrancyCodeActionProvider } from './providers/code-action-provider';
+import { VibrancyCodeLensProvider } from './providers/codelens-provider';
 import { VibrancyHoverProvider } from './providers/hover-provider';
 import { VibrancyStatusBar } from './ui/status-bar';
 import { VibrancyReportPanel } from './views/report-webview';
@@ -37,6 +38,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     const cache = new CacheService(context.globalState);
     const treeProvider = new VibrancyTreeProvider();
     const hoverProvider = new VibrancyHoverProvider();
+    const codeLensProvider = new VibrancyCodeLensProvider();
     const statusBar = new VibrancyStatusBar();
     const diagCollection = vscode.languages.createDiagnosticCollection(
         'saropa-vibrancy',
@@ -47,11 +49,11 @@ export function runActivation(context: vscode.ExtensionContext): void {
 
     const targets: ScanTargets = {
         tree: treeProvider, hover: hoverProvider,
-        statusBar, diagnostics, cache,
+        codeLens: codeLensProvider, statusBar, diagnostics, cache,
     };
 
     registerTreeView(context, treeProvider);
-    registerProviders(context, hoverProvider);
+    registerProviders(context, hoverProvider, codeLensProvider);
     registerCommands(context, targets);
     registerTreeCommands(context);
     registerUpgradeCommand(context);
@@ -101,17 +103,19 @@ function registerTreeView(
 function registerProviders(
     context: vscode.ExtensionContext,
     hoverProvider: VibrancyHoverProvider,
+    codeLensProvider: VibrancyCodeLensProvider,
 ): void {
     const pubspecSelector = { language: 'yaml', pattern: '**/pubspec.yaml' };
 
     context.subscriptions.push(
         vscode.languages.registerHoverProvider(pubspecSelector, hoverProvider),
-    );
-    context.subscriptions.push(
         vscode.languages.registerCodeActionsProvider(
             pubspecSelector,
             new VibrancyCodeActionProvider(),
             { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] },
+        ),
+        vscode.languages.registerCodeLensProvider(
+            pubspecSelector, codeLensProvider,
         ),
     );
 }
@@ -119,6 +123,7 @@ function registerProviders(
 interface ScanTargets {
     tree: VibrancyTreeProvider;
     hover: VibrancyHoverProvider;
+    codeLens: VibrancyCodeLensProvider;
     statusBar: VibrancyStatusBar;
     diagnostics: VibrancyDiagnostics;
     cache: CacheService;
@@ -259,6 +264,7 @@ function publishResults(
     const active = results.filter(r => !suppressed.has(r.package.name));
     targets.tree.updateResults(results);
     targets.hover.updateResults(active);
+    targets.codeLens.updateResults(active);
     targets.statusBar.update(results);
     targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
 }
@@ -271,6 +277,7 @@ function republishFiltered(
     const suppressed = getSuppressedSet();
     const active = results.filter(r => !suppressed.has(r.package.name));
     targets.hover.updateResults(active);
+    targets.codeLens.updateResults(active);
     targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
 }
 

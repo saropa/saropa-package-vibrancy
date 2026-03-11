@@ -136,6 +136,16 @@ export class MockDiagnosticCollection {
     dispose(): void { this._entries.clear(); }
 }
 
+export class CodeLens {
+    range: Range;
+    command?: { title: string; command: string; arguments?: any[] };
+    constructor(range: Range, command?: CodeLens['command']) {
+        this.range = range;
+        this.command = command;
+    }
+    get isResolved(): boolean { return this.command !== undefined; }
+}
+
 export class CodeAction {
     title: string;
     kind?: string;

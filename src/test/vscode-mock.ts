@@ -5,6 +5,7 @@
 
 export {
     CodeAction,
+    CodeLens,
     Diagnostic,
     DiagnosticSeverity,
     EventEmitter,
@@ -134,6 +135,9 @@ export const languages = {
         return { dispose: () => { /* no-op */ } };
     },
     registerCodeActionsProvider: (_selector: any, _provider: any, _metadata?: any) => {
+        return { dispose: () => { /* no-op */ } };
+    },
+    registerCodeLensProvider: (_selector: any, _provider: any) => {
         return { dispose: () => { /* no-op */ } };
     },
 };

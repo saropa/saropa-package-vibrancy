@@ -253,6 +253,26 @@
             "type": "string"
           }
         },
+        "saropaPackageVibrancy.enableCodeLens": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show vibrancy score badges as CodeLens annotations above each dependency in pubspec.yaml"
+        },
+        "saropaPackageVibrancy.codeLensDetail": {
+          "type": "string",
+          "enum": [
+            "minimal",
+            "standard",
+            "full"
+          ],
+          "default": "standard",
+          "enumDescriptions": [
+            "Score and category only",
+            "Score, category, and update status",
+            "Score, category, archive size, update status, and alerts"
+          ],
+          "description": "Controls how much detail the CodeLens annotations show"
+        },
         "saropaPackageVibrancy.weights.resolutionVelocity": {
           "type": "number",
           "default": 0.5,
