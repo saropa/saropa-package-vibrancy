@@ -7,6 +7,7 @@ import { VibrancyHoverProvider } from './providers/hover-provider';
 import { VibrancyStatusBar } from './ui/status-bar';
 import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
+import { AboutPanel } from './views/about-webview';
 import { exportReports, ReportMetadata } from './services/report-exporter';
 import { ScanLogger } from './services/scan-logger';
 import { VibrancyResult } from './types';
@@ -91,6 +92,7 @@ function registerTreeView(
         'saropaPackageVibrancy.packages',
         { treeDataProvider: provider },
     );
+    tv.description = `v${context.extension.packageJSON.version}`;
     context.subscriptions.push(tv);
 }
 
@@ -147,6 +149,12 @@ function registerCommands(
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.browseKnownIssues',
             () => KnownIssuesPanel.createOrShow(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.about',
+            () => AboutPanel.createOrShow(
+                context.extension.packageJSON.version,
+            ),
         ),
     );
 }

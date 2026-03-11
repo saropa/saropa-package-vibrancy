@@ -9,6 +9,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.2] - Unreleased
 
+### Added
+
+- About panel with version number, Marketplace link, and GitHub link (info icon in sidebar header)
+- Extension version displayed in sidebar tree view header
+
 ### Changed
 
 - Redesigned extension and sidebar icons to match Saropa family style (cream background, gem hexagon, centered pulse line, status pills)

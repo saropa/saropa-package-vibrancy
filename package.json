@@ -78,6 +78,11 @@
         "icon": "$(library)"
       },
       {
+        "command": "saropaPackageVibrancy.about",
+        "title": "Saropa: About",
+        "icon": "$(info)"
+      },
+      {
         "command": "saropaPackageVibrancy.goToPackage",
         "title": "Go to pubspec.yaml",
         "icon": "$(go-to-file)"
@@ -118,7 +123,12 @@
         {
           "command": "saropaPackageVibrancy.scan",
           "when": "view == saropaPackageVibrancy.packages",
-          "group": "navigation"
+          "group": "navigation@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.about",
+          "when": "view == saropaPackageVibrancy.packages",
+          "group": "navigation@2"
         }
       ],
       "view/item/context": [
