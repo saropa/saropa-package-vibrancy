@@ -19,6 +19,7 @@ import { readScanConfig, scanPackages, buildScanMeta, ParsedDeps, findAndParseDe
 import { scanDartImports } from './services/import-scanner';
 import { detectUnused } from './scoring/unused-detector';
 import { fetchFlutterReleases } from './services/flutter-releases';
+import { snapshotVersions, notifyLockDiff } from './services/lock-diff-notifier';
 import { detectFamilySplits } from './scoring/family-conflict-detector';
 
 let latestResults: VibrancyResult[] = [];
@@ -199,6 +200,7 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
         },
         async (progress) => {
             const startTime = Date.now();
+            const oldVersions = snapshotVersions(latestResults);
 
             const parsed = await findAndParseDeps();
             if (!parsed) {
@@ -247,6 +249,7 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             );
 
             publishResults(targets, results, parsed);
+            notifyLockDiff(oldVersions, results);
 
             try {
                 await logger.writeToFile();
@@ -276,8 +279,8 @@ function publishResults(
     targets.hover.updateFamilySplits(splits);
     targets.codeLens.updateResults(active);
     targets.statusBar.update(results);
-    targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
     targets.diagnostics.updateFamilySplits(splits);
+    targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
 }
 
 function republishFiltered(
@@ -292,8 +295,8 @@ function republishFiltered(
     targets.hover.updateResults(active);
     targets.hover.updateFamilySplits(splits);
     targets.codeLens.updateResults(active);
-    targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
     targets.diagnostics.updateFamilySplits(splits);
+    targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
 }
 
 async function exportScanReport(): Promise<void> {
