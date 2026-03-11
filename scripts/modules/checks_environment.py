@@ -7,13 +7,14 @@ but will auto-install if missing and the tools are reachable.
 
 import json
 import shutil
+import sys
 
 from .constants import (
     C,
     REQUIRED_GLOBAL_NPM_PACKAGES,
     REQUIRED_VSCODE_EXTENSIONS,
 )
-from .display import fail, fix, info, ok, warn
+from .display import ask_yn, fail, fix, info, ok, warn
 from .utils import list_editor_extensions, run
 
 
@@ -87,7 +88,12 @@ def check_vscode_extensions() -> bool:
 
 
 def _install_vscode_extension(ext: str) -> bool:
-    """Auto-install a single VS Code extension."""
+    """Auto-install a single VS Code extension (prompts on Windows)."""
+    if sys.platform == "win32":
+        warn("Installing an extension may briefly open a VS Code window.")
+        if not ask_yn(f"Install {ext}?", default=True):
+            warn(f"Skipped {ext}")
+            return True  # non-blocking: skip is not a failure
     fix(f"Installing VS Code extension: {C.WHITE}{ext}{C.RESET}")
     result = run(["code", "--install-extension", ext])
     if result.returncode != 0:

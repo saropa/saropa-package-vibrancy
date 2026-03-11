@@ -9,7 +9,7 @@ import sys
 import time
 
 from .constants import MARKETPLACE_EXTENSION_ID, PROJECT_ROOT
-from .display import fail, info, ok
+from .display import ask_yn, fail, info, ok, warn
 
 
 def run(
@@ -128,13 +128,20 @@ def list_editor_extensions(editor: str = "code") -> set[str]:
     """Return cached set of lowercase extension lines from the editor CLI.
 
     Each line looks like 'publisher.name@version'. Returns empty set
-    if the CLI isn't available or the command fails.
+    if the CLI isn't available or the command fails. On Windows, warns
+    the user that a window may open and offers to skip.
     """
     if editor in _extensions_cache:
         return _extensions_cache[editor]
     if not shutil.which(editor):
         _extensions_cache[editor] = set()
         return set()
+    if sys.platform == "win32":
+        label = "VS Code" if editor == "code" else editor.capitalize()
+        warn(f"Querying {label} CLI may briefly open a window.")
+        if not ask_yn(f"Query {label} extensions?", default=True):
+            _extensions_cache[editor] = set()
+            return set()
     result = run([editor, "--list-extensions", "--show-versions"])
     if result.returncode != 0:
         _extensions_cache[editor] = set()

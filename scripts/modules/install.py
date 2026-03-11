@@ -58,6 +58,8 @@ def prompt_install(vsix_path: str) -> None:
              "'Shell Command: Install code command in PATH'")
         return
 
+    if sys.platform == "win32":
+        warn("Installing via CLI may briefly open a VS Code window.")
     if not ask_yn("Install via CLI now?", default=False):
         return
 
@@ -75,8 +77,8 @@ def prompt_install(vsix_path: str) -> None:
 
 # cspell:ignore startfile
 def prompt_open_report(report_path: str) -> None:
-    """Ask whether to open the build report."""
-    if not ask_yn("Open build report?", default=False):
+    """Ask whether to open the build report in the default viewer."""
+    if not ask_yn("Open build report in default viewer?", default=False):
         return
 
     abs_path = os.path.abspath(report_path)
