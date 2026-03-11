@@ -9,7 +9,8 @@
       "replacement": "omni_datetime_picker",
       "migrationNotes": "Minor rewrite. Update widget calls and dialog context handling.",
       "archiveSizeBytes": 317440,
-      "archiveSizeMB": 0.3
+      "archiveSizeMB": 0.3,
+      "license": "MIT"
     },
     {
       "name": "flutter_facebook_login",
@@ -19,7 +20,8 @@
       "replacement": "flutter_facebook_auth",
       "migrationNotes": "Drop-in API change, but requires updating FB developer console hashes.",
       "archiveSizeBytes": 122880,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "apple_sign_in",
@@ -29,7 +31,8 @@
       "replacement": "sign_in_with_apple",
       "migrationNotes": "Moderate effort. Security nonce and identity token handling changed.",
       "archiveSizeBytes": 71680,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "unknown"
     },
     {
       "name": "adhara_socket_io",
@@ -39,7 +42,8 @@
       "replacement": "socket_io_client",
       "migrationNotes": "Moderate rewrite. Change connection builders and stream subscriptions.",
       "archiveSizeBytes": 163840,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "unknown"
     },
     {
       "name": "flutter_money_formatter",
@@ -49,7 +53,8 @@
       "replacement": "`intl` package",
       "migrationNotes": "Use standard Dart localization number formats.",
       "archiveSizeBytes": 2376613,
-      "archiveSizeMB": 2.27
+      "archiveSizeMB": 2.27,
+      "license": "BSD-2-Clause-Views"
     },
     {
       "name": "progress_dialog",
@@ -59,7 +64,8 @@
       "replacement": "Native `showDialog`",
       "migrationNotes": "Total rewrite. Just use native Flutter dialogs with a CircularProgressIndicator.",
       "archiveSizeBytes": 1065213,
-      "archiveSizeMB": 1.02
+      "archiveSizeMB": 1.02,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_rating_bar",
@@ -69,7 +75,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 6825252,
-      "archiveSizeMB": 6.51
+      "archiveSizeMB": 6.51,
+      "license": "MIT"
     },
     {
       "name": "flutter_offline",
@@ -79,7 +86,8 @@
       "replacement": "internet_connection_checker_plus",
       "migrationNotes": "Huge logic change. Must manually build the Offline overlay UI now.",
       "archiveSizeBytes": 665249,
-      "archiveSizeMB": 0.63
+      "archiveSizeMB": 0.63,
+      "license": "MIT"
     },
     {
       "name": "clippy_flutter",
@@ -89,7 +97,8 @@
       "replacement": "Native CustomPainter",
       "migrationNotes": "Draw paths manually to ensure GPU compatibility.",
       "archiveSizeBytes": 2850122,
-      "archiveSizeMB": 2.72
+      "archiveSizeMB": 2.72,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "flutter_masked_text",
@@ -99,7 +108,8 @@
       "replacement": "mask_text_input_formatter",
       "migrationNotes": "Moderate. Replaces custom controllers with native `inputFormatters`.",
       "archiveSizeBytes": 235520,
-      "archiveSizeMB": 0.22
+      "archiveSizeMB": 0.22,
+      "license": "MIT"
     },
     {
       "name": "ff_navigation_bar",
@@ -109,7 +119,8 @@
       "replacement": "google_nav_bar",
       "migrationNotes": "Total UI replacement. Different configuration parameters.",
       "archiveSizeBytes": 42700800,
-      "archiveSizeMB": 40.72
+      "archiveSizeMB": 40.72,
+      "license": "MIT"
     },
     {
       "name": "states_rebuilder",
@@ -119,7 +130,8 @@
       "replacement": "flutter_bloc",
       "migrationNotes": "Total architecture rewrite. Requires migrating to event-driven state.",
       "archiveSizeBytes": 291577,
-      "archiveSizeMB": 0.28
+      "archiveSizeMB": 0.28,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_google_places",
@@ -129,7 +141,8 @@
       "replacement": "google_places_flutter",
       "migrationNotes": "Moderate. Parameter mapping is slightly different.",
       "archiveSizeBytes": 6809600,
-      "archiveSizeMB": 6.49
+      "archiveSizeMB": 6.49,
+      "license": "unknown"
     },
     {
       "name": "zefyr",
@@ -139,7 +152,8 @@
       "replacement": "flutter_quill",
       "migrationNotes": "Huge rewrite. Document formats (JSON) are different. Need data migration.",
       "archiveSizeBytes": 727040,
-      "archiveSizeMB": 0.69
+      "archiveSizeMB": 0.69,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "builder",
@@ -149,7 +163,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 57092,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "MIT"
     },
     {
       "name": "flutter_twitter_login",
@@ -159,7 +174,8 @@
       "replacement": "twitter_login",
       "migrationNotes": "Rewrite auth logic to support X API v2.",
       "archiveSizeBytes": 122880,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "stripe_payment",
@@ -169,7 +185,8 @@
       "replacement": "flutter_stripe",
       "migrationNotes": "Total rewrite. Use the official SDK; update backend webhook logic too.",
       "archiveSizeBytes": 276480,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "MIT"
     },
     {
       "name": "flutter_audio_recorder",
@@ -179,7 +196,8 @@
       "replacement": "record",
       "migrationNotes": "Moderate. Better async permission handling and codec support.",
       "archiveSizeBytes": 122880,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "chewie_audio",
@@ -189,7 +207,8 @@
       "replacement": "just_audio",
       "migrationNotes": "Total rewrite. `just_audio` is far more powerful but requires custom UI.",
       "archiveSizeBytes": 101804,
-      "archiveSizeMB": 0.1
+      "archiveSizeMB": 0.1,
+      "license": "MIT"
     },
     {
       "name": "flutter_speed_dial",
@@ -199,7 +218,8 @@
       "replacement": "Native `ExpandableFab`",
       "migrationNotes": "Total rewrite. Use Flutter's modern native custom FAB animations.",
       "archiveSizeBytes": 18063,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "websafe_svg",
@@ -209,7 +229,8 @@
       "replacement": "flutter_svg",
       "migrationNotes": "Drop-in replacement. Change package imports.",
       "archiveSizeBytes": 151433,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "MIT"
     },
     {
       "name": "flutter_statusbar_manager",
@@ -219,7 +240,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 9871360,
-      "archiveSizeMB": 9.41
+      "archiveSizeMB": 9.41,
+      "license": "MIT"
     },
     {
       "name": "nice_button",
@@ -229,7 +251,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 177960,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "MIT"
     },
     {
       "name": "liquid_progress_indicator",
@@ -239,7 +262,8 @@
       "replacement": "percent_indicator",
       "migrationNotes": "UI swap. Linear and circular alternatives available.",
       "archiveSizeBytes": 2304000,
-      "archiveSizeMB": 2.2
+      "archiveSizeMB": 2.2,
+      "license": "MIT"
     },
     {
       "name": "flutter_tags",
@@ -249,7 +273,8 @@
       "replacement": "textfield_tags",
       "migrationNotes": "Moderate rewrite. Different controller logic.",
       "archiveSizeBytes": 21427200,
-      "archiveSizeMB": 20.43
+      "archiveSizeMB": 20.43,
+      "license": "MIT"
     },
     {
       "name": "flutter_markdown",
@@ -259,7 +284,8 @@
       "replacement": "markdown_widget",
       "migrationNotes": "Moderate. Syntax highlighters and builders must be mapped.",
       "archiveSizeBytes": 360982,
-      "archiveSizeMB": 0.34
+      "archiveSizeMB": 0.34,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_adaptive_scaffold",
@@ -269,7 +295,8 @@
       "replacement": "Native `LayoutBuilder`",
       "migrationNotes": "Total rewrite. Roll your own responsive breakpoints.",
       "archiveSizeBytes": 4915910,
-      "archiveSizeMB": 4.69
+      "archiveSizeMB": 4.69,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "ios_platform_images",
@@ -279,7 +306,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 66980,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "palette_generator",
@@ -289,7 +317,8 @@
       "replacement": "color_thief_flutter",
       "migrationNotes": "Moderate rewrite. Different async methods for extracting dominant colors.",
       "archiveSizeBytes": 412490,
-      "archiveSizeMB": 0.39
+      "archiveSizeMB": 0.39,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_image",
@@ -299,7 +328,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 277199,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "js",
@@ -309,7 +339,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 9994,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "scoped_model",
@@ -319,7 +350,8 @@
       "replacement": "provider",
       "migrationNotes": "Massive rewrite. Shift to `ChangeNotifierProvider`.",
       "archiveSizeBytes": 131122,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "provide",
@@ -329,7 +361,8 @@
       "replacement": "get_it",
       "migrationNotes": "Massive rewrite. Shift to locator pattern.",
       "archiveSizeBytes": 71680,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_sparkline",
@@ -339,7 +372,8 @@
       "replacement": "fl_chart",
       "migrationNotes": "Rewrite to use modern chart primitives.",
       "archiveSizeBytes": 132166,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "MIT"
     },
     {
       "name": "flutter_sticky_header",
@@ -349,7 +383,8 @@
       "replacement": "sliver_tools",
       "migrationNotes": "Moderate rewrite. Use native sliver logic wrapped in tools.",
       "archiveSizeBytes": 4434186,
-      "archiveSizeMB": 4.23
+      "archiveSizeMB": 4.23,
+      "license": "MIT"
     },
     {
       "name": "flutter_circular_chart",
@@ -359,7 +394,8 @@
       "replacement": "fl_chart",
       "migrationNotes": "Rewrite to use modern pie chart implementations.",
       "archiveSizeBytes": 2668262,
-      "archiveSizeMB": 2.54
+      "archiveSizeMB": 2.54,
+      "license": "MIT"
     },
     {
       "name": "flutter_full_pdf_viewer",
@@ -369,7 +405,8 @@
       "replacement": "pdfrx",
       "migrationNotes": "Total rewrite. New controller logic and memory management.",
       "archiveSizeBytes": 106956,
-      "archiveSizeMB": 0.1
+      "archiveSizeMB": 0.1,
+      "license": "Not Found"
     },
     {
       "name": "flutter_html_view",
@@ -379,7 +416,8 @@
       "replacement": "flutter_html",
       "migrationNotes": "Moderate. Update tag styling parameters.",
       "archiveSizeBytes": 763812,
-      "archiveSizeMB": 0.73
+      "archiveSizeMB": 0.73,
+      "license": "MIT"
     },
     {
       "name": "flutter_youtube_view",
@@ -389,7 +427,8 @@
       "replacement": "youtube_player_flutter",
       "migrationNotes": "Moderate. Swap controller initialization.",
       "archiveSizeBytes": 254647,
-      "archiveSizeMB": 0.24
+      "archiveSizeMB": 0.24,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_webview_plugin",
@@ -399,7 +438,8 @@
       "replacement": "webview_flutter",
       "migrationNotes": "Total rewrite. Shift to modern `WebViewController` architecture.",
       "archiveSizeBytes": 256000,
-      "archiveSizeMB": 0.24
+      "archiveSizeMB": 0.24,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "admob_flutter",
@@ -409,7 +449,8 @@
       "replacement": "google_mobile_ads",
       "migrationNotes": "Complete rewrite of ad widget placement and initialization logic.",
       "archiveSizeBytes": 122593,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "ISC"
     },
     {
       "name": "firebase_admob",
@@ -419,7 +460,8 @@
       "replacement": "google_mobile_ads",
       "migrationNotes": "Complete rewrite. Ads decoupled from Firebase wrapper.",
       "archiveSizeBytes": 81920,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_blue",
@@ -429,7 +471,8 @@
       "replacement": "flutter_blue_plus",
       "migrationNotes": "Moderate effort. Fork that fixes permissions; API is mostly similar.",
       "archiveSizeBytes": 226662,
-      "archiveSizeMB": 0.22
+      "archiveSizeMB": 0.22,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_ble_lib",
@@ -439,7 +482,8 @@
       "replacement": "flutter_reactive_ble",
       "migrationNotes": "Massive rewrite. Stream parsing is fundamentally different.",
       "archiveSizeBytes": 174080,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_beacon",
@@ -449,7 +493,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 163840,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_nfc_reader",
@@ -459,7 +504,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 184367,
-      "archiveSizeMB": 0.18
+      "archiveSizeMB": 0.18,
+      "license": "MIT"
     },
     {
       "name": "contact_picker",
@@ -469,7 +515,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 163840,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "contacts_service",
@@ -479,7 +526,8 @@
       "replacement": "flutter_contacts",
       "migrationNotes": "Easy migration. Better cross-platform parameter support.",
       "archiveSizeBytes": 1834825,
-      "archiveSizeMB": 1.75
+      "archiveSizeMB": 1.75,
+      "license": "MIT"
     },
     {
       "name": "sms",
@@ -489,7 +537,8 @@
       "replacement": "None (Don't do this)",
       "migrationNotes": "Re-architect app to not require broad SMS reading.",
       "archiveSizeBytes": 136020,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "MIT"
     },
     {
       "name": "telephony",
@@ -499,7 +548,8 @@
       "replacement": "Native Platform Channels",
       "migrationNotes": "Write native Kotlin/Swift for precise telecom functions.",
       "archiveSizeBytes": 39176,
-      "archiveSizeMB": 0.04
+      "archiveSizeMB": 0.04,
+      "license": "MIT"
     },
     {
       "name": "flutter_launch",
@@ -509,7 +559,8 @@
       "replacement": "url_launcher",
       "migrationNotes": "Complete drop-in URL execution.",
       "archiveSizeBytes": 11439309,
-      "archiveSizeMB": 10.91
+      "archiveSizeMB": 10.91,
+      "license": "GPL-3.0"
     },
     {
       "name": "vibrate",
@@ -519,7 +570,8 @@
       "replacement": "Native `HapticFeedback`",
       "migrationNotes": "Drop-in swap to `HapticFeedback.vibrate()`.",
       "archiveSizeBytes": 122880,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "flutter_incall",
@@ -529,7 +581,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 92257,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "ISC"
     },
     {
       "name": "flutter_webrtc_wrapper",
@@ -539,7 +592,8 @@
       "replacement": "flutter_webrtc",
       "migrationNotes": "Heavy update. SDP negotiation methods changed.",
       "archiveSizeBytes": 6622,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "flutter_staggered_grid_view",
@@ -549,7 +603,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Drop-in API change to the maintained version.",
       "archiveSizeBytes": 32145,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "Not Found"
     },
     {
       "name": "flutter_slidable",
@@ -559,7 +614,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 89485,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "MIT"
     },
     {
       "name": "flutter_icons",
@@ -569,7 +625,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 13824000,
-      "archiveSizeMB": 13.18
+      "archiveSizeMB": 13.18,
+      "license": "Apache-2.0"
     },
     {
       "name": "font_awesome_flutter",
@@ -579,7 +636,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Fix pubspec constraints; update icon names.",
       "archiveSizeBytes": 694473,
-      "archiveSizeMB": 0.66
+      "archiveSizeMB": 0.66,
+      "license": "MIT"
     },
     {
       "name": "google_fonts",
@@ -589,7 +647,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 1847877,
-      "archiveSizeMB": 1.76
+      "archiveSizeMB": 1.76,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_spinkit",
@@ -599,7 +658,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 1828277,
-      "archiveSizeMB": 1.74
+      "archiveSizeMB": 1.74,
+      "license": "MIT"
     },
     {
       "name": "flutter_shimmer",
@@ -609,7 +669,8 @@
       "replacement": "shimmer",
       "migrationNotes": "UI swap. Syntax is heavily builder-focused now.",
       "archiveSizeBytes": 27017039,
-      "archiveSizeMB": 25.77
+      "archiveSizeMB": 25.77,
+      "license": "unknown"
     },
     {
       "name": "flutter_page_indicator",
@@ -619,7 +680,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 122880,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "unknown"
     },
     {
       "name": "flutter_card_swipper",
@@ -629,7 +691,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 552960,
-      "archiveSizeMB": 0.53
+      "archiveSizeMB": 0.53,
+      "license": "MIT"
     },
     {
       "name": "snaplist",
@@ -639,7 +702,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 61440,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "carousel_pro",
@@ -649,7 +713,8 @@
       "replacement": "carousel_slider",
       "migrationNotes": "Moderate rewrite. `carousel_slider` has a totally different builder pattern.",
       "archiveSizeBytes": 675840,
-      "archiveSizeMB": 0.64
+      "archiveSizeMB": 0.64,
+      "license": "MIT"
     },
     {
       "name": "flutter_swiper",
@@ -659,7 +724,8 @@
       "replacement": "card_swiper",
       "migrationNotes": "Easy migration. Maintained fork with the exact same API.",
       "archiveSizeBytes": 6359040,
-      "archiveSizeMB": 6.06
+      "archiveSizeMB": 6.06,
+      "license": "MIT"
     },
     {
       "name": "cached_network_image_v1",
@@ -669,7 +735,8 @@
       "replacement": "cached_network_image",
       "migrationNotes": "Drop-in mostly, but requires updating error builder syntax.",
       "archiveSizeBytes": 292939,
-      "archiveSizeMB": 0.28
+      "archiveSizeMB": 0.28,
+      "license": "MIT"
     },
     {
       "name": "multi_image_picker",
@@ -679,7 +746,8 @@
       "replacement": "image_picker",
       "migrationNotes": "Total rewrite. Use official `pickMultiImage` method.",
       "archiveSizeBytes": 696320,
-      "archiveSizeMB": 0.66
+      "archiveSizeMB": 0.66,
+      "license": "Unknown"
     },
     {
       "name": "image_picker_saver",
@@ -689,7 +757,8 @@
       "replacement": "gal",
       "migrationNotes": "Modern drop-in replacement for saving to gallery.",
       "archiveSizeBytes": 81920,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_exif",
@@ -699,7 +768,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 71680,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "unknown"
     },
     {
       "name": "flutter_ffmpeg",
@@ -709,7 +779,8 @@
       "replacement": "ffmpeg_kit_flutter",
       "migrationNotes": "Massive rewrite. Execution syntax entirely refactored.",
       "archiveSizeBytes": 3475146,
-      "archiveSizeMB": 3.31
+      "archiveSizeMB": 3.31,
+      "license": "LGPL-3.0"
     },
     {
       "name": "flutter_sound_v7",
@@ -719,7 +790,8 @@
       "replacement": "Update to v9+",
       "migrationNotes": "Complete rewrite of the playback session builder.",
       "archiveSizeBytes": 15290933,
-      "archiveSizeMB": 14.58
+      "archiveSizeMB": 14.58,
+      "license": "MPL-2.0"
     },
     {
       "name": "audioplayers_v0",
@@ -729,7 +801,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 21027379,
-      "archiveSizeMB": 20.05
+      "archiveSizeMB": 20.05,
+      "license": "MIT"
     },
     {
       "name": "flutter_vlc_player_orig",
@@ -739,7 +812,8 @@
       "replacement": "media_kit",
       "migrationNotes": "Huge rewrite. Better Wasm/Desktop support.",
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "video_launcher",
@@ -749,7 +823,8 @@
       "replacement": "url_launcher",
       "migrationNotes": "Route to native browser or system handlers safely.",
       "archiveSizeBytes": 5191680,
-      "archiveSizeMB": 4.95
+      "archiveSizeMB": 4.95,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_downloader",
@@ -759,7 +834,8 @@
       "replacement": "background_downloader",
       "migrationNotes": "Total rewrite of background task initialization.",
       "archiveSizeBytes": 828168,
-      "archiveSizeMB": 0.79
+      "archiveSizeMB": 0.79,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "open_file_v3",
@@ -769,7 +845,8 @@
       "replacement": "open_filex",
       "migrationNotes": "Easy migration. Maintained fork with exact API.",
       "archiveSizeBytes": 15764086,
-      "archiveSizeMB": 15.03
+      "archiveSizeMB": 15.03,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "file_picker_v3",
@@ -779,7 +856,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 20261718,
-      "archiveSizeMB": 19.32
+      "archiveSizeMB": 19.32,
+      "license": "MIT"
     },
     {
       "name": "path_provider_ex",
@@ -789,7 +867,8 @@
       "replacement": "path_provider",
       "migrationNotes": "Drop-in. Use the official modern directories.",
       "archiveSizeBytes": 61440,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "flutter_notifications_v8",
@@ -799,7 +878,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "unknown"
     },
     {
       "name": "workmanager_v04",
@@ -809,7 +889,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Moderate. Callbacks require stricter async handling.",
       "archiveSizeBytes": 13544,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "flutter_background_service",
@@ -819,7 +900,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Moderate update. Adjust foreground notification hooks.",
       "archiveSizeBytes": 128298,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "android_alarm_manager",
@@ -829,7 +911,8 @@
       "replacement": "android_alarm_manager_plus",
       "migrationNotes": "Mostly drop-in, but requires updating AndroidManifest permissions.",
       "archiveSizeBytes": 30720,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "workmanager",
@@ -839,7 +922,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 13544,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "geolocator_apple_v1",
@@ -849,7 +933,8 @@
       "replacement": "geolocator",
       "migrationNotes": "Do not use standalone components. Use main package.",
       "archiveSizeBytes": 241107,
-      "archiveSizeMB": 0.23
+      "archiveSizeMB": 0.23,
+      "license": "MIT"
     },
     {
       "name": "geolocator_android_v1",
@@ -859,7 +944,8 @@
       "replacement": "geolocator",
       "migrationNotes": "Same as above. Use unified plugin.",
       "archiveSizeBytes": 136597,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "MIT"
     },
     {
       "name": "google_api_availability",
@@ -869,7 +955,8 @@
       "replacement": "Use Native Channels",
       "migrationNotes": "Write custom Kotlin script for exact API versioning.",
       "archiveSizeBytes": 15031,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "location_permissions",
@@ -879,7 +966,8 @@
       "replacement": "permission_handler",
       "migrationNotes": "Total rewrite. Unified permission asking method.",
       "archiveSizeBytes": 63157,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "trust_fall",
@@ -889,7 +977,8 @@
       "replacement": "freerasp",
       "migrationNotes": "Architecture rewrite. Implements much stricter TEE checking.",
       "archiveSizeBytes": 122880,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "safe_device",
@@ -899,7 +988,8 @@
       "replacement": "device_info_plus",
       "migrationNotes": "Write custom logic using physical device flag.",
       "archiveSizeBytes": 75947,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "flutter_secure_storage",
@@ -909,7 +999,8 @@
       "replacement": "Update to v9+",
       "migrationNotes": "Critical update. Fixes Android Keystore initialization.",
       "archiveSizeBytes": 343976,
-      "archiveSizeMB": 0.33
+      "archiveSizeMB": 0.33,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "biometric_storage",
@@ -919,7 +1010,8 @@
       "replacement": "local_auth",
       "migrationNotes": "Rewrite logic. Securely bind auth token to local storage manually.",
       "archiveSizeBytes": 759612,
-      "archiveSizeMB": 0.72
+      "archiveSizeMB": 0.72,
+      "license": "MIT"
     },
     {
       "name": "local_auth",
@@ -929,7 +1021,8 @@
       "replacement": null,
       "migrationNotes": null,
       "archiveSizeBytes": 247265,
-      "archiveSizeMB": 0.24
+      "archiveSizeMB": 0.24,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_app_badger",
@@ -939,7 +1032,8 @@
       "replacement": "flutter_app_icon_badge",
       "migrationNotes": "Drop-in equivalent with updated native launcher maps.",
       "archiveSizeBytes": 174072,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_shortcuts",
@@ -949,7 +1043,8 @@
       "replacement": "quick_actions",
       "migrationNotes": "Total rewrite using official Flutter quick actions API.",
       "archiveSizeBytes": 266748,
-      "archiveSizeMB": 0.25
+      "archiveSizeMB": 0.25,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_email_sender",
@@ -959,7 +1054,8 @@
       "replacement": "Use `url_launcher`",
       "migrationNotes": "Build `mailto:` schemes natively, or use backend emailing.",
       "archiveSizeBytes": 61135,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_sms_inbox",
@@ -969,7 +1065,8 @@
       "replacement": "None",
       "migrationNotes": "Redesign app to not scrape user text messages.",
       "archiveSizeBytes": 58332,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "call_log",
@@ -979,7 +1076,8 @@
       "replacement": "None",
       "migrationNotes": "Stop reading call logs.",
       "archiveSizeBytes": 61655,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "keyboard_actions",
@@ -989,7 +1087,8 @@
       "replacement": "Use Native FocusNodes",
       "migrationNotes": "Rewrite using `FocusManager.instance.primaryFocus?.unfocus()`.",
       "archiveSizeBytes": 66410,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "connectivity",
@@ -999,7 +1098,8 @@
       "replacement": "connectivity_plus",
       "migrationNotes": "Drop-in replacement. Change imports and class names to add `_plus`.",
       "archiveSizeBytes": 153600,
-      "archiveSizeMB": 0.15
+      "archiveSizeMB": 0.15,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "share",
@@ -1009,7 +1109,8 @@
       "replacement": "share_plus",
       "migrationNotes": "Drop-in. Method signatures changed slightly to support `XFile`.",
       "archiveSizeBytes": 61440,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "device_info",
@@ -1019,7 +1120,8 @@
       "replacement": "device_info_plus",
       "migrationNotes": "Drop-in. Update imports and model getters.",
       "archiveSizeBytes": 53698,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "package_info",
@@ -1029,7 +1131,8 @@
       "replacement": "package_info_plus",
       "migrationNotes": "Drop-in. Returns modern async version models.",
       "archiveSizeBytes": 133120,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "sensors",
@@ -1039,7 +1142,8 @@
       "replacement": "sensors_plus",
       "migrationNotes": "Drop-in stream replacement. Better memory management.",
       "archiveSizeBytes": 61440,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "battery",
@@ -1049,7 +1153,8 @@
       "replacement": "battery_plus",
       "migrationNotes": "Drop-in. Update stream listeners.",
       "archiveSizeBytes": 51200,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "android_intent",
@@ -1059,7 +1164,8 @@
       "replacement": "android_intent_plus",
       "migrationNotes": "Drop-in. Update platform channel calls.",
       "archiveSizeBytes": 30720,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "charts_flutter",
@@ -1069,7 +1175,8 @@
       "replacement": "fl_chart",
       "migrationNotes": "Total rewrite. You must rebuild all chart datasets from scratch.",
       "archiveSizeBytes": 215237,
-      "archiveSizeMB": 0.21
+      "archiveSizeMB": 0.21,
+      "license": "Apache-2.0"
     },
     {
       "name": "Hive (v1/v2)",
@@ -1079,7 +1186,8 @@
       "replacement": "hive_ce",
       "migrationNotes": "Update to the Community Edition (hive_ce) fork which is actively maintained and Dart 3/Wasm compatible, or execute a total rewrite to Drift for relational needs.",
       "archiveSizeBytes": 96991,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "unknown"
     },
     {
       "name": "isar",
@@ -1089,7 +1197,8 @@
       "replacement": "drift",
       "migrationNotes": "Total rewrite. Shift to a stable SQLite-backed architecture like Drift, or Realm if a NoSQL object store is strictly required.",
       "archiveSizeBytes": 73661,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "Apache-2.0"
     },
     {
       "name": "easy_localization",
@@ -1099,7 +1208,8 @@
       "replacement": "slang",
       "migrationNotes": "Heavy migration. Move from runtime parsing to build-time code generation.",
       "archiveSizeBytes": 352380,
-      "archiveSizeMB": 0.34
+      "archiveSizeMB": 0.34,
+      "license": "MIT"
     },
     {
       "name": "pull_to_refresh",
@@ -1109,7 +1219,8 @@
       "replacement": "liquid_pull_to_refresh",
       "migrationNotes": "Moderate effort. Switch controller logic to modern native RefreshIndicator wrappers.",
       "archiveSizeBytes": 18063360,
-      "archiveSizeMB": 17.23
+      "archiveSizeMB": 17.23,
+      "license": "MIT"
     },
     {
       "name": "background_locator",
@@ -1119,7 +1230,8 @@
       "replacement": "flutter_background_geolocation",
       "migrationNotes": "Paid plugin, but total drop-in for enterprise. (Free alt: `geolocator`).",
       "archiveSizeBytes": 3916696,
-      "archiveSizeMB": 3.74
+      "archiveSizeMB": 3.74,
+      "license": "MIT"
     },
     {
       "name": "jitsi_meet",
@@ -1129,7 +1241,8 @@
       "replacement": "jitsi_meet_wrapper",
       "migrationNotes": "Moderate effort. Update event listeners and view configurations.",
       "archiveSizeBytes": 92160,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "MIT"
     },
     {
       "name": "flutter_pagewise",
@@ -1139,7 +1252,8 @@
       "replacement": "infinite_scroll_pagination",
       "migrationNotes": "Moderate rewrite. Shift to PagingController pattern.",
       "archiveSizeBytes": 6182408,
-      "archiveSizeMB": 5.9
+      "archiveSizeMB": 5.9,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "audioplayers (v0.x)",
@@ -1149,7 +1263,8 @@
       "replacement": "audioplayers",
       "migrationNotes": "Heavy migration. `AudioCache` is gone, completely new async API.",
       "archiveSizeBytes": 21027379,
-      "archiveSizeMB": 20.05
+      "archiveSizeMB": 20.05,
+      "license": "MIT"
     },
     {
       "name": "file_picker (v1/v2)",
@@ -1159,7 +1274,8 @@
       "replacement": "file_picker",
       "migrationNotes": "Moderate. Update async fetching and handle new Scoped Storage rules.",
       "archiveSizeBytes": 20261718,
-      "archiveSizeMB": 19.32
+      "archiveSizeMB": 19.32,
+      "license": "MIT"
     },
     {
       "name": "flutter_local_notifications (v8)",
@@ -1169,7 +1285,8 @@
       "replacement": "flutter_local_notifications",
       "migrationNotes": "Heavy rewrite. Initialization and tap-handling completely overhauled.",
       "archiveSizeBytes": 727307,
-      "archiveSizeMB": 0.69
+      "archiveSizeMB": 0.69,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_rating_bar (Orig)",
@@ -1179,7 +1296,8 @@
       "replacement": "flutter_rating_bar",
       "migrationNotes": "Check for active forks or rebuild using native Gesturedetector + Row.",
       "archiveSizeBytes": 6825252,
-      "archiveSizeMB": 6.51
+      "archiveSizeMB": 6.51,
+      "license": "MIT"
     },
     {
       "name": "js (original)",
@@ -1189,7 +1307,8 @@
       "replacement": "`dart:js_interop`",
       "migrationNotes": "Huge rewrite. Requires migrating to strict Wasm-ready extension types.",
       "archiveSizeBytes": 9994,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_slidable (v0)",
@@ -1199,7 +1318,8 @@
       "replacement": "flutter_slidable",
       "migrationNotes": "Complete rewrite of the ActionPane builders.",
       "archiveSizeBytes": 89485,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "MIT"
     },
     {
       "name": "google_fonts (v1)",
@@ -1209,7 +1329,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Drop-in update, massive performance boost.",
       "archiveSizeBytes": 1847877,
-      "archiveSizeMB": 1.76
+      "archiveSizeMB": 1.76,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_spinkit (v4)",
@@ -1219,7 +1340,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Drop-in update.",
       "archiveSizeBytes": 1828277,
-      "archiveSizeMB": 1.74
+      "archiveSizeMB": 1.74,
+      "license": "MIT"
     },
     {
       "name": "flutter_advanced_networkimage",
@@ -1229,7 +1351,8 @@
       "replacement": "cached_network_image",
       "migrationNotes": "Total rewrite. Use standard caching logic.",
       "archiveSizeBytes": 141615,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "MIT"
     },
     {
       "name": "local_auth (Legacy)",
@@ -1239,7 +1362,8 @@
       "replacement": "Update to latest official",
       "migrationNotes": "Drop-in update, improves biometric fallback mechanisms.",
       "archiveSizeBytes": 247265,
-      "archiveSizeMB": 0.24
+      "archiveSizeMB": 0.24,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "moor",
@@ -1249,7 +1373,8 @@
       "replacement": "drift",
       "migrationNotes": "Requires renaming annotations and running the Drift migration tool.",
       "archiveSizeBytes": 23521,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "pedantic",
@@ -1259,7 +1384,8 @@
       "replacement": "flutter_lints",
       "migrationNotes": "Update analysis_options.yaml to include flutter_lints.",
       "archiveSizeBytes": 6308,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "effective_dart",
@@ -1269,7 +1395,8 @@
       "replacement": "flutter_lints",
       "migrationNotes": "Drop-in replacement in analysis options.",
       "archiveSizeBytes": 5304,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "lint",
@@ -1279,7 +1406,8 @@
       "replacement": "flutter_lints",
       "migrationNotes": "Standardize to official lints.",
       "archiveSizeBytes": 33820,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "Apache-2.0"
     },
     {
       "name": "flushbar",
@@ -1289,7 +1417,8 @@
       "replacement": "another_flushbar",
       "migrationNotes": "Drop-in API change to the maintained community fork.",
       "archiveSizeBytes": 20480,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "unknown"
     },
     {
       "name": "qr_code_scanner",
@@ -1299,7 +1428,8 @@
       "replacement": "mobile_scanner",
       "migrationNotes": "Total rewrite using ML Kit base.",
       "archiveSizeBytes": 86004,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "flutter_barcode_scanner",
@@ -1309,7 +1439,8 @@
       "replacement": "mobile_scanner",
       "migrationNotes": "Shift to ML Kit based scanner.",
       "archiveSizeBytes": 174080,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "MIT"
     },
     {
       "name": "barcode_scan",
@@ -1319,7 +1450,8 @@
       "replacement": "mobile_scanner",
       "migrationNotes": "Total rewrite of scanning overlays and callbacks.",
       "archiveSizeBytes": 81920,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "MIT"
     },
     {
       "name": "flutter_neumorphic",
@@ -1329,7 +1461,8 @@
       "replacement": "flutter_neumorphic_plus",
       "migrationNotes": "Update package name; underlying Impeller issues patched in fork.",
       "archiveSizeBytes": 15055860,
-      "archiveSizeMB": 14.36
+      "archiveSizeMB": 14.36,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_staggered_animations",
@@ -1339,7 +1472,8 @@
       "replacement": "flutter_animate",
       "migrationNotes": "Shift to modern extension-based declarative animations.",
       "archiveSizeBytes": 916225,
-      "archiveSizeMB": 0.87
+      "archiveSizeMB": 0.87,
+      "license": "MIT"
     },
     {
       "name": "animations",
@@ -1349,7 +1483,8 @@
       "replacement": "flutter_animate",
       "migrationNotes": "Total rewrite. Use native Material 3 transitions where possible.",
       "archiveSizeBytes": 37455785,
-      "archiveSizeMB": 35.72
+      "archiveSizeMB": 35.72,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "simple_animations (v2)",
@@ -1359,7 +1494,8 @@
       "replacement": "simple_animations (v5+)",
       "migrationNotes": "Total syntax rewrite using modern Control constructs.",
       "archiveSizeBytes": 4641780,
-      "archiveSizeMB": 4.43
+      "archiveSizeMB": 4.43,
+      "license": "MIT"
     },
     {
       "name": "fluro",
@@ -1369,7 +1505,8 @@
       "replacement": "go_router",
       "migrationNotes": "Massive rewrite. Shift to declarative route trees.",
       "archiveSizeBytes": 134695,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "MIT"
     },
     {
       "name": "beamer",
@@ -1379,7 +1516,8 @@
       "replacement": "go_router",
       "migrationNotes": "Total architectural rewrite for navigation.",
       "archiveSizeBytes": 454942,
-      "archiveSizeMB": 0.43
+      "archiveSizeMB": 0.43,
+      "license": "MIT"
     },
     {
       "name": "vrouter",
@@ -1389,7 +1527,8 @@
       "replacement": "go_router",
       "migrationNotes": "Shift to official Flutter routing package.",
       "archiveSizeBytes": 149027,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "MIT"
     },
     {
       "name": "routemaster",
@@ -1399,7 +1538,8 @@
       "replacement": "go_router",
       "migrationNotes": "Rewrite tab navigation and route delegates.",
       "archiveSizeBytes": 322093,
-      "archiveSizeMB": 0.31
+      "archiveSizeMB": 0.31,
+      "license": "MIT"
     },
     {
       "name": "flutter_modular (v3)",
@@ -1409,7 +1549,8 @@
       "replacement": "flutter_modular (v6+)",
       "migrationNotes": "Complete module syntax refactoring.",
       "archiveSizeBytes": 586162,
-      "archiveSizeMB": 0.56
+      "archiveSizeMB": 0.56,
+      "license": "MIT"
     },
     {
       "name": "dio_http_cache",
@@ -1419,7 +1560,8 @@
       "replacement": "dio_cache_interceptor",
       "migrationNotes": "Drop-in interceptor swap, but different cache store configurations.",
       "archiveSizeBytes": 71680,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "Apache-2.0"
     },
     {
       "name": "alice",
@@ -1429,7 +1571,8 @@
       "replacement": "alice_lightweight",
       "migrationNotes": "Maintained fork with exact same API.",
       "archiveSizeBytes": 3229692,
-      "archiveSizeMB": 3.08
+      "archiveSizeMB": 3.08,
+      "license": "Apache-2.0"
     },
     {
       "name": "catcher",
@@ -1439,7 +1582,8 @@
       "replacement": "catcher_2",
       "migrationNotes": "Drop-in replacement to the maintained version.",
       "archiveSizeBytes": 1496796,
-      "archiveSizeMB": 1.43
+      "archiveSizeMB": 1.43,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_crashlytics",
@@ -1449,7 +1593,8 @@
       "replacement": "firebase_crashlytics",
       "migrationNotes": "Total initialization rewrite. Use modern Firebase Core.",
       "archiveSizeBytes": 174080,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "firebase_ml_vision",
@@ -1459,7 +1604,8 @@
       "replacement": "google_mlkit_commons",
       "migrationNotes": "Huge rewrite. Shift from Firebase to on-device ML Kit.",
       "archiveSizeBytes": 305689,
-      "archiveSizeMB": 0.29
+      "archiveSizeMB": 0.29,
+      "license": "Not Found"
     },
     {
       "name": "flutter_camera_ml_vision",
@@ -1469,7 +1615,8 @@
       "replacement": "mobile_scanner",
       "migrationNotes": "Total rewrite of camera view integration.",
       "archiveSizeBytes": 3164160,
-      "archiveSizeMB": 3.02
+      "archiveSizeMB": 3.02,
+      "license": "Not Found"
     },
     {
       "name": "camerawesome",
@@ -1479,7 +1626,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Significant rewrite of the builder syntax.",
       "archiveSizeBytes": 62669454,
-      "archiveSizeMB": 59.77
+      "archiveSizeMB": 59.77,
+      "license": "MIT"
     },
     {
       "name": "flutter_villains",
@@ -1489,7 +1637,8 @@
       "replacement": "flutter_animate",
       "migrationNotes": "Replace with modern animation extensions.",
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "rubber",
@@ -1499,7 +1648,8 @@
       "replacement": "bottom_sheet",
       "migrationNotes": "Use native or standard bottom sheet implementations.",
       "archiveSizeBytes": 3568002,
-      "archiveSizeMB": 3.4
+      "archiveSizeMB": 3.4,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "sliding_up_panel",
@@ -1509,7 +1659,8 @@
       "replacement": "sliding_up_panel2",
       "migrationNotes": "Drop-in API change to fix layout math.",
       "archiveSizeBytes": 54835200,
-      "archiveSizeMB": 52.29
+      "archiveSizeMB": 52.29,
+      "license": "unknown"
     },
     {
       "name": "backdrop",
@@ -1519,7 +1670,8 @@
       "replacement": "flutter_backdrop",
       "migrationNotes": "Moderate theme updates required.",
       "archiveSizeBytes": 211952,
-      "archiveSizeMB": 0.2
+      "archiveSizeMB": 0.2,
+      "license": "MIT"
     },
     {
       "name": "flutter_inappbrowser",
@@ -1529,7 +1681,8 @@
       "replacement": "flutter_inappwebview",
       "migrationNotes": "Update namespace and controller syntax.",
       "archiveSizeBytes": 532480,
-      "archiveSizeMB": 0.51
+      "archiveSizeMB": 0.51,
+      "license": "unknown"
     },
     {
       "name": "flutter_webview_pro",
@@ -1539,7 +1692,8 @@
       "replacement": "webview_flutter",
       "migrationNotes": "Total rewrite to modern official plugin.",
       "archiveSizeBytes": 1324292,
-      "archiveSizeMB": 1.26
+      "archiveSizeMB": 1.26,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_fluid_slider",
@@ -1549,7 +1703,8 @@
       "replacement": "sleek_circular_slider",
       "migrationNotes": "Change widget implementation.",
       "archiveSizeBytes": 55873,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "MIT"
     },
     {
       "name": "flutter_xlider",
@@ -1559,7 +1714,8 @@
       "replacement": "another_xlider",
       "migrationNotes": "Drop-in fork.",
       "archiveSizeBytes": 5259572,
-      "archiveSizeMB": 5.02
+      "archiveSizeMB": 5.02,
+      "license": "MIT"
     },
     {
       "name": "flutter_rating",
@@ -1569,7 +1725,8 @@
       "replacement": "flutter_rating_bar",
       "migrationNotes": "UI component swap.",
       "archiveSizeBytes": 877698,
-      "archiveSizeMB": 0.84
+      "archiveSizeMB": 0.84,
+      "license": "MIT"
     },
     {
       "name": "smooth_star_rating",
@@ -1579,7 +1736,8 @@
       "replacement": "flutter_rating_bar",
       "migrationNotes": "UI component swap.",
       "archiveSizeBytes": 157018,
-      "archiveSizeMB": 0.15
+      "archiveSizeMB": 0.15,
+      "license": "MIT"
     },
     {
       "name": "flutter_colorpicker (v0.x)",
@@ -1589,7 +1747,8 @@
       "replacement": "flex_color_picker",
       "migrationNotes": "Moderate rewrite. Update color translation handling.",
       "archiveSizeBytes": 103849,
-      "archiveSizeMB": 0.1
+      "archiveSizeMB": 0.1,
+      "license": "MIT"
     },
     {
       "name": "color_picker",
@@ -1599,7 +1758,8 @@
       "replacement": "flex_color_picker",
       "migrationNotes": "Swap dialog implementation.",
       "archiveSizeBytes": 167353,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "MIT"
     },
     {
       "name": "flutter_material_color_picker",
@@ -1609,7 +1769,8 @@
       "replacement": "flex_color_picker",
       "migrationNotes": "Swap widget and update logic.",
       "archiveSizeBytes": 723801,
-      "archiveSizeMB": 0.69
+      "archiveSizeMB": 0.69,
+      "license": "MIT"
     },
     {
       "name": "day_night_time_picker",
@@ -1619,7 +1780,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Mostly drop-in, update imports.",
       "archiveSizeBytes": 4524430,
-      "archiveSizeMB": 4.31
+      "archiveSizeMB": 4.31,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_rounded_date_picker",
@@ -1629,7 +1791,8 @@
       "replacement": "omni_datetime_picker",
       "migrationNotes": "Moderate rewrite. Dialog presentation changed.",
       "archiveSizeBytes": 2310697,
-      "archiveSizeMB": 2.2
+      "archiveSizeMB": 2.2,
+      "license": "unknown"
     },
     {
       "name": "flutter_calendar",
@@ -1639,7 +1802,8 @@
       "replacement": "table_calendar",
       "migrationNotes": "Massive rewrite. Shift to modern calendar builders.",
       "archiveSizeBytes": 16629760,
-      "archiveSizeMB": 15.86
+      "archiveSizeMB": 15.86,
+      "license": "UNKNOWN"
     },
     {
       "name": "flutter_calendar_carousel",
@@ -1649,7 +1813,8 @@
       "replacement": "table_calendar",
       "migrationNotes": "Complete UI swap.",
       "archiveSizeBytes": 2042727,
-      "archiveSizeMB": 1.95
+      "archiveSizeMB": 1.95,
+      "license": "MIT"
     },
     {
       "name": "syncfusion_flutter_calendar (v18)",
@@ -1659,7 +1824,8 @@
       "replacement": "syncfusion_flutter_calendar (latest)",
       "migrationNotes": "Update license keys and fix null-safety breaks.",
       "archiveSizeBytes": 4719387,
-      "archiveSizeMB": 4.5
+      "archiveSizeMB": 4.5,
+      "license": "unknown"
     },
     {
       "name": "intro_slider",
@@ -1669,7 +1835,8 @@
       "replacement": "introduction_screen",
       "migrationNotes": "UI rewrite. Data models for pages changed.",
       "archiveSizeBytes": 5190525,
-      "archiveSizeMB": 4.95
+      "archiveSizeMB": 4.95,
+      "license": "MIT"
     },
     {
       "name": "intro_views_flutter",
@@ -1679,7 +1846,8 @@
       "replacement": "introduction_screen",
       "migrationNotes": "Total UI replacement.",
       "archiveSizeBytes": 2844023,
-      "archiveSizeMB": 2.71
+      "archiveSizeMB": 2.71,
+      "license": "MIT"
     },
     {
       "name": "flutter_onboarding_slider",
@@ -1689,7 +1857,8 @@
       "replacement": "introduction_screen",
       "migrationNotes": "Total UI replacement.",
       "archiveSizeBytes": 187761,
-      "archiveSizeMB": 0.18
+      "archiveSizeMB": 0.18,
+      "license": "MIT"
     },
     {
       "name": "transformer_page_view",
@@ -1699,7 +1868,8 @@
       "replacement": "smooth_page_indicator",
       "migrationNotes": "Rethink page view animations.",
       "archiveSizeBytes": 2406400,
-      "archiveSizeMB": 2.29
+      "archiveSizeMB": 2.29,
+      "license": "Not Found"
     },
     {
       "name": "page_view_indicators",
@@ -1709,7 +1879,8 @@
       "replacement": "smooth_page_indicator",
       "migrationNotes": "Swap indicator UI.",
       "archiveSizeBytes": 5089,
-      "archiveSizeMB": 0.0
+      "archiveSizeMB": 0.0,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_typeahead (v1)",
@@ -1719,7 +1890,8 @@
       "replacement": "flutter_typeahead (latest)",
       "migrationNotes": "Major update to overlay rendering logic.",
       "archiveSizeBytes": 30545934,
-      "archiveSizeMB": 29.13
+      "archiveSizeMB": 29.13,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "autocomplete_textfield",
@@ -1729,7 +1901,8 @@
       "replacement": "flutter_typeahead",
       "migrationNotes": "Rewrite the suggestion builder callbacks.",
       "archiveSizeBytes": 1262833,
-      "archiveSizeMB": 1.2
+      "archiveSizeMB": 1.2,
+      "license": "MIT"
     },
     {
       "name": "flutter_search_bar",
@@ -1739,7 +1912,8 @@
       "replacement": "Native SearchAnchor",
       "migrationNotes": "Use Flutter's built-in M3 SearchAnchor widget.",
       "archiveSizeBytes": 6125,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "material_floating_search_bar",
@@ -1749,7 +1923,8 @@
       "replacement": "Native SearchAnchor",
       "migrationNotes": "Total UI rewrite. Shift to native Material 3 widgets.",
       "archiveSizeBytes": 34698590,
-      "archiveSizeMB": 33.09
+      "archiveSizeMB": 33.09,
+      "license": "MIT"
     },
     {
       "name": "search_widget",
@@ -1759,7 +1934,8 @@
       "replacement": "Native SearchAnchor",
       "migrationNotes": "Total UI rewrite.",
       "archiveSizeBytes": 1331200,
-      "archiveSizeMB": 1.27
+      "archiveSizeMB": 1.27,
+      "license": "MIT"
     },
     {
       "name": "flutter_chips_input",
@@ -1769,7 +1945,8 @@
       "replacement": "textfield_tags",
       "migrationNotes": "Moderate rewrite of input controllers.",
       "archiveSizeBytes": 58822,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "badges (v1)",
@@ -1779,7 +1956,8 @@
       "replacement": "badges (v3+)",
       "migrationNotes": "Syntax overhaul; badge positioning changed entirely.",
       "archiveSizeBytes": 7602536,
-      "archiveSizeMB": 7.25
+      "archiveSizeMB": 7.25,
+      "license": "MIT"
     },
     {
       "name": "flutter_inner_drawer",
@@ -1789,7 +1967,8 @@
       "replacement": "flutter_zoom_drawer",
       "migrationNotes": "Architecture change. Update scaffold wrapping.",
       "archiveSizeBytes": 33132438,
-      "archiveSizeMB": 31.6
+      "archiveSizeMB": 31.6,
+      "license": "MIT"
     },
     {
       "name": "hidden_drawer_menu",
@@ -1799,7 +1978,8 @@
       "replacement": "flutter_zoom_drawer",
       "migrationNotes": "Total UI overhaul.",
       "archiveSizeBytes": 13475683,
-      "archiveSizeMB": 12.85
+      "archiveSizeMB": 12.85,
+      "license": "MIT"
     },
     {
       "name": "foldable_sidebar",
@@ -1809,7 +1989,8 @@
       "replacement": "flutter_zoom_drawer",
       "migrationNotes": "Total UI overhaul.",
       "archiveSizeBytes": 1898558,
-      "archiveSizeMB": 1.81
+      "archiveSizeMB": 1.81,
+      "license": "MIT"
     },
     {
       "name": "unicorndial",
@@ -1819,7 +2000,8 @@
       "replacement": "flutter_expandable_fab",
       "migrationNotes": "Moderate rewrite of action items.",
       "archiveSizeBytes": 224267,
-      "archiveSizeMB": 0.21
+      "archiveSizeMB": 0.21,
+      "license": "unknown"
     },
     {
       "name": "hawk_fab_menu",
@@ -1829,7 +2011,8 @@
       "replacement": "flutter_expandable_fab",
       "migrationNotes": "Total UI rewrite.",
       "archiveSizeBytes": 5246055,
-      "archiveSizeMB": 5.0
+      "archiveSizeMB": 5.0,
+      "license": "MIT"
     },
     {
       "name": "flutter_arc_speed_dial",
@@ -1839,7 +2022,8 @@
       "replacement": "flutter_expandable_fab",
       "migrationNotes": "Total UI rewrite.",
       "archiveSizeBytes": 68616,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "bubble_bottom_bar",
@@ -1849,7 +2033,8 @@
       "replacement": "google_nav_bar",
       "migrationNotes": "Moderate rewrite. Update item building logic.",
       "archiveSizeBytes": 54917,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "MIT"
     },
     {
       "name": "curved_navigation_bar (v0.x)",
@@ -1859,7 +2044,8 @@
       "replacement": "curved_navigation_bar (latest)",
       "migrationNotes": "Fix dependencies and null-safety errors.",
       "archiveSizeBytes": 374960,
-      "archiveSizeMB": 0.36
+      "archiveSizeMB": 0.36,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "fancy_bottom_navigation",
@@ -1869,7 +2055,8 @@
       "replacement": "google_nav_bar",
       "migrationNotes": "Total UI rewrite.",
       "archiveSizeBytes": 256000,
-      "archiveSizeMB": 0.24
+      "archiveSizeMB": 0.24,
+      "license": "Apache-2.0"
     },
     {
       "name": "convex_bottom_bar (v2)",
@@ -1879,7 +2066,8 @@
       "replacement": "convex_bottom_bar (latest)",
       "migrationNotes": "Update handling of system insets.",
       "archiveSizeBytes": 7319537,
-      "archiveSizeMB": 6.98
+      "archiveSizeMB": 6.98,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_snake_navigationbar",
@@ -1889,7 +2077,8 @@
       "replacement": "google_nav_bar",
       "migrationNotes": "Total UI rewrite.",
       "archiveSizeBytes": 3480151,
-      "archiveSizeMB": 3.32
+      "archiveSizeMB": 3.32,
+      "license": "Apache-2.0"
     },
     {
       "name": "bottom_navy_bar",
@@ -1899,7 +2088,8 @@
       "replacement": "water_drop_nav_bar",
       "migrationNotes": "UI swap. Similar aesthetic.",
       "archiveSizeBytes": 4791790,
-      "archiveSizeMB": 4.57
+      "archiveSizeMB": 4.57,
+      "license": "Apache-2.0"
     },
     {
       "name": "responsive_builder (v0.x)",
@@ -1909,7 +2099,8 @@
       "replacement": "responsive_builder (latest)",
       "migrationNotes": "Refactor sizing information properties.",
       "archiveSizeBytes": 1175977,
-      "archiveSizeMB": 1.12
+      "archiveSizeMB": 1.12,
+      "license": "MIT"
     },
     {
       "name": "flutter_screenutil (v4)",
@@ -1919,7 +2110,8 @@
       "replacement": "flutter_screenutil (latest)",
       "migrationNotes": "Update init pattern to use standard builders.",
       "archiveSizeBytes": 850174,
-      "archiveSizeMB": 0.81
+      "archiveSizeMB": 0.81,
+      "license": "Apache-2.0"
     },
     {
       "name": "size_config",
@@ -1929,7 +2121,8 @@
       "replacement": "flutter_screenutil",
       "migrationNotes": "Massive rewrite to responsive scaling.",
       "archiveSizeBytes": 3611608,
-      "archiveSizeMB": 3.44
+      "archiveSizeMB": 3.44,
+      "license": "MIT"
     },
     {
       "name": "easy_localization_loader",
@@ -1939,7 +2132,8 @@
       "replacement": "slang",
       "migrationNotes": "Shift from runtime loading to code-generation.",
       "archiveSizeBytes": 6675,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "flutter_i18n",
@@ -1949,7 +2143,8 @@
       "replacement": "slang",
       "migrationNotes": "Total rewrite of localization architecture.",
       "archiveSizeBytes": 248445,
-      "archiveSizeMB": 0.24
+      "archiveSizeMB": 0.24,
+      "license": "MIT"
     },
     {
       "name": "i18n_extension",
@@ -1959,7 +2154,8 @@
       "replacement": "slang",
       "migrationNotes": "Massive syntax rewrite.",
       "archiveSizeBytes": 390724,
-      "archiveSizeMB": 0.37
+      "archiveSizeMB": 0.37,
+      "license": "unknown"
     },
     {
       "name": "intl_translation",
@@ -1969,7 +2165,8 @@
       "replacement": "intl_utils",
       "migrationNotes": "Shift to the community standard generation.",
       "archiveSizeBytes": 80734,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_localizations",
@@ -1979,7 +2176,8 @@
       "replacement": "Update to latest version",
       "migrationNotes": "Update SDK constraints.",
       "archiveSizeBytes": null,
-      "archiveSizeMB": null
+      "archiveSizeMB": null,
+      "license": "Not Found"
     },
     {
       "name": "flutter_mobx (v0.x)",
@@ -1989,7 +2187,8 @@
       "replacement": "flutter_mobx (latest)",
       "migrationNotes": "Update build_runner and regenerate all stores.",
       "archiveSizeBytes": 14829,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "fish_redux",
@@ -1999,7 +2198,8 @@
       "replacement": "flutter_riverpod",
       "migrationNotes": "Total architecture rewrite. Huge effort.",
       "archiveSizeBytes": 143360,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_redux",
@@ -2009,7 +2209,8 @@
       "replacement": "flutter_bloc",
       "migrationNotes": "Total rewrite to event-driven bloc architecture.",
       "archiveSizeBytes": 983710,
-      "archiveSizeMB": 0.94
+      "archiveSizeMB": 0.94,
+      "license": "MIT"
     },
     {
       "name": "redux",
@@ -2019,7 +2220,8 @@
       "replacement": "bloc",
       "migrationNotes": "Total rewrite.",
       "archiveSizeBytes": 30720,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "MIT"
     },
     {
       "name": "mvc_pattern",
@@ -2029,7 +2231,8 @@
       "replacement": "flutter_riverpod",
       "migrationNotes": "Complete paradigm shift.",
       "archiveSizeBytes": 64503,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "stacked (v1)",
@@ -2039,7 +2242,8 @@
       "replacement": "stacked (latest)",
       "migrationNotes": "Update ViewModel builder syntax.",
       "archiveSizeBytes": 611627,
-      "archiveSizeMB": 0.58
+      "archiveSizeMB": 0.58,
+      "license": "MIT"
     },
     {
       "name": "momentum",
@@ -2049,7 +2253,8 @@
       "replacement": "flutter_riverpod",
       "migrationNotes": "Total rewrite.",
       "archiveSizeBytes": 26107,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "binder",
@@ -2059,7 +2264,8 @@
       "replacement": "flutter_riverpod",
       "migrationNotes": "Total rewrite.",
       "archiveSizeBytes": 31138,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "unknown"
     },
     {
       "name": "flutter_hooks (v0.x)",
@@ -2069,7 +2275,8 @@
       "replacement": "flutter_hooks (latest)",
       "migrationNotes": "Update syntax and hook definitions.",
       "archiveSizeBytes": 83307,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "MIT"
     },
     {
       "name": "functional_widget",
@@ -2079,7 +2286,8 @@
       "replacement": "hooks_riverpod",
       "migrationNotes": "Rewrite using HookConsumerWidgets manually.",
       "archiveSizeBytes": 16100,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "flutter_stetho",
@@ -2089,7 +2297,8 @@
       "replacement": "drift_db_viewer",
       "migrationNotes": "Use standard Dart tooling for DB debugging.",
       "archiveSizeBytes": 6451200,
-      "archiveSizeMB": 6.15
+      "archiveSizeMB": 6.15,
+      "license": "MIT"
     },
     {
       "name": "flutter_flipperkit",
@@ -2099,7 +2308,8 @@
       "replacement": "devtools_extensions",
       "migrationNotes": "Use official Flutter DevTools.",
       "archiveSizeBytes": 1857949,
-      "archiveSizeMB": 1.77
+      "archiveSizeMB": 1.77,
+      "license": "MIT"
     },
     {
       "name": "moor_ffi",
@@ -2109,7 +2319,8 @@
       "replacement": "sqlite3_flutter_libs",
       "migrationNotes": "Update SQLite dependency structures.",
       "archiveSizeBytes": 25226,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "sqflite_sqlcipher",
@@ -2119,7 +2330,8 @@
       "replacement": "sqlcipher_flutter_libs",
       "migrationNotes": "Update imports and native libraries.",
       "archiveSizeBytes": 1304080,
-      "archiveSizeMB": 1.24
+      "archiveSizeMB": 1.24,
+      "license": "MIT"
     },
     {
       "name": "shared_preferences_windows",
@@ -2129,7 +2341,8 @@
       "replacement": "shared_preferences",
       "migrationNotes": "Remove explicit dependency.",
       "archiveSizeBytes": 37821,
-      "archiveSizeMB": 0.04
+      "archiveSizeMB": 0.04,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "shared_preferences_macos",
@@ -2139,7 +2352,8 @@
       "replacement": "shared_preferences",
       "migrationNotes": "Remove explicit dependency.",
       "archiveSizeBytes": 93535,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "shared_preferences_web",
@@ -2149,7 +2363,8 @@
       "replacement": "shared_preferences",
       "migrationNotes": "Remove explicit dependency.",
       "archiveSizeBytes": 9449,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "sembast (v1)",
@@ -2159,7 +2374,8 @@
       "replacement": "sembast (v3+)",
       "migrationNotes": "Major update to async database factory logic.",
       "archiveSizeBytes": 161323,
-      "archiveSizeMB": 0.15
+      "archiveSizeMB": 0.15,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "localstorage",
@@ -2169,7 +2385,8 @@
       "replacement": "shared_preferences",
       "migrationNotes": "Total rewrite. Data must be migrated.",
       "archiveSizeBytes": 272492,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "MIT"
     },
     {
       "name": "flutter_cache_manager (v1)",
@@ -2179,7 +2396,8 @@
       "replacement": "flutter_cache_manager (latest)",
       "migrationNotes": "Update cache eviction callbacks.",
       "archiveSizeBytes": 323689,
-      "archiveSizeMB": 0.31
+      "archiveSizeMB": 0.31,
+      "license": "MIT"
     },
     {
       "name": "http_middleware",
@@ -2189,7 +2407,8 @@
       "replacement": "http_interceptor",
       "migrationNotes": "Rewrite request interceptors.",
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "chopper (v3)",
@@ -2199,7 +2418,8 @@
       "replacement": "chopper (latest)",
       "migrationNotes": "Regenerate all network services.",
       "archiveSizeBytes": 80521,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "MIT"
     },
     {
       "name": "retrofit (v1)",
@@ -2209,7 +2429,8 @@
       "replacement": "retrofit (latest)",
       "migrationNotes": "Regenerate client services.",
       "archiveSizeBytes": 23392,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "graphql (v3)",
@@ -2219,7 +2440,8 @@
       "replacement": "graphql_flutter",
       "migrationNotes": "Huge rewrite. Link configurations changed entirely.",
       "archiveSizeBytes": 75322,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "hasura_connect",
@@ -2229,7 +2451,8 @@
       "replacement": "graphql_flutter",
       "migrationNotes": "Total network architecture rewrite.",
       "archiveSizeBytes": 500283,
-      "archiveSizeMB": 0.48
+      "archiveSizeMB": 0.48,
+      "license": "MIT"
     },
     {
       "name": "flutter_socket_io",
@@ -2239,7 +2462,8 @@
       "replacement": "socket_io_client",
       "migrationNotes": "Total rewrite.",
       "archiveSizeBytes": 147990,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "MIT"
     },
     {
       "name": "flutter_pusher",
@@ -2249,7 +2473,8 @@
       "replacement": "pusher_channels_flutter",
       "migrationNotes": "Use official pusher SDK.",
       "archiveSizeBytes": 71680,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "pusher_websocket_flutter",
@@ -2259,7 +2484,8 @@
       "replacement": "pusher_channels_flutter",
       "migrationNotes": "Total rewrite of channel binding logic.",
       "archiveSizeBytes": 174080,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "MIT"
     },
     {
       "name": "signalr_flutter",
@@ -2269,7 +2495,8 @@
       "replacement": "signalr_netcore",
       "migrationNotes": "Moderate connection string update.",
       "archiveSizeBytes": 642057,
-      "archiveSizeMB": 0.61
+      "archiveSizeMB": 0.61,
+      "license": "MIT"
     },
     {
       "name": "agora_rtc_engine (v4)",
@@ -2279,7 +2506,8 @@
       "replacement": "agora_rtc_engine (v6+)",
       "migrationNotes": "Massive rewrite of video view and event handlers.",
       "archiveSizeBytes": 5206880,
-      "archiveSizeMB": 4.97
+      "archiveSizeMB": 4.97,
+      "license": "MIT"
     },
     {
       "name": "youtube_player_iframe (v2)",
@@ -2289,7 +2517,8 @@
       "replacement": "youtube_player_iframe (latest)",
       "migrationNotes": "Controller syntax completely changed.",
       "archiveSizeBytes": 1234454,
-      "archiveSizeMB": 1.18
+      "archiveSizeMB": 1.18,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "audioplayer",
@@ -2299,7 +2528,8 @@
       "replacement": "audioplayers",
       "migrationNotes": "Total syntax replacement.",
       "archiveSizeBytes": 92160,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_sound_lite",
@@ -2309,7 +2539,8 @@
       "replacement": "flutter_sound",
       "migrationNotes": "API drop-in, but requires full FFMPEG setup.",
       "archiveSizeBytes": 95304948,
-      "archiveSizeMB": 90.89
+      "archiveSizeMB": 90.89,
+      "license": "MPL-2.0"
     },
     {
       "name": "flutter_midi",
@@ -2319,7 +2550,8 @@
       "replacement": "dart_midi",
       "migrationNotes": "Total rewrite using Dart-native synthesis.",
       "archiveSizeBytes": 6563840,
-      "archiveSizeMB": 6.26
+      "archiveSizeMB": 6.26,
+      "license": "MIT"
     },
     {
       "name": "camera (v0.x)",
@@ -2329,7 +2561,8 @@
       "replacement": "camera (latest)",
       "migrationNotes": "Heavy update to async camera initialization.",
       "archiveSizeBytes": 102777,
-      "archiveSizeMB": 0.1
+      "archiveSizeMB": 0.1,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "mapbox_gl",
@@ -2339,7 +2572,8 @@
       "replacement": "mapbox_maps_flutter",
       "migrationNotes": "Total rewrite to the official v10 SDK.",
       "archiveSizeBytes": 826350,
-      "archiveSizeMB": 0.79
+      "archiveSizeMB": 0.79,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "flutter_map (v0.x)",
@@ -2349,7 +2583,8 @@
       "replacement": "flutter_map (latest)",
       "migrationNotes": "Complete rewrite of map options and layers.",
       "archiveSizeBytes": 919792,
-      "archiveSizeMB": 0.88
+      "archiveSizeMB": 0.88,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "location (v3)",
@@ -2359,7 +2594,8 @@
       "replacement": "location (latest)",
       "migrationNotes": "Update permission request flow.",
       "archiveSizeBytes": 2942056,
-      "archiveSizeMB": 2.81
+      "archiveSizeMB": 2.81,
+      "license": "MIT"
     },
     {
       "name": "bitsdojo_window",
@@ -2369,7 +2605,8 @@
       "replacement": "window_manager",
       "migrationNotes": "Total rewrite of desktop window controls.",
       "archiveSizeBytes": 121449,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "desktop_window",
@@ -2379,7 +2616,8 @@
       "replacement": "window_manager",
       "migrationNotes": "Total rewrite.",
       "archiveSizeBytes": 122804,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "window_size",
@@ -2389,7 +2627,8 @@
       "replacement": "window_manager",
       "migrationNotes": "Total rewrite.",
       "archiveSizeBytes": 17084,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_web_plugins",
@@ -2399,7 +2638,8 @@
       "replacement": "None",
       "migrationNotes": "Remove explicit dependency.",
       "archiveSizeBytes": null,
-      "archiveSizeMB": null
+      "archiveSizeMB": null,
+      "license": "Not Found"
     },
     {
       "name": "timeago (v2)",
@@ -2409,7 +2649,8 @@
       "replacement": "timeago (latest)",
       "migrationNotes": "Update syntax for custom locales.",
       "archiveSizeBytes": 23847,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "date_format",
@@ -2419,7 +2660,8 @@
       "replacement": "intl",
       "migrationNotes": "Rewrite all date string parsing.",
       "archiveSizeBytes": 7805,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "supercharged (v1)",
@@ -2429,7 +2671,8 @@
       "replacement": "supercharged (latest)",
       "migrationNotes": "Syntax updates required.",
       "archiveSizeBytes": 9771,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "fluttertoast (v8)",
@@ -2439,7 +2682,8 @@
       "replacement": "fluttertoast (latest)",
       "migrationNotes": "Shift to contextless FToast pattern.",
       "archiveSizeBytes": 546320,
-      "archiveSizeMB": 0.52
+      "archiveSizeMB": 0.52,
+      "license": "MIT"
     },
     {
       "name": "flutter_absolute_path",
@@ -2449,7 +2693,8 @@
       "replacement": "path_provider",
       "migrationNotes": "Rewrite all local file path resolution.",
       "archiveSizeBytes": 122880,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "Apache-2.0"
     },
     {
       "name": "file_utils",
@@ -2459,7 +2704,8 @@
       "replacement": "Native dart:io",
       "migrationNotes": "Use standard File and Directory classes.",
       "archiveSizeBytes": 11864,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_string_encryption",
@@ -2469,7 +2715,8 @@
       "replacement": "encrypt",
       "migrationNotes": "Total rewrite of encryption logic.",
       "archiveSizeBytes": 163840,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "MIT"
     },
     {
       "name": "aes_crypt",
@@ -2479,7 +2726,8 @@
       "replacement": "encrypt",
       "migrationNotes": "Rewrite using secure PKCS7 padding.",
       "archiveSizeBytes": 150972,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "MIT"
     },
     {
       "name": "flutter_keychain",
@@ -2489,7 +2737,8 @@
       "replacement": "flutter_secure_storage",
       "migrationNotes": "Total rewrite. Keys must be migrated.",
       "archiveSizeBytes": 56577,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_uploader",
@@ -2499,7 +2748,8 @@
       "replacement": "background_downloader",
       "migrationNotes": "Total rewrite of background task execution.",
       "archiveSizeBytes": 6144000,
-      "archiveSizeMB": 5.86
+      "archiveSizeMB": 5.86,
+      "license": "MIT"
     },
     {
       "name": "flutter_local_notifications (v9)",
@@ -2509,7 +2759,8 @@
       "replacement": "flutter_local_notifications (latest)",
       "migrationNotes": "Requires explicitly asking for exact notification permissions.",
       "archiveSizeBytes": 727307,
-      "archiveSizeMB": 0.69
+      "archiveSizeMB": 0.69,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_native_timezone",
@@ -2519,7 +2770,8 @@
       "replacement": "flutter_timezone",
       "migrationNotes": "Drop-in API change.",
       "archiveSizeBytes": 74467,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "unknown"
     },
     {
       "name": "timezone (v0.x)",
@@ -2529,7 +2781,8 @@
       "replacement": "timezone (latest)",
       "migrationNotes": "Total rewrite of timezone initialization and database fetching logic.",
       "archiveSizeBytes": 664044,
-      "archiveSizeMB": 0.63
+      "archiveSizeMB": 0.63,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "flutter_phone_direct_caller",
@@ -2539,7 +2792,8 @@
       "replacement": "url_launcher",
       "migrationNotes": "Use `url_launcher` with the `tel:` scheme to open the system dialer. Bypassing the dialer entirely is no longer recommended due to modern OS privacy restrictions.",
       "archiveSizeBytes": 55957,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "MIT"
     },
     {
       "name": "get",
@@ -2548,7 +2802,8 @@
       "replacement": "flutter_riverpod / flutter_bloc",
       "migrationNotes": "While popular, GetX creates massive coupling and navigation issues on modern Router setups.",
       "archiveSizeBytes": 14563060,
-      "archiveSizeMB": 13.89
+      "archiveSizeMB": 13.89,
+      "license": "MIT"
     },
     {
       "name": "flare_flutter",
@@ -2557,7 +2812,8 @@
       "replacement": "rive",
       "migrationNotes": "Rewrite animation loading and state machines using the new `rive` package syntax.",
       "archiveSizeBytes": 81920,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "MIT"
     },
     {
       "name": "flutter_clean_architecture",
@@ -2566,7 +2822,8 @@
       "replacement": "None",
       "migrationNotes": "Abandoned. Implement clean architecture concepts using native standard widgets and standard state management (e.g., flutter_bloc).",
       "archiveSizeBytes": 90043,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "MIT"
     },
     {
       "name": "flutter_vibrate",
@@ -2575,7 +2832,8 @@
       "replacement": "Native `HapticFeedback`",
       "migrationNotes": "Use standard `HapticFeedback.vibrate()` from `package:flutter/services.dart`.",
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "speech_recognition",
@@ -2584,7 +2842,8 @@
       "replacement": "speech_to_text",
       "migrationNotes": "Complete rewrite of async initialization and stream listening.",
       "archiveSizeBytes": 6236160,
-      "archiveSizeMB": 5.95
+      "archiveSizeMB": 5.95,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "random_string",
@@ -2593,7 +2852,8 @@
       "replacement": "uuid",
       "migrationNotes": "Use proper UUIDs or standard cryptographically secure random number generators.",
       "archiveSizeBytes": 4593,
-      "archiveSizeMB": 0.0
+      "archiveSizeMB": 0.0,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "hardware_buttons",
@@ -2602,651 +2862,744 @@
       "replacement": "PopScope",
       "migrationNotes": "Native interceptors cause crashes on Android 14 predictive back paths. Use modern Flutter routing handles.",
       "archiveSizeBytes": 61440,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "http",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 46315,
-      "archiveSizeMB": 0.04
+      "archiveSizeMB": 0.04,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "provider",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 9236844,
-      "archiveSizeMB": 8.81
+      "archiveSizeMB": 8.81,
+      "license": "MIT"
     },
     {
       "name": "flutter_bloc",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 82703,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "MIT"
     },
     {
       "name": "sqflite",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 47681,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "dio",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 118058,
-      "archiveSizeMB": 0.11
+      "archiveSizeMB": 0.11,
+      "license": "MIT"
     },
     {
       "name": "intl",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 305265,
-      "archiveSizeMB": 0.29
+      "archiveSizeMB": 0.29,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "firebase_core",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 257826,
-      "archiveSizeMB": 0.25
+      "archiveSizeMB": 0.25,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "rxdart",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 180081,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "Apache-2.0"
     },
     {
       "name": "json_annotation",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 13618,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "equatable",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 288110,
-      "archiveSizeMB": 0.27
+      "archiveSizeMB": 0.27,
+      "license": "MIT"
     },
     {
       "name": "go_router",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 325320,
-      "archiveSizeMB": 0.31
+      "archiveSizeMB": 0.31,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_riverpod",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 54407,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "MIT"
     },
     {
       "name": "uuid",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 237574,
-      "archiveSizeMB": 0.23
+      "archiveSizeMB": 0.23,
+      "license": "MIT"
     },
     {
       "name": "image_picker",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 284152,
-      "archiveSizeMB": 0.27
+      "archiveSizeMB": 0.27,
+      "license": "Apache-2.0"
     },
     {
       "name": "fl_chart",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 19917489,
-      "archiveSizeMB": 18.99
+      "archiveSizeMB": 18.99,
+      "license": "MIT"
     },
     {
       "name": "freezed",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 214464,
-      "archiveSizeMB": 0.2
+      "archiveSizeMB": 0.2,
+      "license": "MIT"
     },
     {
       "name": "permission_handler",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 149679,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "MIT"
     },
     {
       "name": "flutter_svg",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 496219,
-      "archiveSizeMB": 0.47
+      "archiveSizeMB": 0.47,
+      "license": "MIT"
     },
     {
       "name": "lottie",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 157210,
-      "archiveSizeMB": 0.15
+      "archiveSizeMB": 0.15,
+      "license": "MIT"
     },
     {
       "name": "device_info_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 285845,
-      "archiveSizeMB": 0.27
+      "archiveSizeMB": 0.27,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "connectivity_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 295191,
-      "archiveSizeMB": 0.28
+      "archiveSizeMB": 0.28,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "package_info_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 295951,
-      "archiveSizeMB": 0.28
+      "archiveSizeMB": 0.28,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "shimmer",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1771115,
-      "archiveSizeMB": 1.69
+      "archiveSizeMB": 1.69,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "webview_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1361615,
-      "archiveSizeMB": 1.3
+      "archiveSizeMB": 1.3,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "video_player",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 10866556,
-      "archiveSizeMB": 10.36
+      "archiveSizeMB": 10.36,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "share_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 292304,
-      "archiveSizeMB": 0.28
+      "archiveSizeMB": 0.28,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "geolocator",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 282308,
-      "archiveSizeMB": 0.27
+      "archiveSizeMB": 0.27,
+      "license": "MIT"
     },
     {
       "name": "crypto",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 615595,
-      "archiveSizeMB": 0.59
+      "archiveSizeMB": 0.59,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "path",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 45282,
-      "archiveSizeMB": 0.04
+      "archiveSizeMB": 0.04,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "collection",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 77897,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "google_maps_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 164037,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "carousel_slider",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4447091,
-      "archiveSizeMB": 4.24
+      "archiveSizeMB": 4.24,
+      "license": "MIT"
     },
     {
       "name": "smooth_page_indicator",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 127071,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "introduction_screen",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 11007268,
-      "archiveSizeMB": 10.5
+      "archiveSizeMB": 10.5,
+      "license": "MIT"
     },
     {
       "name": "english_words",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2365440,
-      "archiveSizeMB": 2.26
+      "archiveSizeMB": 2.26,
+      "license": "MIT"
     },
     {
       "name": "flutter_launcher_icons",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1276191,
-      "archiveSizeMB": 1.22
+      "archiveSizeMB": 1.22,
+      "license": "MIT"
     },
     {
       "name": "flutter_native_splash",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1139700,
-      "archiveSizeMB": 1.09
+      "archiveSizeMB": 1.09,
+      "license": "MIT"
     },
     {
       "name": "in_app_purchase",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1229673,
-      "archiveSizeMB": 1.17
+      "archiveSizeMB": 1.17,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "firebase_auth",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 382017,
-      "archiveSizeMB": 0.36
+      "archiveSizeMB": 0.36,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "cloud_firestore",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 489965,
-      "archiveSizeMB": 0.47
+      "archiveSizeMB": 0.47,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "firebase_messaging",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 709719,
-      "archiveSizeMB": 0.68
+      "archiveSizeMB": 0.68,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "firebase_storage",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 271019,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "firebase_analytics",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 217364,
-      "archiveSizeMB": 0.21
+      "archiveSizeMB": 0.21,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "firebase_crashlytics",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 211811,
-      "archiveSizeMB": 0.2
+      "archiveSizeMB": 0.2,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "just_audio",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 322908,
-      "archiveSizeMB": 0.31
+      "archiveSizeMB": 0.31,
+      "license": "Apache-2.0"
     },
     {
       "name": "record",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 191233,
-      "archiveSizeMB": 0.18
+      "archiveSizeMB": 0.18,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_tts",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 498253,
-      "archiveSizeMB": 0.48
+      "archiveSizeMB": 0.48,
+      "license": "MIT"
     },
     {
       "name": "speech_to_text",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 308780,
-      "archiveSizeMB": 0.29
+      "archiveSizeMB": 0.29,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "socket_io_client",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 43846,
-      "archiveSizeMB": 0.04
+      "archiveSizeMB": 0.04,
+      "license": "MIT"
     },
     {
       "name": "graphql_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 123743,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "MIT"
     },
     {
       "name": "drift",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 14867885,
-      "archiveSizeMB": 14.18
+      "archiveSizeMB": 14.18,
+      "license": "MIT"
     },
     {
       "name": "hive_ce",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 12774724,
-      "archiveSizeMB": 12.18
+      "archiveSizeMB": 12.18,
+      "license": "Apache-2.0"
     },
     {
       "name": "encrypt",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 14734,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "pointycastle",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2069489,
-      "archiveSizeMB": 1.97
+      "archiveSizeMB": 1.97,
+      "license": "MIT"
     },
     {
       "name": "logger",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 313943,
-      "archiveSizeMB": 0.3
+      "archiveSizeMB": 0.3,
+      "license": "MIT"
     },
     {
       "name": "sentry_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1774653,
-      "archiveSizeMB": 1.69
+      "archiveSizeMB": 1.69,
+      "license": "MIT"
     },
     {
       "name": "mixpanel_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 345087,
-      "archiveSizeMB": 0.33
+      "archiveSizeMB": 0.33,
+      "license": "Apache-2.0"
     },
     {
       "name": "amplitude_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 676690,
-      "archiveSizeMB": 0.65
+      "archiveSizeMB": 0.65,
+      "license": "MIT"
     },
     {
       "name": "table_calendar",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 125667,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "Apache-2.0"
     },
     {
       "name": "percent_indicator",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1446361,
-      "archiveSizeMB": 1.38
+      "archiveSizeMB": 1.38,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "sign_in_with_apple",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 612048,
-      "archiveSizeMB": 0.58
+      "archiveSizeMB": 0.58,
+      "license": "MIT"
     },
     {
       "name": "google_sign_in",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 243654,
-      "archiveSizeMB": 0.23
+      "archiveSizeMB": 0.23,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_facebook_auth",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 16097,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "twitter_login",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 350578,
-      "archiveSizeMB": 0.33
+      "archiveSizeMB": 0.33,
+      "license": "MIT"
     },
     {
       "name": "flutter_stripe",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 36133,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "MIT"
     },
     {
       "name": "pay",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 125442,
-      "archiveSizeMB": 0.12
+      "archiveSizeMB": 0.12,
+      "license": "Apache-2.0"
     },
     {
       "name": "in_app_review",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 540284,
-      "archiveSizeMB": 0.52
+      "archiveSizeMB": 0.52,
+      "license": "MIT"
     },
     {
       "name": "store_redirect",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 107631,
-      "archiveSizeMB": 0.1
+      "archiveSizeMB": 0.1,
+      "license": "MIT"
     },
     {
       "name": "upgrader",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2628325,
-      "archiveSizeMB": 2.51
+      "archiveSizeMB": 2.51,
+      "license": "MIT"
     },
     {
       "name": "flutter_dotenv",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 283292,
-      "archiveSizeMB": 0.27
+      "archiveSizeMB": 0.27,
+      "license": "MIT"
     },
     {
       "name": "envied",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 8697,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "get_it",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 12049334,
-      "archiveSizeMB": 11.49
+      "archiveSizeMB": 11.49,
+      "license": "MIT"
     },
     {
       "name": "injectable",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 22562,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "bloc",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 62562,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "cubit",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "mobx",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 69511,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "velocity_x",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 273042,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "MIT"
     },
     {
       "name": "flex_color_scheme",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 5643289,
-      "archiveSizeMB": 5.38
+      "archiveSizeMB": 5.38,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "adaptive_theme",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 395212,
-      "archiveSizeMB": 0.38
+      "archiveSizeMB": 0.38,
+      "license": "Apache-2.0"
     },
     {
       "name": "flutter_animate",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 246092,
-      "archiveSizeMB": 0.23
+      "archiveSizeMB": 0.23,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "rive",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 7870943,
-      "archiveSizeMB": 7.51
+      "archiveSizeMB": 7.51,
+      "license": "MIT"
     },
     {
       "name": "flame",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 14823168,
-      "archiveSizeMB": 14.14
+      "archiveSizeMB": 14.14,
+      "license": "MIT"
     },
     {
       "name": "bonfire",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 150576,
-      "archiveSizeMB": 0.14
+      "archiveSizeMB": 0.14,
+      "license": "MIT"
     },
     {
       "name": "flutter_vector_icons",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "ionicons",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 478714,
-      "archiveSizeMB": 0.46
+      "archiveSizeMB": 0.46,
+      "license": "MIT"
     },
     {
       "name": "cupertino_icons",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 343075,
-      "archiveSizeMB": 0.33
+      "archiveSizeMB": 0.33,
+      "license": "MIT"
     },
     {
       "name": "meta",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 15784,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_lints",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4980,
-      "archiveSizeMB": 0.0
+      "archiveSizeMB": 0.0,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "lints",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 18120,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "analyzer",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 3636305,
-      "archiveSizeMB": 3.47
+      "archiveSizeMB": 3.47,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "build_runner",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 275975,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "source_gen",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 52048,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "dart_code_metrics_annotations",
@@ -3256,7 +3609,8 @@
       "replacement": "flutter_lints",
       "migrationNotes": "Remove DCM annotations and dependencies. Replace with saropa_lints (https://pub.dev/packages/saropa_lints) — a drop-in replacement with vastly more coverage: 2057 custom lint rules and 132 quick fixes for Flutter and Dart. Catches memory leaks, security vulnerabilities, and runtime crashes that standard linters miss. No vendor lock-in, no pay gates.",
       "archiveSizeBytes": 2408,
-      "archiveSizeMB": 0.0
+      "archiveSizeMB": 0.0,
+      "license": "MIT"
     },
     {
       "name": "blinkid_flutter",
@@ -3266,7 +3620,8 @@
       "replacement": "google_mlkit_document_scanner",
       "migrationNotes": "Migrate to free, on-device alternatives like Google ML Kit for standard document, ID, and barcode scanning needs.",
       "archiveSizeBytes": 77613,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "zego_uikit_prebuilt_call",
@@ -3276,7 +3631,8 @@
       "replacement": "flutter_webrtc",
       "migrationNotes": "Total rewrite. Move to an open-source WebRTC implementation (like LiveKit or standard flutter_webrtc) to avoid per-minute usage fees.",
       "archiveSizeBytes": 5838181,
-      "archiveSizeMB": 5.57
+      "archiveSizeMB": 5.57,
+      "license": "MIT"
     },
     {
       "name": "stream_chat_flutter",
@@ -3286,7 +3642,8 @@
       "replacement": "Custom WebSockets / Firebase RTDB",
       "migrationNotes": "Major architecture shift. If budget is a strict constraint, build custom real-time messaging using standard WebSockets or cheaper cloud databases.",
       "archiveSizeBytes": 5244972,
-      "archiveSizeMB": 5.0
+      "archiveSizeMB": 5.0,
+      "license": "unknown"
     },
     {
       "name": "scanbot_sdk",
@@ -3296,7 +3653,8 @@
       "replacement": "mobile_scanner",
       "migrationNotes": "Drop the proprietary SDK and switch to open-source ML Kit-based barcode scanning.",
       "archiveSizeBytes": 3039922,
-      "archiveSizeMB": 2.9
+      "archiveSizeMB": 2.9,
+      "license": "unknown"
     },
     {
       "name": "purchases_flutter",
@@ -3306,7 +3664,8 @@
       "replacement": "in_app_purchase",
       "migrationNotes": "Heavy rewrite of the entitlement validation engine. Shift to Flutter's official in-app purchase plugin and manage subscription states on your own backend.",
       "archiveSizeBytes": 167206,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "MIT"
     },
     {
       "name": "syncfusion_flutter_core",
@@ -3316,7 +3675,8 @@
       "replacement": "fl_chart / pdfrx / table_calendar",
       "migrationNotes": "Massive rewrite. You must strip out all Syncfusion UI components (charts, grids, PDF viewers) and replace them with individual open-source equivalents to avoid licensing audits.",
       "archiveSizeBytes": 368471,
-      "archiveSizeMB": 0.35
+      "archiveSizeMB": 0.35,
+      "license": "unknown"
     },
     {
       "name": "agora_rtc_engine",
@@ -3326,7 +3686,8 @@
       "replacement": "flutter_webrtc",
       "migrationNotes": "Total rewrite of the calling architecture. Shift to an open-source WebRTC standard and self-host your signaling servers (e.g., using LiveKit or Janus).",
       "archiveSizeBytes": 5206880,
-      "archiveSizeMB": 4.97
+      "archiveSizeMB": 4.97,
+      "license": "MIT"
     },
     {
       "name": "mapbox_maps_flutter",
@@ -3336,7 +3697,8 @@
       "replacement": "flutter_map",
       "migrationNotes": "Rewrite map implementation using `flutter_map` tied to completely free OpenStreetMap (OSM) tile servers, bypassing commercial tile providers.",
       "archiveSizeBytes": 17089883,
-      "archiveSizeMB": 16.3
+      "archiveSizeMB": 16.3,
+      "license": "unknown"
     },
     {
       "name": "appsflyer_sdk",
@@ -3346,7 +3708,8 @@
       "replacement": "firebase_analytics / posthog_flutter",
       "migrationNotes": "Shift tracking and deep-linking to Firebase Dynamic Links (or standard App Links) and use open-source or cheaper analytics platforms.",
       "archiveSizeBytes": 375126,
-      "archiveSizeMB": 0.36
+      "archiveSizeMB": 0.36,
+      "license": "MIT"
     },
     {
       "name": "sendbird_chat_sdk",
@@ -3356,7 +3719,8 @@
       "replacement": "Custom backend + web_socket_channel",
       "migrationNotes": "Strip out the Sendbird UI and SDK. Build your own messaging repository layer using Dart WebSockets and an open-source backend.",
       "archiveSizeBytes": 344505,
-      "archiveSizeMB": 0.33
+      "archiveSizeMB": 0.33,
+      "license": "unknown"
     },
     {
       "name": "datadog_flutter_plugin",
@@ -3366,7 +3730,8 @@
       "replacement": "firebase_crashlytics + catcher_2",
       "migrationNotes": "Remove Datadog initialization and routing observers. Rely on standard Crashlytics for fatal errors and standard analytics for user funnels.",
       "archiveSizeBytes": 365225,
-      "archiveSizeMB": 0.35
+      "archiveSizeMB": 0.35,
+      "license": "Apache-2.0"
     },
     {
       "name": "superwallkit_flutter",
@@ -3376,7 +3741,8 @@
       "replacement": "in_app_purchase",
       "migrationNotes": "Build native Flutter paywall UIs and handle the App Store/Play Store receipt validation natively or on your own server.",
       "archiveSizeBytes": 235968,
-      "archiveSizeMB": 0.23
+      "archiveSizeMB": 0.23,
+      "license": "MIT"
     },
     {
       "name": "flutter_uxcam",
@@ -3386,7 +3752,8 @@
       "replacement": "posthog_flutter / standard analytics",
       "migrationNotes": "Remove screen recording SDKs entirely. They often cause App Store privacy review headaches anyway. Rely on standard telemetry.",
       "archiveSizeBytes": 133145,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "realm",
@@ -3396,7 +3763,8 @@
       "replacement": "drift + custom REST/GraphQL sync",
       "migrationNotes": "Migrate local schemas to Drift (SQLite) and write standard API syncing logic to remain backend-agnostic.",
       "archiveSizeBytes": 106579,
-      "archiveSizeMB": 0.1
+      "archiveSizeMB": 0.1,
+      "license": "Apache-2.0"
     },
     {
       "name": "cometchat_chat_uikit",
@@ -3406,7 +3774,8 @@
       "replacement": "firebase_core / web_socket_channel",
       "migrationNotes": "Total UI and backend swap. Roll your own chat components.",
       "archiveSizeBytes": 3022817,
-      "archiveSizeMB": 2.88
+      "archiveSizeMB": 2.88,
+      "license": "unknown"
     },
     {
       "as_of": "2026-03-10",
@@ -3415,7 +3784,8 @@
       "replacement": "media_kit",
       "migrationNotes": "Development has stalled. Consider migrating to `media_kit` for modern hardware-accelerated video rendering.",
       "archiveSizeBytes": 27282206,
-      "archiveSizeMB": 26.02
+      "archiveSizeMB": 26.02,
+      "license": "Apache-2.0"
     },
     {
       "name": "spritewidget",
@@ -3424,7 +3794,8 @@
       "replacement": "flame",
       "migrationNotes": "Abandoned 2D game engine. Replaced entirely by Flame in the modern Flutter ecosystem.",
       "archiveSizeBytes": 2828282,
-      "archiveSizeMB": 2.7
+      "archiveSizeMB": 2.7,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_sequence_animation",
@@ -3433,7 +3804,8 @@
       "replacement": "flutter_animate",
       "migrationNotes": "Unmaintained. Use `flutter_animate` for highly readable declarative animation sequences.",
       "archiveSizeBytes": 401993,
-      "archiveSizeMB": 0.38
+      "archiveSizeMB": 0.38,
+      "license": "MIT"
     },
     {
       "name": "bouncing_widget",
@@ -3442,7 +3814,8 @@
       "replacement": "flutter_animate",
       "migrationNotes": "Dead repository. Touch-scale effects are now trivial to implement with standard animation extensions.",
       "archiveSizeBytes": 1044480,
-      "archiveSizeMB": 1.0
+      "archiveSizeMB": 1.0,
+      "license": "MIT"
     },
     {
       "name": "flutter_native_image",
@@ -3451,665 +3824,760 @@
       "replacement": "flutter_image_compress",
       "migrationNotes": "Abandoned native code fails to compile on modern Android Gradle configurations.",
       "archiveSizeBytes": 165035,
-      "archiveSizeMB": 0.16
+      "archiveSizeMB": 0.16,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "auto_route",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 141476,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "MIT"
     },
     {
       "name": "hive_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 10240,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "unknown"
     },
     {
       "name": "dropdown_search",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 6658755,
-      "archiveSizeMB": 6.35
+      "archiveSizeMB": 6.35,
+      "license": "MIT"
     },
     {
       "name": "multi_select_flutter",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 110992,
-      "archiveSizeMB": 0.11
+      "archiveSizeMB": 0.11,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "expandable",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2273280,
-      "archiveSizeMB": 2.17
+      "archiveSizeMB": 2.17,
+      "license": "MIT"
     },
     {
       "name": "modal_bottom_sheet",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 5393602,
-      "archiveSizeMB": 5.14
+      "archiveSizeMB": 5.14,
+      "license": "MIT"
     },
     {
       "name": "another_flushbar",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1121038,
-      "archiveSizeMB": 1.07
+      "archiveSizeMB": 1.07,
+      "license": "MIT"
     },
     {
       "name": "bot_toast",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 50277,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "Apache-2.0"
     },
     {
       "name": "awesome_dialog",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2256135,
-      "archiveSizeMB": 2.15
+      "archiveSizeMB": 2.15,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "google_nav_bar",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 56292,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "MIT"
     },
     {
       "name": "salomon_bottom_bar",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 460647,
-      "archiveSizeMB": 0.44
+      "archiveSizeMB": 0.44,
+      "license": "MIT"
     },
     {
       "name": "curved_navigation_bar",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 374960,
-      "archiveSizeMB": 0.36
+      "archiveSizeMB": 0.36,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "timeline_tile",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 12861440,
-      "archiveSizeMB": 12.27
+      "archiveSizeMB": 12.27,
+      "license": "MIT"
     },
     {
       "name": "dotted_border",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 239405,
-      "archiveSizeMB": 0.23
+      "archiveSizeMB": 0.23,
+      "license": "MIT"
     },
     {
       "name": "auto_size_text",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 71601,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "readmore",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2395866,
-      "archiveSizeMB": 2.28
+      "archiveSizeMB": 2.28,
+      "license": "MIT"
     },
     {
       "name": "flutter_html",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 763812,
-      "archiveSizeMB": 0.73
+      "archiveSizeMB": 0.73,
+      "license": "MIT"
     },
     {
       "name": "markdown",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 271934,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "html",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 232248,
-      "archiveSizeMB": 0.22
+      "archiveSizeMB": 0.22,
+      "license": "unknown"
     },
     {
       "name": "liquid_pull_to_refresh",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 8019816,
-      "archiveSizeMB": 7.65
+      "archiveSizeMB": 7.65,
+      "license": "MIT"
     },
     {
       "name": "pull_to_refresh_flutter3",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 18014221,
-      "archiveSizeMB": 17.18
+      "archiveSizeMB": 17.18,
+      "license": "MIT"
     },
     {
       "name": "syncfusion_flutter_pdfviewer",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2472918,
-      "archiveSizeMB": 2.36
+      "archiveSizeMB": 2.36,
+      "license": "unknown"
     },
     {
       "name": "flutter_pdfview",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4849328,
-      "archiveSizeMB": 4.62
+      "archiveSizeMB": 4.62,
+      "license": "MIT"
     },
     {
       "name": "open_filex",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 214821,
-      "archiveSizeMB": 0.2
+      "archiveSizeMB": 0.2,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "image_gallery_saver",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 98061,
-      "archiveSizeMB": 0.09
+      "archiveSizeMB": 0.09,
+      "license": "MIT"
     },
     {
       "name": "video_compress",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 155858,
-      "archiveSizeMB": 0.15
+      "archiveSizeMB": 0.15,
+      "license": "MIT"
     },
     {
       "name": "chewie",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2077604,
-      "archiveSizeMB": 1.98
+      "archiveSizeMB": 1.98,
+      "license": "MIT"
     },
     {
       "name": "flick_video_player",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 30720,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "MIT"
     },
     {
       "name": "youtube_player_iframe",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1234454,
-      "archiveSizeMB": 1.18
+      "archiveSizeMB": 1.18,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "audio_service",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 265266,
-      "archiveSizeMB": 0.25
+      "archiveSizeMB": 0.25,
+      "license": "MIT"
     },
     {
       "name": "audio_session",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 319291,
-      "archiveSizeMB": 0.3
+      "archiveSizeMB": 0.3,
+      "license": "MIT"
     },
     {
       "name": "battery_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 265789,
-      "archiveSizeMB": 0.25
+      "archiveSizeMB": 0.25,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "sensors_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 67870,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "network_info_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 277475,
-      "archiveSizeMB": 0.26
+      "archiveSizeMB": 0.26,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "app_settings",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 258898,
-      "archiveSizeMB": 0.25
+      "archiveSizeMB": 0.25,
+      "license": "MIT"
     },
     {
       "name": "geocoding",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 111719,
-      "archiveSizeMB": 0.11
+      "archiveSizeMB": 0.11,
+      "license": "MIT"
     },
     {
       "name": "geoflutterfire_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 62554,
-      "archiveSizeMB": 0.06
+      "archiveSizeMB": 0.06,
+      "license": "MIT"
     },
     {
       "name": "google_mobile_ads",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 253787,
-      "archiveSizeMB": 0.24
+      "archiveSizeMB": 0.24,
+      "license": "Apache-2.0"
     },
     {
       "name": "firebase_app_check",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 200338,
-      "archiveSizeMB": 0.19
+      "archiveSizeMB": 0.19,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "flutter_appauth",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 245724,
-      "archiveSizeMB": 0.23
+      "archiveSizeMB": 0.23,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "jwt_decoder",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4692,
-      "archiveSizeMB": 0.0
+      "archiveSizeMB": 0.0,
+      "license": "MIT"
     },
     {
       "name": "dart_jsonwebtoken",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 31871,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "MIT"
     },
     {
       "name": "pin_code_fields",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 5216723,
-      "archiveSizeMB": 4.98
+      "archiveSizeMB": 4.98,
+      "license": "MIT"
     },
     {
       "name": "flutter_blurhash",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 385210,
-      "archiveSizeMB": 0.37
+      "archiveSizeMB": 0.37,
+      "license": "MIT"
     },
     {
       "name": "objectbox",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1129679,
-      "archiveSizeMB": 1.08
+      "archiveSizeMB": 1.08,
+      "license": "Apache-2.0"
     },
     {
       "name": "cbl",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 306513,
-      "archiveSizeMB": 0.29
+      "archiveSizeMB": 0.29,
+      "license": "Apache-2.0"
     },
     {
       "name": "sqflite_common_ffi",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 25622,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "shared_preferences_android",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 43894,
-      "archiveSizeMB": 0.04
+      "archiveSizeMB": 0.04,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "shared_preferences_ios",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 54286,
-      "archiveSizeMB": 0.05
+      "archiveSizeMB": 0.05,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "web_socket_channel",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 14525,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "grpc",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 217383,
-      "archiveSizeMB": 0.21
+      "archiveSizeMB": 0.21,
+      "license": "Apache-2.0"
     },
     {
       "name": "internet_connection_checker_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 294898,
-      "archiveSizeMB": 0.28
+      "archiveSizeMB": 0.28,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "url_launcher_web",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 25621,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "Apache-2.0"
     },
     {
       "name": "url_strategy",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 18965,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "logging",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 12198,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "timeago",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 23847,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "dartz",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 80497,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "MIT"
     },
     {
       "name": "fpdart",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 258644,
-      "archiveSizeMB": 0.25
+      "archiveSizeMB": 0.25,
+      "license": "MIT"
     },
     {
       "name": "tuple",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 6135,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "async",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 84278,
-      "archiveSizeMB": 0.08
+      "archiveSizeMB": 0.08,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "characters",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 528692,
-      "archiveSizeMB": 0.5
+      "archiveSizeMB": 0.5,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "vector_math",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 181198,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "Zlib"
     },
     {
       "name": "validators",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 12137,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "test",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 355867,
-      "archiveSizeMB": 0.34
+      "archiveSizeMB": 0.34,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "fluttertest",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 141436,
-      "archiveSizeMB": 0.13
+      "archiveSizeMB": 0.13,
+      "license": "unknown"
     },
     {
       "name": "integration_test",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 174080,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "mockito",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 103522,
-      "archiveSizeMB": 0.1
+      "archiveSizeMB": 0.1,
+      "license": "Apache-2.0"
     },
     {
       "name": "mocktail",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 32396,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "MIT"
     },
     {
       "name": "bloc_test",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 29144,
-      "archiveSizeMB": 0.03
+      "archiveSizeMB": 0.03,
+      "license": "MIT"
     },
     {
       "name": "network_image_mock",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4822,
-      "archiveSizeMB": 0.0
+      "archiveSizeMB": 0.0,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "window_manager",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 262059,
-      "archiveSizeMB": 0.25
+      "archiveSizeMB": 0.25,
+      "license": "MIT"
     },
     {
       "name": "tray_manager",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 177092,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "MIT"
     },
     {
       "name": "screen_retriever",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 205775,
-      "archiveSizeMB": 0.2
+      "archiveSizeMB": 0.2,
+      "license": "MIT"
     },
     {
       "name": "system_theme",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 14294715,
-      "archiveSizeMB": 13.63
+      "archiveSizeMB": 13.63,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "win32",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 1068674,
-      "archiveSizeMB": 1.02
+      "archiveSizeMB": 1.02,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "fluent_ui",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 22157708,
-      "archiveSizeMB": 21.13
+      "archiveSizeMB": 21.13,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "macos_ui",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 514296,
-      "archiveSizeMB": 0.49
+      "archiveSizeMB": 0.49,
+      "license": "MIT"
     },
     {
       "name": "yaru",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2717545,
-      "archiveSizeMB": 2.59
+      "archiveSizeMB": 2.59,
+      "license": "MPL-2.0"
     },
     {
       "name": "page_transition",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 339272,
-      "archiveSizeMB": 0.32
+      "archiveSizeMB": 0.32,
+      "license": "BSD-2-Clause"
     },
     {
       "name": "media_kit",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2049647,
-      "archiveSizeMB": 1.95
+      "archiveSizeMB": 1.95,
+      "license": "MIT"
     },
     {
       "name": "map_launcher",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 3445264,
-      "archiveSizeMB": 3.29
+      "archiveSizeMB": 3.29,
+      "license": "MIT"
     },
     {
       "name": "google_mlkit_commons",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 13526,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "google_mlkit_text_recognition",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 11207,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "google_mlkit_face_detection",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 11792,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "google_mlkit_barcode_scanning",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 14281,
-      "archiveSizeMB": 0.01
+      "archiveSizeMB": 0.01,
+      "license": "MIT"
     },
     {
       "name": "mobile_scanner",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 3159958,
-      "archiveSizeMB": 3.01
+      "archiveSizeMB": 3.01,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "wakelock_plus",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 296576,
-      "archiveSizeMB": 0.28
+      "archiveSizeMB": 0.28,
+      "license": "BSD-3-Clause"
     },
     {
       "name": "in_app_update",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 19426,
-      "archiveSizeMB": 0.02
+      "archiveSizeMB": 0.02,
+      "license": "MIT"
     },
     {
       "name": "showcaseview",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2880178,
-      "archiveSizeMB": 2.75
+      "archiveSizeMB": 2.75,
+      "license": "MIT"
     },
     {
       "name": "tutorial_coach_mark",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 75691,
-      "archiveSizeMB": 0.07
+      "archiveSizeMB": 0.07,
+      "license": "MIT"
     },
     {
       "name": "sms_autofill",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 177154,
-      "archiveSizeMB": 0.17
+      "archiveSizeMB": 0.17,
+      "license": "MIT"
     },
     {
       "name": "pinput",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 370892,
-      "archiveSizeMB": 0.35
+      "archiveSizeMB": 0.35,
+      "license": "MIT"
     },
     {
       "name": "octo_image",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 602841,
-      "archiveSizeMB": 0.57
+      "archiveSizeMB": 0.57,
+      "license": "MIT"
     },
     {
       "name": "transparent_image",
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2020,
-      "archiveSizeMB": 0.0
+      "archiveSizeMB": 0.0,
+      "license": "MIT"
     }
   ]
 }

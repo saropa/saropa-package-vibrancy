@@ -54,6 +54,35 @@
           "archiveSizeMB": {
             "type": ["number", "null"],
             "description": "Archive size in megabytes (derived from archiveSizeBytes)."
+          },
+          "license": {
+            "type": ["string", "null"],
+            "description": "The SPDX license identifier for the package (e.g. MIT, BSD-3-Clause)."
+          },
+          "lastUpdated": {
+            "type": ["string", "null"],
+            "format": "date",
+            "description": "The date the package was last published on pub.dev (YYYY-MM-DD)."
+          },
+          "pubPoints": {
+            "type": ["integer", "null"],
+            "description": "The pub.dev points score for the package."
+          },
+          "wasmReady": {
+            "type": ["boolean", "null"],
+            "description": "Whether the package supports WASM compilation."
+          },
+          "verifiedPublisher": {
+            "type": ["boolean", "null"],
+            "description": "Whether the package publisher is verified on pub.dev."
+          },
+          "platforms": {
+            "type": ["array", "null"],
+            "items": {
+              "type": "string",
+              "enum": ["android", "ios", "linux", "macos", "web", "windows"]
+            },
+            "description": "The platforms supported by the package."
           }
         },
         "required": ["name", "status", "as_of"],
