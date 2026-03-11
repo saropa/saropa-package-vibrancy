@@ -1,20 +1,30 @@
 import * as vscode from 'vscode';
-import { VibrancyResult } from '../types';
+import { VibrancyResult, FamilySplit } from '../types';
 import {
     PackageItem, DetailItem, GroupItem, SuppressedGroupItem,
-    SuppressedPackageItem, buildGroupItems,
+    SuppressedPackageItem, FamilyConflictGroupItem, FamilySplitItem,
+    buildGroupItems, buildFamilySplitDetails,
 } from './tree-items';
 
-type TreeNode = PackageItem | GroupItem | DetailItem | SuppressedGroupItem;
+type TreeNode =
+    | PackageItem | GroupItem | DetailItem
+    | SuppressedGroupItem | FamilyConflictGroupItem | FamilySplitItem;
 
 export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     private _results: VibrancyResult[] = [];
+    private _familySplits: FamilySplit[] = [];
     private readonly _onDidChangeTreeData = new vscode.EventEmitter<void>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
     /** Update results and refresh the tree. Sorted worst-first. */
     updateResults(results: VibrancyResult[]): void {
         this._results = [...results].sort((a, b) => a.score - b.score);
+        this._onDidChangeTreeData.fire();
+    }
+
+    /** Update detected family version splits. */
+    updateFamilySplits(splits: FamilySplit[]): void {
+        this._familySplits = splits;
         this._onDidChangeTreeData.fire();
     }
 
@@ -35,6 +45,12 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
         if (!element) {
             return this._buildRootChildren();
         }
+        if (element instanceof FamilyConflictGroupItem) {
+            return element.splits.map(s => new FamilySplitItem(s));
+        }
+        if (element instanceof FamilySplitItem) {
+            return buildFamilySplitDetails(element.split);
+        }
         if (element instanceof SuppressedGroupItem) {
             return this._getSuppressedResults().map(
                 r => new SuppressedPackageItem(r),
@@ -50,11 +66,19 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     }
 
     private _buildRootChildren(): TreeNode[] {
+        const items: TreeNode[] = [];
+        if (this._familySplits.length > 0) {
+            items.push(
+                new FamilyConflictGroupItem(this._familySplits),
+            );
+        }
         const suppressed = this._getSuppressedSet();
         const active = this._results.filter(
             r => !suppressed.has(r.package.name),
         );
-        const items: TreeNode[] = active.map(r => new PackageItem(r));
+        for (const r of active) {
+            items.push(new PackageItem(r));
+        }
         const suppressedCount = this._results.length - active.length;
         if (suppressedCount > 0) {
             items.push(new SuppressedGroupItem(suppressedCount));

@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { VibrancyResult } from '../types';
+import { VibrancyResult, FamilySplit } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
 import { categoryToSeverity } from '../scoring/status-classifier';
 
@@ -10,9 +10,23 @@ const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
 };
 
 export class VibrancyDiagnostics {
+    private _splitsByPackage = new Map<string, FamilySplit>();
+
     constructor(
         private readonly _collection: vscode.DiagnosticCollection,
     ) {}
+
+    /** Update detected family splits for diagnostic generation. */
+    updateFamilySplits(splits: FamilySplit[]): void {
+        this._splitsByPackage.clear();
+        for (const split of splits) {
+            for (const group of split.versionGroups) {
+                for (const pkg of group.packages) {
+                    this._splitsByPackage.set(pkg, split);
+                }
+            }
+        }
+    }
 
     /** Update diagnostics for a pubspec.yaml document. */
     update(uri: vscode.Uri, content: string, results: VibrancyResult[]): void {
@@ -48,6 +62,19 @@ export class VibrancyDiagnostics {
                 unusedDiag.source = 'Saropa Package Vibrancy';
                 unusedDiag.code = 'unused-dependency';
                 diagnostics.push(unusedDiag);
+            }
+
+            const split = this._splitsByPackage.get(result.package.name);
+            if (split) {
+                const msg = buildFamilyConflictMessage(
+                    result.package.name, split,
+                );
+                const splitDiag = new vscode.Diagnostic(
+                    vscodeRange, msg, vscode.DiagnosticSeverity.Warning,
+                );
+                splitDiag.source = 'Saropa Package Vibrancy';
+                splitDiag.code = 'family-conflict';
+                diagnostics.push(splitDiag);
             }
 
             // Vibrant packages skip the vibrancy diagnostic above,
@@ -102,4 +129,19 @@ function buildMessage(result: VibrancyResult): string {
     }
 
     return `${msg} (${score}/10)`;
+}
+
+function buildFamilyConflictMessage(
+    packageName: string,
+    split: FamilySplit,
+): string {
+    const ownGroup = split.versionGroups.find(
+        g => g.packages.includes(packageName),
+    );
+    const otherVersions = split.versionGroups
+        .filter(g => g !== ownGroup)
+        .map(g => `v${g.majorVersion}`)
+        .join(', ');
+    const ownVersion = ownGroup ? `v${ownGroup.majorVersion}` : '?';
+    return `Family conflict: ${packageName} is in the ${split.familyLabel} family on major ${ownVersion}, but other members use major ${otherVersions}`;
 }
