@@ -74,7 +74,7 @@ from modules.checks_environment import (
 # --- Steps 4-9: Project state validation (git, deps, build, quality) ---
 from modules.checks_project import (
     check_file_line_limits,   # Warn if any src/*.ts file exceeds 300 lines
-    check_known_issues_data,  # Validate knownIssues.json (no dupes, valid dates)
+    check_known_issues_data,  # Validate known_issues.json (no dupes, valid dates)
     check_remote_sync,        # Fetch origin, auto-pull if behind upstream
     check_working_tree,       # Warn if uncommitted changes exist
     ensure_dependencies,      # Run npm install if node_modules stale or missing
@@ -415,7 +415,7 @@ def _main_publish(
 
     Prompts for final confirmation, selects target stores, then runs the
     irreversible publish steps. On success, prints a green banner with
-    marketplace URLs and attempts to open the marketplace page in a browser.
+    marketplace URLs and offers to open the marketplace page in a browser.
     """
     heading("Publish Confirmation")
     if not confirm_publish(version):

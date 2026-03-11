@@ -7,7 +7,6 @@ but will auto-install if missing and the tools are reachable.
 
 import json
 import shutil
-import sys
 
 from .constants import (
     C,

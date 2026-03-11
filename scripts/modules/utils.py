@@ -120,8 +120,7 @@ def get_ovsx_pat() -> str:
 
 
 # Cache for `editor --list-extensions --show-versions` output.
-# Keyed by editor name ("code", "cursor"). Each CLI call can spawn
-# a window on Windows, so we cache to call at most once per editor.
+# Keyed by editor name ("code", "cursor") to avoid redundant CLI calls.
 _extensions_cache: dict[str, set[str]] = {}
 
 
