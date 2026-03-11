@@ -1,0 +1,4115 @@
+{
+  "$schema": "./known_issues_schema.json",
+  "issues": [
+    {
+      "name": "flutter_datetime_picker",
+      "status": "end_of_life",
+      "reason": "Uses deprecated Theme APIs; causes instant render crashes on Impeller.",
+      "as_of": "2026-03-09",
+      "replacement": "omni_datetime_picker",
+      "migrationNotes": "Minor rewrite. Update widget calls and dialog context handling.",
+      "archiveSizeBytes": 317440,
+      "archiveSizeMB": 0.3
+    },
+    {
+      "name": "flutter_facebook_login",
+      "status": "end_of_life",
+      "reason": "SDKs are ancient; fails Gradle builds and violates modern iOS privacy manifests.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_facebook_auth",
+      "migrationNotes": "Drop-in API change, but requires updating FB developer console hashes.",
+      "archiveSizeBytes": 122880,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "apple_sign_in",
+      "status": "end_of_life",
+      "reason": "Obsolete cryptography; using this triggers automatic App Store review rejections.",
+      "as_of": "2026-03-09",
+      "replacement": "sign_in_with_apple",
+      "migrationNotes": "Moderate effort. Security nonce and identity token handling changed.",
+      "archiveSizeBytes": 71680,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "adhara_socket_io",
+      "status": "end_of_life",
+      "reason": "Hardcoded to Socket.io v2; immediately disconnects from modern Node.js backends.",
+      "as_of": "2026-03-09",
+      "replacement": "socket_io_client",
+      "migrationNotes": "Moderate rewrite. Change connection builders and stream subscriptions.",
+      "archiveSizeBytes": 163840,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "flutter_money_formatter",
+      "status": "end_of_life",
+      "reason": "No Null Safety; completely refuses to compile on Dart 3.0+.",
+      "as_of": "2026-03-09",
+      "replacement": "`intl` package",
+      "migrationNotes": "Use standard Dart localization number formats.",
+      "archiveSizeBytes": 2376613,
+      "archiveSizeMB": 2.27
+    },
+    {
+      "name": "progress_dialog",
+      "status": "end_of_life",
+      "reason": "Context leaks and layout overflows break modern navigation stacks.",
+      "as_of": "2026-03-09",
+      "replacement": "Native `showDialog`",
+      "migrationNotes": "Total rewrite. Just use native Flutter dialogs with a CircularProgressIndicator.",
+      "archiveSizeBytes": 1065213,
+      "archiveSizeMB": 1.02
+    },
+    {
+      "name": "flutter_rating_bar",
+      "status": "end_of_life",
+      "reason": "Gesture math is broken on high-refresh-rate screens (120Hz+).",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 6825252,
+      "archiveSizeMB": 6.51
+    },
+    {
+      "name": "flutter_offline",
+      "status": "end_of_life",
+      "reason": "Underlying connectivity logic reports false positives on Android 14+.",
+      "as_of": "2026-03-09",
+      "replacement": "internet_connection_checker_plus",
+      "migrationNotes": "Huge logic change. Must manually build the Offline overlay UI now.",
+      "archiveSizeBytes": 665249,
+      "archiveSizeMB": 0.63
+    },
+    {
+      "name": "clippy_flutter",
+      "status": "end_of_life",
+      "reason": "Legacy canvas painting logic creates severe visual artifacting.",
+      "as_of": "2026-03-09",
+      "replacement": "Native CustomPainter",
+      "migrationNotes": "Draw paths manually to ensure GPU compatibility.",
+      "archiveSizeBytes": 2850122,
+      "archiveSizeMB": 2.72
+    },
+    {
+      "name": "flutter_masked_text",
+      "status": "end_of_life",
+      "reason": "Massive memory leaks from un-disposed internal TextEditingControllers.",
+      "as_of": "2026-03-09",
+      "replacement": "mask_text_input_formatter",
+      "migrationNotes": "Moderate. Replaces custom controllers with native `inputFormatters`.",
+      "archiveSizeBytes": 235520,
+      "archiveSizeMB": 0.22
+    },
+    {
+      "name": "ff_navigation_bar",
+      "status": "end_of_life",
+      "reason": "Throws \"RenderBox was not laid out\" exceptions on device rotation.",
+      "as_of": "2026-03-09",
+      "replacement": "google_nav_bar",
+      "migrationNotes": "Total UI replacement. Different configuration parameters.",
+      "archiveSizeBytes": 42700800,
+      "archiveSizeMB": 40.72
+    },
+    {
+      "name": "states_rebuilder",
+      "status": "end_of_life",
+      "reason": "Incompatible with modern Dart class modifiers (sealed/final).",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_bloc",
+      "migrationNotes": "Total architecture rewrite. Requires migrating to event-driven state.",
+      "archiveSizeBytes": 291577,
+      "archiveSizeMB": 0.28
+    },
+    {
+      "name": "flutter_google_places",
+      "status": "end_of_life",
+      "reason": "Locked to ancient HTTP dependencies; causes unresolvable pubspec conflicts.",
+      "as_of": "2026-03-09",
+      "replacement": "google_places_flutter",
+      "migrationNotes": "Moderate. Parameter mapping is slightly different.",
+      "archiveSizeBytes": 6809600,
+      "archiveSizeMB": 6.49
+    },
+    {
+      "name": "zefyr",
+      "status": "end_of_life",
+      "reason": "Architecture is dead; keyboard handling completely broken on iOS 18.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_quill",
+      "migrationNotes": "Huge rewrite. Document formats (JSON) are different. Need data migration.",
+      "archiveSizeBytes": 727040,
+      "archiveSizeMB": 0.69
+    },
+    {
+      "name": "builder",
+      "status": "end_of_life",
+      "reason": "Half-finished project; core layout files throw null exceptions.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 57092,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "flutter_twitter_login",
+      "status": "end_of_life",
+      "reason": "Hardcoded to Twitter API v1.1; 100% fail rate since X killed the endpoints.",
+      "as_of": "2026-03-09",
+      "replacement": "twitter_login",
+      "migrationNotes": "Rewrite auth logic to support X API v2.",
+      "archiveSizeBytes": 122880,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "stripe_payment",
+      "status": "end_of_life",
+      "reason": "Uses deprecated Stripe APIs; transactions will be rejected by the processor.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_stripe",
+      "migrationNotes": "Total rewrite. Use the official SDK; update backend webhook logic too.",
+      "archiveSizeBytes": 276480,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "flutter_audio_recorder",
+      "status": "end_of_life",
+      "reason": "Fails on Android 14+ due to new strict microphone background policies.",
+      "as_of": "2026-03-09",
+      "replacement": "record",
+      "migrationNotes": "Moderate. Better async permission handling and codec support.",
+      "archiveSizeBytes": 122880,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "chewie_audio",
+      "status": "end_of_life",
+      "reason": "Stagnant codebase; doesn't support modern system-level audio routing.",
+      "as_of": "2026-03-09",
+      "replacement": "just_audio",
+      "migrationNotes": "Total rewrite. `just_audio` is far more powerful but requires custom UI.",
+      "archiveSizeBytes": 101804,
+      "archiveSizeMB": 0.1
+    },
+    {
+      "name": "flutter_speed_dial",
+      "status": "end_of_life",
+      "reason": "Animation controllers misfire, causing UI to permanently lock up.",
+      "as_of": "2026-03-09",
+      "replacement": "Native `ExpandableFab`",
+      "migrationNotes": "Total rewrite. Use Flutter's modern native custom FAB animations.",
+      "archiveSizeBytes": 18063,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "websafe_svg",
+      "status": "end_of_life",
+      "reason": "Obsolete; Flutter natively supports Web SVGs now. Adds dead weight.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_svg",
+      "migrationNotes": "Drop-in replacement. Change package imports.",
+      "archiveSizeBytes": 151433,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "flutter_statusbar_manager",
+      "status": "end_of_life",
+      "reason": "Conflicts directly with modern Flutter SystemChrome implementations.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 9871360,
+      "archiveSizeMB": 9.41
+    },
+    {
+      "name": "nice_button",
+      "status": "end_of_life",
+      "reason": "Uses syntax completely removed from the Dart language; won't compile.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 177960,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "liquid_progress_indicator",
+      "status": "end_of_life",
+      "reason": "Shaders are incompatible with Impeller, causing screen-tearing glitches.",
+      "as_of": "2026-03-09",
+      "replacement": "percent_indicator",
+      "migrationNotes": "UI swap. Linear and circular alternatives available.",
+      "archiveSizeBytes": 2304000,
+      "archiveSizeMB": 2.2
+    },
+    {
+      "name": "flutter_tags",
+      "status": "end_of_life",
+      "reason": "Internal state management is broken; deleting tags crashes the app.",
+      "as_of": "2026-03-09",
+      "replacement": "textfield_tags",
+      "migrationNotes": "Moderate rewrite. Different controller logic.",
+      "archiveSizeBytes": 21427200,
+      "archiveSizeMB": 20.43
+    },
+    {
+      "name": "flutter_markdown",
+      "status": "end_of_life",
+      "reason": "Discontinued by Google; vulnerable to unpatched markdown injection flaws.",
+      "as_of": "2026-03-09",
+      "replacement": "markdown_widget",
+      "migrationNotes": "Moderate. Syntax highlighters and builders must be mapped.",
+      "archiveSizeBytes": 360982,
+      "archiveSizeMB": 0.34
+    },
+    {
+      "name": "flutter_adaptive_scaffold",
+      "status": "end_of_life",
+      "reason": "Discontinued; relies on older layout constraints that fail on foldable phones.",
+      "as_of": "2026-03-09",
+      "replacement": "Native `LayoutBuilder`",
+      "migrationNotes": "Total rewrite. Roll your own responsive breakpoints.",
+      "archiveSizeBytes": 4915910,
+      "archiveSizeMB": 4.69
+    },
+    {
+      "name": "ios_platform_images",
+      "status": "end_of_life",
+      "reason": "Discontinued; redundant since modern Flutter seamlessly handles iOS assets.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 66980,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "palette_generator",
+      "status": "end_of_life",
+      "reason": "Discontinued; incredibly slow on modern high-res device camera feeds.",
+      "as_of": "2026-03-09",
+      "replacement": "color_thief_flutter",
+      "migrationNotes": "Moderate rewrite. Different async methods for extracting dominant colors.",
+      "archiveSizeBytes": 412490,
+      "archiveSizeMB": 0.39
+    },
+    {
+      "name": "flutter_image",
+      "status": "end_of_life",
+      "reason": "Discontinued; memory leaks heavily compared to modern network image caching.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 277199,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "js",
+      "status": "end_of_life",
+      "reason": "Completely replaced by modern Wasm-compatible dart:js_interop.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 9994,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "scoped_model",
+      "status": "end_of_life",
+      "reason": "Ancient logic that causes massive, app-wide widget rebuild jank.",
+      "as_of": "2026-03-09",
+      "replacement": "provider",
+      "migrationNotes": "Massive rewrite. Shift to `ChangeNotifierProvider`.",
+      "archiveSizeBytes": 131122,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "provide",
+      "status": "end_of_life",
+      "reason": "Officially deprecated by Google 7 years ago; full of syntax errors.",
+      "as_of": "2026-03-09",
+      "replacement": "get_it",
+      "migrationNotes": "Massive rewrite. Shift to locator pattern.",
+      "archiveSizeBytes": 71680,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "flutter_sparkline",
+      "status": "end_of_life",
+      "reason": "Pre-null-safety; custom painters throw out-of-bounds exceptions.",
+      "as_of": "2026-03-09",
+      "replacement": "fl_chart",
+      "migrationNotes": "Rewrite to use modern chart primitives.",
+      "archiveSizeBytes": 132166,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "flutter_sticky_header",
+      "status": "end_of_life",
+      "reason": "Completely breaks Flutter's modern sliver scroll physics; severe jank.",
+      "as_of": "2026-03-09",
+      "replacement": "sliver_tools",
+      "migrationNotes": "Moderate rewrite. Use native sliver logic wrapped in tools.",
+      "archiveSizeBytes": 4434186,
+      "archiveSizeMB": 4.23
+    },
+    {
+      "name": "flutter_circular_chart",
+      "status": "end_of_life",
+      "reason": "Relies on dead animation APIs; chart simply renders as a black box.",
+      "as_of": "2026-03-09",
+      "replacement": "fl_chart",
+      "migrationNotes": "Rewrite to use modern pie chart implementations.",
+      "archiveSizeBytes": 2668262,
+      "archiveSizeMB": 2.54
+    },
+    {
+      "name": "flutter_full_pdf_viewer",
+      "status": "end_of_life",
+      "reason": "Platform channel architecture causes hard thread crashes on Android 15.",
+      "as_of": "2026-03-09",
+      "replacement": "pdfrx",
+      "migrationNotes": "Total rewrite. New controller logic and memory management.",
+      "archiveSizeBytes": 106956,
+      "archiveSizeMB": 0.1
+    },
+    {
+      "name": "flutter_html_view",
+      "status": "end_of_life",
+      "reason": "Massive security risk; highly vulnerable to modern XSS injections.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_html",
+      "migrationNotes": "Moderate. Update tag styling parameters.",
+      "archiveSizeBytes": 763812,
+      "archiveSizeMB": 0.73
+    },
+    {
+      "name": "flutter_youtube_view",
+      "status": "end_of_life",
+      "reason": "YouTube changed their iframe API policies; videos refuse to play.",
+      "as_of": "2026-03-09",
+      "replacement": "youtube_player_flutter",
+      "migrationNotes": "Moderate. Swap controller initialization.",
+      "archiveSizeBytes": 254647,
+      "archiveSizeMB": 0.24
+    },
+    {
+      "name": "flutter_webview_plugin",
+      "status": "end_of_life",
+      "reason": "Uses the old v1 Android embedding; blocks app compilation entirely.",
+      "as_of": "2026-03-09",
+      "replacement": "webview_flutter",
+      "migrationNotes": "Total rewrite. Shift to modern `WebViewController` architecture.",
+      "archiveSizeBytes": 256000,
+      "archiveSizeMB": 0.24
+    },
+    {
+      "name": "admob_flutter",
+      "status": "end_of_life",
+      "reason": "Uses retired Google Ad APIs; ads will not serve and revenue is lost.",
+      "as_of": "2026-03-09",
+      "replacement": "google_mobile_ads",
+      "migrationNotes": "Complete rewrite of ad widget placement and initialization logic.",
+      "archiveSizeBytes": 122593,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "firebase_admob",
+      "status": "end_of_life",
+      "reason": "Discontinued officially; completely incompatible with current Firebase SDKs.",
+      "as_of": "2026-03-09",
+      "replacement": "google_mobile_ads",
+      "migrationNotes": "Complete rewrite. Ads decoupled from Firebase wrapper.",
+      "archiveSizeBytes": 81920,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "flutter_blue",
+      "status": "end_of_life",
+      "reason": "Over 800 open issues; completely fails to handle Android 14+ BLE permissions.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_blue_plus",
+      "migrationNotes": "Moderate effort. Fork that fixes permissions; API is mostly similar.",
+      "archiveSizeBytes": 226662,
+      "archiveSizeMB": 0.22
+    },
+    {
+      "name": "flutter_ble_lib",
+      "status": "end_of_life",
+      "reason": "Native iOS bridge crashes instantly when requesting background execution.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_reactive_ble",
+      "migrationNotes": "Massive rewrite. Stream parsing is fundamentally different.",
+      "archiveSizeBytes": 174080,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "flutter_beacon",
+      "status": "end_of_life",
+      "reason": "Ghosted repo; hardware scanning methods are dead on modern mobile OS.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 163840,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "flutter_nfc_reader",
+      "status": "end_of_life",
+      "reason": "Lacks modern tag tech support; background reading is totally broken.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 184367,
+      "archiveSizeMB": 0.18
+    },
+    {
+      "name": "contact_picker",
+      "status": "end_of_life",
+      "reason": "Violates Play Store/App Store privacy policies by leaking full contact lists.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 163840,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "contacts_service",
+      "status": "end_of_life",
+      "reason": "Unmaintained; fails to fetch modern cross-linked cloud contacts.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_contacts",
+      "migrationNotes": "Easy migration. Better cross-platform parameter support.",
+      "archiveSizeBytes": 1834825,
+      "archiveSizeMB": 1.75
+    },
+    {
+      "name": "sms",
+      "status": "end_of_life",
+      "reason": "Android blocked this level of SMS access years ago; immediate crash.",
+      "as_of": "2026-03-09",
+      "replacement": "None (Don't do this)",
+      "migrationNotes": "Re-architect app to not require broad SMS reading.",
+      "archiveSizeBytes": 136020,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "telephony",
+      "status": "end_of_life",
+      "reason": "Fails modern foreground service requirements on Android 15/16.",
+      "as_of": "2026-03-09",
+      "replacement": "Native Platform Channels",
+      "migrationNotes": "Write native Kotlin/Swift for precise telecom functions.",
+      "archiveSizeBytes": 39176,
+      "archiveSizeMB": 0.04
+    },
+    {
+      "name": "flutter_launch",
+      "status": "end_of_life",
+      "reason": "Obsolete functionality that `url_launcher` has handled natively for years.",
+      "as_of": "2026-03-09",
+      "replacement": "url_launcher",
+      "migrationNotes": "Complete drop-in URL execution.",
+      "archiveSizeBytes": 11439309,
+      "archiveSizeMB": 10.91
+    },
+    {
+      "name": "vibrate",
+      "status": "end_of_life",
+      "reason": "Uses deprecated Android vibration classes that no longer trigger hardware.",
+      "as_of": "2026-03-09",
+      "replacement": "Native `HapticFeedback`",
+      "migrationNotes": "Drop-in swap to `HapticFeedback.vibrate()`.",
+      "archiveSizeBytes": 122880,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "flutter_incall",
+      "status": "end_of_life",
+      "reason": "Audio route conflicts freeze the device speakerphone permanently.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 92257,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "flutter_webrtc_wrapper",
+      "status": "end_of_life",
+      "reason": "(Note: The 0.x versions) Video tracks desync and memory spike infinitely.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_webrtc",
+      "migrationNotes": "Heavy update. SDP negotiation methods changed.",
+      "archiveSizeBytes": 6622,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "flutter_staggered_grid_view",
+      "status": "end_of_life",
+      "reason": "(Original repo versions) Unoptimized scroll logic eats 100% of the CPU.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Drop-in API change to the maintained version.",
+      "archiveSizeBytes": 32145,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "flutter_slidable",
+      "status": "end_of_life",
+      "reason": "(v0.x versions) Gestures conflict with modern Flutter internal navigators.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 89485,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "flutter_icons",
+      "status": "end_of_life",
+      "reason": "Generates giant font files that drastically bloat app bundle size.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 13824000,
+      "archiveSizeMB": 13.18
+    },
+    {
+      "name": "font_awesome_flutter",
+      "status": "end_of_life",
+      "reason": "(Legacy versions) Icons render as boxes due to missing font maps.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Fix pubspec constraints; update icon names.",
+      "archiveSizeBytes": 694473,
+      "archiveSizeMB": 0.66
+    },
+    {
+      "name": "google_fonts",
+      "status": "end_of_life",
+      "reason": "(Original 1.x) Dynamic fetching blocks the main UI thread during load.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 1847877,
+      "archiveSizeMB": 1.76
+    },
+    {
+      "name": "flutter_spinkit",
+      "status": "end_of_life",
+      "reason": "(v4.x) Hardcoded TickerProviders cause exceptions when screens pop.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 1828277,
+      "archiveSizeMB": 1.74
+    },
+    {
+      "name": "flutter_shimmer",
+      "status": "end_of_life",
+      "reason": "Fails to render transparent gradients on Impeller engine correctly.",
+      "as_of": "2026-03-09",
+      "replacement": "shimmer",
+      "migrationNotes": "UI swap. Syntax is heavily builder-focused now.",
+      "archiveSizeBytes": 27017039,
+      "archiveSizeMB": 25.77
+    },
+    {
+      "name": "flutter_page_indicator",
+      "status": "end_of_life",
+      "reason": "Animation logic expects PageController structures that are now obsolete.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 122880,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "flutter_card_swipper",
+      "status": "end_of_life",
+      "reason": "Ghosted project; memory management for image cards is nonexistent.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 552960,
+      "archiveSizeMB": 0.53
+    },
+    {
+      "name": "snaplist",
+      "status": "end_of_life",
+      "reason": "Custom scroll physics are completely broken by Flutter 3+ engine updates.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 61440,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "carousel_pro",
+      "status": "end_of_life",
+      "reason": "Dead UI library; auto-play timers will memory leak and crash the app.",
+      "as_of": "2026-03-09",
+      "replacement": "carousel_slider",
+      "migrationNotes": "Moderate rewrite. `carousel_slider` has a totally different builder pattern.",
+      "archiveSizeBytes": 675840,
+      "archiveSizeMB": 0.64
+    },
+    {
+      "name": "flutter_swiper",
+      "status": "end_of_life",
+      "reason": "Unmerged Null Safety PR has been sitting open for 4+ years.",
+      "as_of": "2026-03-09",
+      "replacement": "card_swiper",
+      "migrationNotes": "Easy migration. Maintained fork with the exact same API.",
+      "archiveSizeBytes": 6359040,
+      "archiveSizeMB": 6.06
+    },
+    {
+      "name": "cached_network_image_v1",
+      "status": "end_of_life",
+      "reason": "Legacy version 1.x; fundamentally incompatible with Dart 3 typing.",
+      "as_of": "2026-03-09",
+      "replacement": "cached_network_image",
+      "migrationNotes": "Drop-in mostly, but requires updating error builder syntax.",
+      "archiveSizeBytes": 292939,
+      "archiveSizeMB": 0.28
+    },
+    {
+      "name": "multi_image_picker",
+      "status": "end_of_life",
+      "reason": "Does not support Android Scoped Storage; returns dead file paths.",
+      "as_of": "2026-03-09",
+      "replacement": "image_picker",
+      "migrationNotes": "Total rewrite. Use official `pickMultiImage` method.",
+      "archiveSizeBytes": 696320,
+      "archiveSizeMB": 0.66
+    },
+    {
+      "name": "image_picker_saver",
+      "status": "end_of_life",
+      "reason": "Fails on iOS 16+ due to missing modern photo library permission flags.",
+      "as_of": "2026-03-09",
+      "replacement": "gal",
+      "migrationNotes": "Modern drop-in replacement for saving to gallery.",
+      "archiveSizeBytes": 81920,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "flutter_exif",
+      "status": "end_of_life",
+      "reason": "Buffer parsing logic throws formatting exceptions on modern HEIC photos.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 71680,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "flutter_ffmpeg",
+      "status": "end_of_life",
+      "reason": "Underlying mobile FFmpeg libraries are discontinued and fail to compile.",
+      "as_of": "2026-03-09",
+      "replacement": "ffmpeg_kit_flutter",
+      "migrationNotes": "Massive rewrite. Execution syntax entirely refactored.",
+      "archiveSizeBytes": 3475146,
+      "archiveSizeMB": 3.31
+    },
+    {
+      "name": "flutter_sound_v7",
+      "status": "end_of_life",
+      "reason": "(Legacy versions) Missing background service permissions for Android 15.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to v9+",
+      "migrationNotes": "Complete rewrite of the playback session builder.",
+      "archiveSizeBytes": 15290933,
+      "archiveSizeMB": 14.58
+    },
+    {
+      "name": "audioplayers_v0",
+      "status": "end_of_life",
+      "reason": "(v0.x versions) Native code fails to build on Apple Silicon (M1/M2/M3) Macs.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 21027379,
+      "archiveSizeMB": 20.05
+    },
+    {
+      "name": "flutter_vlc_player_orig",
+      "status": "end_of_life",
+      "reason": "Severe texture cache issues lead to green-screen artifacting on video load.",
+      "as_of": "2026-03-09",
+      "replacement": "media_kit",
+      "migrationNotes": "Huge rewrite. Better Wasm/Desktop support.",
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "video_launcher",
+      "status": "end_of_life",
+      "reason": "Obsolete wrapper; native OS no longer responds to these specific intents.",
+      "as_of": "2026-03-09",
+      "replacement": "url_launcher",
+      "migrationNotes": "Route to native browser or system handlers safely.",
+      "archiveSizeBytes": 5191680,
+      "archiveSizeMB": 4.95
+    },
+    {
+      "name": "flutter_downloader",
+      "status": "end_of_life",
+      "reason": "Progress synchronization isolates are broken, leaving ghost notifications.",
+      "as_of": "2026-03-09",
+      "replacement": "background_downloader",
+      "migrationNotes": "Total rewrite of background task initialization.",
+      "archiveSizeBytes": 828168,
+      "archiveSizeMB": 0.79
+    },
+    {
+      "name": "open_file_v3",
+      "status": "end_of_life",
+      "reason": "Fails to map modern MIME types, causing the OS to reject opening PDFs/docs.",
+      "as_of": "2026-03-09",
+      "replacement": "open_filex",
+      "migrationNotes": "Easy migration. Maintained fork with exact API.",
+      "archiveSizeBytes": 15764086,
+      "archiveSizeMB": 15.03
+    },
+    {
+      "name": "file_picker_v3",
+      "status": "end_of_life",
+      "reason": "(Legacy versions) Returns relative paths that the app lacks permission to read.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 20261718,
+      "archiveSizeMB": 19.32
+    },
+    {
+      "name": "path_provider_ex",
+      "status": "end_of_life",
+      "reason": "Redundant; the official `path_provider` covers all external storage needs now.",
+      "as_of": "2026-03-09",
+      "replacement": "path_provider",
+      "migrationNotes": "Drop-in. Use the official modern directories.",
+      "archiveSizeBytes": 61440,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "flutter_notifications_v8",
+      "status": "end_of_life",
+      "reason": "(Pre-v10) Completely ignores Android 14+ POST_NOTIFICATIONS permission requirements.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "workmanager_v04",
+      "status": "end_of_life",
+      "reason": "Background execution keys fail to register, so tasks never actually fire.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Moderate. Callbacks require stricter async handling.",
+      "archiveSizeBytes": 13544,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "flutter_background_service",
+      "status": "end_of_life",
+      "reason": "Fails to keep isolates alive; killed instantly by modern OS battery managers.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Moderate update. Adjust foreground notification hooks.",
+      "archiveSizeBytes": 128298,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "android_alarm_manager",
+      "status": "end_of_life",
+      "reason": "WakeLocks fail; alarms simply do not trigger when the screen is off.",
+      "as_of": "2026-03-09",
+      "replacement": "android_alarm_manager_plus",
+      "migrationNotes": "Mostly drop-in, but requires updating AndroidManifest permissions.",
+      "archiveSizeBytes": 30720,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "workmanager",
+      "status": "end_of_life",
+      "reason": "Dead repo; incompatible with modern Android WorkManager architecture.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 13544,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "geolocator_apple_v1",
+      "status": "end_of_life",
+      "reason": "Standalone version dead; lacks modern iOS precise location toggles.",
+      "as_of": "2026-03-09",
+      "replacement": "geolocator",
+      "migrationNotes": "Do not use standalone components. Use main package.",
+      "archiveSizeBytes": 241107,
+      "archiveSizeMB": 0.23
+    },
+    {
+      "name": "geolocator_android_v1",
+      "status": "end_of_life",
+      "reason": "Standalone version dead; crashes on Android 14 location permission prompt.",
+      "as_of": "2026-03-09",
+      "replacement": "geolocator",
+      "migrationNotes": "Same as above. Use unified plugin.",
+      "archiveSizeBytes": 136597,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "google_api_availability",
+      "status": "end_of_life",
+      "reason": "Obsolete detection methods return false negatives on modern devices.",
+      "as_of": "2026-03-09",
+      "replacement": "Use Native Channels",
+      "migrationNotes": "Write custom Kotlin script for exact API versioning.",
+      "archiveSizeBytes": 15031,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "location_permissions",
+      "status": "end_of_life",
+      "reason": "Completely replaced by `permission_handler`; causes manifest merge errors.",
+      "as_of": "2026-03-09",
+      "replacement": "permission_handler",
+      "migrationNotes": "Total rewrite. Unified permission asking method.",
+      "archiveSizeBytes": 63157,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "trust_fall",
+      "status": "end_of_life",
+      "reason": "Easily bypassed by modern root tools; provides zero actual security in 2026.",
+      "as_of": "2026-03-09",
+      "replacement": "freerasp",
+      "migrationNotes": "Architecture rewrite. Implements much stricter TEE checking.",
+      "archiveSizeBytes": 122880,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "safe_device",
+      "status": "end_of_life",
+      "reason": "Flagged physical Samsung/Pixel devices as emulators due to outdated hardware lists.",
+      "as_of": "2026-03-09",
+      "replacement": "device_info_plus",
+      "migrationNotes": "Write custom logic using physical device flag.",
+      "archiveSizeBytes": 75947,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "flutter_secure_storage",
+      "status": "end_of_life",
+      "reason": "(Pre-v5.0) Keychain/Keystore logic is old; data can be wiped on OS upgrades.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to v9+",
+      "migrationNotes": "Critical update. Fixes Android Keystore initialization.",
+      "archiveSizeBytes": 343976,
+      "archiveSizeMB": 0.33
+    },
+    {
+      "name": "biometric_storage",
+      "status": "end_of_life",
+      "reason": "Blocks the main UI thread during biometric handshakes, freezing the app.",
+      "as_of": "2026-03-09",
+      "replacement": "local_auth",
+      "migrationNotes": "Rewrite logic. Securely bind auth token to local storage manually.",
+      "archiveSizeBytes": 759612,
+      "archiveSizeMB": 0.72
+    },
+    {
+      "name": "local_auth",
+      "status": "end_of_life",
+      "reason": "Dead standalone package; lacks modern strong biometric fallback handlers.",
+      "as_of": "2026-03-09",
+      "replacement": null,
+      "migrationNotes": null,
+      "archiveSizeBytes": 247265,
+      "archiveSizeMB": 0.24
+    },
+    {
+      "name": "flutter_app_badger",
+      "status": "end_of_life",
+      "reason": "Badge counting logic is entirely broken on Android 14+ launchers.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_app_icon_badge",
+      "migrationNotes": "Drop-in equivalent with updated native launcher maps.",
+      "archiveSizeBytes": 174072,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "flutter_shortcuts",
+      "status": "end_of_life",
+      "reason": "Fails to register dynamic shortcuts on modern iOS/Android homescreens.",
+      "as_of": "2026-03-09",
+      "replacement": "quick_actions",
+      "migrationNotes": "Total rewrite using official Flutter quick actions API.",
+      "archiveSizeBytes": 266748,
+      "archiveSizeMB": 0.25
+    },
+    {
+      "name": "flutter_email_sender",
+      "status": "end_of_life",
+      "reason": "File attachment intents crash due to modern FileProvider security rules.",
+      "as_of": "2026-03-09",
+      "replacement": "Use `url_launcher`",
+      "migrationNotes": "Build `mailto:` schemes natively, or use backend emailing.",
+      "archiveSizeBytes": 61135,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "flutter_sms_inbox",
+      "status": "end_of_life",
+      "reason": "Google Play Store explicitly bans apps using this broad SMS read permission.",
+      "as_of": "2026-03-09",
+      "replacement": "None",
+      "migrationNotes": "Redesign app to not scrape user text messages.",
+      "archiveSizeBytes": 58332,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "call_log",
+      "status": "end_of_life",
+      "reason": "Dead privacy wrapper; app will be suspended from app stores for using it.",
+      "as_of": "2026-03-09",
+      "replacement": "None",
+      "migrationNotes": "Stop reading call logs.",
+      "archiveSizeBytes": 61655,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "keyboard_actions",
+      "status": "end_of_life",
+      "reason": "FocusNode conflicts cause the keyboard to continuously flicker open and closed.",
+      "as_of": "2026-03-09",
+      "replacement": "Use Native FocusNodes",
+      "migrationNotes": "Rewrite using `FocusManager.instance.primaryFocus?.unfocus()`.",
+      "archiveSizeBytes": 66410,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "connectivity",
+      "status": "end_of_life",
+      "reason": "Completely dead, fails on Android 14+.",
+      "as_of": "2026-03-09",
+      "replacement": "connectivity_plus",
+      "migrationNotes": "Drop-in replacement. Change imports and class names to add `_plus`.",
+      "archiveSizeBytes": 153600,
+      "archiveSizeMB": 0.15
+    },
+    {
+      "name": "share",
+      "status": "end_of_life",
+      "reason": "Fails iOS 18 privacy manifests.",
+      "as_of": "2026-03-09",
+      "replacement": "share_plus",
+      "migrationNotes": "Drop-in. Method signatures changed slightly to support `XFile`.",
+      "archiveSizeBytes": 61440,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "device_info",
+      "status": "end_of_life",
+      "reason": "Missing modern device identifiers.",
+      "as_of": "2026-03-09",
+      "replacement": "device_info_plus",
+      "migrationNotes": "Drop-in. Update imports and model getters.",
+      "archiveSizeBytes": 53698,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "package_info",
+      "status": "end_of_life",
+      "reason": "Fails to read modern Gradle setups.",
+      "as_of": "2026-03-09",
+      "replacement": "package_info_plus",
+      "migrationNotes": "Drop-in. Returns modern async version models.",
+      "archiveSizeBytes": 133120,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "sensors",
+      "status": "end_of_life",
+      "reason": "Battery draining event loops.",
+      "as_of": "2026-03-09",
+      "replacement": "sensors_plus",
+      "migrationNotes": "Drop-in stream replacement. Better memory management.",
+      "archiveSizeBytes": 61440,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "battery",
+      "status": "end_of_life",
+      "reason": "API deprecations on Android 15.",
+      "as_of": "2026-03-09",
+      "replacement": "battery_plus",
+      "migrationNotes": "Drop-in. Update stream listeners.",
+      "archiveSizeBytes": 51200,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "android_intent",
+      "status": "end_of_life",
+      "reason": "Missing modern Intent flags.",
+      "as_of": "2026-03-09",
+      "replacement": "android_intent_plus",
+      "migrationNotes": "Drop-in. Update platform channel calls.",
+      "archiveSizeBytes": 30720,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "charts_flutter",
+      "status": "end_of_life",
+      "reason": "Dart 3 incompatible; looks ancient.",
+      "as_of": "2026-03-09",
+      "replacement": "fl_chart",
+      "migrationNotes": "Total rewrite. You must rebuild all chart datasets from scratch.",
+      "archiveSizeBytes": 215237,
+      "archiveSizeMB": 0.21
+    },
+    {
+      "name": "Hive (v1/v2)",
+      "status": "end_of_life",
+      "reason": "Legacy architecture, sync limits, and abandoned by original creator.",
+      "as_of": "2026-03-10",
+      "replacement": "hive_ce",
+      "migrationNotes": "Update to the Community Edition (hive_ce) fork which is actively maintained and Dart 3/Wasm compatible, or execute a total rewrite to Drift for relational needs.",
+      "archiveSizeBytes": 96991,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "isar",
+      "status": "end_of_life",
+      "reason": "Abandoned by the creator; unpatched data corruption risks with enum evolutions and weak Wasm support.",
+      "as_of": "2026-03-10",
+      "replacement": "drift",
+      "migrationNotes": "Total rewrite. Shift to a stable SQLite-backed architecture like Drift, or Realm if a NoSQL object store is strictly required.",
+      "archiveSizeBytes": 73661,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "easy_localization",
+      "status": "end_of_life",
+      "reason": "Slow updates, context leaks.",
+      "as_of": "2026-03-09",
+      "replacement": "slang",
+      "migrationNotes": "Heavy migration. Move from runtime parsing to build-time code generation.",
+      "archiveSizeBytes": 352380,
+      "archiveSizeMB": 0.34
+    },
+    {
+      "name": "pull_to_refresh",
+      "status": "end_of_life",
+      "reason": "Breaks Impeller physics.",
+      "as_of": "2026-03-09",
+      "replacement": "liquid_pull_to_refresh",
+      "migrationNotes": "Moderate effort. Switch controller logic to modern native RefreshIndicator wrappers.",
+      "archiveSizeBytes": 18063360,
+      "archiveSizeMB": 17.23
+    },
+    {
+      "name": "background_locator",
+      "status": "end_of_life",
+      "reason": "Fails Android 14+ strict bg policies.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_background_geolocation",
+      "migrationNotes": "Paid plugin, but total drop-in for enterprise. (Free alt: `geolocator`).",
+      "archiveSizeBytes": 3916696,
+      "archiveSizeMB": 3.74
+    },
+    {
+      "name": "jitsi_meet",
+      "status": "end_of_life",
+      "reason": "Broken WebRTC bridges.",
+      "as_of": "2026-03-09",
+      "replacement": "jitsi_meet_wrapper",
+      "migrationNotes": "Moderate effort. Update event listeners and view configurations.",
+      "archiveSizeBytes": 92160,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "flutter_pagewise",
+      "status": "end_of_life",
+      "reason": "Stagnant list builder logic.",
+      "as_of": "2026-03-09",
+      "replacement": "infinite_scroll_pagination",
+      "migrationNotes": "Moderate rewrite. Shift to PagingController pattern.",
+      "archiveSizeBytes": 6182408,
+      "archiveSizeMB": 5.9
+    },
+    {
+      "name": "audioplayers (v0.x)",
+      "status": "end_of_life",
+      "reason": "Fails on Apple Silicon builds.",
+      "as_of": "2026-03-09",
+      "replacement": "audioplayers",
+      "migrationNotes": "Heavy migration. `AudioCache` is gone, completely new async API.",
+      "archiveSizeBytes": 21027379,
+      "archiveSizeMB": 20.05
+    },
+    {
+      "name": "file_picker (v1/v2)",
+      "status": "end_of_life",
+      "reason": "Returns unreadable cache paths.",
+      "as_of": "2026-03-09",
+      "replacement": "file_picker",
+      "migrationNotes": "Moderate. Update async fetching and handle new Scoped Storage rules.",
+      "archiveSizeBytes": 20261718,
+      "archiveSizeMB": 19.32
+    },
+    {
+      "name": "flutter_local_notifications (v8)",
+      "status": "end_of_life",
+      "reason": "Ignores Android 14 POST flags.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_local_notifications",
+      "migrationNotes": "Heavy rewrite. Initialization and tap-handling completely overhauled.",
+      "archiveSizeBytes": 727307,
+      "archiveSizeMB": 0.69
+    },
+    {
+      "name": "flutter_rating_bar (Orig)",
+      "status": "end_of_life",
+      "reason": "Broken on 120Hz screens.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_rating_bar",
+      "migrationNotes": "Check for active forks or rebuild using native Gesturedetector + Row.",
+      "archiveSizeBytes": 6825252,
+      "archiveSizeMB": 6.51
+    },
+    {
+      "name": "js (original)",
+      "status": "end_of_life",
+      "reason": "Blocks Wasm compilation.",
+      "as_of": "2026-03-09",
+      "replacement": "`dart:js_interop`",
+      "migrationNotes": "Huge rewrite. Requires migrating to strict Wasm-ready extension types.",
+      "archiveSizeBytes": 9994,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "flutter_slidable (v0)",
+      "status": "end_of_life",
+      "reason": "Navigator conflicts.",
+      "as_of": "2026-03-09",
+      "replacement": "flutter_slidable",
+      "migrationNotes": "Complete rewrite of the ActionPane builders.",
+      "archiveSizeBytes": 89485,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "google_fonts (v1)",
+      "status": "end_of_life",
+      "reason": "Main thread blocks.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Drop-in update, massive performance boost.",
+      "archiveSizeBytes": 1847877,
+      "archiveSizeMB": 1.76
+    },
+    {
+      "name": "flutter_spinkit (v4)",
+      "status": "end_of_life",
+      "reason": "TickerProvider exceptions.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Drop-in update.",
+      "archiveSizeBytes": 1828277,
+      "archiveSizeMB": 1.74
+    },
+    {
+      "name": "flutter_advanced_networkimage",
+      "status": "end_of_life",
+      "reason": "Eviction failures crash OS.",
+      "as_of": "2026-03-09",
+      "replacement": "cached_network_image",
+      "migrationNotes": "Total rewrite. Use standard caching logic.",
+      "archiveSizeBytes": 141615,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "local_auth (Legacy)",
+      "status": "end_of_life",
+      "reason": "Dead standalone package.",
+      "as_of": "2026-03-09",
+      "replacement": "Update to latest official",
+      "migrationNotes": "Drop-in update, improves biometric fallback mechanisms.",
+      "archiveSizeBytes": 247265,
+      "archiveSizeMB": 0.24
+    },
+    {
+      "name": "moor",
+      "status": "end_of_life",
+      "reason": "Replaced entirely by Drift; ancient code generator fails on modern Dart SDKs.",
+      "as_of": "2026-03-10",
+      "replacement": "drift",
+      "migrationNotes": "Requires renaming annotations and running the Drift migration tool.",
+      "archiveSizeBytes": 23521,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "pedantic",
+      "status": "end_of_life",
+      "reason": "Officially deprecated by the Dart team in favor of unified core lints.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_lints",
+      "migrationNotes": "Update analysis_options.yaml to include flutter_lints.",
+      "archiveSizeBytes": 6308,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "effective_dart",
+      "status": "end_of_life",
+      "reason": "Superseded by standard Dart linter rules; ruleset is obsolete.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_lints",
+      "migrationNotes": "Drop-in replacement in analysis options.",
+      "archiveSizeBytes": 5304,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "lint",
+      "status": "end_of_life",
+      "reason": "Abandoned third-party lint package; causes false positives on Dart 3 modifiers.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_lints",
+      "migrationNotes": "Standardize to official lints.",
+      "archiveSizeBytes": 33820,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "flushbar",
+      "status": "end_of_life",
+      "reason": "Discontinued; completely breaks on modern Navigator 2.0 (Router) stacks.",
+      "as_of": "2026-03-10",
+      "replacement": "another_flushbar",
+      "migrationNotes": "Drop-in API change to the maintained community fork.",
+      "archiveSizeBytes": 20480,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "qr_code_scanner",
+      "status": "end_of_life",
+      "reason": "Native bindings fail Android 15 camera foreground policies, causing instant crashes.",
+      "as_of": "2026-03-10",
+      "replacement": "mobile_scanner",
+      "migrationNotes": "Total rewrite using ML Kit base.",
+      "archiveSizeBytes": 86004,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "flutter_barcode_scanner",
+      "status": "end_of_life",
+      "reason": "Uses deprecated Android V1 embeddings; refuses to compile on Gradle 8+.",
+      "as_of": "2026-03-10",
+      "replacement": "mobile_scanner",
+      "migrationNotes": "Shift to ML Kit based scanner.",
+      "archiveSizeBytes": 174080,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "barcode_scan",
+      "status": "end_of_life",
+      "reason": "Abandoned repo; totally incompatible with modern iOS privacy manifests.",
+      "as_of": "2026-03-10",
+      "replacement": "mobile_scanner",
+      "migrationNotes": "Total rewrite of scanning overlays and callbacks.",
+      "archiveSizeBytes": 81920,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "flutter_neumorphic",
+      "status": "end_of_life",
+      "reason": "Heavy shadow math creates massive screen tearing on the Impeller engine.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_neumorphic_plus",
+      "migrationNotes": "Update package name; underlying Impeller issues patched in fork.",
+      "archiveSizeBytes": 15055860,
+      "archiveSizeMB": 14.36
+    },
+    {
+      "name": "flutter_staggered_animations",
+      "status": "end_of_life",
+      "reason": "Uses old TickerProvider architecture causing severe jank on 120Hz screens.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_animate",
+      "migrationNotes": "Shift to modern extension-based declarative animations.",
+      "archiveSizeBytes": 916225,
+      "archiveSizeMB": 0.87
+    },
+    {
+      "name": "animations",
+      "status": "end_of_life",
+      "reason": "Pre-Material 3 package; page transitions lack predictive back gesture support.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_animate",
+      "migrationNotes": "Total rewrite. Use native Material 3 transitions where possible.",
+      "archiveSizeBytes": 37455785,
+      "archiveSizeMB": 35.72
+    },
+    {
+      "name": "simple_animations (v2)",
+      "status": "end_of_life",
+      "reason": "Stateless animation logic is fundamentally incompatible with Dart 3 type safety.",
+      "as_of": "2026-03-10",
+      "replacement": "simple_animations (v5+)",
+      "migrationNotes": "Total syntax rewrite using modern Control constructs.",
+      "archiveSizeBytes": 4641780,
+      "archiveSizeMB": 4.43
+    },
+    {
+      "name": "fluro",
+      "status": "end_of_life",
+      "reason": "Legacy routing system that fundamentally conflicts with deep-linking in Router API.",
+      "as_of": "2026-03-10",
+      "replacement": "go_router",
+      "migrationNotes": "Massive rewrite. Shift to declarative route trees.",
+      "archiveSizeBytes": 134695,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "beamer",
+      "status": "end_of_life",
+      "reason": "Maintainer MIA; unpatched bugs with WebAssembly (Wasm) URL synchronization.",
+      "as_of": "2026-03-10",
+      "replacement": "go_router",
+      "migrationNotes": "Total architectural rewrite for navigation.",
+      "archiveSizeBytes": 454942,
+      "archiveSizeMB": 0.43
+    },
+    {
+      "name": "vrouter",
+      "status": "end_of_life",
+      "reason": "Dead project; throws layout exceptions when resizing Wasm browser windows.",
+      "as_of": "2026-03-10",
+      "replacement": "go_router",
+      "migrationNotes": "Shift to official Flutter routing package.",
+      "archiveSizeBytes": 149027,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "routemaster",
+      "status": "end_of_life",
+      "reason": "Unmaintained; memory leaks active Route objects on heavy app traversal.",
+      "as_of": "2026-03-10",
+      "replacement": "go_router",
+      "migrationNotes": "Rewrite tab navigation and route delegates.",
+      "archiveSizeBytes": 322093,
+      "archiveSizeMB": 0.31
+    },
+    {
+      "name": "flutter_modular (v3)",
+      "status": "end_of_life",
+      "reason": "Global singletons block Dart 3 compilation; deeply flawed memory management.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_modular (v6+)",
+      "migrationNotes": "Complete module syntax refactoring.",
+      "archiveSizeBytes": 586162,
+      "archiveSizeMB": 0.56
+    },
+    {
+      "name": "dio_http_cache",
+      "status": "end_of_life",
+      "reason": "Incompatible with Dio v5+; causes unresolvable pubspec dependency conflicts.",
+      "as_of": "2026-03-10",
+      "replacement": "dio_cache_interceptor",
+      "migrationNotes": "Drop-in interceptor swap, but different cache store configurations.",
+      "archiveSizeBytes": 71680,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "alice",
+      "status": "end_of_life",
+      "reason": "Overlay intercepts block native predictive back gestures on Android 14.",
+      "as_of": "2026-03-10",
+      "replacement": "alice_lightweight",
+      "migrationNotes": "Maintained fork with exact same API.",
+      "archiveSizeBytes": 3229692,
+      "archiveSizeMB": 3.08
+    },
+    {
+      "name": "catcher",
+      "status": "end_of_life",
+      "reason": "Fails to capture modern Flutter engine unhandled isolate errors.",
+      "as_of": "2026-03-10",
+      "replacement": "catcher_2",
+      "migrationNotes": "Drop-in replacement to the maintained version.",
+      "archiveSizeBytes": 1496796,
+      "archiveSizeMB": 1.43
+    },
+    {
+      "name": "flutter_crashlytics",
+      "status": "end_of_life",
+      "reason": "Uses the defunct Fabric namespace; logs will go to a dead server.",
+      "as_of": "2026-03-10",
+      "replacement": "firebase_crashlytics",
+      "migrationNotes": "Total initialization rewrite. Use modern Firebase Core.",
+      "archiveSizeBytes": 174080,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "firebase_ml_vision",
+      "status": "end_of_life",
+      "reason": "Google permanently retired the backend APIs; package is functionally dead.",
+      "as_of": "2026-03-10",
+      "replacement": "google_mlkit_commons",
+      "migrationNotes": "Huge rewrite. Shift from Firebase to on-device ML Kit.",
+      "archiveSizeBytes": 305689,
+      "archiveSizeMB": 0.29
+    },
+    {
+      "name": "flutter_camera_ml_vision",
+      "status": "end_of_life",
+      "reason": "Fails iOS 18 hardware privacy manifests, causing automatic app rejection.",
+      "as_of": "2026-03-10",
+      "replacement": "mobile_scanner",
+      "migrationNotes": "Total rewrite of camera view integration.",
+      "archiveSizeBytes": 3164160,
+      "archiveSizeMB": 3.02
+    },
+    {
+      "name": "camerawesome",
+      "status": "end_of_life",
+      "reason": "Lacks Android Scoped Storage flags; videos save to corrupted, unreadable paths.",
+      "as_of": "2026-03-10",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Significant rewrite of the builder syntax.",
+      "archiveSizeBytes": 62669454,
+      "archiveSizeMB": 59.77
+    },
+    {
+      "name": "flutter_villains",
+      "status": "end_of_life",
+      "reason": "Uses highly deprecated page transition math; causes blank screens on push.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_animate",
+      "migrationNotes": "Replace with modern animation extensions.",
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "rubber",
+      "status": "end_of_life",
+      "reason": "Gesture physics deadlocks with Flutter's internal Scrollables.",
+      "as_of": "2026-03-10",
+      "replacement": "bottom_sheet",
+      "migrationNotes": "Use native or standard bottom sheet implementations.",
+      "archiveSizeBytes": 3568002,
+      "archiveSizeMB": 3.4
+    },
+    {
+      "name": "sliding_up_panel",
+      "status": "end_of_life",
+      "reason": "Causes fatal layout constraints errors on foldable devices.",
+      "as_of": "2026-03-10",
+      "replacement": "sliding_up_panel2",
+      "migrationNotes": "Drop-in API change to fix layout math.",
+      "archiveSizeBytes": 54835200,
+      "archiveSizeMB": 52.29
+    },
+    {
+      "name": "backdrop",
+      "status": "end_of_life",
+      "reason": "Completely incompatible with Material 3 standard theming.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_backdrop",
+      "migrationNotes": "Moderate theme updates required.",
+      "archiveSizeBytes": 211952,
+      "archiveSizeMB": 0.2
+    },
+    {
+      "name": "flutter_inappbrowser",
+      "status": "end_of_life",
+      "reason": "Legacy wrapper; fails Wasm compilation and uses obsolete WKWebView configs.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_inappwebview",
+      "migrationNotes": "Update namespace and controller syntax.",
+      "archiveSizeBytes": 532480,
+      "archiveSizeMB": 0.51
+    },
+    {
+      "name": "flutter_webview_pro",
+      "status": "end_of_life",
+      "reason": "Abandoned file-upload fork; modern webview_flutter supports files natively.",
+      "as_of": "2026-03-10",
+      "replacement": "webview_flutter",
+      "migrationNotes": "Total rewrite to modern official plugin.",
+      "archiveSizeBytes": 1324292,
+      "archiveSizeMB": 1.26
+    },
+    {
+      "name": "flutter_fluid_slider",
+      "status": "end_of_life",
+      "reason": "Custom path drawing throws severe artifacting errors on Impeller.",
+      "as_of": "2026-03-10",
+      "replacement": "sleek_circular_slider",
+      "migrationNotes": "Change widget implementation.",
+      "archiveSizeBytes": 55873,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "flutter_xlider",
+      "status": "end_of_life",
+      "reason": "Pre-null-safety; codebase completely fails to compile on Dart 3.",
+      "as_of": "2026-03-10",
+      "replacement": "another_xlider",
+      "migrationNotes": "Drop-in fork.",
+      "archiveSizeBytes": 5259572,
+      "archiveSizeMB": 5.02
+    },
+    {
+      "name": "flutter_rating",
+      "status": "end_of_life",
+      "reason": "Dead repository; incompatible with Material 3 iconography sizes.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_rating_bar",
+      "migrationNotes": "UI component swap.",
+      "archiveSizeBytes": 877698,
+      "archiveSizeMB": 0.84
+    },
+    {
+      "name": "smooth_star_rating",
+      "status": "end_of_life",
+      "reason": "Internal GestureDetector freezes input loops on 120Hz displays.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_rating_bar",
+      "migrationNotes": "UI component swap.",
+      "archiveSizeBytes": 157018,
+      "archiveSizeMB": 0.15
+    },
+    {
+      "name": "flutter_colorpicker (v0.x)",
+      "status": "end_of_life",
+      "reason": "Relies on deprecated HSV math that creates inaccurate hex codes.",
+      "as_of": "2026-03-10",
+      "replacement": "flex_color_picker",
+      "migrationNotes": "Moderate rewrite. Update color translation handling.",
+      "archiveSizeBytes": 103849,
+      "archiveSizeMB": 0.1
+    },
+    {
+      "name": "color_picker",
+      "status": "end_of_life",
+      "reason": "Dead project; dialog contexts leak and crash modern navigators.",
+      "as_of": "2026-03-10",
+      "replacement": "flex_color_picker",
+      "migrationNotes": "Swap dialog implementation.",
+      "archiveSizeBytes": 167353,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "flutter_material_color_picker",
+      "status": "end_of_life",
+      "reason": "Doesn't support Material 3 seed-generated color schemes.",
+      "as_of": "2026-03-10",
+      "replacement": "flex_color_picker",
+      "migrationNotes": "Swap widget and update logic.",
+      "archiveSizeBytes": 723801,
+      "archiveSizeMB": 0.69
+    },
+    {
+      "name": "day_night_time_picker",
+      "status": "end_of_life",
+      "reason": "Animation controllers are left un-disposed, causing massive memory leaks.",
+      "as_of": "2026-03-10",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Mostly drop-in, update imports.",
+      "archiveSizeBytes": 4524430,
+      "archiveSizeMB": 4.31
+    },
+    {
+      "name": "flutter_rounded_date_picker",
+      "status": "end_of_life",
+      "reason": "Uses deprecated Theme properties that immediately throw compilation errors.",
+      "as_of": "2026-03-10",
+      "replacement": "omni_datetime_picker",
+      "migrationNotes": "Moderate rewrite. Dialog presentation changed.",
+      "archiveSizeBytes": 2310697,
+      "archiveSizeMB": 2.2
+    },
+    {
+      "name": "flutter_calendar",
+      "status": "end_of_life",
+      "reason": "Unmaintained; layout fails entirely on web/Wasm targets.",
+      "as_of": "2026-03-10",
+      "replacement": "table_calendar",
+      "migrationNotes": "Massive rewrite. Shift to modern calendar builders.",
+      "archiveSizeBytes": 16629760,
+      "archiveSizeMB": 15.86
+    },
+    {
+      "name": "flutter_calendar_carousel",
+      "status": "end_of_life",
+      "reason": "Swiping physics conflicts with Flutter 3 engine updates, causing stutter.",
+      "as_of": "2026-03-10",
+      "replacement": "table_calendar",
+      "migrationNotes": "Complete UI swap.",
+      "archiveSizeBytes": 2042727,
+      "archiveSizeMB": 1.95
+    },
+    {
+      "name": "syncfusion_flutter_calendar (v18)",
+      "status": "end_of_life",
+      "reason": "Legacy commercial package; completely fails Dart 3 type checks.",
+      "as_of": "2026-03-10",
+      "replacement": "syncfusion_flutter_calendar (latest)",
+      "migrationNotes": "Update license keys and fix null-safety breaks.",
+      "archiveSizeBytes": 4719387,
+      "archiveSizeMB": 4.5
+    },
+    {
+      "name": "intro_slider",
+      "status": "end_of_life",
+      "reason": "Layouts render as 1x1 pixel boxes on foldable and dual-screen devices.",
+      "as_of": "2026-03-10",
+      "replacement": "introduction_screen",
+      "migrationNotes": "UI rewrite. Data models for pages changed.",
+      "archiveSizeBytes": 5190525,
+      "archiveSizeMB": 4.95
+    },
+    {
+      "name": "intro_views_flutter",
+      "status": "end_of_life",
+      "reason": "Ignores device SafeAreas; content is obscured by modern mobile notches.",
+      "as_of": "2026-03-10",
+      "replacement": "introduction_screen",
+      "migrationNotes": "Total UI replacement.",
+      "archiveSizeBytes": 2844023,
+      "archiveSizeMB": 2.71
+    },
+    {
+      "name": "flutter_onboarding_slider",
+      "status": "end_of_life",
+      "reason": "Ghosted repo; state misfires cause onboarding to skip pages randomly.",
+      "as_of": "2026-03-10",
+      "replacement": "introduction_screen",
+      "migrationNotes": "Total UI replacement.",
+      "archiveSizeBytes": 187761,
+      "archiveSizeMB": 0.18
+    },
+    {
+      "name": "transformer_page_view",
+      "status": "end_of_life",
+      "reason": "Matrix translations are obsolete and crash the Impeller renderer.",
+      "as_of": "2026-03-10",
+      "replacement": "smooth_page_indicator",
+      "migrationNotes": "Rethink page view animations.",
+      "archiveSizeBytes": 2406400,
+      "archiveSizeMB": 2.29
+    },
+    {
+      "name": "page_view_indicators",
+      "status": "end_of_life",
+      "reason": "Dead repo; doesn't support dynamically sized or infinite pagers.",
+      "as_of": "2026-03-10",
+      "replacement": "smooth_page_indicator",
+      "migrationNotes": "Swap indicator UI.",
+      "archiveSizeBytes": 5089,
+      "archiveSizeMB": 0.0
+    },
+    {
+      "name": "flutter_typeahead (v1)",
+      "status": "end_of_life",
+      "reason": "Overlay floats behind keyboards on modern Android 14 inset architectures.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_typeahead (latest)",
+      "migrationNotes": "Major update to overlay rendering logic.",
+      "archiveSizeBytes": 30545934,
+      "archiveSizeMB": 29.13
+    },
+    {
+      "name": "autocomplete_textfield",
+      "status": "end_of_life",
+      "reason": "Fails to release FocusNodes, breaking physical keyboard inputs on iPadOS.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_typeahead",
+      "migrationNotes": "Rewrite the suggestion builder callbacks.",
+      "archiveSizeBytes": 1262833,
+      "archiveSizeMB": 1.2
+    },
+    {
+      "name": "flutter_search_bar",
+      "status": "end_of_life",
+      "reason": "Overrides AppBar illegally in Material 3; breaks standard Scaffold layouts.",
+      "as_of": "2026-03-10",
+      "replacement": "Native SearchAnchor",
+      "migrationNotes": "Use Flutter's built-in M3 SearchAnchor widget.",
+      "archiveSizeBytes": 6125,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "material_floating_search_bar",
+      "status": "end_of_life",
+      "reason": "Throws 'RenderBox was not laid out' exceptions when rotating the device.",
+      "as_of": "2026-03-10",
+      "replacement": "Native SearchAnchor",
+      "migrationNotes": "Total UI rewrite. Shift to native Material 3 widgets.",
+      "archiveSizeBytes": 34698590,
+      "archiveSizeMB": 33.09
+    },
+    {
+      "name": "search_widget",
+      "status": "end_of_life",
+      "reason": "Uses legacy dart:io calls that completely block WebAssembly (Wasm) builds.",
+      "as_of": "2026-03-10",
+      "replacement": "Native SearchAnchor",
+      "migrationNotes": "Total UI rewrite.",
+      "archiveSizeBytes": 1331200,
+      "archiveSizeMB": 1.27
+    },
+    {
+      "name": "flutter_chips_input",
+      "status": "end_of_life",
+      "reason": "Text deletion triggers out-of-bounds exceptions, crashing the app.",
+      "as_of": "2026-03-10",
+      "replacement": "textfield_tags",
+      "migrationNotes": "Moderate rewrite of input controllers.",
+      "archiveSizeBytes": 58822,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "badges (v1)",
+      "status": "end_of_life",
+      "reason": "Positioning logic broken; badges render off-screen in Material 3.",
+      "as_of": "2026-03-10",
+      "replacement": "badges (v3+)",
+      "migrationNotes": "Syntax overhaul; badge positioning changed entirely.",
+      "archiveSizeBytes": 7602536,
+      "archiveSizeMB": 7.25
+    },
+    {
+      "name": "flutter_inner_drawer",
+      "status": "end_of_life",
+      "reason": "Fails completely with predictive back gestures on Android 14.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_zoom_drawer",
+      "migrationNotes": "Architecture change. Update scaffold wrapping.",
+      "archiveSizeBytes": 33132438,
+      "archiveSizeMB": 31.6
+    },
+    {
+      "name": "hidden_drawer_menu",
+      "status": "end_of_life",
+      "reason": "Dead project; animation controllers lack disposal logic.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_zoom_drawer",
+      "migrationNotes": "Total UI overhaul.",
+      "archiveSizeBytes": 13475683,
+      "archiveSizeMB": 12.85
+    },
+    {
+      "name": "foldable_sidebar",
+      "status": "end_of_life",
+      "reason": "Abandoned; incompatible with null safety and Dart 3.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_zoom_drawer",
+      "migrationNotes": "Total UI overhaul.",
+      "archiveSizeBytes": 1898558,
+      "archiveSizeMB": 1.81
+    },
+    {
+      "name": "unicorndial",
+      "status": "end_of_life",
+      "reason": "Breaks entirely with standard Scaffold floatingActionButtonLocations.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_expandable_fab",
+      "migrationNotes": "Moderate rewrite of action items.",
+      "archiveSizeBytes": 224267,
+      "archiveSizeMB": 0.21
+    },
+    {
+      "name": "hawk_fab_menu",
+      "status": "end_of_life",
+      "reason": "Obsolete custom animations that conflict with the native engine.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_expandable_fab",
+      "migrationNotes": "Total UI rewrite.",
+      "archiveSizeBytes": 5246055,
+      "archiveSizeMB": 5.0
+    },
+    {
+      "name": "flutter_arc_speed_dial",
+      "status": "end_of_life",
+      "reason": "Trigonometry math fails on high-DPI screens, displacing icons.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_expandable_fab",
+      "migrationNotes": "Total UI rewrite.",
+      "archiveSizeBytes": 68616,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "bubble_bottom_bar",
+      "status": "end_of_life",
+      "reason": "Fails safe area constraints; overflows into the iOS Dynamic Island.",
+      "as_of": "2026-03-10",
+      "replacement": "google_nav_bar",
+      "migrationNotes": "Moderate rewrite. Update item building logic.",
+      "archiveSizeBytes": 54917,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "curved_navigation_bar (v0.x)",
+      "status": "end_of_life",
+      "reason": "Severe stutter when pushing new routes over the bar.",
+      "as_of": "2026-03-10",
+      "replacement": "curved_navigation_bar (latest)",
+      "migrationNotes": "Fix dependencies and null-safety errors.",
+      "archiveSizeBytes": 374960,
+      "archiveSizeMB": 0.36
+    },
+    {
+      "name": "fancy_bottom_navigation",
+      "status": "end_of_life",
+      "reason": "Contains non-standard JS interops that fail Wasm compilation.",
+      "as_of": "2026-03-10",
+      "replacement": "google_nav_bar",
+      "migrationNotes": "Total UI rewrite.",
+      "archiveSizeBytes": 256000,
+      "archiveSizeMB": 0.24
+    },
+    {
+      "name": "convex_bottom_bar (v2)",
+      "status": "end_of_life",
+      "reason": "Gesture area overlaps system navigation bars on Android 15.",
+      "as_of": "2026-03-10",
+      "replacement": "convex_bottom_bar (latest)",
+      "migrationNotes": "Update handling of system insets.",
+      "archiveSizeBytes": 7319537,
+      "archiveSizeMB": 6.98
+    },
+    {
+      "name": "flutter_snake_navigationbar",
+      "status": "end_of_life",
+      "reason": "Shader effects conflict with the Impeller engine, crashing the app.",
+      "as_of": "2026-03-10",
+      "replacement": "google_nav_bar",
+      "migrationNotes": "Total UI rewrite.",
+      "archiveSizeBytes": 3480151,
+      "archiveSizeMB": 3.32
+    },
+    {
+      "name": "bottom_navy_bar",
+      "status": "end_of_life",
+      "reason": "Dead repository; unoptimized rebuilds cause CPU spiking.",
+      "as_of": "2026-03-10",
+      "replacement": "water_drop_nav_bar",
+      "migrationNotes": "UI swap. Similar aesthetic.",
+      "archiveSizeBytes": 4791790,
+      "archiveSizeMB": 4.57
+    },
+    {
+      "name": "responsive_builder (v0.x)",
+      "status": "end_of_life",
+      "reason": "Hardcoded breakpoints are totally obsolete for modern foldables.",
+      "as_of": "2026-03-10",
+      "replacement": "responsive_builder (latest)",
+      "migrationNotes": "Refactor sizing information properties.",
+      "archiveSizeBytes": 1175977,
+      "archiveSizeMB": 1.12
+    },
+    {
+      "name": "flutter_screenutil (v4)",
+      "status": "end_of_life",
+      "reason": "Init function crashes on initialization in modern Flutter views.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_screenutil (latest)",
+      "migrationNotes": "Update init pattern to use standard builders.",
+      "archiveSizeBytes": 850174,
+      "archiveSizeMB": 0.81
+    },
+    {
+      "name": "size_config",
+      "status": "end_of_life",
+      "reason": "Antiquated singleton pattern that breaks completely on web resizes.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_screenutil",
+      "migrationNotes": "Massive rewrite to responsive scaling.",
+      "archiveSizeBytes": 3611608,
+      "archiveSizeMB": 3.44
+    },
+    {
+      "name": "easy_localization_loader",
+      "status": "end_of_life",
+      "reason": "Asset bundles fail to load synchronously, breaking Wasm builds.",
+      "as_of": "2026-03-10",
+      "replacement": "slang",
+      "migrationNotes": "Shift from runtime loading to code-generation.",
+      "archiveSizeBytes": 6675,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "flutter_i18n",
+      "status": "end_of_life",
+      "reason": "Unmaintained; delegates fail to register properly in Dart 3.",
+      "as_of": "2026-03-10",
+      "replacement": "slang",
+      "migrationNotes": "Total rewrite of localization architecture.",
+      "archiveSizeBytes": 248445,
+      "archiveSizeMB": 0.24
+    },
+    {
+      "name": "i18n_extension",
+      "status": "end_of_life",
+      "reason": "String extension injections leak memory wildly on large translation sets.",
+      "as_of": "2026-03-10",
+      "replacement": "slang",
+      "migrationNotes": "Massive syntax rewrite.",
+      "archiveSizeBytes": 390724,
+      "archiveSizeMB": 0.37
+    },
+    {
+      "name": "intl_translation",
+      "status": "end_of_life",
+      "reason": "Officially deprecated by the Dart team.",
+      "as_of": "2026-03-10",
+      "replacement": "intl_utils",
+      "migrationNotes": "Shift to the community standard generation.",
+      "archiveSizeBytes": 80734,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "flutter_localizations",
+      "status": "end_of_life",
+      "reason": "Pre-null-safety; lacks modern RTL language mappings.",
+      "as_of": "2026-03-10",
+      "replacement": "Update to latest version",
+      "migrationNotes": "Update SDK constraints.",
+      "archiveSizeBytes": null,
+      "archiveSizeMB": null
+    },
+    {
+      "name": "flutter_mobx (v0.x)",
+      "status": "end_of_life",
+      "reason": "Generators output invalid Dart 3 code, blocking compilation.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_mobx (latest)",
+      "migrationNotes": "Update build_runner and regenerate all stores.",
+      "archiveSizeBytes": 14829,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "fish_redux",
+      "status": "end_of_life",
+      "reason": "Abandoned by Alibaba; deeply incompatible with Dart 3 class modifiers.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_riverpod",
+      "migrationNotes": "Total architecture rewrite. Huge effort.",
+      "archiveSizeBytes": 143360,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "flutter_redux",
+      "status": "end_of_life",
+      "reason": "Architecturally obsolete; causes unnecessary full-tree widget rebuilds.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_bloc",
+      "migrationNotes": "Total rewrite to event-driven bloc architecture.",
+      "archiveSizeBytes": 983710,
+      "archiveSizeMB": 0.94
+    },
+    {
+      "name": "redux",
+      "status": "end_of_life",
+      "reason": "Synchronous reducers block the main thread causing UI freezing.",
+      "as_of": "2026-03-10",
+      "replacement": "bloc",
+      "migrationNotes": "Total rewrite.",
+      "archiveSizeBytes": 30720,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "mvc_pattern",
+      "status": "end_of_life",
+      "reason": "Non-idiomatic framework that breaks modern Flutter DevTools.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_riverpod",
+      "migrationNotes": "Complete paradigm shift.",
+      "archiveSizeBytes": 64503,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "stacked (v1)",
+      "status": "end_of_life",
+      "reason": "ViewModel locators throw exceptions due to old Provider bindings.",
+      "as_of": "2026-03-10",
+      "replacement": "stacked (latest)",
+      "migrationNotes": "Update ViewModel builder syntax.",
+      "archiveSizeBytes": 611627,
+      "archiveSizeMB": 0.58
+    },
+    {
+      "name": "momentum",
+      "status": "end_of_life",
+      "reason": "Dead state management library; causes infinite build loops.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_riverpod",
+      "migrationNotes": "Total rewrite.",
+      "archiveSizeBytes": 26107,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "binder",
+      "status": "end_of_life",
+      "reason": "Abandoned state library; incompatible with Impeller engine bindings.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_riverpod",
+      "migrationNotes": "Total rewrite.",
+      "archiveSizeBytes": 31138,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "flutter_hooks (v0.x)",
+      "status": "end_of_life",
+      "reason": "Hook states decouple and cause memory leaks on rapid navigation.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_hooks (latest)",
+      "migrationNotes": "Update syntax and hook definitions.",
+      "archiveSizeBytes": 83307,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "functional_widget",
+      "status": "end_of_life",
+      "reason": "Code generator is dead; fails to generate valid Dart 3 widgets.",
+      "as_of": "2026-03-10",
+      "replacement": "hooks_riverpod",
+      "migrationNotes": "Rewrite using HookConsumerWidgets manually.",
+      "archiveSizeBytes": 16100,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "flutter_stetho",
+      "status": "end_of_life",
+      "reason": "Meta discontinued Stetho; fails to build with modern Android Gradle Plugins.",
+      "as_of": "2026-03-10",
+      "replacement": "drift_db_viewer",
+      "migrationNotes": "Use standard Dart tooling for DB debugging.",
+      "archiveSizeBytes": 6451200,
+      "archiveSizeMB": 6.15
+    },
+    {
+      "name": "flutter_flipperkit",
+      "status": "end_of_life",
+      "reason": "Native bridges completely fail to compile on Apple Silicon (M-series) Macs.",
+      "as_of": "2026-03-10",
+      "replacement": "devtools_extensions",
+      "migrationNotes": "Use official Flutter DevTools.",
+      "archiveSizeBytes": 1857949,
+      "archiveSizeMB": 1.77
+    },
+    {
+      "name": "moor_ffi",
+      "status": "end_of_life",
+      "reason": "Deprecated native bridges; entirely breaks Wasm compilation.",
+      "as_of": "2026-03-10",
+      "replacement": "sqlite3_flutter_libs",
+      "migrationNotes": "Update SQLite dependency structures.",
+      "archiveSizeBytes": 25226,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "sqflite_sqlcipher",
+      "status": "end_of_life",
+      "reason": "Dead package; native C bindings break on Android 15.",
+      "as_of": "2026-03-10",
+      "replacement": "sqlcipher_flutter_libs",
+      "migrationNotes": "Update imports and native libraries.",
+      "archiveSizeBytes": 1304080,
+      "archiveSizeMB": 1.24
+    },
+    {
+      "name": "shared_preferences_windows",
+      "status": "end_of_life",
+      "reason": "Integrated into the core package; keeping this causes duplicate symbol errors.",
+      "as_of": "2026-03-10",
+      "replacement": "shared_preferences",
+      "migrationNotes": "Remove explicit dependency.",
+      "archiveSizeBytes": 37821,
+      "archiveSizeMB": 0.04
+    },
+    {
+      "name": "shared_preferences_macos",
+      "status": "end_of_life",
+      "reason": "Integrated into core package; redundant dead weight.",
+      "as_of": "2026-03-10",
+      "replacement": "shared_preferences",
+      "migrationNotes": "Remove explicit dependency.",
+      "archiveSizeBytes": 93535,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "shared_preferences_web",
+      "status": "end_of_life",
+      "reason": "Integrated into core package; redundant dead weight.",
+      "as_of": "2026-03-10",
+      "replacement": "shared_preferences",
+      "migrationNotes": "Remove explicit dependency.",
+      "archiveSizeBytes": 9449,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "sembast (v1)",
+      "status": "end_of_life",
+      "reason": "Synchronous writes freeze the UI thread on modern devices.",
+      "as_of": "2026-03-10",
+      "replacement": "sembast (v3+)",
+      "migrationNotes": "Major update to async database factory logic.",
+      "archiveSizeBytes": 161323,
+      "archiveSizeMB": 0.15
+    },
+    {
+      "name": "localstorage",
+      "status": "end_of_life",
+      "reason": "Uses obsolete synchronous file I/O that crashes Wasm applications.",
+      "as_of": "2026-03-10",
+      "replacement": "shared_preferences",
+      "migrationNotes": "Total rewrite. Data must be migrated.",
+      "archiveSizeBytes": 272492,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "flutter_cache_manager (v1)",
+      "status": "end_of_life",
+      "reason": "Fails to clear disk space, leading to out-of-storage app crashes.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_cache_manager (latest)",
+      "migrationNotes": "Update cache eviction callbacks.",
+      "archiveSizeBytes": 323689,
+      "archiveSizeMB": 0.31
+    },
+    {
+      "name": "http_middleware",
+      "status": "end_of_life",
+      "reason": "Incompatible with the modern Dart http package architecture.",
+      "as_of": "2026-03-10",
+      "replacement": "http_interceptor",
+      "migrationNotes": "Rewrite request interceptors.",
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "chopper (v3)",
+      "status": "end_of_life",
+      "reason": "Code generator fails completely on Dart 3.",
+      "as_of": "2026-03-10",
+      "replacement": "chopper (latest)",
+      "migrationNotes": "Regenerate all network services.",
+      "archiveSizeBytes": 80521,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "retrofit (v1)",
+      "status": "end_of_life",
+      "reason": "Pre-null-safety; generator outputs dead code.",
+      "as_of": "2026-03-10",
+      "replacement": "retrofit (latest)",
+      "migrationNotes": "Regenerate client services.",
+      "archiveSizeBytes": 23392,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "graphql (v3)",
+      "status": "end_of_life",
+      "reason": "Fails to compile on modern Flutter SDKs.",
+      "as_of": "2026-03-10",
+      "replacement": "graphql_flutter",
+      "migrationNotes": "Huge rewrite. Link configurations changed entirely.",
+      "archiveSizeBytes": 75322,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "hasura_connect",
+      "status": "end_of_life",
+      "reason": "Unmaintained; websockets instantly disconnect from modern Hasura backends.",
+      "as_of": "2026-03-10",
+      "replacement": "graphql_flutter",
+      "migrationNotes": "Total network architecture rewrite.",
+      "archiveSizeBytes": 500283,
+      "archiveSizeMB": 0.48
+    },
+    {
+      "name": "flutter_socket_io",
+      "status": "end_of_life",
+      "reason": "Hardcoded to ancient Android NDKs that Play Store rejects.",
+      "as_of": "2026-03-10",
+      "replacement": "socket_io_client",
+      "migrationNotes": "Total rewrite.",
+      "archiveSizeBytes": 147990,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "flutter_pusher",
+      "status": "end_of_life",
+      "reason": "Abandoned; native bindings throw unhandled exceptions.",
+      "as_of": "2026-03-10",
+      "replacement": "pusher_channels_flutter",
+      "migrationNotes": "Use official pusher SDK.",
+      "archiveSizeBytes": 71680,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "pusher_websocket_flutter",
+      "status": "end_of_life",
+      "reason": "Fails on iOS 18 background execution policies.",
+      "as_of": "2026-03-10",
+      "replacement": "pusher_channels_flutter",
+      "migrationNotes": "Total rewrite of channel binding logic.",
+      "archiveSizeBytes": 174080,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "signalr_flutter",
+      "status": "end_of_life",
+      "reason": "Dead repo; connections fail against .NET 8+ backends.",
+      "as_of": "2026-03-10",
+      "replacement": "signalr_netcore",
+      "migrationNotes": "Moderate connection string update.",
+      "archiveSizeBytes": 642057,
+      "archiveSizeMB": 0.61
+    },
+    {
+      "name": "agora_rtc_engine (v4)",
+      "status": "end_of_life",
+      "reason": "Agora officially retired these SDK versions; calls will not connect.",
+      "as_of": "2026-03-10",
+      "replacement": "agora_rtc_engine (v6+)",
+      "migrationNotes": "Massive rewrite of video view and event handlers.",
+      "archiveSizeBytes": 5206880,
+      "archiveSizeMB": 4.97
+    },
+    {
+      "name": "youtube_player_iframe (v2)",
+      "status": "end_of_life",
+      "reason": "YouTube blocked the old Web API; iframe renders a black screen.",
+      "as_of": "2026-03-10",
+      "replacement": "youtube_player_iframe (latest)",
+      "migrationNotes": "Controller syntax completely changed.",
+      "archiveSizeBytes": 1234454,
+      "archiveSizeMB": 1.18
+    },
+    {
+      "name": "audioplayer",
+      "status": "end_of_life",
+      "reason": "Completely dead package; conflicts directly with modern audio routers.",
+      "as_of": "2026-03-10",
+      "replacement": "audioplayers",
+      "migrationNotes": "Total syntax replacement.",
+      "archiveSizeBytes": 92160,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "flutter_sound_lite",
+      "status": "end_of_life",
+      "reason": "Deprecated by maintainers in favor of the full package.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_sound",
+      "migrationNotes": "API drop-in, but requires full FFMPEG setup.",
+      "archiveSizeBytes": 95304948,
+      "archiveSizeMB": 90.89
+    },
+    {
+      "name": "flutter_midi",
+      "status": "end_of_life",
+      "reason": "C++ bridges fail completely on macOS 15, blocking desktop builds.",
+      "as_of": "2026-03-10",
+      "replacement": "dart_midi",
+      "migrationNotes": "Total rewrite using Dart-native synthesis.",
+      "archiveSizeBytes": 6563840,
+      "archiveSizeMB": 6.26
+    },
+    {
+      "name": "camera (v0.x)",
+      "status": "end_of_life",
+      "reason": "Fails Android 14 Scoped Storage and iOS 18 hardware manifest requirements.",
+      "as_of": "2026-03-10",
+      "replacement": "camera (latest)",
+      "migrationNotes": "Heavy update to async camera initialization.",
+      "archiveSizeBytes": 102777,
+      "archiveSizeMB": 0.1
+    },
+    {
+      "name": "mapbox_gl",
+      "status": "end_of_life",
+      "reason": "Discontinued by Mapbox; map tiles will fail to load.",
+      "as_of": "2026-03-10",
+      "replacement": "mapbox_maps_flutter",
+      "migrationNotes": "Total rewrite to the official v10 SDK.",
+      "archiveSizeBytes": 826350,
+      "archiveSizeMB": 0.79
+    },
+    {
+      "name": "flutter_map (v0.x)",
+      "status": "end_of_life",
+      "reason": "Leaflet core fundamentally broken; maps render as gray squares.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_map (latest)",
+      "migrationNotes": "Complete rewrite of map options and layers.",
+      "archiveSizeBytes": 919792,
+      "archiveSizeMB": 0.88
+    },
+    {
+      "name": "location (v3)",
+      "status": "end_of_life",
+      "reason": "Fails Android 14 exact vs approximate location prompt requirements.",
+      "as_of": "2026-03-10",
+      "replacement": "location (latest)",
+      "migrationNotes": "Update permission request flow.",
+      "archiveSizeBytes": 2942056,
+      "archiveSizeMB": 2.81
+    },
+    {
+      "name": "bitsdojo_window",
+      "status": "end_of_life",
+      "reason": "Fails to compile on modern Windows 11 SDKs.",
+      "as_of": "2026-03-10",
+      "replacement": "window_manager",
+      "migrationNotes": "Total rewrite of desktop window controls.",
+      "archiveSizeBytes": 121449,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "desktop_window",
+      "status": "end_of_life",
+      "reason": "Obsolete since native Flutter desktop size support was added.",
+      "as_of": "2026-03-10",
+      "replacement": "window_manager",
+      "migrationNotes": "Total rewrite.",
+      "archiveSizeBytes": 122804,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "window_size",
+      "status": "end_of_life",
+      "reason": "Obsolete experimental package discontinued by Google.",
+      "as_of": "2026-03-10",
+      "replacement": "window_manager",
+      "migrationNotes": "Total rewrite.",
+      "archiveSizeBytes": 17084,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "flutter_web_plugins",
+      "status": "end_of_life",
+      "reason": "Built directly into the Flutter SDK now; causes namespace collisions.",
+      "as_of": "2026-03-10",
+      "replacement": "None",
+      "migrationNotes": "Remove explicit dependency.",
+      "archiveSizeBytes": null,
+      "archiveSizeMB": null
+    },
+    {
+      "name": "timeago (v2)",
+      "status": "end_of_life",
+      "reason": "Pre-null-safety; blocks Dart 3 compilation.",
+      "as_of": "2026-03-10",
+      "replacement": "timeago (latest)",
+      "migrationNotes": "Update syntax for custom locales.",
+      "archiveSizeBytes": 23847,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "date_format",
+      "status": "end_of_life",
+      "reason": "Dead repository; incompatible with modern intl patterns.",
+      "as_of": "2026-03-10",
+      "replacement": "intl",
+      "migrationNotes": "Rewrite all date string parsing.",
+      "archiveSizeBytes": 7805,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "supercharged (v1)",
+      "status": "end_of_life",
+      "reason": "String/Number extensions fail Dart 3 strict typing.",
+      "as_of": "2026-03-10",
+      "replacement": "supercharged (latest)",
+      "migrationNotes": "Syntax updates required.",
+      "archiveSizeBytes": 9771,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "fluttertoast (v8)",
+      "status": "end_of_life",
+      "reason": "Uses deprecated overlay APIs causing context leaks and app freezes.",
+      "as_of": "2026-03-10",
+      "replacement": "fluttertoast (latest)",
+      "migrationNotes": "Shift to contextless FToast pattern.",
+      "archiveSizeBytes": 546320,
+      "archiveSizeMB": 0.52
+    },
+    {
+      "name": "flutter_absolute_path",
+      "status": "end_of_life",
+      "reason": "Dead file URI parser; fails completely on Android 14 ContentProviders.",
+      "as_of": "2026-03-10",
+      "replacement": "path_provider",
+      "migrationNotes": "Rewrite all local file path resolution.",
+      "archiveSizeBytes": 122880,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "file_utils",
+      "status": "end_of_life",
+      "reason": "Abandoned package; redundant with Dart's modern dart:io.",
+      "as_of": "2026-03-10",
+      "replacement": "Native dart:io",
+      "migrationNotes": "Use standard File and Directory classes.",
+      "archiveSizeBytes": 11864,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "flutter_string_encryption",
+      "status": "end_of_life",
+      "reason": "Cryptography algorithms broken by modern OS standards; insecure.",
+      "as_of": "2026-03-10",
+      "replacement": "encrypt",
+      "migrationNotes": "Total rewrite of encryption logic.",
+      "archiveSizeBytes": 163840,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "aes_crypt",
+      "status": "end_of_life",
+      "reason": "Insecure default paddings make it vulnerable to padding oracle attacks.",
+      "as_of": "2026-03-10",
+      "replacement": "encrypt",
+      "migrationNotes": "Rewrite using secure PKCS7 padding.",
+      "archiveSizeBytes": 150972,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "flutter_keychain",
+      "status": "end_of_life",
+      "reason": "Dead repository; unpatched vulnerabilities and crashes on iOS 18.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_secure_storage",
+      "migrationNotes": "Total rewrite. Keys must be migrated.",
+      "archiveSizeBytes": 56577,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "flutter_uploader",
+      "status": "end_of_life",
+      "reason": "Background isolates fail to register on Android 15, silently failing uploads.",
+      "as_of": "2026-03-10",
+      "replacement": "background_downloader",
+      "migrationNotes": "Total rewrite of background task execution.",
+      "archiveSizeBytes": 6144000,
+      "archiveSizeMB": 5.86
+    },
+    {
+      "name": "flutter_local_notifications (v9)",
+      "status": "end_of_life",
+      "reason": "Fails Android 14 POST_NOTIFICATIONS requirements.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_local_notifications (latest)",
+      "migrationNotes": "Requires explicitly asking for exact notification permissions.",
+      "archiveSizeBytes": 727307,
+      "archiveSizeMB": 0.69
+    },
+    {
+      "name": "flutter_native_timezone",
+      "status": "end_of_life",
+      "reason": "Integrated into flutter_timezone; keeping this causes linker errors.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_timezone",
+      "migrationNotes": "Drop-in API change.",
+      "archiveSizeBytes": 74467,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "timezone (v0.x)",
+      "status": "end_of_life",
+      "reason": "Pre-null-safety; blocks Dart 3 compilation entirely.",
+      "as_of": "2026-03-10",
+      "replacement": "timezone (latest)",
+      "migrationNotes": "Total rewrite of timezone initialization and database fetching logic.",
+      "archiveSizeBytes": 664044,
+      "archiveSizeMB": 0.63
+    },
+    {
+      "name": "flutter_phone_direct_caller",
+      "status": "end_of_life",
+      "reason": "Hardcoded to obsolete Java 8 and missing AGP namespaces; native bindings crash on Android Gradle Plugin 8+ and iOS 18.",
+      "as_of": "2026-03-10",
+      "replacement": "url_launcher",
+      "migrationNotes": "Use `url_launcher` with the `tel:` scheme to open the system dialer. Bypassing the dialer entirely is no longer recommended due to modern OS privacy restrictions.",
+      "archiveSizeBytes": 55957,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "get",
+      "status": "maintenance_mode",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_riverpod / flutter_bloc",
+      "migrationNotes": "While popular, GetX creates massive coupling and navigation issues on modern Router setups.",
+      "archiveSizeBytes": 14563060,
+      "archiveSizeMB": 13.89
+    },
+    {
+      "name": "flare_flutter",
+      "as_of": "2026-03-10",
+      "status": "end_of_life",
+      "replacement": "rive",
+      "migrationNotes": "Rewrite animation loading and state machines using the new `rive` package syntax.",
+      "archiveSizeBytes": 81920,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "flutter_clean_architecture",
+      "status": "end_of_life",
+      "as_of": "2026-03-10",
+      "replacement": "None",
+      "migrationNotes": "Abandoned. Implement clean architecture concepts using native standard widgets and standard state management (e.g., flutter_bloc).",
+      "archiveSizeBytes": 90043,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "flutter_vibrate",
+      "as_of": "2026-03-10",
+      "status": "end_of_life",
+      "replacement": "Native `HapticFeedback`",
+      "migrationNotes": "Use standard `HapticFeedback.vibrate()` from `package:flutter/services.dart`.",
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "speech_recognition",
+      "as_of": "2026-03-10",
+      "status": "end_of_life",
+      "replacement": "speech_to_text",
+      "migrationNotes": "Complete rewrite of async initialization and stream listening.",
+      "archiveSizeBytes": 6236160,
+      "archiveSizeMB": 5.95
+    },
+    {
+      "name": "random_string",
+      "status": "end_of_life",
+      "as_of": "2026-03-10",
+      "replacement": "uuid",
+      "migrationNotes": "Use proper UUIDs or standard cryptographically secure random number generators.",
+      "archiveSizeBytes": 4593,
+      "archiveSizeMB": 0.0
+    },
+    {
+      "name": "hardware_buttons",
+      "as_of": "2026-03-10",
+      "status": "end_of_life",
+      "replacement": "PopScope",
+      "migrationNotes": "Native interceptors cause crashes on Android 14 predictive back paths. Use modern Flutter routing handles.",
+      "archiveSizeBytes": 61440,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "http",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 46315,
+      "archiveSizeMB": 0.04
+    },
+    {
+      "name": "provider",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 9236844,
+      "archiveSizeMB": 8.81
+    },
+    {
+      "name": "flutter_bloc",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 82703,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "sqflite",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 47681,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "dio",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 118058,
+      "archiveSizeMB": 0.11
+    },
+    {
+      "name": "intl",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 305265,
+      "archiveSizeMB": 0.29
+    },
+    {
+      "name": "firebase_core",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 257826,
+      "archiveSizeMB": 0.25
+    },
+    {
+      "name": "rxdart",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 180081,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "json_annotation",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 13618,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "equatable",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 288110,
+      "archiveSizeMB": 0.27
+    },
+    {
+      "name": "go_router",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 325320,
+      "archiveSizeMB": 0.31
+    },
+    {
+      "name": "flutter_riverpod",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 54407,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "uuid",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 237574,
+      "archiveSizeMB": 0.23
+    },
+    {
+      "name": "image_picker",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 284152,
+      "archiveSizeMB": 0.27
+    },
+    {
+      "name": "fl_chart",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 19917489,
+      "archiveSizeMB": 18.99
+    },
+    {
+      "name": "freezed",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 214464,
+      "archiveSizeMB": 0.2
+    },
+    {
+      "name": "permission_handler",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 149679,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "flutter_svg",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 496219,
+      "archiveSizeMB": 0.47
+    },
+    {
+      "name": "lottie",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 157210,
+      "archiveSizeMB": 0.15
+    },
+    {
+      "name": "device_info_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 285845,
+      "archiveSizeMB": 0.27
+    },
+    {
+      "name": "connectivity_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 295191,
+      "archiveSizeMB": 0.28
+    },
+    {
+      "name": "package_info_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 295951,
+      "archiveSizeMB": 0.28
+    },
+    {
+      "name": "shimmer",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1771115,
+      "archiveSizeMB": 1.69
+    },
+    {
+      "name": "webview_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1361615,
+      "archiveSizeMB": 1.3
+    },
+    {
+      "name": "video_player",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 10866556,
+      "archiveSizeMB": 10.36
+    },
+    {
+      "name": "share_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 292304,
+      "archiveSizeMB": 0.28
+    },
+    {
+      "name": "geolocator",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 282308,
+      "archiveSizeMB": 0.27
+    },
+    {
+      "name": "crypto",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 615595,
+      "archiveSizeMB": 0.59
+    },
+    {
+      "name": "path",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 45282,
+      "archiveSizeMB": 0.04
+    },
+    {
+      "name": "collection",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 77897,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "google_maps_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 164037,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "carousel_slider",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 4447091,
+      "archiveSizeMB": 4.24
+    },
+    {
+      "name": "smooth_page_indicator",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 127071,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "introduction_screen",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 11007268,
+      "archiveSizeMB": 10.5
+    },
+    {
+      "name": "english_words",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2365440,
+      "archiveSizeMB": 2.26
+    },
+    {
+      "name": "flutter_launcher_icons",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1276191,
+      "archiveSizeMB": 1.22
+    },
+    {
+      "name": "flutter_native_splash",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1139700,
+      "archiveSizeMB": 1.09
+    },
+    {
+      "name": "in_app_purchase",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1229673,
+      "archiveSizeMB": 1.17
+    },
+    {
+      "name": "firebase_auth",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 382017,
+      "archiveSizeMB": 0.36
+    },
+    {
+      "name": "cloud_firestore",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 489965,
+      "archiveSizeMB": 0.47
+    },
+    {
+      "name": "firebase_messaging",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 709719,
+      "archiveSizeMB": 0.68
+    },
+    {
+      "name": "firebase_storage",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 271019,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "firebase_analytics",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 217364,
+      "archiveSizeMB": 0.21
+    },
+    {
+      "name": "firebase_crashlytics",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 211811,
+      "archiveSizeMB": 0.2
+    },
+    {
+      "name": "just_audio",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 322908,
+      "archiveSizeMB": 0.31
+    },
+    {
+      "name": "record",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 191233,
+      "archiveSizeMB": 0.18
+    },
+    {
+      "name": "flutter_tts",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 498253,
+      "archiveSizeMB": 0.48
+    },
+    {
+      "name": "speech_to_text",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 308780,
+      "archiveSizeMB": 0.29
+    },
+    {
+      "name": "socket_io_client",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 43846,
+      "archiveSizeMB": 0.04
+    },
+    {
+      "name": "graphql_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 123743,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "drift",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 14867885,
+      "archiveSizeMB": 14.18
+    },
+    {
+      "name": "hive_ce",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 12774724,
+      "archiveSizeMB": 12.18
+    },
+    {
+      "name": "encrypt",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 14734,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "pointycastle",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2069489,
+      "archiveSizeMB": 1.97
+    },
+    {
+      "name": "logger",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 313943,
+      "archiveSizeMB": 0.3
+    },
+    {
+      "name": "sentry_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1774653,
+      "archiveSizeMB": 1.69
+    },
+    {
+      "name": "mixpanel_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 345087,
+      "archiveSizeMB": 0.33
+    },
+    {
+      "name": "amplitude_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 676690,
+      "archiveSizeMB": 0.65
+    },
+    {
+      "name": "table_calendar",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 125667,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "percent_indicator",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1446361,
+      "archiveSizeMB": 1.38
+    },
+    {
+      "name": "sign_in_with_apple",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 612048,
+      "archiveSizeMB": 0.58
+    },
+    {
+      "name": "google_sign_in",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 243654,
+      "archiveSizeMB": 0.23
+    },
+    {
+      "name": "flutter_facebook_auth",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 16097,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "twitter_login",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 350578,
+      "archiveSizeMB": 0.33
+    },
+    {
+      "name": "flutter_stripe",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 36133,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "pay",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 125442,
+      "archiveSizeMB": 0.12
+    },
+    {
+      "name": "in_app_review",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 540284,
+      "archiveSizeMB": 0.52
+    },
+    {
+      "name": "store_redirect",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 107631,
+      "archiveSizeMB": 0.1
+    },
+    {
+      "name": "upgrader",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2628325,
+      "archiveSizeMB": 2.51
+    },
+    {
+      "name": "flutter_dotenv",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 283292,
+      "archiveSizeMB": 0.27
+    },
+    {
+      "name": "envied",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 8697,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "get_it",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 12049334,
+      "archiveSizeMB": 11.49
+    },
+    {
+      "name": "injectable",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 22562,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "bloc",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 62562,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "cubit",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "mobx",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 69511,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "velocity_x",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 273042,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "flex_color_scheme",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 5643289,
+      "archiveSizeMB": 5.38
+    },
+    {
+      "name": "adaptive_theme",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 395212,
+      "archiveSizeMB": 0.38
+    },
+    {
+      "name": "flutter_animate",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 246092,
+      "archiveSizeMB": 0.23
+    },
+    {
+      "name": "rive",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 7870943,
+      "archiveSizeMB": 7.51
+    },
+    {
+      "name": "flame",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 14823168,
+      "archiveSizeMB": 14.14
+    },
+    {
+      "name": "bonfire",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 150576,
+      "archiveSizeMB": 0.14
+    },
+    {
+      "name": "flutter_vector_icons",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "ionicons",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 478714,
+      "archiveSizeMB": 0.46
+    },
+    {
+      "name": "cupertino_icons",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 343075,
+      "archiveSizeMB": 0.33
+    },
+    {
+      "name": "meta",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 15784,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "flutter_lints",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 4980,
+      "archiveSizeMB": 0.0
+    },
+    {
+      "name": "lints",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 18120,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "analyzer",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 3636305,
+      "archiveSizeMB": 3.47
+    },
+    {
+      "name": "build_runner",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 275975,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "source_gen",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 52048,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "dart_code_metrics_annotations",
+      "status": "freemium",
+      "reason": "Hooks the codebase directly into a commercial, vendor-locked ecosystem (dcm.dev). Actual trial-ware / pay to play.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_lints",
+      "migrationNotes": "Remove DCM annotations and dependencies. Replace with saropa_lints (https://pub.dev/packages/saropa_lints) — a drop-in replacement with vastly more coverage: 2057 custom lint rules and 132 quick fixes for Flutter and Dart. Catches memory leaks, security vulnerabilities, and runtime crashes that standard linters miss. No vendor lock-in, no pay gates.",
+      "archiveSizeBytes": 2408,
+      "archiveSizeMB": 0.0
+    },
+    {
+      "name": "blinkid_flutter",
+      "status": "commercial",
+      "reason": "Premium, closed-source SDK wrapper. Requires a paid commercial license key from Microblink to function in production.",
+      "as_of": "2026-03-10",
+      "replacement": "google_mlkit_document_scanner",
+      "migrationNotes": "Migrate to free, on-device alternatives like Google ML Kit for standard document, ID, and barcode scanning needs.",
+      "archiveSizeBytes": 77613,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "zego_uikit_prebuilt_call",
+      "status": "freemium",
+      "reason": "Hooks the app into ZEGOCLOUD's proprietary infrastructure. Shifts from free-tier to a pay-as-you-go commercial model at scale.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_webrtc",
+      "migrationNotes": "Total rewrite. Move to an open-source WebRTC implementation (like LiveKit or standard flutter_webrtc) to avoid per-minute usage fees.",
+      "archiveSizeBytes": 5838181,
+      "archiveSizeMB": 5.57
+    },
+    {
+      "name": "stream_chat_flutter",
+      "status": "freemium",
+      "reason": "Proprietary Chat-as-a-Service SaaS. While it has a startup tier, it is a heavily vendor-locked enterprise product that scales aggressively in cost.",
+      "as_of": "2026-03-10",
+      "replacement": "Custom WebSockets / Firebase RTDB",
+      "migrationNotes": "Major architecture shift. If budget is a strict constraint, build custom real-time messaging using standard WebSockets or cheaper cloud databases.",
+      "archiveSizeBytes": 5244972,
+      "archiveSizeMB": 5.0
+    },
+    {
+      "name": "scanbot_sdk",
+      "status": "paid",
+      "reason": "Strictly commercial enterprise SDK. Cannot be used in production without purchasing a highly expensive yearly corporate license from Scanbot.",
+      "as_of": "2026-03-10",
+      "replacement": "mobile_scanner",
+      "migrationNotes": "Drop the proprietary SDK and switch to open-source ML Kit-based barcode scanning.",
+      "archiveSizeBytes": 3039922,
+      "archiveSizeMB": 2.9
+    },
+    {
+      "name": "purchases_flutter",
+      "status": "freemium",
+      "reason": "RevenueCat's proprietary wrapper. Free up to a specific monthly revenue limit, after which they take a percentage cut of your app's earnings.",
+      "as_of": "2026-03-10",
+      "replacement": "in_app_purchase",
+      "migrationNotes": "Heavy rewrite of the entitlement validation engine. Shift to Flutter's official in-app purchase plugin and manage subscription states on your own backend.",
+      "archiveSizeBytes": 167206,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "syncfusion_flutter_core",
+      "status": "commercial_trap",
+      "reason": "Syncfusion offers a 'Community License', but it is a legal trap. The moment your company hits $1M USD in gross revenue OR has more than 5 developers, you are legally required to buy their enterprise licenses.",
+      "as_of": "2026-03-10",
+      "replacement": "fl_chart / pdfrx / table_calendar",
+      "migrationNotes": "Massive rewrite. You must strip out all Syncfusion UI components (charts, grids, PDF viewers) and replace them with individual open-source equivalents to avoid licensing audits.",
+      "archiveSizeBytes": 368471,
+      "archiveSizeMB": 0.35
+    },
+    {
+      "name": "agora_rtc_engine",
+      "status": "freemium",
+      "reason": "Hooks into Agora's proprietary video/audio routing cloud. They offer 10,000 free minutes a month, but scaling a social or calling app on this will quickly result in massive monthly server bills.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_webrtc",
+      "migrationNotes": "Total rewrite of the calling architecture. Shift to an open-source WebRTC standard and self-host your signaling servers (e.g., using LiveKit or Janus).",
+      "archiveSizeBytes": 5206880,
+      "archiveSizeMB": 4.97
+    },
+    {
+      "name": "mapbox_maps_flutter",
+      "status": "freemium",
+      "reason": "Requires an active billing account and credit card to even generate the necessary public tokens. Charges per map-load/API request after you exceed their free tier.",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_map",
+      "migrationNotes": "Rewrite map implementation using `flutter_map` tied to completely free OpenStreetMap (OSM) tile servers, bypassing commercial tile providers.",
+      "archiveSizeBytes": 17089883,
+      "archiveSizeMB": 16.3
+    },
+    {
+      "name": "appsflyer_sdk",
+      "status": "enterprise",
+      "reason": "Strictly commercial mobile attribution platform. Used for deep-linking and ad-spend tracking, but their pricing tiers are famously opaque and geared strictly toward enterprise budgets.",
+      "as_of": "2026-03-10",
+      "replacement": "firebase_analytics / posthog_flutter",
+      "migrationNotes": "Shift tracking and deep-linking to Firebase Dynamic Links (or standard App Links) and use open-source or cheaper analytics platforms.",
+      "archiveSizeBytes": 375126,
+      "archiveSizeMB": 0.36
+    },
+    {
+      "name": "sendbird_chat_sdk",
+      "status": "commercial",
+      "reason": "A heavy, proprietary Chat-as-a-Service SDK. Their free tier is heavily crippled (limits on MAUs and concurrent connections), forcing a rapid upgrade to very expensive paid tiers.",
+      "as_of": "2026-03-10",
+      "replacement": "Custom backend + web_socket_channel",
+      "migrationNotes": "Strip out the Sendbird UI and SDK. Build your own messaging repository layer using Dart WebSockets and an open-source backend.",
+      "archiveSizeBytes": 344505,
+      "archiveSizeMB": 0.33
+    },
+    {
+      "name": "datadog_flutter_plugin",
+      "status": "paid",
+      "reason": "Enterprise observability and Application Performance Monitoring (APM). No permanent free tier; you pay heavily per millions of sessions logged.",
+      "as_of": "2026-03-10",
+      "replacement": "firebase_crashlytics + catcher_2",
+      "migrationNotes": "Remove Datadog initialization and routing observers. Rely on standard Crashlytics for fatal errors and standard analytics for user funnels.",
+      "archiveSizeBytes": 365225,
+      "archiveSizeMB": 0.35
+    },
+    {
+      "name": "superwallkit_flutter",
+      "status": "freemium",
+      "reason": "A paywall-as-a-service provider. Like RevenueCat, they inject themselves into your monetization flow and take a cut or charge a flat SaaS fee to manage your subscription UI.",
+      "as_of": "2026-03-10",
+      "replacement": "in_app_purchase",
+      "migrationNotes": "Build native Flutter paywall UIs and handle the App Store/Play Store receipt validation natively or on your own server.",
+      "archiveSizeBytes": 235968,
+      "archiveSizeMB": 0.23
+    },
+    {
+      "name": "flutter_uxcam",
+      "status": "freemium",
+      "reason": "Session recording and heat-mapping tool. Generous free tier, but the cost scales incredibly steeply once you have a moderate user base.",
+      "as_of": "2026-03-10",
+      "replacement": "posthog_flutter / standard analytics",
+      "migrationNotes": "Remove screen recording SDKs entirely. They often cause App Store privacy review headaches anyway. Rely on standard telemetry.",
+      "archiveSizeBytes": 133145,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "realm",
+      "status": "freemium",
+      "reason": "While the local Realm database is open-source, the package heavily pushes 'Device Sync', which permanently vendor-locks your app's data layer to paid MongoDB Atlas cloud instances.",
+      "as_of": "2026-03-10",
+      "replacement": "drift + custom REST/GraphQL sync",
+      "migrationNotes": "Migrate local schemas to Drift (SQLite) and write standard API syncing logic to remain backend-agnostic.",
+      "archiveSizeBytes": 106579,
+      "archiveSizeMB": 0.1
+    },
+    {
+      "name": "cometchat_chat_uikit",
+      "status": "paid",
+      "reason": "Another heavy Chat BaaS (Backend-as-a-Service). Trial-ware that demands an expensive monthly subscription for basic features like push notifications and media sharing.",
+      "as_of": "2026-03-10",
+      "replacement": "firebase_core / web_socket_channel",
+      "migrationNotes": "Total UI and backend swap. Roll your own chat components.",
+      "archiveSizeBytes": 3022817,
+      "archiveSizeMB": 2.88
+    },
+    {
+      "as_of": "2026-03-10",
+      "name": "better_player",
+      "status": "maintenance_mode",
+      "replacement": "media_kit",
+      "migrationNotes": "Development has stalled. Consider migrating to `media_kit` for modern hardware-accelerated video rendering.",
+      "archiveSizeBytes": 27282206,
+      "archiveSizeMB": 26.02
+    },
+    {
+      "name": "spritewidget",
+      "as_of": "2026-03-10",
+      "status": "end_of_life",
+      "replacement": "flame",
+      "migrationNotes": "Abandoned 2D game engine. Replaced entirely by Flame in the modern Flutter ecosystem.",
+      "archiveSizeBytes": 2828282,
+      "archiveSizeMB": 2.7
+    },
+    {
+      "name": "flutter_sequence_animation",
+      "as_of": "2026-03-10",
+      "status": "end_of_life",
+      "replacement": "flutter_animate",
+      "migrationNotes": "Unmaintained. Use `flutter_animate` for highly readable declarative animation sequences.",
+      "archiveSizeBytes": 401993,
+      "archiveSizeMB": 0.38
+    },
+    {
+      "name": "bouncing_widget",
+      "as_of": "2026-03-10",
+      "status": "end_of_life",
+      "replacement": "flutter_animate",
+      "migrationNotes": "Dead repository. Touch-scale effects are now trivial to implement with standard animation extensions.",
+      "archiveSizeBytes": 1044480,
+      "archiveSizeMB": 1.0
+    },
+    {
+      "name": "flutter_native_image",
+      "status": "end_of_life",
+      "as_of": "2026-03-10",
+      "replacement": "flutter_image_compress",
+      "migrationNotes": "Abandoned native code fails to compile on modern Android Gradle configurations.",
+      "archiveSizeBytes": 165035,
+      "archiveSizeMB": 0.16
+    },
+    {
+      "name": "auto_route",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 141476,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "hive_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 10240,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "dropdown_search",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 6658755,
+      "archiveSizeMB": 6.35
+    },
+    {
+      "name": "multi_select_flutter",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 110992,
+      "archiveSizeMB": 0.11
+    },
+    {
+      "name": "expandable",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2273280,
+      "archiveSizeMB": 2.17
+    },
+    {
+      "name": "modal_bottom_sheet",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 5393602,
+      "archiveSizeMB": 5.14
+    },
+    {
+      "name": "another_flushbar",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1121038,
+      "archiveSizeMB": 1.07
+    },
+    {
+      "name": "bot_toast",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 50277,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "awesome_dialog",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2256135,
+      "archiveSizeMB": 2.15
+    },
+    {
+      "name": "google_nav_bar",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 56292,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "salomon_bottom_bar",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 460647,
+      "archiveSizeMB": 0.44
+    },
+    {
+      "name": "curved_navigation_bar",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 374960,
+      "archiveSizeMB": 0.36
+    },
+    {
+      "name": "timeline_tile",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 12861440,
+      "archiveSizeMB": 12.27
+    },
+    {
+      "name": "dotted_border",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 239405,
+      "archiveSizeMB": 0.23
+    },
+    {
+      "name": "auto_size_text",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 71601,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "readmore",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2395866,
+      "archiveSizeMB": 2.28
+    },
+    {
+      "name": "flutter_html",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 763812,
+      "archiveSizeMB": 0.73
+    },
+    {
+      "name": "markdown",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 271934,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "html",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 232248,
+      "archiveSizeMB": 0.22
+    },
+    {
+      "name": "liquid_pull_to_refresh",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 8019816,
+      "archiveSizeMB": 7.65
+    },
+    {
+      "name": "pull_to_refresh_flutter3",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 18014221,
+      "archiveSizeMB": 17.18
+    },
+    {
+      "name": "syncfusion_flutter_pdfviewer",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2472918,
+      "archiveSizeMB": 2.36
+    },
+    {
+      "name": "flutter_pdfview",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 4849328,
+      "archiveSizeMB": 4.62
+    },
+    {
+      "name": "open_filex",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 214821,
+      "archiveSizeMB": 0.2
+    },
+    {
+      "name": "image_gallery_saver",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 98061,
+      "archiveSizeMB": 0.09
+    },
+    {
+      "name": "video_compress",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 155858,
+      "archiveSizeMB": 0.15
+    },
+    {
+      "name": "chewie",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2077604,
+      "archiveSizeMB": 1.98
+    },
+    {
+      "name": "flick_video_player",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 30720,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "youtube_player_iframe",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1234454,
+      "archiveSizeMB": 1.18
+    },
+    {
+      "name": "audio_service",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 265266,
+      "archiveSizeMB": 0.25
+    },
+    {
+      "name": "audio_session",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 319291,
+      "archiveSizeMB": 0.3
+    },
+    {
+      "name": "battery_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 265789,
+      "archiveSizeMB": 0.25
+    },
+    {
+      "name": "sensors_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 67870,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "network_info_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 277475,
+      "archiveSizeMB": 0.26
+    },
+    {
+      "name": "app_settings",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 258898,
+      "archiveSizeMB": 0.25
+    },
+    {
+      "name": "geocoding",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 111719,
+      "archiveSizeMB": 0.11
+    },
+    {
+      "name": "geoflutterfire_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 62554,
+      "archiveSizeMB": 0.06
+    },
+    {
+      "name": "google_mobile_ads",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 253787,
+      "archiveSizeMB": 0.24
+    },
+    {
+      "name": "firebase_app_check",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 200338,
+      "archiveSizeMB": 0.19
+    },
+    {
+      "name": "flutter_appauth",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 245724,
+      "archiveSizeMB": 0.23
+    },
+    {
+      "name": "jwt_decoder",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 4692,
+      "archiveSizeMB": 0.0
+    },
+    {
+      "name": "dart_jsonwebtoken",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 31871,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "pin_code_fields",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 5216723,
+      "archiveSizeMB": 4.98
+    },
+    {
+      "name": "flutter_blurhash",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 385210,
+      "archiveSizeMB": 0.37
+    },
+    {
+      "name": "objectbox",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1129679,
+      "archiveSizeMB": 1.08
+    },
+    {
+      "name": "cbl",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 306513,
+      "archiveSizeMB": 0.29
+    },
+    {
+      "name": "sqflite_common_ffi",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 25622,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "shared_preferences_android",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 43894,
+      "archiveSizeMB": 0.04
+    },
+    {
+      "name": "shared_preferences_ios",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 54286,
+      "archiveSizeMB": 0.05
+    },
+    {
+      "name": "web_socket_channel",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 14525,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "grpc",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 217383,
+      "archiveSizeMB": 0.21
+    },
+    {
+      "name": "internet_connection_checker_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 294898,
+      "archiveSizeMB": 0.28
+    },
+    {
+      "name": "url_launcher_web",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 25621,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "url_strategy",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 18965,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "logging",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 12198,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "timeago",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 23847,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "dartz",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 80497,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "fpdart",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 258644,
+      "archiveSizeMB": 0.25
+    },
+    {
+      "name": "tuple",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 6135,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "async",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 84278,
+      "archiveSizeMB": 0.08
+    },
+    {
+      "name": "characters",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 528692,
+      "archiveSizeMB": 0.5
+    },
+    {
+      "name": "vector_math",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 181198,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "validators",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 12137,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "test",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 355867,
+      "archiveSizeMB": 0.34
+    },
+    {
+      "name": "fluttertest",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 141436,
+      "archiveSizeMB": 0.13
+    },
+    {
+      "name": "integration_test",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 174080,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "mockito",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 103522,
+      "archiveSizeMB": 0.1
+    },
+    {
+      "name": "mocktail",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 32396,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "bloc_test",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 29144,
+      "archiveSizeMB": 0.03
+    },
+    {
+      "name": "network_image_mock",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 4822,
+      "archiveSizeMB": 0.0
+    },
+    {
+      "name": "window_manager",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 262059,
+      "archiveSizeMB": 0.25
+    },
+    {
+      "name": "tray_manager",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 177092,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "screen_retriever",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 205775,
+      "archiveSizeMB": 0.2
+    },
+    {
+      "name": "system_theme",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 14294715,
+      "archiveSizeMB": 13.63
+    },
+    {
+      "name": "win32",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 1068674,
+      "archiveSizeMB": 1.02
+    },
+    {
+      "name": "fluent_ui",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 22157708,
+      "archiveSizeMB": 21.13
+    },
+    {
+      "name": "macos_ui",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 514296,
+      "archiveSizeMB": 0.49
+    },
+    {
+      "name": "yaru",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2717545,
+      "archiveSizeMB": 2.59
+    },
+    {
+      "name": "page_transition",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 339272,
+      "archiveSizeMB": 0.32
+    },
+    {
+      "name": "media_kit",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2049647,
+      "archiveSizeMB": 1.95
+    },
+    {
+      "name": "map_launcher",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 3445264,
+      "archiveSizeMB": 3.29
+    },
+    {
+      "name": "google_mlkit_commons",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 13526,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "google_mlkit_text_recognition",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 11207,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "google_mlkit_face_detection",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 11792,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "google_mlkit_barcode_scanning",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 14281,
+      "archiveSizeMB": 0.01
+    },
+    {
+      "name": "mobile_scanner",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 3159958,
+      "archiveSizeMB": 3.01
+    },
+    {
+      "name": "wakelock_plus",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 296576,
+      "archiveSizeMB": 0.28
+    },
+    {
+      "name": "in_app_update",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 19426,
+      "archiveSizeMB": 0.02
+    },
+    {
+      "name": "showcaseview",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2880178,
+      "archiveSizeMB": 2.75
+    },
+    {
+      "name": "tutorial_coach_mark",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 75691,
+      "archiveSizeMB": 0.07
+    },
+    {
+      "name": "sms_autofill",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 177154,
+      "archiveSizeMB": 0.17
+    },
+    {
+      "name": "pinput",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 370892,
+      "archiveSizeMB": 0.35
+    },
+    {
+      "name": "octo_image",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 602841,
+      "archiveSizeMB": 0.57
+    },
+    {
+      "name": "transparent_image",
+      "status": "active",
+      "as_of": "2026-03-10",
+      "archiveSizeBytes": 2020,
+      "archiveSizeMB": 0.0
+    }
+  ]
+}
