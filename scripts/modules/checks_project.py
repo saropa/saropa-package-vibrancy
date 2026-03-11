@@ -179,9 +179,9 @@ def check_file_line_limits() -> bool:
 
 
 def check_known_issues_data() -> bool:
-    """Validate knownIssues.json: counts, duplicates, oldest as_of."""
+    """Validate known_issues.json: counts, duplicates, oldest as_of."""
     json_path = os.path.join(
-        PROJECT_ROOT, "src", "data", "knownIssues.json",
+        PROJECT_ROOT, "src", "data", "known_issues.json",
     )
     with open(json_path, encoding="utf-8") as f:
         data = json.load(f)

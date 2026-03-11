@@ -6,70 +6,70 @@ Reference spec: `saropa_package_validator/PLAN.md`
 
 ### Scoring Algorithm (PLAN.md §3.3)
 
-| Component | Dart File | TypeScript File | Notes |
-|-----------|-----------|-----------------|-------|
-| V_score formula | `scoring/vibrancy_calculator.dart` | `src/scoring/vibrancy-calculator.ts` | Same formula: `(0.5*R) + (0.4*E) + (0.1*P)` |
-| Resolution Velocity (R) | same | same | Closed issues + merged PRs in 90d + recency |
-| Engagement Level (E) | same | same | Avg comments + recency of last update |
-| Popularity (P) | same | same | Pub points (normalized to 150) + stars (normalized to 5000) |
-| Status Classifier | `scoring/status_classifier.dart` | `src/scoring/status-classifier.ts` | Categories: vibrant (≥70), quiet (≥40), legacy-locked (≥10), end-of-life (<10) |
-| Known Issues DB | `data/known_issues.json` | `src/data/knownIssues.json` | 100 curated packages, same data |
+| Component               | Dart File                          | TypeScript File                      | Notes                                                                          |
+| ----------------------- | ---------------------------------- | ------------------------------------ | ------------------------------------------------------------------------------ |
+| V_score formula         | `scoring/vibrancy_calculator.dart` | `src/scoring/vibrancy-calculator.ts` | Same formula: `(0.5*R) + (0.4*E) + (0.1*P)`                                    |
+| Resolution Velocity (R) | same                               | same                                 | Closed issues + merged PRs in 90d + recency                                    |
+| Engagement Level (E)    | same                               | same                                 | Avg comments + recency of last update                                          |
+| Popularity (P)          | same                               | same                                 | Pub points (normalized to 150) + stars (normalized to 5000)                    |
+| Status Classifier       | `scoring/status_classifier.dart`   | `src/scoring/status-classifier.ts`   | Categories: vibrant (≥70), quiet (≥40), legacy-locked (≥10), end-of-life (<10) |
+| Known Issues DB         | `data/known_issues.json`           | `src/data/known_issues.json`         | 100 curated packages, same data                                                |
 
 **Weights are hardcoded** (0.5, 0.4, 0.1). Dart CLI supports override via `saropa.yaml`. Extension does not.
 
 ### API Services (PLAN.md §2.2)
 
-| Service | Dart File | TypeScript File | Notes |
-|---------|-----------|-----------------|-------|
-| Pub.dev metadata | `services/pub_api_service.dart` | `src/services/pub-dev-api.ts` | Fetches name, version, published date, repo URL, discontinued/unlisted flags |
-| Pub.dev score | same | same | Fetches `grantedPoints` from `/score` endpoint |
-| GitHub metrics | `services/github_api_service.dart` | `src/services/github-api.ts` | 3 parallel calls: repo + issues + pulls. Extracts stars, closed issues/PRs in 90d, avg comments, recency |
-| GitHub URL parsing | same | same | Regex: `github.com/owner/repo` |
-| GitHub auth token | same | same | Optional PAT via VS Code setting (Dart used env var) |
+| Service            | Dart File                          | TypeScript File               | Notes                                                                                                    |
+| ------------------ | ---------------------------------- | ----------------------------- | -------------------------------------------------------------------------------------------------------- |
+| Pub.dev metadata   | `services/pub_api_service.dart`    | `src/services/pub-dev-api.ts` | Fetches name, version, published date, repo URL, discontinued/unlisted flags                             |
+| Pub.dev score      | same                               | same                          | Fetches `grantedPoints` from `/score` endpoint                                                           |
+| GitHub metrics     | `services/github_api_service.dart` | `src/services/github-api.ts`  | 3 parallel calls: repo + issues + pulls. Extracts stars, closed issues/PRs in 90d, avg comments, recency |
+| GitHub URL parsing | same                               | same                          | Regex: `github.com/owner/repo`                                                                           |
+| GitHub auth token  | same                               | same                          | Optional PAT via VS Code setting (Dart used env var)                                                     |
 
 ### Pubspec Parsing (PLAN.md §2.1)
 
-| Feature | Dart File | TypeScript File | Notes |
-|---------|-----------|-----------------|-------|
-| Parse pubspec.yaml | `services/pubspec_parser.dart` | `src/services/pubspec-parser.ts` | Extracts direct + dev dependency names |
-| Parse pubspec.lock | same | same | Extracts name, version, source, isDirect |
-| Find package range | N/A (CLI didn't need this) | same | Locates package name position for inline diagnostics |
+| Feature            | Dart File                      | TypeScript File                  | Notes                                                |
+| ------------------ | ------------------------------ | -------------------------------- | ---------------------------------------------------- |
+| Parse pubspec.yaml | `services/pubspec_parser.dart` | `src/services/pubspec-parser.ts` | Extracts direct + dev dependency names               |
+| Parse pubspec.lock | same                           | same                             | Extracts name, version, source, isDirect             |
+| Find package range | N/A (CLI didn't need this)     | same                             | Locates package name position for inline diagnostics |
 
 ### Caching (PLAN.md §3.1)
 
-| Feature | Dart File | TypeScript File | Notes |
-|---------|-----------|-----------------|-------|
+| Feature         | Dart File               | TypeScript File                 | Notes                                                                           |
+| --------------- | ----------------------- | ------------------------------- | ------------------------------------------------------------------------------- |
 | TTL-based cache | `cache/file_cache.dart` | `src/services/cache-service.ts` | Dart: file-based in `.saropa_cache/`. Extension: VS Code Memento (global state) |
-| 24h default TTL | same | same | Extension adds configurable TTL (1–168h via setting) |
-| Cache clear | N/A | same | Extension adds command to clear cache |
+| 24h default TTL | same                    | same                            | Extension adds configurable TTL (1–168h via setting)                            |
+| Cache clear     | N/A                     | same                            | Extension adds command to clear cache                                           |
 
 ### Orchestration
 
-| Feature | Dart File | TypeScript File | Notes |
-|---------|-----------|-----------------|-------|
-| Full scan pipeline | `orchestrator.dart` | `src/scan-orchestrator.ts` + `src/extension-activation.ts` | Dart: single class. Extension: split across orchestrator (per-package) and activation (scan loop) |
-| Progress reporting | `cli/progress.dart` | `src/extension-activation.ts` | Dart: CLI spinner. Extension: VS Code notification progress bar |
-| Auto-scan on change | N/A | `src/extension-activation.ts` | Extension watches `pubspec.lock` for changes |
+| Feature             | Dart File           | TypeScript File                                            | Notes                                                                                             |
+| ------------------- | ------------------- | ---------------------------------------------------------- | ------------------------------------------------------------------------------------------------- |
+| Full scan pipeline  | `orchestrator.dart` | `src/scan-orchestrator.ts` + `src/extension-activation.ts` | Dart: single class. Extension: split across orchestrator (per-package) and activation (scan loop) |
+| Progress reporting  | `cli/progress.dart` | `src/extension-activation.ts`                              | Dart: CLI spinner. Extension: VS Code notification progress bar                                   |
+| Auto-scan on change | N/A                 | `src/extension-activation.ts`                              | Extension watches `pubspec.lock` for changes                                                      |
 
 ### VS Code Extension UI (PLAN.md Appendix E)
 
-| Feature | Spec Section | TypeScript File | Notes |
-|---------|-------------|-----------------|-------|
-| Inline diagnostics (squiggles) | §2.1 | `src/providers/diagnostics.ts` | Error for EOL, Warning for Legacy-Locked, Info for Quiet, skips Vibrant |
-| Hover tooltips | §2.2 | `src/providers/hover-provider.ts` | Markdown table: score, category, version, published date, pub points, stars, known issue |
-| Code actions (quick fix) | §2.3 | `src/providers/code-action-provider.ts` | "Replace with X" when known-issues has a replacement |
-| Sidebar tree view | §2.4 | `src/providers/tree-data-provider.ts` + `tree-items.ts` | Sorted worst-first, expandable detail items |
-| Status bar | N/A | `src/ui/status-bar.ts` | Shows avg score, clickable to open report |
-| Webview report panel | N/A | `src/views/report-webview.ts` + `report-html.ts` + `report-styles.ts` + `report-script.ts` | Sortable HTML table with summary cards |
+| Feature                        | Spec Section | TypeScript File                                                                            | Notes                                                                                    |
+| ------------------------------ | ------------ | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| Inline diagnostics (squiggles) | §2.1         | `src/providers/diagnostics.ts`                                                             | Error for EOL, Warning for Legacy-Locked, Info for Quiet, skips Vibrant                  |
+| Hover tooltips                 | §2.2         | `src/providers/hover-provider.ts`                                                          | Markdown table: score, category, version, published date, pub points, stars, known issue |
+| Code actions (quick fix)       | §2.3         | `src/providers/code-action-provider.ts`                                                    | "Replace with X" when known-issues has a replacement                                     |
+| Sidebar tree view              | §2.4         | `src/providers/tree-data-provider.ts` + `tree-items.ts`                                    | Sorted worst-first, expandable detail items                                              |
+| Status bar                     | N/A          | `src/ui/status-bar.ts`                                                                     | Shows avg score, clickable to open report                                                |
+| Webview report panel           | N/A          | `src/views/report-webview.ts` + `report-html.ts` + `report-styles.ts` + `report-script.ts` | Sortable HTML table with summary cards                                                   |
 
 ### Configuration
 
-| Setting | Spec Source | Implemented |
-|---------|------------|-------------|
-| GitHub token | PLAN.md §3.2 | Yes — `saropaPackageVibrancy.githubToken` |
-| Auto-scan on open | Appendix E §2.1 | Yes — `saropaPackageVibrancy.scanOnOpen` |
-| Include dev deps | N/A (new) | Yes — `saropaPackageVibrancy.includeDevDependencies` |
-| Cache TTL | N/A (new) | Yes — `saropaPackageVibrancy.cacheTtlHours` |
+| Setting           | Spec Source     | Implemented                                          |
+| ----------------- | --------------- | ---------------------------------------------------- |
+| GitHub token      | PLAN.md §3.2    | Yes — `saropaPackageVibrancy.githubToken`            |
+| Auto-scan on open | Appendix E §2.1 | Yes — `saropaPackageVibrancy.scanOnOpen`             |
+| Include dev deps  | N/A (new)       | Yes — `saropaPackageVibrancy.includeDevDependencies` |
+| Cache TTL         | N/A (new)       | Yes — `saropaPackageVibrancy.cacheTtlHours`          |
 
 ### Tests
 
@@ -122,14 +122,14 @@ CLI-specific feature. Not applicable to a VS Code extension.
 
 ## Architecture Differences
 
-| Aspect | Dart CLI | VS Code Extension |
-|--------|----------|-------------------|
-| Language | Dart | TypeScript |
-| Caching | File-based (`.saropa_cache/`) | VS Code Memento (global state) |
-| Config | `saropa.yaml` file | VS Code settings JSON |
-| Output | CLI terminal + file reports | Webview + inline diagnostics + sidebar |
-| HTTP client | `package:http` (injectable) | Native `fetch` (not injectable) |
-| Scanning | Parallel with `Future.wait` | Sequential loop with progress |
+| Aspect      | Dart CLI                      | VS Code Extension                      |
+| ----------- | ----------------------------- | -------------------------------------- |
+| Language    | Dart                          | TypeScript                             |
+| Caching     | File-based (`.saropa_cache/`) | VS Code Memento (global state)         |
+| Config      | `saropa.yaml` file            | VS Code settings JSON                  |
+| Output      | CLI terminal + file reports   | Webview + inline diagnostics + sidebar |
+| HTTP client | `package:http` (injectable)   | Native `fetch` (not injectable)        |
+| Scanning    | Parallel with `Future.wait`   | Sequential loop with progress          |
 
 ---
 

@@ -18,12 +18,12 @@
     "Unsuppress"
   ],
   "cSpell.ignorePaths": [
-    "src/data/knownIssues.json"
+    "src/data/known_issues.json"
   ],
   "json.schemas": [
     {
       "fileMatch": [
-        "**/knownIssues.json"
+        "**/known_issues.json"
       ],
       "url": "./src/data/known_issues_schema.json"
     }

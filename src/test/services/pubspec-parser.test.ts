@@ -40,8 +40,8 @@ describe('pubspec-parser', () => {
 
         it('should extract version constraints', () => {
             const { constraints } = parsePubspecYaml(yamlContent);
-            assert.strictEqual(constraints['http'], '^1.2.0');
-            assert.strictEqual(constraints['provider'], '^6.1.0');
+            assert.strictEqual(constraints['http'], '^1.6.0');
+            assert.strictEqual(constraints['provider'], '^6.1.5+1');
             assert.strictEqual(constraints['mockito'], '^5.4.0');
         });
 
@@ -87,7 +87,7 @@ describe('pubspec-parser', () => {
             const packages = parsePubspecLock(lockContent, directDeps, constraints);
             const http = packages.find(p => p.name === 'http');
             assert.ok(http);
-            assert.strictEqual(http.constraint, '^1.2.0');
+            assert.strictEqual(http.constraint, '^1.6.0');
             assert.strictEqual(http.version, '1.2.0');
         });
 
