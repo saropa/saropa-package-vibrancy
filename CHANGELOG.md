@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
 
+## [0.1.2] - Unreleased
+
+### Changed
+
+- Redesigned extension and sidebar icons to match Saropa family style (cream background, gem hexagon, centered pulse line, status pills)
+
 ## [0.1.1]
 
 ### Added

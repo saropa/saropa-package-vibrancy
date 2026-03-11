@@ -1,16 +1,32 @@
 <svg width="128" height="128" viewBox="0 0 128 128" fill="none" xmlns="http://www.w3.org/2000/svg">
   <defs>
-    <linearGradient id="bg" x1="0" y1="0" x2="128" y2="128" gradientUnits="userSpaceOnUse">
+    <linearGradient id="gemGrad" x1="28" y1="14" x2="100" y2="90" gradientUnits="userSpaceOnUse">
       <stop offset="0%" stop-color="#F72585"/>
+      <stop offset="50%" stop-color="#B5179E"/>
       <stop offset="100%" stop-color="#4CC9F0"/>
     </linearGradient>
+    <linearGradient id="pillGrad" x1="36" y1="104" x2="92" y2="104" gradientUnits="userSpaceOnUse">
+      <stop offset="0%" stop-color="#F72585"/>
+      <stop offset="100%" stop-color="#FF8C42"/>
+    </linearGradient>
   </defs>
-  <!-- Gradient background -->
-  <rect width="128" height="128" rx="20" fill="url(#bg)"/>
-  <!-- Pub.dev gem silhouette -->
-  <polygon points="64,5 101,27 123,53 123,101 107,101 107,123 53,123 27,101 5,69 21,21" stroke="white" stroke-width="3" fill="none" stroke-linejoin="round" opacity="0.85"/>
-  <!-- Gem facet diagonal -->
-  <line x1="21" y1="21" x2="107" y2="101" stroke="white" stroke-width="2" opacity="0.3"/>
-  <!-- Vibrancy pulse -->
-  <path d="M21 64 L43 64 L53 43 L64 91 L75 43 L85 64 L112 64" stroke="white" stroke-width="4.5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Cream background -->
+  <rect x="1" y="1" width="126" height="126" rx="24" fill="#FAF6EF" stroke="#E8DFD0" stroke-width="2"/>
+
+  <!-- Gem body (pub.dev package reference) -->
+  <path d="M64 14 L100 34 L100 74 L64 94 L28 74 L28 34 Z"
+        fill="url(#gemGrad)" stroke="#3A1D71" stroke-width="3" stroke-linejoin="round"/>
+
+  <!-- Gem top facet highlight -->
+  <path d="M64 14 L100 34 L64 48 L28 34 Z"
+        fill="white" opacity="0.2"/>
+
+  <!-- Vibrancy pulse line -->
+  <path d="M16 54 L42 54 L52 36 L64 74 L76 36 L86 54 L112 54"
+        stroke="white" stroke-width="5" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+
+  <!-- Status indicator pills -->
+  <rect x="36" y="102" width="22" height="8" rx="4" fill="url(#pillGrad)" stroke="#3A1D71" stroke-width="1.5"/>
+  <rect x="66" y="102" width="26" height="8" rx="4" fill="url(#pillGrad)" stroke="#3A1D71" stroke-width="1.5"/>
 </svg>
