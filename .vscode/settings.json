@@ -13,6 +13,8 @@
   ],
   "mochaExplorer.timeout": 5000,
   "cSpell.words": [
+    "firestore",
+    "flutterfire",
     "prereqs",
     "pubspec",
     "Unsuppress"

@@ -16,15 +16,22 @@ import { VibrancyResult } from './types';
 import { countByCategory } from './scoring/status-classifier';
 import { registerTreeCommands } from './providers/tree-commands';
 import { registerUpgradeCommand } from './providers/upgrade-command';
+import { registerAnnotateCommand } from './providers/annotate-command';
 import { readScanConfig, scanPackages, buildScanMeta, ParsedDeps, findAndParseDeps } from './scan-helpers';
 import { scanDartImports } from './services/import-scanner';
 import { detectUnused } from './scoring/unused-detector';
 import { fetchFlutterReleases } from './services/flutter-releases';
 import { snapshotVersions, notifyLockDiff } from './services/lock-diff-notifier';
 import { detectFamilySplits } from './scoring/family-conflict-detector';
+import { AdoptionGateProvider } from './providers/adoption-gate';
+import { enrichWithBlockers } from './services/blocker-enricher';
+import { buildUpgradeOrder } from './scoring/upgrade-sequencer';
+import { executeUpgradePlan, formatUpgradePlan, formatUpgradeReport } from './services/upgrade-executor';
+import { buildReverseDeps } from './services/dep-graph';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
+let lastReverseDeps: ReadonlyMap<string, readonly import('./types').DepEdge[]> | null = null;
 let scanInProgress = false;
 let lastScanMeta: ReportMetadata = {
     flutterVersion: 'unknown',
@@ -51,9 +58,13 @@ export function runActivation(context: vscode.ExtensionContext): void {
 
     context.subscriptions.push(diagCollection, statusBar);
 
+    const adoptionGate = new AdoptionGateProvider(cache);
+    adoptionGate.register(context);
+
     const targets: ScanTargets = {
         tree: treeProvider, hover: hoverProvider,
         codeLens: codeLensProvider, statusBar, diagnostics, cache,
+        adoptionGate,
     };
 
     registerTreeView(context, treeProvider);
@@ -61,6 +72,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     registerCommands(context, targets);
     registerTreeCommands(context);
     registerUpgradeCommand(context);
+    registerAnnotateCommand(context);
     registerFileWatcher(context, targets);
     registerSuppressListener(context, targets);
     autoScanIfPubspec(targets);
@@ -86,7 +98,7 @@ function registerSuppressListener(
             }
             targets.tree.refresh();
             if (lastParsedDeps && latestResults.length > 0) {
-                republishFiltered(targets, latestResults, lastParsedDeps);
+                updateFilteredTargets(targets, latestResults, lastParsedDeps);
             }
         }),
     );
@@ -131,6 +143,7 @@ interface ScanTargets {
     statusBar: VibrancyStatusBar;
     diagnostics: VibrancyDiagnostics;
     cache: CacheService;
+    adoptionGate: AdoptionGateProvider;
 }
 
 function registerCommands(
@@ -155,7 +168,10 @@ function registerCommands(
         ),
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.exportReport',
-            () => exportScanReport(),
+            () => requireResults(
+                r => exportReports(r, lastScanMeta).then(f => f.length || null),
+                n => `Reports saved: ${n} files`,
+            ),
         ),
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.browseKnownIssues',
@@ -169,7 +185,14 @@ function registerCommands(
         ),
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.exportSbom',
-            () => runSbomExport(context),
+            () => requireResults(
+                r => exportSbomReport(r, context.extension.packageJSON.version),
+                p => `SBOM exported: ${p}`,
+            ),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.planUpgrades',
+            () => planAndExecuteUpgrades(),
         ),
     );
 }
@@ -237,10 +260,17 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             const unusedNames = new Set(detectUnused(
                 deps.map(d => d.name), imported,
             ));
-            const results = rawResults.map(r =>
+            const withUnused = rawResults.map(r =>
                 unusedNames.has(r.package.name)
                     ? { ...r, isUnused: true } : r,
             );
+
+            progress.report({ message: 'Analyzing upgrade blockers...' });
+            const enrichResult = await enrichWithBlockers(
+                withUnused, workspaceRoot.fsPath, logger,
+            );
+            const results = enrichResult.results;
+            lastReverseDeps = enrichResult.reverseDeps;
 
             latestResults = results;
             lastParsedDeps = parsed;
@@ -275,20 +305,13 @@ function publishResults(
     results: VibrancyResult[],
     parsed: ParsedDeps,
 ): void {
-    const suppressed = getSuppressedSet();
-    const active = results.filter(r => !suppressed.has(r.package.name));
-    const splits = detectFamilySplits(active);
+    targets.adoptionGate.clearDecorations();
     targets.tree.updateResults(results);
-    targets.tree.updateFamilySplits(splits);
-    targets.hover.updateResults(active);
-    targets.hover.updateFamilySplits(splits);
-    targets.codeLens.updateResults(active);
     targets.statusBar.update(results);
-    targets.diagnostics.updateFamilySplits(splits);
-    targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
+    updateFilteredTargets(targets, results, parsed);
 }
 
-function republishFiltered(
+function updateFilteredTargets(
     targets: ScanTargets,
     results: VibrancyResult[],
     parsed: ParsedDeps,
@@ -304,31 +327,77 @@ function republishFiltered(
     targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
 }
 
-async function exportScanReport(): Promise<void> {
+let upgradeChannel: vscode.OutputChannel | null = null;
+
+async function planAndExecuteUpgrades(): Promise<void> {
     if (latestResults.length === 0) {
         vscode.window.showWarningMessage('Run a scan first');
         return;
     }
 
-    const files = await exportReports(latestResults, lastScanMeta);
-    if (files.length > 0) {
+    if (!upgradeChannel) {
+        upgradeChannel = vscode.window.createOutputChannel(
+            'Saropa: Upgrade Plan',
+        );
+    }
+    upgradeChannel.clear();
+
+    const reverseDeps = lastReverseDeps ?? new Map();
+    const steps = buildUpgradeOrder(latestResults, reverseDeps);
+    if (steps.length === 0) {
         vscode.window.showInformationMessage(
-            `Reports saved: ${files.length} files`,
+            'No upgradable packages found',
+        );
+        return;
+    }
+
+    upgradeChannel.appendLine(formatUpgradePlan(steps));
+    upgradeChannel.show(true);
+
+    const choice = await vscode.window.showInformationMessage(
+        `Proceed with ${steps.length} upgrade(s)? Stop on first failure.`,
+        'Execute', 'Cancel',
+    );
+    if (choice !== 'Execute') { return; }
+
+    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+    const report = await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: 'Executing upgrade plan...',
+            cancellable: false,
+        },
+        () => executeUpgradePlan(steps, upgradeChannel!, {
+            skipTests: config.get<boolean>('upgradeSkipTests', false),
+            maxSteps: config.get<number>('upgradeMaxSteps', 20),
+        }),
+    );
+
+    upgradeChannel.appendLine('\n' + formatUpgradeReport(report));
+    upgradeChannel.show(true);
+
+    if (report.failedAt) {
+        vscode.window.showWarningMessage(
+            `Upgrade stopped at ${report.failedAt} — ${report.completedCount}/${steps.length} completed`,
+        );
+    } else {
+        vscode.window.showInformationMessage(
+            `All ${report.completedCount} upgrades completed successfully`,
         );
     }
 }
 
-async function runSbomExport(
-    context: vscode.ExtensionContext,
+async function requireResults<T>(
+    action: (results: VibrancyResult[]) => Promise<T | null>,
+    successMsg: (result: T) => string,
 ): Promise<void> {
     if (latestResults.length === 0) {
         vscode.window.showWarningMessage('Run a scan first');
         return;
     }
-    const version = context.extension.packageJSON.version;
-    const path = await exportSbomReport(latestResults, version);
-    if (path) {
-        vscode.window.showInformationMessage(`SBOM exported: ${path}`);
+    const result = await action(latestResults);
+    if (result) {
+        vscode.window.showInformationMessage(successMsg(result));
     }
 }
 

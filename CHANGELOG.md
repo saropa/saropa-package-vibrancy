@@ -7,7 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
 
-## [Unreleased]
+## [0.1.3]
+
+### Added
+
+- Unused dependency detection: scans lib/, bin/, and test/ for imports and flags dependencies with no matching imports
+- CodeLens vibrancy badges above each dependency line in pubspec.yaml with clickable score and update segments
+- SPDX license display in tree view, hover tooltips, and reports
+- Dependency drift timeline showing version history relative to Flutter stable releases
+- Package family conflict detection: warns when Firebase/Riverpod/Bloc packages are on incompatible major versions
+- License and health metric fields in known issues database
+- Clickable URLs in tree view detail items via openUrl command
+- Annotate Dependencies command: adds pub.dev description and URL comments above each dependency in pubspec.yaml
+
+### Fixed
+
+- No longer shows "Update available" when the version constraint already covers the latest version
+- Sidebar icon star shape and watch task problem matcher
 
 ### Changed
 

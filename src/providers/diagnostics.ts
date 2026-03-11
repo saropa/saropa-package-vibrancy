@@ -122,6 +122,12 @@ function buildMessage(result: VibrancyResult): string {
         && result.updateInfo.updateStatus !== 'up-to-date') {
         msg += ` | Update: ${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion}`;
     }
+    if (result.blocker) {
+        const bScore = result.blocker.blockerVibrancyScore;
+        const scoreStr = bScore !== null
+            ? ` (${Math.round(bScore / 10)}/10)` : '';
+        msg += ` | Blocked: ${result.blocker.blockerPackage}${scoreStr}`;
+    }
 
     const flaggedCount = result.github?.flaggedIssues?.length ?? 0;
     if (flaggedCount > 0) {

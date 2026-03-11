@@ -118,6 +118,15 @@ function buildHoverContent(
         md.appendMarkdown(
             `**Update Available:** ${result.updateInfo.currentVersion} → ${result.updateInfo.latestVersion} (${result.updateInfo.updateStatus})\n\n`,
         );
+        if (result.blocker) {
+            md.appendMarkdown(
+                `| Upgrade Status | Blocked by **${result.blocker.blockerPackage}** |\n`,
+            );
+        } else if (result.upgradeBlockStatus === 'constrained') {
+            md.appendMarkdown(
+                `| Upgrade Status | Constrained by your pubspec.yaml |\n`,
+            );
+        }
         appendChangelogSection(md, result.updateInfo);
     }
 

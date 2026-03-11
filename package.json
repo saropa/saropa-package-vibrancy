@@ -2,7 +2,7 @@
   "name": "saropa-package-vibrancy",
   "displayName": "Saropa Package Vibrancy",
   "description": "Analyze Flutter/Dart dependency health and community vibrancy",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "publisher": "saropa",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -88,6 +88,11 @@
         "icon": "$(shield)"
       },
       {
+        "command": "saropaPackageVibrancy.annotatePubspec",
+        "title": "Saropa: Annotate Dependencies",
+        "icon": "$(note)"
+      },
+      {
         "command": "saropaPackageVibrancy.goToPackage",
         "title": "Go to pubspec.yaml",
         "icon": "$(go-to-file)"
@@ -136,6 +141,11 @@
         "command": "saropaPackageVibrancy.deleteUnused",
         "title": "Delete Unused Dependency (with backup)",
         "icon": "$(trash)"
+      },
+      {
+        "command": "saropaPackageVibrancy.planUpgrades",
+        "title": "Saropa: Plan & Execute Upgrades",
+        "icon": "$(rocket)"
       }
     ],
     "menus": {
@@ -149,6 +159,16 @@
           "command": "saropaPackageVibrancy.about",
           "when": "view == saropaPackageVibrancy.packages",
           "group": "navigation@2"
+        },
+        {
+          "command": "saropaPackageVibrancy.planUpgrades",
+          "when": "view == saropaPackageVibrancy.packages",
+          "group": "navigation@3"
+        },
+        {
+          "command": "saropaPackageVibrancy.annotatePubspec",
+          "when": "view == saropaPackageVibrancy.packages",
+          "group": "navigation@4"
         }
       ],
       "view/item/context": [
@@ -268,6 +288,11 @@
           "default": true,
           "description": "Show vibrancy score badges as CodeLens annotations above each dependency in pubspec.yaml"
         },
+        "saropaPackageVibrancy.enableAdoptionGate": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show inline vibrancy badges for new packages being added to pubspec.yaml"
+        },
         "saropaPackageVibrancy.codeLensDetail": {
           "type": "string",
           "enum": [
@@ -310,6 +335,18 @@
           "minimum": 0,
           "maximum": 25,
           "description": "Max bonus for major trusted publishers like dart.dev (0 to disable). Verified publishers get 1/3, no publisher gets \u22121/3 penalty."
+        },
+        "saropaPackageVibrancy.upgradeSkipTests": {
+          "type": "boolean",
+          "default": false,
+          "description": "Skip flutter test gates during upgrade execution (faster but less safe)"
+        },
+        "saropaPackageVibrancy.upgradeMaxSteps": {
+          "type": "number",
+          "default": 20,
+          "minimum": 1,
+          "maximum": 50,
+          "description": "Maximum number of upgrade steps to execute in one run"
         }
       }
     }

@@ -1,0 +1,61 @@
+{
+  "root": "my_app",
+  "packages": [
+    {
+      "name": "my_app",
+      "version": "1.0.0",
+      "kind": "root",
+      "source": "root",
+      "dependencies": ["http", "intl", "date_picker_timeline", "firebase_core"]
+    },
+    {
+      "name": "http",
+      "version": "1.2.0",
+      "kind": "direct",
+      "source": "hosted",
+      "dependencies": ["http_parser", "meta"]
+    },
+    {
+      "name": "intl",
+      "version": "0.17.0",
+      "kind": "direct",
+      "source": "hosted",
+      "dependencies": ["meta", "path"]
+    },
+    {
+      "name": "date_picker_timeline",
+      "version": "1.2.5",
+      "kind": "direct",
+      "source": "hosted",
+      "dependencies": ["intl"]
+    },
+    {
+      "name": "firebase_core",
+      "version": "2.31.0",
+      "kind": "direct",
+      "source": "hosted",
+      "dependencies": ["meta"]
+    },
+    {
+      "name": "http_parser",
+      "version": "4.0.2",
+      "kind": "transitive",
+      "source": "hosted",
+      "dependencies": ["meta"]
+    },
+    {
+      "name": "meta",
+      "version": "1.11.0",
+      "kind": "transitive",
+      "source": "hosted",
+      "dependencies": []
+    },
+    {
+      "name": "path",
+      "version": "1.9.0",
+      "kind": "transitive",
+      "source": "hosted",
+      "dependencies": []
+    }
+  ]
+}
