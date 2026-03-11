@@ -45,15 +45,15 @@ describe('license-classifier', () => {
             assert.strictEqual(classifyLicense('WTFPL'), 'unknown');
         });
 
-        it('should use most restrictive for OR expression', () => {
+        it('should use least restrictive for OR expression', () => {
             assert.strictEqual(
-                classifyLicense('MIT OR GPL-3.0'), 'copyleft',
+                classifyLicense('MIT OR GPL-3.0'), 'permissive',
             );
         });
 
         it('should use most restrictive for AND expression', () => {
             assert.strictEqual(
-                classifyLicense('MIT AND Apache-2.0'), 'permissive',
+                classifyLicense('MIT AND GPL-3.0'), 'copyleft',
             );
         });
 

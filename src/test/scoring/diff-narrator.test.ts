@@ -93,5 +93,22 @@ describe('diff-narrator', () => {
             const lines = narrateDiff(diff).split('\n');
             assert.ok(lines[0].startsWith('Lock file:'));
         });
+
+        it('should list all entries when multiple exist', () => {
+            const diff = makeDiff({
+                upgraded: [
+                    { name: 'http', from: '1.0.0', to: '1.1.0' },
+                    { name: 'path', from: '1.8.0', to: '1.9.0' },
+                ],
+            });
+            const text = narrateDiff(diff);
+            assert.ok(text.includes('⬆ http'));
+            assert.ok(text.includes('⬆ path'));
+        });
+
+        it('should handle empty diff gracefully', () => {
+            const text = narrateDiff(makeDiff());
+            assert.ok(text.includes('no changes'));
+        });
     });
 });

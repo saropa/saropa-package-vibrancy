@@ -51,6 +51,14 @@ describe('lock-diff', () => {
             assert.strictEqual(diff.unchangedCount, 0);
         });
 
+        it('should classify pre-release version upgrade correctly', () => {
+            const old = new Map([['pkg', '1.0.0']]);
+            const next = new Map([['pkg', '2.0.0-dev.1']]);
+            const diff = diffVersionMaps(old, next);
+            assert.strictEqual(diff.upgraded.length, 1);
+            assert.strictEqual(diff.downgraded.length, 0);
+        });
+
         it('should handle mixed changes', () => {
             const old = new Map([
                 ['http', '1.0.0'],

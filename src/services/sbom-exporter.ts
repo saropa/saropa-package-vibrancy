@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { VibrancyResult } from '../types';
 import { generateSbom, serializeSbom, SbomMetadata } from './sbom-generator';
+import { resolveReportFolder, formatTimestamp } from './report-utils';
 
 /** Export SBOM to a timestamped file in the report/ directory. */
 export async function exportSbomReport(
@@ -20,14 +21,6 @@ export async function exportSbomReport(
     );
     await vscode.workspace.fs.writeFile(uri, Buffer.from(content, 'utf-8'));
     return uri.fsPath;
-}
-
-async function resolveReportFolder(): Promise<vscode.Uri | null> {
-    const folders = vscode.workspace.workspaceFolders;
-    if (!folders || folders.length === 0) { return null; }
-    const reportDir = vscode.Uri.joinPath(folders[0].uri, 'report');
-    await vscode.workspace.fs.createDirectory(reportDir);
-    return reportDir;
 }
 
 async function readProjectMeta(
@@ -55,17 +48,7 @@ async function readProjectMeta(
 function extractYamlField(text: string, field: string): string | null {
     const re = new RegExp(`^${field}:\\s*(.+)$`, 'm');
     const match = re.exec(text);
-    return match ? match[1].trim() : null;
+    if (!match) { return null; }
+    return match[1].trim().replace(/^(['"])(.+)\1$/, '$2');
 }
 
-function formatTimestamp(date: Date): string {
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return [
-        date.getFullYear(),
-        '-', pad(date.getMonth() + 1),
-        '-', pad(date.getDate()),
-        '_', pad(date.getHours()),
-        '-', pad(date.getMinutes()),
-        '-', pad(date.getSeconds()),
-    ].join('');
-}

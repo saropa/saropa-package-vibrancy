@@ -35,7 +35,7 @@ function mapDriftScore(behind: number): number {
     if (behind === 0) { return 10; }
     if (behind === 1) { return 8; }
     if (behind === 2) { return 6; }
-    if (behind <= 4) { return 4; }
+    if (behind <= 5) { return 4; }
     if (behind <= 6) { return 2; }
     return 0;
 }

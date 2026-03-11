@@ -17,8 +17,20 @@ const COPYLEFT = new Set([
 /** Classify an SPDX identifier into a risk tier. */
 export function classifyLicense(spdx: string | null): LicenseTier {
     if (!spdx || !spdx.trim()) { return 'unknown'; }
+    const isOr = /\s+OR\s+/i.test(spdx);
     const ids = spdx.split(/\s+(?:OR|AND)\s+/i).map(s => s.trim());
     const tiers = ids.map(classifySingle);
+    if (isOr) { return leastRestrictive(tiers); }
+    return mostRestrictive(tiers);
+}
+
+function leastRestrictive(tiers: LicenseTier[]): LicenseTier {
+    if (tiers.includes('permissive')) { return 'permissive'; }
+    if (tiers.includes('copyleft')) { return 'copyleft'; }
+    return 'unknown';
+}
+
+function mostRestrictive(tiers: LicenseTier[]): LicenseTier {
     if (tiers.includes('copyleft')) { return 'copyleft'; }
     if (tiers.includes('permissive')) { return 'permissive'; }
     return 'unknown';

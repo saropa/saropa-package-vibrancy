@@ -2,6 +2,7 @@ import * as vscode from 'vscode';
 import { VibrancyResult } from '../types';
 import { categoryLabel, countByCategory } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
+import { resolveReportFolder, formatTimestamp } from './report-utils';
 
 /**
  * Export scan results as timestamped markdown and JSON files
@@ -44,27 +45,6 @@ export interface ReportMetadata {
     readonly flutterVersion: string;
     readonly dartVersion: string;
     readonly executionTimeMs: number;
-}
-
-async function resolveReportFolder(): Promise<vscode.Uri | null> {
-    const folders = vscode.workspace.workspaceFolders;
-    if (!folders || folders.length === 0) { return null; }
-
-    const reportDir = vscode.Uri.joinPath(folders[0].uri, 'report');
-    await vscode.workspace.fs.createDirectory(reportDir);
-    return reportDir;
-}
-
-function formatTimestamp(date: Date): string {
-    const pad = (n: number) => String(n).padStart(2, '0');
-    return [
-        date.getFullYear(),
-        '-', pad(date.getMonth() + 1),
-        '-', pad(date.getDate()),
-        '_', pad(date.getHours()),
-        '-', pad(date.getMinutes()),
-        '-', pad(date.getSeconds()),
-    ].join('');
 }
 
 function buildMarkdownReport(
