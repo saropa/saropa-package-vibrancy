@@ -31,6 +31,7 @@ function makeResult(
         } : null,
         archiveSizeBytes: null,
         bloatRating: null,
+        isUnused: false,
     };
 }
 
@@ -250,6 +251,16 @@ describe('buildGroupItems', () => {
     it('should not include Alerts group when no issues', () => {
         const labels = groupLabels(makeResult('http', 80));
         assert.ok(!labels.includes('🚨 Alerts'));
+    });
+
+    it('should include Alerts group with Unused item when isUnused', () => {
+        const result = { ...makeResult('http', 80), isUnused: true };
+        const groups = buildGroupItems(result);
+        const alerts = groups.find(g => g.label === '🚨 Alerts')!;
+        assert.ok(alerts);
+        assert.ok(alerts.children.some(
+            c => `${c.label}`.includes('Unused'),
+        ));
     });
 
     it('should use green emoji for patch update', () => {

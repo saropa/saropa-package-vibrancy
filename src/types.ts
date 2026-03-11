@@ -96,6 +96,7 @@ export interface VibrancyResult {
     readonly updateInfo: UpdateInfo | null;
     readonly archiveSizeBytes: number | null;
     readonly bloatRating: number | null;
+    readonly isUnused: boolean;
 }
 
 /** Cache entry with TTL. */

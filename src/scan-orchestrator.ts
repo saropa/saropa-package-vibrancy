@@ -73,8 +73,8 @@ export async function analyzePackage(
     const [updateInfo, archiveSizeBytes] = await Promise.all([
         pubDev
             ? buildUpdateInfo(
-                dep.version, pubDev.latestVersion, repoInfo,
-                {
+                dep.version, pubDev.latestVersion, dep.constraint,
+                repoInfo, {
                     token: params.githubToken, cache: params.cache,
                     packageName: dep.name,
                 },
@@ -88,6 +88,7 @@ export async function analyzePackage(
     return {
         package: dep, pubDev: pubDevWithPoints, github, knownIssue,
         ...scores, category, updateInfo, archiveSizeBytes, bloatRating,
+        isUnused: false,
     };
 }
 

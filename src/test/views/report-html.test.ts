@@ -32,6 +32,7 @@ function makeResult(
         updateInfo: null,
         archiveSizeBytes: null,
         bloatRating: null,
+        isUnused: false,
     };
 }
 
@@ -88,5 +89,26 @@ describe('buildReportHtml', () => {
     it('should include sort arrows in table headers', () => {
         const html = buildReportHtml([]);
         assert.ok(html.includes('class="sort-arrow"'));
+    });
+
+    it('should show unused badge for unused packages', () => {
+        const result: VibrancyResult = { ...makeResult('http', 80), isUnused: true };
+        const html = buildReportHtml([result]);
+        assert.ok(html.includes('badge-unused'));
+        assert.ok(html.includes('data-status="unused"'));
+    });
+
+    it('should show unused count in summary', () => {
+        const results = [
+            makeResult('http', 80),
+            { ...makeResult('bloc', 60), isUnused: true },
+        ];
+        const html = buildReportHtml(results);
+        assert.ok(html.includes('class="summary-card unused"'));
+    });
+
+    it('should show dash for non-unused packages in Status column', () => {
+        const html = buildReportHtml([makeResult('http', 80)]);
+        assert.ok(html.includes('data-status="ok"'));
     });
 });

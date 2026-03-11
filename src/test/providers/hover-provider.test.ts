@@ -29,6 +29,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         updateInfo: null,
         archiveSizeBytes: null,
         bloatRating: null,
+        isUnused: false,
     };
 }
 
@@ -111,5 +112,22 @@ describe('VibrancyHoverProvider', () => {
         const doc = makeMockDocument('  unknown_pkg: ^1.0.0');
         const hover = provider.provideHover(doc, new vscode.Position(0, 2));
         assert.strictEqual(hover, null);
+    });
+
+    it('should include unused status in hover content', () => {
+        const result: VibrancyResult = { ...makeResult('http', 85), isUnused: true };
+        provider.updateResults([result]);
+        const doc = makeMockDocument('  http: ^1.0.0');
+        const hover = provider.provideHover(doc, new vscode.Position(0, 2));
+        const md = hover!.contents as unknown as vscode.MarkdownString;
+        assert.ok(md.value.includes('Unused'));
+    });
+
+    it('should not include unused status when not unused', () => {
+        provider.updateResults([makeResult('http', 85)]);
+        const doc = makeMockDocument('  http: ^1.0.0');
+        const hover = provider.provideHover(doc, new vscode.Position(0, 2));
+        const md = hover!.contents as unknown as vscode.MarkdownString;
+        assert.ok(!md.value.includes('Unused'));
     });
 });
