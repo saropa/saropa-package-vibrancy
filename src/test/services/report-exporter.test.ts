@@ -34,6 +34,8 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
         popularity: 60,
         publisherTrust: 0,
         updateInfo: null,
+        archiveSizeBytes: null,
+        bloatRating: null,
         ...overrides,
     };
 }

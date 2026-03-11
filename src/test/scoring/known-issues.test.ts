@@ -1,5 +1,5 @@
 import * as assert from 'assert';
-import knownIssuesData from '../../data/knownIssues.json';
+import knownIssuesData from '../../data/known_issues.json';
 import { findKnownIssue, allKnownIssues } from '../../scoring/known-issues';
 
 describe('known-issues', () => {
@@ -13,7 +13,7 @@ describe('known-issues', () => {
         assert.deepStrictEqual(
             dupes,
             [],
-            `duplicate names in knownIssues.json: ${dupes.join(', ')}`,
+            `duplicate names in known_issues.json: ${dupes.join(', ')}`,
         );
     });
 
@@ -51,6 +51,24 @@ describe('known-issues', () => {
         assert.ok(issue);
         assert.strictEqual(issue.replacement, undefined);
         assert.strictEqual(issue.migrationNotes, undefined);
+    });
+
+    it('should preserve archiveSizeBytes when present', () => {
+        const issue = findKnownIssue('flutter_datetime_picker');
+        assert.ok(issue);
+        assert.strictEqual(issue.archiveSizeBytes, 317440);
+    });
+
+    it('should leave archiveSizeBytes undefined when null in JSON', () => {
+        const all = allKnownIssues();
+        let foundUndefined = false;
+        for (const [, issue] of all) {
+            if (issue.archiveSizeBytes === undefined) {
+                foundUndefined = true;
+                break;
+            }
+        }
+        assert.ok(foundUndefined, 'expected at least one entry with undefined archiveSizeBytes');
     });
 
     it('should have migrationNotes when replacement is present', () => {

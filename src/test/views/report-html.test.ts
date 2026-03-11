@@ -30,6 +30,8 @@ function makeResult(
         popularity: 30,
         publisherTrust: 0,
         updateInfo: null,
+        archiveSizeBytes: null,
+        bloatRating: null,
     };
 }
 

@@ -15,6 +15,8 @@ function makeResult(name: string, score: number): VibrancyResult {
         popularity: 0,
         publisherTrust: 0,
         updateInfo: null,
+        archiveSizeBytes: null,
+        bloatRating: null,
     };
 }
 

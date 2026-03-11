@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { VibrancyResult, UpdateInfo } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
+import { formatSizeMB } from '../scoring/bloat-calculator';
 
 export class VibrancyHoverProvider implements vscode.HoverProvider {
     private _results = new Map<string, VibrancyResult>();
@@ -54,6 +55,13 @@ function buildHoverContent(result: VibrancyResult): vscode.MarkdownString {
     if (result.github) {
         md.appendMarkdown(`| GitHub Stars | ${result.github.stars} |\n`);
         md.appendMarkdown(`| Open Issues | ${result.github.openIssues} |\n`);
+    }
+
+    if (result.bloatRating !== null && result.archiveSizeBytes !== null) {
+        const sizeMB = formatSizeMB(result.archiveSizeBytes);
+        md.appendMarkdown(
+            `| Archive Size | ${sizeMB} (${result.bloatRating}/10 bloat) |\n`,
+        );
     }
 
     if (result.updateInfo

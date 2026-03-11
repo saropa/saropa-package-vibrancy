@@ -1,9 +1,11 @@
-import { VibrancyResult, PackageDependency, GitHubMetrics } from './types';
+import { VibrancyResult, PackageDependency, GitHubMetrics, KnownIssue } from './types';
 import { CacheService } from './services/cache-service';
 import { ScanLogger } from './services/scan-logger';
 import {
     fetchPackageInfo, fetchPackageScore, fetchPublisher,
+    fetchArchiveSize,
 } from './services/pub-dev-api';
+import { calcBloatRating } from './scoring/bloat-calculator';
 import { extractGitHubRepo, fetchRepoMetrics } from './services/github-api';
 import { extractRepoSubpath, buildUpdateInfo } from './services/changelog-service';
 import { findKnownIssue } from './scoring/known-issues';
@@ -68,19 +70,24 @@ export async function analyzePackage(
         pop: scores.popularity, pt: scores.publisherTrust,
     });
 
-    const updateInfo = pubDev
-        ? await buildUpdateInfo(
-            dep.version, pubDev.latestVersion, repoInfo,
-            {
-                token: params.githubToken, cache: params.cache,
-                packageName: dep.name,
-            },
-        )
-        : null;
+    const [updateInfo, archiveSizeBytes] = await Promise.all([
+        pubDev
+            ? buildUpdateInfo(
+                dep.version, pubDev.latestVersion, repoInfo,
+                {
+                    token: params.githubToken, cache: params.cache,
+                    packageName: dep.name,
+                },
+            )
+            : null,
+        resolveArchiveSize(dep.name, knownIssue, params),
+    ]);
+    const bloatRating = archiveSizeBytes !== null
+        ? calcBloatRating(archiveSizeBytes) : null;
 
     return {
         package: dep, pubDev: pubDevWithPoints, github, knownIssue,
-        ...scores, category, updateInfo,
+        ...scores, category, updateInfo, archiveSizeBytes, bloatRating,
     };
 }
 
@@ -107,6 +114,15 @@ async function fetchGitHubData(
         logger: params.logger,
     });
     return { github, repoInfo };
+}
+
+async function resolveArchiveSize(
+    name: string,
+    knownIssue: KnownIssue | null,
+    params: AnalyzeParams,
+): Promise<number | null> {
+    if (knownIssue?.archiveSizeBytes != null) { return knownIssue.archiveSizeBytes; }
+    return fetchArchiveSize(name, params.cache, params.logger);
 }
 
 function daysSince(isoDate: string): number | undefined {

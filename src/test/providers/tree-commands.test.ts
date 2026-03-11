@@ -28,6 +28,8 @@ function makeResult(
             updateStatus: 'major' as const,
             changelog: null,
         } : null,
+        archiveSizeBytes: null,
+        bloatRating: null,
     };
 }
 

@@ -47,5 +47,6 @@ export function getReportStyles(): string {
         .update-minor { color: var(--vscode-editorWarning-foreground); }
         .update-patch { color: var(--vscode-editorInfo-foreground); }
         .updates .count { color: var(--vscode-textLink-foreground); }
+        .caveat { font-size: 0.8em; opacity: 0.6; margin-top: 4px; }
     `;
 }

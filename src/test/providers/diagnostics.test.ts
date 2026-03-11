@@ -27,6 +27,8 @@ function makeResult(
         popularity: 0,
         publisherTrust: 0,
         updateInfo: null,
+        archiveSizeBytes: null,
+        bloatRating: null,
     };
 }
 

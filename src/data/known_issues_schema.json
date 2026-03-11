@@ -46,6 +46,14 @@
           "migrationNotes": {
             "type": ["string", "null"],
             "description": "Steps required to move away from this package."
+          },
+          "archiveSizeBytes": {
+            "type": ["integer", "null"],
+            "description": "Archive size in bytes from pub.dev."
+          },
+          "archiveSizeMB": {
+            "type": ["number", "null"],
+            "description": "Archive size in megabytes (derived from archiveSizeBytes)."
           }
         },
         "required": ["name", "status", "as_of"],

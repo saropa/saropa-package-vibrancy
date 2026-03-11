@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { VibrancyResult } from '../types';
 import { categoryLabel, countByCategory } from '../scoring/status-classifier';
+import { formatSizeMB } from '../scoring/bloat-calculator';
 
 /**
  * Export scan results as timestamped markdown and JSON files
@@ -72,9 +73,13 @@ function buildMarkdownReport(
     isoTimestamp: string,
 ): string {
     const counts = countByCategory(results);
+    const totalBytes = results.reduce(
+        (sum, r) => sum + (r.archiveSizeBytes ?? 0), 0,
+    );
+    const totalSize = totalBytes > 0 ? formatSizeMB(totalBytes) : undefined;
     const lines = [
         ...mdHeader(meta, isoTimestamp),
-        ...mdSummary(results.length, counts),
+        ...mdSummary(results.length, counts, totalSize),
         ...mdPackageRows(results),
     ];
     return lines.join('\n') + '\n';
@@ -94,26 +99,33 @@ function mdHeader(meta: ReportMetadata, isoTimestamp: string): string[] {
 function mdSummary(
     total: number,
     counts: { vibrant: number; quiet: number; legacy: number; eol: number },
+    totalSize?: string,
 ): string[] {
-    return [
+    const rows = [
         '', '## Summary', '',
         `| Total | Vibrant | Quiet | Legacy-Locked | End of Life |`,
         `|-------|---------|-------|---------------|-------------|`,
         `| ${total} | ${counts.vibrant} | ${counts.quiet} | ${counts.legacy} | ${counts.eol} |`,
     ];
+    if (totalSize) {
+        rows.push('', `**Total archive size:** ${totalSize} *(before tree shaking)*`);
+    }
+    return rows;
 }
 
 function mdPackageRows(results: VibrancyResult[]): string[] {
     const rows = ['', '## Packages', '',
-        '| Name | Version | Latest | Status | Score |',
-        '|------|---------|--------|--------|-------|',
+        '| Name | Version | Latest | Status | Score | Size |',
+        '|------|---------|--------|--------|-------|------|',
     ];
     for (const r of results) {
         const latest = r.pubDev?.latestVersion ?? '';
         const label = categoryLabel(r.category);
         const displayScore = Math.round(r.score / 10);
+        const size = r.archiveSizeBytes !== null
+            ? formatSizeMB(r.archiveSizeBytes) : '—';
         rows.push(
-            `| ${r.package.name} | ${r.package.version} | ${latest} | ${label} | ${displayScore}/10 |`,
+            `| ${r.package.name} | ${r.package.version} | ${latest} | ${label} | ${displayScore}/10 | ${size} |`,
         );
     }
     return rows;
@@ -156,5 +168,7 @@ function mapPackageToJson(r: VibrancyResult) {
         is_unlisted: r.pubDev?.isUnlisted ?? false,
         pub_dev_url: `https://pub.dev/packages/${r.package.name}`,
         repository_url: r.pubDev?.repositoryUrl ?? '',
+        archive_size_bytes: r.archiveSizeBytes,
+        bloat_rating: r.bloatRating,
     };
 }

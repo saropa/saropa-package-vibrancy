@@ -28,6 +28,8 @@ function makeResult(
             updateStatus: updateStatus as any,
             changelog: null,
         } : null,
+        archiveSizeBytes: null,
+        bloatRating: null,
     };
 }
 

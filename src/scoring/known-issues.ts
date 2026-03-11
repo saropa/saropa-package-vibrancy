@@ -1,4 +1,4 @@
-import knownIssuesData from '../data/knownIssues.json';
+import knownIssuesData from '../data/known_issues.json';
 import { KnownIssue } from '../types';
 
 /** Treat "N/A", empty, and whitespace-only strings as unset. */
@@ -17,6 +17,8 @@ function normalizeIssue(raw: Record<string, unknown>): KnownIssue {
         as_of: raw.as_of as string | undefined,
         replacement: normalizeOptional(raw.replacement),
         migrationNotes: normalizeOptional(raw.migrationNotes),
+        archiveSizeBytes: typeof raw.archiveSizeBytes === 'number'
+            ? raw.archiveSizeBytes : undefined,
     };
 }
 

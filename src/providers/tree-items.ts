@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { VibrancyResult, VibrancyCategory } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
+import { formatSizeMB } from '../scoring/bloat-calculator';
 
 function categoryColor(cat: VibrancyCategory): vscode.ThemeColor {
     switch (cat) {
@@ -120,6 +121,13 @@ export function buildDetailItems(result: VibrancyResult): DetailItem[] {
     if (result.github) {
         items.push(new DetailItem('Stars', `${result.github.stars}`));
         items.push(new DetailItem('Open Issues', `${result.github.openIssues}`));
+    }
+
+    if (result.bloatRating !== null && result.archiveSizeBytes !== null) {
+        const sizeMB = formatSizeMB(result.archiveSizeBytes);
+        items.push(new DetailItem(
+            'Archive Size', `${sizeMB} (${result.bloatRating}/10 bloat)`,
+        ));
     }
 
     appendFlaggedItems(items, result);

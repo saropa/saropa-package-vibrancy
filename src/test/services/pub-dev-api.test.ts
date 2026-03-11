@@ -4,6 +4,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import {
     fetchPackageInfo, fetchPackageScore, fetchPublisher,
+    fetchArchiveSize,
 } from '../../services/pub-dev-api';
 
 const fixturesDir = path.join(__dirname, '..', '..', '..', 'src', 'test', 'fixtures');
@@ -96,6 +97,70 @@ describe('pub-dev-api', () => {
             fetchStub.resolves(new Response('', { status: 400 }));
             const points = await fetchPackageScore('broken');
             assert.strictEqual(points, 0);
+        });
+    });
+
+    describe('fetchArchiveSize', () => {
+        it('should return size from HEAD Content-Length', async () => {
+            const apiBody = JSON.stringify({
+                latest: { archive_url: 'https://pub.dev/archive/test.tar.gz' },
+            });
+            fetchStub.onFirstCall().resolves(new Response(apiBody, { status: 200 }));
+            fetchStub.onSecondCall().resolves(
+                new Response(null, {
+                    status: 200,
+                    headers: { 'Content-Length': '1048576' },
+                }),
+            );
+
+            const size = await fetchArchiveSize('test_pkg');
+            assert.strictEqual(size, 1048576);
+        });
+
+        it('should return null when API returns 404', async () => {
+            fetchStub.resolves(new Response('', { status: 404 }));
+            const size = await fetchArchiveSize('nonexistent');
+            assert.strictEqual(size, null);
+        });
+
+        it('should return null when Content-Length header is missing', async () => {
+            const apiBody = JSON.stringify({
+                latest: { archive_url: 'https://pub.dev/archive/test.tar.gz' },
+            });
+            fetchStub.onFirstCall().resolves(new Response(apiBody, { status: 200 }));
+            fetchStub.onSecondCall().resolves(
+                new Response(null, { status: 200 }),
+            );
+
+            const size = await fetchArchiveSize('no_header_pkg');
+            assert.strictEqual(size, null);
+        });
+
+        it('should return null when HEAD request throws', async () => {
+            const apiBody = JSON.stringify({
+                latest: { archive_url: 'https://pub.dev/archive/test.tar.gz' },
+            });
+            fetchStub.onFirstCall().resolves(new Response(apiBody, { status: 200 }));
+            fetchStub.onSecondCall().rejects(new Error('network timeout'));
+
+            const size = await fetchArchiveSize('timeout_pkg');
+            assert.strictEqual(size, null);
+        });
+
+        it('should return null for non-numeric Content-Length', async () => {
+            const apiBody = JSON.stringify({
+                latest: { archive_url: 'https://pub.dev/archive/test.tar.gz' },
+            });
+            fetchStub.onFirstCall().resolves(new Response(apiBody, { status: 200 }));
+            fetchStub.onSecondCall().resolves(
+                new Response(null, {
+                    status: 200,
+                    headers: { 'Content-Length': 'abc' },
+                }),
+            );
+
+            const size = await fetchArchiveSize('bad_header_pkg');
+            assert.strictEqual(size, null);
         });
     });
 });

@@ -1,5 +1,6 @@
 import { VibrancyResult } from '../types';
 import { categoryLabel, countByCategory } from '../scoring/status-classifier';
+import { formatSizeMB } from '../scoring/bloat-calculator';
 import { getReportStyles } from './report-styles';
 import { getReportScript } from './report-script';
 import { escapeHtml } from './html-utils';
@@ -31,16 +32,22 @@ function buildReportSummary(results: VibrancyResult[]): string {
     const avg = results.length > 0
         ? Math.round(results.reduce((s, r) => s + r.score, 0) / results.length / 10)
         : 0;
+    const totalBytes = results.reduce(
+        (sum, r) => sum + (r.archiveSizeBytes ?? 0), 0,
+    );
+    const totalSize = totalBytes > 0 ? formatSizeMB(totalBytes) : '—';
 
     return `<div class="summary">
         <div class="summary-card"><div class="count">${results.length}</div><div class="label">Packages</div></div>
         <div class="summary-card"><div class="count">${avg}/10</div><div class="label">Avg Score</div></div>
+        <div class="summary-card"><div class="count">${totalSize}</div><div class="label">Total Size*</div></div>
         <div class="summary-card vibrant"><div class="count">${counts.vibrant}</div><div class="label">Vibrant</div></div>
         <div class="summary-card quiet"><div class="count">${counts.quiet}</div><div class="label">Quiet</div></div>
         <div class="summary-card legacy"><div class="count">${counts.legacy}</div><div class="label">Legacy</div></div>
         <div class="summary-card eol"><div class="count">${counts.eol}</div><div class="label">End of Life</div></div>
         <div class="summary-card updates"><div class="count">${updates}</div><div class="label">Updates</div></div>
-    </div>`;
+    </div>
+    <p class="caveat">*Archive sizes before tree shaking. Actual app size will be smaller.</p>`;
 }
 
 function buildReportTable(results: VibrancyResult[]): string {
@@ -52,6 +59,7 @@ function buildReportTable(results: VibrancyResult[]): string {
             <th data-col="category">Category<span class="sort-arrow"></span></th>
             <th data-col="published">Published<span class="sort-arrow"></span></th>
             <th data-col="stars">Stars<span class="sort-arrow"></span></th>
+            <th data-col="size">Size<span class="sort-arrow"></span></th>
             <th data-col="update">Update<span class="sort-arrow"></span></th>
         </tr></thead>
         <tbody id="pkg-body">
@@ -65,6 +73,8 @@ function buildRow(r: VibrancyResult): string {
     const version = escapeHtml(r.package.version);
     const date = r.pubDev?.publishedDate.split('T')[0] ?? '';
     const stars = r.github?.stars ?? '';
+    const sizeText = r.archiveSizeBytes !== null
+        ? formatSizeMB(r.archiveSizeBytes) : '—';
     const url = `https://pub.dev/packages/${encodeURIComponent(r.package.name)}`;
 
     const hasUpdate = r.updateInfo
@@ -80,6 +90,7 @@ function buildRow(r: VibrancyResult): string {
     return `<tr data-name="${name}" data-version="${version}"
         data-score="${r.score}" data-category="${r.category}"
         data-published="${date}" data-stars="${stars}"
+        data-size="${r.archiveSizeBytes ?? 0}"
         data-update="${r.updateInfo?.updateStatus ?? 'unknown'}">
         <td><a href="${url}">${name}</a></td>
         <td>${version}</td>
@@ -87,6 +98,7 @@ function buildRow(r: VibrancyResult): string {
         <td>${categoryLabel(r.category)}</td>
         <td>${date}</td>
         <td>${stars}</td>
+        <td>${sizeText}</td>
         <td class="${updateClass}">${updateText}</td>
     </tr>`;
 }

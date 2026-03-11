@@ -53,6 +53,7 @@ export interface KnownIssue {
     readonly as_of?: string;
     readonly replacement?: string;
     readonly migrationNotes?: string;
+    readonly archiveSizeBytes?: number;
 }
 
 /** Granularity of available update. */
@@ -93,6 +94,8 @@ export interface VibrancyResult {
     readonly popularity: number;
     readonly publisherTrust: number;
     readonly updateInfo: UpdateInfo | null;
+    readonly archiveSizeBytes: number | null;
+    readonly bloatRating: number | null;
 }
 
 /** Cache entry with TTL. */
