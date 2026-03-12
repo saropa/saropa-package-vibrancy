@@ -74,6 +74,9 @@ import {
     generateCiWorkflow, getDefaultOutputPath, getAvailablePlatforms,
 } from './services/ci-generator';
 import { CiPlatform, CiThresholds } from './types';
+import { ProblemRegistry, collectProblemsFromResults, CollectorContext } from './problems';
+import { ProblemTreeProvider, registerProblemTreeView } from './providers/problem-tree-provider';
+import { findPackageRange } from './services/pubspec-parser';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
@@ -93,6 +96,8 @@ let detailLogger: DetailLogger | null = null;
 let detailChannel: vscode.OutputChannel | null = null;
 let saveTaskRunner: SaveTaskRunner | null = null;
 let registryService: RegistryService | null = null;
+const problemRegistry: ProblemRegistry = new ProblemRegistry();
+let problemTreeProvider: ProblemTreeProvider | null = null;
 
 /** Get the latest scan results (used by providers). */
 export function getLatestResults(): readonly VibrancyResult[] {
@@ -112,6 +117,11 @@ export function getStateManager(): VibrancyStateManager | null {
 /** Get the registry service (used by providers). */
 export function getRegistryService(): RegistryService | null {
     return registryService;
+}
+
+/** Get the problem registry (used by providers). */
+export function getProblemRegistry(): ProblemRegistry {
+    return problemRegistry;
 }
 
 /** Main activation wiring. */
@@ -174,6 +184,9 @@ export function runActivation(context: vscode.ExtensionContext): void {
     detailChannel = vscode.window.createOutputChannel(DETAIL_CHANNEL_NAME);
     detailLogger = new DetailLogger(detailChannel);
     context.subscriptions.push(detailChannel);
+
+    problemTreeProvider = new ProblemTreeProvider();
+    registerProblemTreeView(context, problemTreeProvider);
 
     registerTreeView(context, treeProvider);
     registerProviders(context, hoverProvider, codeLensProvider, codeActionProvider);
@@ -633,6 +646,22 @@ function updateFilteredTargets(
     const splits = detectFamilySplits(active);
 
     lastInsights = consolidateInsights(active, lastOverrideAnalyses, splits);
+
+    const packageRanges = buildPackageRanges(parsed.yamlContent, active);
+    const collectorContext: CollectorContext = {
+        packageRanges,
+        overrideAnalyses: lastOverrideAnalyses,
+        familySplits: splits,
+    };
+    collectProblemsFromResults(active, collectorContext, problemRegistry);
+
+    if (problemTreeProvider) {
+        problemTreeProvider.updateRegistry(problemRegistry);
+        const healthy = active.filter(
+            r => problemRegistry.getForPackage(r.package.name).length === 0,
+        );
+        problemTreeProvider.setHealthyPackages(healthy);
+    }
 
     targets.tree.updateFamilySplits(splits);
     targets.tree.updateInsights(lastInsights);
@@ -1270,5 +1299,19 @@ async function fetchComparisonData(
         platforms: metrics.platforms,
         inProject: false,
     };
+}
+
+function buildPackageRanges(
+    yamlContent: string,
+    results: readonly VibrancyResult[],
+): Map<string, import('./types').PackageRange> {
+    const ranges = new Map<string, import('./types').PackageRange>();
+    for (const result of results) {
+        const range = findPackageRange(yamlContent, result.package.name);
+        if (range) {
+            ranges.set(result.package.name, range);
+        }
+    }
+    return ranges;
 }
 

@@ -1,6 +1,6 @@
 # Plan: Unified Problem Model
 
-**Status: PLANNED**
+**Status: IMPLEMENTED**
 
 ## Problem
 
@@ -368,3 +368,47 @@ Examples:
 - Auto-fix functionality (problems are informational)
 - Problem history/tracking across scans
 - User-defined problem severity overrides
+
+## Implementation Notes
+
+Implemented on 2026-03-12. The following files were created:
+
+### Core Problem Model (`src/problems/`)
+
+- `problem-types.ts` — Problem union type with specific interfaces for each
+  problem kind (UnhealthyPackageProblem, StaleOverrideProblem, etc.)
+- `problem-registry.ts` — ProblemRegistry class for storage, deduplication,
+  linking, and priority calculation
+- `problem-actions.ts` — SuggestedAction interface and action determination
+  logic with resolution chain calculation
+- `problem-collector.ts` — Converts existing analysis results (VibrancyResult,
+  OverrideAnalysis, FamilySplit) into Problem objects
+- `problem-hover.ts` — Hover formatting utilities for problems
+- `index.ts` — Module barrel export
+
+### Providers (`src/providers/`)
+
+- `problem-tree-provider.ts` — Problem-centric tree data provider
+- `problem-tree-items.ts` — Tree item classes for problem view
+
+### Tests (`src/test/problems/`)
+
+- `problem-registry.test.ts` — Tests for ProblemRegistry
+- `problem-actions.test.ts` — Tests for action determination
+
+### Integration
+
+The problem model is integrated into `extension-activation.ts`:
+- ProblemRegistry is populated during each scan via `collectProblemsFromResults`
+- ProblemTreeProvider receives registry updates
+- Coexists with existing providers (gradual migration path)
+
+### Migration Approach
+
+The implementation follows the "alongside existing" pattern rather than
+replacing existing providers. This allows gradual migration:
+1. Problem types and registry are fully implemented
+2. Problem collection happens during scans
+3. New problem tree view is registered
+4. Existing providers continue to work unchanged
+5. Future work can migrate providers to use ProblemRegistry directly

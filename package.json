@@ -47,6 +47,11 @@
           "icon": "images/sidebar-icon.svg"
         },
         {
+          "id": "saropaPackageVibrancy.problems",
+          "name": "Problems",
+          "icon": "$(warning)"
+        },
+        {
           "id": "saropaPackageVibrancy.details",
           "name": "Package Details",
           "type": "webview"

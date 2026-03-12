@@ -55,6 +55,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Internal
 
+- **Unified Problem Model**: new `src/problems/` module with `ProblemRegistry` class for centralized problem storage, deduplication, linking, and priority scoring; type-safe Problem union with 9 specific interfaces (UnhealthyPackageProblem, VulnerabilityProblem, etc.); `SuggestedAction` system for action determination and resolution chain tracking; `ProblemTreeProvider` for problem-centric sidebar view; comprehensive test coverage in `src/test/problems/`
 - Extracted pubspec editing utilities to `services/pubspec-editor.ts` to fix layer violation (services importing from providers)
 - Created centralized `services/config-service.ts` for typed access to all extension settings
 - Split `tree-items.ts` (579 lines) into `tree-item-classes.ts` and `tree-item-builders.ts` for better maintainability
