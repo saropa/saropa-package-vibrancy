@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { UpgradeStep, UpgradeStepResult, UpgradeReport, StepOutcome } from '../types';
+import { UpgradeStep, UpgradeStepResult, UpgradeReport } from '../types';
 import { runPubGet, runFlutterTest } from './flutter-cli';
 import { buildVersionEdit, readVersionConstraint, findPubspecYaml } from '../providers/tree-commands';
 

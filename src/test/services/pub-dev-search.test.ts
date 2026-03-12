@@ -39,7 +39,7 @@ describe('pub-dev-search', () => {
                 new Response(JSON.stringify(scoreResponse), { status: 200 }),
             );
 
-            const result = await searchAlternatives(['networking'], ['other_pkg']);
+            await searchAlternatives(['networking'], ['other_pkg']);
 
             assert.ok(fetchStub.called);
             const searchUrl = fetchStub.firstCall.args[0];
