@@ -876,7 +876,7 @@
   },
   "devDependencies": {
     "@types/mocha": "^10.0.10",
-    "@types/node": "22.x",
+    "@types/node": "25.x",
     "@types/semver": "^7.7.1",
     "@types/sinon": "^17.0.0",
     "@types/vscode": "^1.85.0",
