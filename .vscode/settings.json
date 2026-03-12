@@ -17,6 +17,7 @@
     "flutterfire",
     "prereqs",
     "pubspec",
+    "Riverpod",
     "Unsuppress"
   ],
   "cSpell.ignorePaths": [

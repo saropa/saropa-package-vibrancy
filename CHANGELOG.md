@@ -7,10 +7,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
 
-## [0.1.3]
+## [0.2.0]
 
 ### Added
 
+- **Suppress from Problems panel**: code actions now include "Suppress [package] diagnostics" for every vibrancy diagnostic, allowing quick suppression directly from the Problems panel or lightbulb menu
+- **Bulk suppression commands**: new commands "Suppress by Category..." (end-of-life, legacy-locked, quiet, or blocked packages) and "Suppress All Unhealthy Packages" accessible from tree view toolbar; "Unsuppress All Packages" to reset
 - **Action Items Consolidator**: cross-references all feature signals (vibrancy score, overrides, transitives, family conflicts, unused deps, blockers) into a unified "Action Items" view at the top of the tree; ranks packages by combined risk score; suggests specific actions ("Remove this package", "Upgrade blocker first", "Upgrade all Firebase packages together"); shows what gets unblocked when a problem is fixed; surfaces in tree view, hover tooltips, and status bar
 - Transitive risk now penalizes vibrancy score: packages with EOL/discontinued transitives or >20 transitive deps receive score penalties
 - Freshness watch notifications now include blocker info: "http 1.3.0 available [blocked by meta]"
@@ -20,14 +22,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Alternative Package Suggestions: for packages scoring below 40 (Legacy-Locked/End-of-Life), automatically suggests healthier alternatives by searching pub.dev for packages with matching topics; curated replacements from known_issues.json shown as "Recommended", discovery suggestions shown as "Similar"; displayed in tree view Alternatives group, hover tooltips, and quick-fix code actions
 - Smart dependency_overrides Tracker: parses overrides section, detects stale overrides (no longer needed), tracks override age via git history, surfaces in tree view as collapsible group, adds inline diagnostics with severity levels, and provides quick-fix to remove stale overrides
 - Dependency Freshness Watch: background polling for new package versions with configurable interval (1-24 hours), filter modes (all/unhealthy/custom), and VS Code toast notifications with one-click actions
-- Unused dependency detection: scans lib/, bin/, and test/ for imports and flags dependencies with no matching imports
-- CodeLens vibrancy badges above each dependency line in pubspec.yaml with clickable score and update segments
-- SPDX license display in tree view, hover tooltips, and reports
-- Dependency drift timeline showing version history relative to Flutter stable releases
-- Package family conflict detection: warns when Firebase/Riverpod/Bloc packages are on incompatible major versions
-- License and health metric fields in known issues database
-- Clickable URLs in tree view detail items via openUrl command
-- Annotate Dependencies command: adds pub.dev description and URL comments above each dependency in pubspec.yaml
 - Decorative section headers: optional ornamental comment blocks above major pubspec sections (dependencies, dev_dependencies, dependency_overrides, flutter, flutter_launcher_icons, flutter_native_splash) and sub-sections (assets, fonts within flutter)
 - Override marker: auto-inserts "DEP OVERRIDDEN BELOW" header above the first dependency that has a corresponding override
 - Tree view section grouping: optional grouping by pubspec section (dependencies, dev_dependencies, transitive) via `treeGrouping` setting
@@ -36,6 +30,33 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Improved
 
 - Smarter annotation detection: recognizes URL suffixes like `/changelog`, removes ALL duplicate annotations scattered in comments, preserves user comments (NOTE:, TODO:, FIXME:, Because, etc.)
+
+### Changed
+
+- End-of-life diagnostic severity now configurable via `endOfLifeDiagnostics` setting (none/hint/smart); defaults to "none" to avoid warning fatigue for unfixable issues; changed message from "Replace" to "Deprecated:" when no replacement is known
+
+### Internal
+
+- Extracted pubspec editing utilities to `services/pubspec-editor.ts` to fix layer violation (services importing from providers)
+- Created centralized `services/config-service.ts` for typed access to all extension settings
+- Split `tree-items.ts` (579 lines) into `tree-item-classes.ts` and `tree-item-builders.ts` for better maintainability
+- Extracted `override-runner.ts` from `extension-activation.ts`
+- Improved modularity: clear separation between providers (UI), services (data), and scoring (pure logic)
+
+---
+
+## [0.1.3]
+
+### Added
+
+- Unused dependency detection: scans lib/, bin/, and test/ for imports and flags dependencies with no matching imports
+- CodeLens vibrancy badges above each dependency line in pubspec.yaml with clickable score and update segments
+- SPDX license display in tree view, hover tooltips, and reports
+- Dependency drift timeline showing version history relative to Flutter stable releases
+- Package family conflict detection: warns when Firebase/Riverpod/Bloc packages are on incompatible major versions
+- License and health metric fields in known issues database
+- Clickable URLs in tree view detail items via openUrl command
+- Annotate Dependencies command: adds pub.dev description and URL comments above each dependency in pubspec.yaml
 
 ### Fixed
 
@@ -46,15 +67,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Enriched About panel with full company profile, consumer apps, developer ecosystem, social links, and company details from ABOUT_SAROPA.md
 - Tree view packages now expand into logical groups (Version, Update, Community, Size, Alerts) with colored emoji indicators for update severity and bloat rating
-- End-of-life diagnostic severity now configurable via `endOfLifeDiagnostics` setting (none/hint/smart); defaults to "none" to avoid warning fatigue for unfixable issues; changed message from "Replace" to "Deprecated:" when no replacement is known
-
-### Internal
-
-- Extracted pubspec editing utilities to `services/pubspec-editor.ts` to fix layer violation (services importing from providers)
-- Created centralized `services/config-service.ts` for typed access to all extension settings
-- Split `tree-items.ts` (579 lines) into `tree-item-classes.ts` and `tree-item-builders.ts` for better maintainability
-- Extracted `override-runner.ts` from `extension-activation.ts`
-- Improved modularity: clear separation between providers (UI), services (data), and scoring (pure logic)
 
 ---
 
