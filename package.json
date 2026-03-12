@@ -2,7 +2,7 @@
   "name": "saropa-package-vibrancy",
   "displayName": "Saropa Package Vibrancy",
   "description": "Analyze Flutter/Dart dependency health and community vibrancy",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "publisher": "saropa",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -572,15 +572,42 @@
           "default": {},
           "description": "Custom symbols for status indicators. Keys: vibrant, quiet, legacyLocked, endOfLife, updateAvailable, prerelease, warning, error, unused, suppressed, upToDate",
           "properties": {
-            "vibrant": { "type": "string", "description": "Indicator for vibrant packages (default: 🟢)" },
-            "quiet": { "type": "string", "description": "Indicator for quiet packages (default: 🟡)" },
-            "legacyLocked": { "type": "string", "description": "Indicator for legacy-locked packages (default: 🟠)" },
-            "endOfLife": { "type": "string", "description": "Indicator for end-of-life packages (default: 🔴)" },
-            "updateAvailable": { "type": "string", "description": "Indicator for available updates (default: ⬆)" },
-            "prerelease": { "type": "string", "description": "Indicator for prerelease versions (default: 🧪)" },
-            "warning": { "type": "string", "description": "Indicator for warnings (default: ⚠)" },
-            "unused": { "type": "string", "description": "Indicator for unused packages (default: 👻)" },
-            "upToDate": { "type": "string", "description": "Indicator for up-to-date packages (default: ✓)" }
+            "vibrant": {
+              "type": "string",
+              "description": "Indicator for vibrant packages (default: \ud83d\udfe2)"
+            },
+            "quiet": {
+              "type": "string",
+              "description": "Indicator for quiet packages (default: \ud83d\udfe1)"
+            },
+            "legacyLocked": {
+              "type": "string",
+              "description": "Indicator for legacy-locked packages (default: \ud83d\udfe0)"
+            },
+            "endOfLife": {
+              "type": "string",
+              "description": "Indicator for end-of-life packages (default: \ud83d\udd34)"
+            },
+            "updateAvailable": {
+              "type": "string",
+              "description": "Indicator for available updates (default: \u2b06)"
+            },
+            "prerelease": {
+              "type": "string",
+              "description": "Indicator for prerelease versions (default: \ud83e\uddea)"
+            },
+            "warning": {
+              "type": "string",
+              "description": "Indicator for warnings (default: \u26a0)"
+            },
+            "unused": {
+              "type": "string",
+              "description": "Indicator for unused packages (default: \ud83d\udc7b)"
+            },
+            "upToDate": {
+              "type": "string",
+              "description": "Indicator for up-to-date packages (default: \u2713)"
+            }
           }
         },
         "saropaPackageVibrancy.indicatorStyle": {
@@ -593,9 +620,9 @@
           ],
           "default": "emoji",
           "enumDescriptions": [
-            "Show emoji only (🟢)",
+            "Show emoji only (\ud83d\udfe2)",
             "Show text only (Vibrant)",
-            "Show both (🟢 Vibrant)",
+            "Show both (\ud83d\udfe2 Vibrant)",
             "Show score only, no indicator"
           ],
           "description": "How to display status indicators in CodeLens"
@@ -750,38 +777,56 @@
           "description": "When to trigger the on-save task"
         },
         "saropaPackageVibrancy.budget.maxDependencies": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": null,
           "minimum": 1,
           "description": "Maximum number of total dependencies allowed (null = no limit)"
         },
         "saropaPackageVibrancy.budget.maxTotalSizeMB": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": null,
           "minimum": 0.1,
           "description": "Maximum total archive size in megabytes (null = no limit)"
         },
         "saropaPackageVibrancy.budget.minAverageVibrancy": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": null,
           "minimum": 0,
           "maximum": 100,
           "description": "Minimum average vibrancy score (0-100) required across all dependencies (null = no limit)"
         },
         "saropaPackageVibrancy.budget.maxEndOfLife": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": null,
           "minimum": 0,
           "description": "Maximum number of End-of-Life packages allowed (null = no limit)"
         },
         "saropaPackageVibrancy.budget.maxLegacyLocked": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": null,
           "minimum": 0,
           "description": "Maximum number of Legacy-Locked packages allowed (null = no limit)"
         },
         "saropaPackageVibrancy.budget.maxUnused": {
-          "type": ["number", "null"],
+          "type": [
+            "number",
+            "null"
+          ],
           "default": null,
           "minimum": 0,
           "description": "Maximum number of unused dependencies allowed (null = no limit)"
