@@ -3,9 +3,22 @@
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-**VSCode Marketplace** — [Saropa Package Vibrancy](https://marketplace.visualstudio.com/items?itemName=saropa.saropa-package-vibrancy)
+**VSCode Marketplace** — [marketplace.visualstudio.com / saropa.saropa-package-vibrancy](https://marketplace.visualstudio.com/items?itemName=saropa.saropa-package-vibrancy)
+
+**Open VSX Registry** — [open-vsx.org / extension / saropa / saropa-package-vibrancy](https://open-vsx.org/extension/saropa/saropa-package-vibrancy)
 
 **Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
+
+---
+
+## [Unreleased]
+
+### Added
+
+- **GitHub Advisory Database Integration**: complementary security advisory source alongside OSV; queries GitHub's Security Advisory API for Pub ecosystem packages; results automatically merged and deduplicated with OSV data; configurable via `enableGitHubAdvisory` setting (default: true); uses existing GitHub token for authentication when available
+- **Dependabot Configuration**: `.github/dependabot.yml` added to keep npm dev dependencies up to date; weekly schedule with grouped minor/patch updates
+
+---
 
 ## [1.0.0]
 

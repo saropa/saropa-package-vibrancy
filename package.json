@@ -836,6 +836,11 @@
           "default": true,
           "description": "Query OSV database for known vulnerabilities in dependencies"
         },
+        "saropaPackageVibrancy.enableGitHubAdvisory": {
+          "type": "boolean",
+          "default": true,
+          "description": "Query GitHub Advisory Database for additional security advisories (complements OSV)"
+        },
         "saropaPackageVibrancy.vulnSeverityThreshold": {
           "type": "string",
           "enum": [

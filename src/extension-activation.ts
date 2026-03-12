@@ -47,9 +47,10 @@ import {
 } from './services/freshness-watcher';
 import {
     addSuppressedPackage, addSuppressedPackages, clearSuppressedPackages,
-    getVulnScanEnabled,
+    getVulnScanEnabled, getGitHubAdvisoryEnabled, getGithubToken,
 } from './services/config-service';
 import { queryVulnerabilities } from './services/osv-api';
+import { queryGitHubAdvisories, mergeVulnerabilities } from './services/github-advisory-api';
 import { sortDependencies } from './services/pubspec-sorter';
 import { clearIndicatorCache } from './services/indicator-config';
 import { findPubspecYaml } from './services/pubspec-editor';
@@ -561,15 +562,33 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                     name: r.package.name,
                     version: r.package.version,
                 }));
-                const vulnResults = await queryVulnerabilities(
-                    vulnQueries, targets.cache, logger,
+
+                // Query OSV and GitHub Advisory in parallel for performance
+                const [osvResults, ghsaResults] = await Promise.all([
+                    queryVulnerabilities(vulnQueries, targets.cache, logger),
+                    getGitHubAdvisoryEnabled()
+                        ? queryGitHubAdvisories(
+                            vulnQueries,
+                            getGithubToken() || undefined,
+                            targets.cache,
+                            logger,
+                        )
+                        : Promise.resolve([]),
+                ]);
+
+                const osvMap = new Map(
+                    osvResults.map(vr => [`${vr.name}@${vr.version}`, vr.vulnerabilities]),
                 );
-                const vulnMap = new Map(
-                    vulnResults.map(vr => [`${vr.name}@${vr.version}`, vr.vulnerabilities]),
+                const ghsaMap = new Map(
+                    ghsaResults.map(vr => [`${vr.name}@${vr.version}`, vr.vulnerabilities]),
                 );
+
                 results = results.map(r => {
-                    const vulns = vulnMap.get(`${r.package.name}@${r.package.version}`) ?? [];
-                    return vulns.length > 0 ? { ...r, vulnerabilities: vulns } : r;
+                    const key = `${r.package.name}@${r.package.version}`;
+                    const osvVulns = osvMap.get(key) ?? [];
+                    const ghsaVulns = ghsaMap.get(key) ?? [];
+                    const merged = mergeVulnerabilities(osvVulns, ghsaVulns);
+                    return merged.length > 0 ? { ...r, vulnerabilities: merged } : r;
                 }) as VibrancyResult[];
 
                 const vulnCount = results.filter(r => r.vulnerabilities.length > 0).length;

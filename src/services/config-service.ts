@@ -183,3 +183,7 @@ export function getVulnScanEnabled(): boolean {
 export function getVulnSeverityThreshold(): VulnSeverity {
     return getConfig().get<VulnSeverity>('vulnSeverityThreshold', 'low');
 }
+
+export function getGitHubAdvisoryEnabled(): boolean {
+    return getConfig().get<boolean>('enableGitHubAdvisory', true);
+}
