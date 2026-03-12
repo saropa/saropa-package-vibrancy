@@ -93,6 +93,9 @@ export const window = {
         messageMock.errors.push(msg);
     },
     showTextDocument: async (_doc: any, _options?: any) => ({}),
+    onDidChangeWindowState: (_listener: (state: { focused: boolean }) => void) => ({
+        dispose: () => { /* no-op */ },
+    }),
 };
 
 export const commands = {
