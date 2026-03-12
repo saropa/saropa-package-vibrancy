@@ -13,8 +13,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [1.0.1]
 
-## [1.0.1]
-
 ### Added
 
 - **GitHub Advisory Database Integration**: complementary security advisory source alongside OSV; queries GitHub's Security Advisory API for Pub ecosystem packages; results automatically merged and deduplicated with OSV data; configurable via `enableGitHubAdvisory` setting (default: true); uses existing GitHub token for authentication when available

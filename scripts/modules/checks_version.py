@@ -164,19 +164,28 @@ def validate_version_changelog() -> tuple[str, bool]:
         if version is None:
             return "", False
 
-    # Ensure CHANGELOG has [Unreleased] section
-    if not _changelog_has_unpublished():
-        if not _ensure_unreleased_section():
-            return version, False
-
     # Ensure version is not already tagged
     version, tag_ok = _ensure_untagged_version(version)
     if not tag_ok:
         return version, False
 
-    # Stamp CHANGELOG
-    if not _stamp_changelog(version):
-        return version, False
+    # Re-read max_cl since version might have been bumped during conflict resolution
+    max_cl = _get_changelog_max_version()
+    has_unreleased = _changelog_has_unpublished()
+
+    if has_unreleased:
+        # There's an [Unreleased] marker to stamp
+        if not _stamp_changelog(version):
+            return version, False
+    elif max_cl and version == max_cl:
+        # Changelog already has [version] entry without Unreleased marker
+        ok(f"CHANGELOG already has [{version}] entry")
+    else:
+        # version > max_cl OR no version headers yet, need new entry
+        if not _ensure_unreleased_section():
+            return version, False
+        if not _stamp_changelog(version):
+            return version, False
 
     ok(f"Version {C.WHITE}{version}{C.RESET} validated")
     return version, True
