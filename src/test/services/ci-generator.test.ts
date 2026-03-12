@@ -23,7 +23,7 @@ describe('ci-generator', () => {
             const result = generateCiWorkflow('github-actions', defaultThresholds);
 
             assert.ok(result.includes('name: Dependency Health Check'));
-            assert.ok(result.includes('github.com'));
+            assert.ok(result.includes('actions/github-script'));
         });
 
         it('should route to GitLab CI generator', () => {
