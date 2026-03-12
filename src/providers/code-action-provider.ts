@@ -48,9 +48,28 @@ export class VibrancyCodeActionProvider implements vscode.CodeActionProvider {
                     );
                 }
             }
+
+            actions.push(this.createSuppressAction(packageName, diag));
         }
 
         return actions;
+    }
+
+    private createSuppressAction(
+        packageName: string,
+        diag: vscode.Diagnostic,
+    ): vscode.CodeAction {
+        const action = new vscode.CodeAction(
+            `Suppress "${packageName}" diagnostics`,
+            vscode.CodeActionKind.QuickFix,
+        );
+        action.diagnostics = [diag];
+        action.command = {
+            command: 'saropaPackageVibrancy.suppressPackageByName',
+            title: 'Suppress Package',
+            arguments: [packageName],
+        };
+        return action;
     }
 
     private createAlternativeAction(

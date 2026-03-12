@@ -65,7 +65,7 @@ describe('VibrancyCodeActionProvider', () => {
         }
     });
 
-    it('should not provide fix for unknown packages', () => {
+    it('should only provide suppress action for unknown packages', () => {
         const doc = {
             ...makeMockDocument(),
             getText: (_range?: vscode.Range) => 'totally_unknown_pkg',
@@ -75,7 +75,8 @@ describe('VibrancyCodeActionProvider', () => {
         const actions = provider.provideCodeActions(
             doc, new vscode.Range(0, 0, 0, 19), context,
         );
-        assert.strictEqual(actions.length, 0);
+        assert.strictEqual(actions.length, 1);
+        assert.ok(actions[0].title.includes('Suppress'));
     });
 
     it('should provide discovery alternatives from updateResults', () => {

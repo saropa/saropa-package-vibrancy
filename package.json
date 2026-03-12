@@ -28,9 +28,6 @@
     "dependency",
     "health"
   ],
-  "activationEvents": [
-    "workspaceContains:pubspec.yaml"
-  ],
   "main": "./dist/extension.js",
   "contributes": {
     "viewsContainers": {
@@ -146,6 +143,25 @@
         "command": "saropaPackageVibrancy.planUpgrades",
         "title": "Saropa: Plan & Execute Upgrades",
         "icon": "$(rocket)"
+      },
+      {
+        "command": "saropaPackageVibrancy.suppressPackageByName",
+        "title": "Suppress Package Diagnostics"
+      },
+      {
+        "command": "saropaPackageVibrancy.suppressByCategory",
+        "title": "Saropa: Suppress by Category...",
+        "icon": "$(filter)"
+      },
+      {
+        "command": "saropaPackageVibrancy.suppressAllProblems",
+        "title": "Saropa: Suppress All Unhealthy Packages",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "saropaPackageVibrancy.unsuppressAll",
+        "title": "Saropa: Unsuppress All Packages",
+        "icon": "$(eye)"
       }
     ],
     "menus": {
@@ -169,6 +185,16 @@
           "command": "saropaPackageVibrancy.annotatePubspec",
           "when": "view == saropaPackageVibrancy.packages",
           "group": "navigation@4"
+        },
+        {
+          "command": "saropaPackageVibrancy.suppressByCategory",
+          "when": "view == saropaPackageVibrancy.packages",
+          "group": "suppress@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.unsuppressAll",
+          "when": "view == saropaPackageVibrancy.packages",
+          "group": "suppress@2"
         }
       ],
       "view/item/context": [

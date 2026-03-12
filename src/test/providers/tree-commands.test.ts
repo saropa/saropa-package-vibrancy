@@ -182,6 +182,66 @@ describe('tree-commands', () => {
         });
     });
 
+    describe('bulk suppression via config-service', () => {
+        const { addSuppressedPackages, clearSuppressedPackages } = require('../../services/config-service');
+
+        it('should add multiple packages at once', async () => {
+            let updatedValue: any = null;
+            sandbox.stub(workspace, 'getConfiguration').returns({
+                get: <T>(_key: string, _defaultValue?: T) =>
+                    ['existing'] as unknown as T,
+                update: async (_key: string, value: any) => {
+                    updatedValue = value;
+                },
+            });
+
+            const count = await addSuppressedPackages(['http', 'bloc', 'existing']);
+            assert.strictEqual(count, 2);
+            assert.deepStrictEqual(updatedValue, ['existing', 'http', 'bloc']);
+        });
+
+        it('should return 0 when all packages already suppressed', async () => {
+            let updateCalled = false;
+            sandbox.stub(workspace, 'getConfiguration').returns({
+                get: <T>(_key: string, _defaultValue?: T) =>
+                    ['http', 'bloc'] as unknown as T,
+                update: async () => { updateCalled = true; },
+            });
+
+            const count = await addSuppressedPackages(['http', 'bloc']);
+            assert.strictEqual(count, 0);
+            assert.strictEqual(updateCalled, false);
+        });
+
+        it('should clear all suppressed packages', async () => {
+            let updatedValue: any = null;
+            sandbox.stub(workspace, 'getConfiguration').returns({
+                get: <T>(_key: string, _defaultValue?: T) =>
+                    ['http', 'bloc', 'provider'] as unknown as T,
+                update: async (_key: string, value: any) => {
+                    updatedValue = value;
+                },
+            });
+
+            const count = await clearSuppressedPackages();
+            assert.strictEqual(count, 3);
+            assert.deepStrictEqual(updatedValue, []);
+        });
+
+        it('should return 0 when clearing empty list', async () => {
+            let updateCalled = false;
+            sandbox.stub(workspace, 'getConfiguration').returns({
+                get: <T>(_key: string, _defaultValue?: T) =>
+                    [] as unknown as T,
+                update: async () => { updateCalled = true; },
+            });
+
+            const count = await clearSuppressedPackages();
+            assert.strictEqual(count, 0);
+            assert.strictEqual(updateCalled, false);
+        });
+    });
+
     describe('openUrl', () => {
         it('should open the given URL in external browser', async () => {
             await vscode.commands.executeCommand(

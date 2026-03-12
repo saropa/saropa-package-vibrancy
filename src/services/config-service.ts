@@ -112,6 +112,36 @@ export async function removeSuppressedPackage(packageName: string): Promise<void
     );
 }
 
+export async function addSuppressedPackages(packageNames: string[]): Promise<number> {
+    const config = getConfig();
+    const current = new Set(config.get<string[]>('suppressedPackages', []));
+    const toAdd = packageNames.filter(name => !current.has(name));
+    if (toAdd.length === 0) { return 0; }
+    await config.update(
+        'suppressedPackages',
+        [...current, ...toAdd],
+        vscode.ConfigurationTarget.Workspace,
+    );
+    return toAdd.length;
+}
+
+export async function clearSuppressedPackages(): Promise<number> {
+    const config = getConfig();
+    const current = config.get<string[]>('suppressedPackages', []);
+    const count = current.length;
+    if (count === 0) { return 0; }
+    await config.update(
+        'suppressedPackages',
+        [],
+        vscode.ConfigurationTarget.Workspace,
+    );
+    return count;
+}
+
+export function getSuppressedSet(): Set<string> {
+    return new Set(getSuppressedPackages());
+}
+
 // --- Notification Settings ---
 
 export function getShowLockDiffNotifications(): boolean {
