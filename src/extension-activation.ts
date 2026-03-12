@@ -3,9 +3,10 @@ import { CacheService } from './services/cache-service';
 import { VibrancyTreeProvider } from './providers/tree-data-provider';
 import { VibrancyDiagnostics } from './providers/diagnostics';
 import { VibrancyCodeActionProvider } from './providers/code-action-provider';
-import { VibrancyCodeLensProvider } from './providers/codelens-provider';
+import { VibrancyCodeLensProvider, setCodeLensToggle } from './providers/codelens-provider';
 import { VibrancyHoverProvider } from './providers/hover-provider';
 import { VibrancyStatusBar } from './ui/status-bar';
+import { CodeLensToggle } from './ui/codelens-toggle';
 import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
 import { AboutPanel } from './views/about-webview';
@@ -43,6 +44,9 @@ import {
 import {
     addSuppressedPackage, addSuppressedPackages, clearSuppressedPackages,
 } from './services/config-service';
+import { sortDependencies } from './services/pubspec-sorter';
+import { clearIndicatorCache } from './services/indicator-config';
+import { findPubspecYaml } from './services/pubspec-editor';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
@@ -73,13 +77,17 @@ export function runActivation(context: vscode.ExtensionContext): void {
     const treeProvider = new VibrancyTreeProvider();
     const hoverProvider = new VibrancyHoverProvider();
     const codeLensProvider = new VibrancyCodeLensProvider();
+    const codeLensToggle = new CodeLensToggle();
     const statusBar = new VibrancyStatusBar();
     const diagCollection = vscode.languages.createDiagnosticCollection(
         'saropa-vibrancy',
     );
     const diagnostics = new VibrancyDiagnostics(diagCollection);
 
-    context.subscriptions.push(diagCollection, statusBar);
+    setCodeLensToggle(codeLensToggle);
+    codeLensToggle.onDidChange(() => codeLensProvider.refresh());
+
+    context.subscriptions.push(diagCollection, statusBar, codeLensToggle);
 
     const adoptionGate = new AdoptionGateProvider(cache);
     adoptionGate.register(context);
@@ -92,7 +100,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     const targets: ScanTargets = {
         tree: treeProvider, hover: hoverProvider,
         codeLens: codeLensProvider, codeActions: codeActionProvider,
-        statusBar, diagnostics, cache, adoptionGate,
+        statusBar, diagnostics, cache, adoptionGate, codeLensToggle,
     };
 
     registerTreeView(context, treeProvider);
@@ -103,6 +111,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     registerAnnotateCommand(context);
     registerFileWatcher(context, targets);
     registerSuppressListener(context, targets);
+    registerConfigListener(context, codeLensProvider);
     autoScanIfPubspec(targets);
 }
 
@@ -127,6 +136,21 @@ function registerSuppressListener(
             targets.tree.refresh();
             if (lastParsedDeps && latestResults.length > 0) {
                 updateFilteredTargets(targets, latestResults, lastParsedDeps);
+            }
+        }),
+    );
+}
+
+function registerConfigListener(
+    context: vscode.ExtensionContext,
+    codeLensProvider: VibrancyCodeLensProvider,
+): void {
+    context.subscriptions.push(
+        vscode.workspace.onDidChangeConfiguration(e => {
+            if (e.affectsConfiguration('saropaPackageVibrancy.indicators')
+                || e.affectsConfiguration('saropaPackageVibrancy.indicatorStyle')) {
+                clearIndicatorCache();
+                codeLensProvider.refresh();
             }
         }),
     );
@@ -174,6 +198,7 @@ interface ScanTargets {
     diagnostics: VibrancyDiagnostics;
     cache: CacheService;
     adoptionGate: AdoptionGateProvider;
+    codeLensToggle: CodeLensToggle;
 }
 
 function registerCommands(
@@ -243,6 +268,22 @@ function registerCommands(
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.unsuppressAll',
             () => unsuppressAll(targets),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.sortDependencies',
+            () => runSortDependencies(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.showCodeLens',
+            () => targets.codeLensToggle.show(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.hideCodeLens',
+            () => targets.codeLensToggle.hide(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.toggleCodeLens',
+            () => targets.codeLensToggle.toggle(),
         ),
     );
 }
@@ -696,5 +737,27 @@ function getBlockedPackages(): string[] {
 
 export function stopFreshnessWatcher(): void {
     freshnessWatcher?.stop();
+}
+
+async function runSortDependencies(): Promise<void> {
+    const pubspecUri = await findPubspecYaml();
+    if (!pubspecUri) {
+        vscode.window.showWarningMessage('No pubspec.yaml found in workspace');
+        return;
+    }
+
+    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+    const sdkFirst = config.get<boolean>('sortSdkFirst', true);
+
+    const result = await sortDependencies(pubspecUri, { sdkFirst });
+
+    if (!result.sorted) {
+        vscode.window.showInformationMessage('Dependencies already sorted');
+        return;
+    }
+
+    vscode.window.showInformationMessage(
+        `Sorted ${result.entriesMoved} dependencies in ${result.sectionsModified.join(', ')}`,
+    );
 }
 

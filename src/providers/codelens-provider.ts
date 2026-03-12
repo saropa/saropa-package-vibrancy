@@ -4,6 +4,14 @@ import { findPackageRange } from '../services/pubspec-parser';
 import {
     formatCodeLensTitle, CodeLensDetail,
 } from '../scoring/codelens-formatter';
+import { CodeLensToggle } from '../ui/codelens-toggle';
+
+let globalToggle: CodeLensToggle | null = null;
+
+/** Set the global toggle instance (called from extension-activation). */
+export function setCodeLensToggle(toggle: CodeLensToggle): void {
+    globalToggle = toggle;
+}
 
 export class VibrancyCodeLensProvider implements vscode.CodeLensProvider {
     private _results = new Map<string, VibrancyResult>();
@@ -15,6 +23,11 @@ export class VibrancyCodeLensProvider implements vscode.CodeLensProvider {
         for (const r of results) {
             this._results.set(r.package.name, r);
         }
+        this._onDidChange.fire();
+    }
+
+    /** Refresh CodeLens display (called when toggle changes). */
+    refresh(): void {
         this._onDidChange.fire();
     }
 
@@ -60,6 +73,9 @@ function buildLenses(
 }
 
 function isEnabled(): boolean {
+    if (globalToggle) {
+        return globalToggle.isEnabled;
+    }
     const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
     return config.get<boolean>('enableCodeLens', true);
 }

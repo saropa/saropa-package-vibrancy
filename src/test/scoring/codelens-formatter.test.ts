@@ -117,7 +117,7 @@ describe('formatCodeLensTitle', () => {
         it('should include unused warning', () => {
             const result = makeResult({ isUnused: true });
             const title = formatCodeLensTitle(result, 'standard');
-            assert.ok(title.includes('⚠ Unused'));
+            assert.ok(title.includes('Unused'));
         });
     });
 

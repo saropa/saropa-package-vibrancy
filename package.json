@@ -2,7 +2,7 @@
   "name": "saropa-package-vibrancy",
   "displayName": "Saropa Package Vibrancy",
   "description": "Analyze Flutter/Dart dependency health and community vibrancy",
-  "version": "0.1.3",
+  "version": "0.2.0",
   "publisher": "saropa",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -162,6 +162,25 @@
         "command": "saropaPackageVibrancy.unsuppressAll",
         "title": "Saropa: Unsuppress All Packages",
         "icon": "$(eye)"
+      },
+      {
+        "command": "saropaPackageVibrancy.sortDependencies",
+        "title": "Saropa: Sort Dependencies Alphabetically",
+        "icon": "$(list-ordered)"
+      },
+      {
+        "command": "saropaPackageVibrancy.showCodeLens",
+        "title": "Saropa: Show Vibrancy Badges",
+        "icon": "$(eye)"
+      },
+      {
+        "command": "saropaPackageVibrancy.hideCodeLens",
+        "title": "Saropa: Hide Vibrancy Badges",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "saropaPackageVibrancy.toggleCodeLens",
+        "title": "Saropa: Toggle Vibrancy Badges"
       }
     ],
     "menus": {
@@ -195,6 +214,40 @@
           "command": "saropaPackageVibrancy.unsuppressAll",
           "when": "view == saropaPackageVibrancy.packages",
           "group": "suppress@2"
+        },
+        {
+          "command": "saropaPackageVibrancy.sortDependencies",
+          "when": "view == saropaPackageVibrancy.packages",
+          "group": "organize@1"
+        }
+      ],
+      "editor/title": [
+        {
+          "command": "saropaPackageVibrancy.hideCodeLens",
+          "when": "resourceFilename == pubspec.yaml && saropaPackageVibrancy.codeLensEnabled",
+          "group": "navigation"
+        },
+        {
+          "command": "saropaPackageVibrancy.showCodeLens",
+          "when": "resourceFilename == pubspec.yaml && !saropaPackageVibrancy.codeLensEnabled",
+          "group": "navigation"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "saropaPackageVibrancy.sortDependencies",
+          "when": "resourceFilename == pubspec.yaml",
+          "group": "saropa@1"
+        }
+      ],
+      "commandPalette": [
+        {
+          "command": "saropaPackageVibrancy.showCodeLens",
+          "when": "!saropaPackageVibrancy.codeLensEnabled"
+        },
+        {
+          "command": "saropaPackageVibrancy.hideCodeLens",
+          "when": "saropaPackageVibrancy.codeLensEnabled"
         }
       ],
       "view/item/context": [
@@ -334,6 +387,43 @@
           ],
           "description": "Controls how much detail the CodeLens annotations show"
         },
+        "saropaPackageVibrancy.indicators": {
+          "type": "object",
+          "default": {},
+          "description": "Custom symbols for status indicators. Keys: vibrant, quiet, legacyLocked, endOfLife, updateAvailable, prerelease, warning, error, unused, suppressed, upToDate",
+          "properties": {
+            "vibrant": { "type": "string", "description": "Indicator for vibrant packages (default: 🟢)" },
+            "quiet": { "type": "string", "description": "Indicator for quiet packages (default: 🟡)" },
+            "legacyLocked": { "type": "string", "description": "Indicator for legacy-locked packages (default: 🟠)" },
+            "endOfLife": { "type": "string", "description": "Indicator for end-of-life packages (default: 🔴)" },
+            "updateAvailable": { "type": "string", "description": "Indicator for available updates (default: ⬆)" },
+            "warning": { "type": "string", "description": "Indicator for warnings (default: ⚠)" },
+            "unused": { "type": "string", "description": "Indicator for unused packages (default: 👻)" },
+            "upToDate": { "type": "string", "description": "Indicator for up-to-date packages (default: ✓)" }
+          }
+        },
+        "saropaPackageVibrancy.indicatorStyle": {
+          "type": "string",
+          "enum": [
+            "emoji",
+            "text",
+            "both",
+            "none"
+          ],
+          "default": "emoji",
+          "enumDescriptions": [
+            "Show emoji only (🟢)",
+            "Show text only (Vibrant)",
+            "Show both (🟢 Vibrant)",
+            "Show score only, no indicator"
+          ],
+          "description": "How to display status indicators in CodeLens"
+        },
+        "saropaPackageVibrancy.sortSdkFirst": {
+          "type": "boolean",
+          "default": true,
+          "description": "Keep SDK dependencies (flutter, flutter_test) at the top when sorting"
+        },
         "saropaPackageVibrancy.endOfLifeDiagnostics": {
           "type": "string",
           "enum": [
@@ -375,7 +465,7 @@
           "default": 15,
           "minimum": 0,
           "maximum": 25,
-"description": "Max bonus for major trusted publishers like dart.dev (0 to disable). Verified publishers get 1/3, no publisher gets −1/3 penalty."
+          "description": "Max bonus for major trusted publishers like dart.dev (0 to disable). Verified publishers get 1/3, no publisher gets \u22121/3 penalty."
         },
         "saropaPackageVibrancy.upgradeSkipTests": {
           "type": "boolean",

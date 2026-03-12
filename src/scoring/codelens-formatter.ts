@@ -1,9 +1,13 @@
 import { VibrancyCategory, VibrancyResult } from '../types';
 import { categoryLabel } from './status-classifier';
 import { formatSizeMB } from './bloat-calculator';
+import {
+    getCategoryIndicator, getIndicator, loadIndicatorStyle,
+} from '../services/indicator-config';
 
 export type CodeLensDetail = 'minimal' | 'standard' | 'full';
 
+/** @deprecated Use getCategoryIndicator() for customizable indicators. */
 export function categoryEmoji(category: VibrancyCategory): string {
     switch (category) {
         case 'vibrant': return '🟢';
@@ -16,18 +20,19 @@ export function categoryEmoji(category: VibrancyCategory): string {
 function formatUpdateSegment(result: VibrancyResult): string {
     if (!result.updateInfo
         || result.updateInfo.updateStatus === 'up-to-date') {
-        return '✓ Up to date';
+        return `${getIndicator('upToDate')} Up to date`;
     }
     const { currentVersion, latestVersion, updateStatus } = result.updateInfo;
-    return `⬆ ${currentVersion} → ${latestVersion} (${updateStatus})`;
+    return `${getIndicator('updateAvailable')} ${currentVersion} → ${latestVersion} (${updateStatus})`;
 }
 
 function formatAlertSegment(result: VibrancyResult): string | null {
+    const warning = getIndicator('warning');
     if (result.knownIssue?.replacement) {
-        return `⚠ Replace with ${result.knownIssue.replacement}`;
+        return `${warning} Replace with ${result.knownIssue.replacement}`;
     }
     if (result.knownIssue?.reason) {
-        return '⚠ Known issue';
+        return `${warning} Known issue`;
     }
     return null;
 }
@@ -37,10 +42,23 @@ export function formatCodeLensTitle(
     result: VibrancyResult,
     detail: CodeLensDetail,
 ): string {
-    const emoji = categoryEmoji(result.category);
+    const style = loadIndicatorStyle();
+    const indicator = getCategoryIndicator(result.category);
     const displayScore = Math.round(result.score / 10);
-    const label = categoryLabel(result.category);
-    const parts: string[] = [`${emoji} ${displayScore}/10 ${label}`];
+
+    let scorePart: string;
+    if (style === 'none') {
+        scorePart = `${displayScore}/10`;
+    } else if (style === 'text') {
+        scorePart = `${displayScore}/10 ${indicator}`;
+    } else if (style === 'both') {
+        scorePart = `${indicator} ${displayScore}/10`;
+    } else {
+        const label = categoryLabel(result.category);
+        scorePart = `${indicator} ${displayScore}/10 ${label}`;
+    }
+
+    const parts: string[] = [scorePart];
 
     if (detail === 'minimal') { return parts[0]; }
 
@@ -53,7 +71,9 @@ export function formatCodeLensTitle(
     const alert = formatAlertSegment(result);
     if (alert) { parts.push(alert); }
 
-    if (result.isUnused) { parts.push('⚠ Unused'); }
+    if (result.isUnused) {
+        parts.push(`${getIndicator('unused')} Unused`);
+    }
 
     return parts.join(' · ');
 }

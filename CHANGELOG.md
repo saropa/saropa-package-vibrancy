@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Sort Dependencies command**: alphabetically sort entries in dependencies, dev_dependencies, and dependency_overrides sections; SDK packages (flutter, flutter_test) optionally kept at top; accessible from Command Palette, tree view menu, and editor context menu
+- **CodeLens toggle**: show/hide vibrancy badges instantly via commands or status bar; click status bar indicator to toggle; editor title button when viewing pubspec.yaml; session-level override of setting
+- **Customizable status indicators**: configure emoji/text for each status category via `indicators` setting; choose display style (emoji/text/both/none) via `indicatorStyle` setting; preset options for accessibility and minimal displays
 - **Suppress from Problems panel**: code actions now include "Suppress [package] diagnostics" for every vibrancy diagnostic, allowing quick suppression directly from the Problems panel or lightbulb menu
 - **Bulk suppression commands**: new commands "Suppress by Category..." (end-of-life, legacy-locked, quiet, or blocked packages) and "Suppress All Unhealthy Packages" accessible from tree view toolbar; "Unsuppress All Packages" to reset
 - **Action Items Consolidator**: cross-references all feature signals (vibrancy score, overrides, transitives, family conflicts, unused deps, blockers) into a unified "Action Items" view at the top of the tree; ranks packages by combined risk score; suggests specific actions ("Remove this package", "Upgrade blocker first", "Upgrade all Firebase packages together"); shows what gets unblocked when a problem is fixed; surfaces in tree view, hover tooltips, and status bar

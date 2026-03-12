@@ -70,6 +70,8 @@ extension." Save for last — they build on everything else.
 
 Read top-to-bottom. Each row is a step; effort column tells you the time.
 
+### Core Roadmap
+
 | # | Feature | Effort | Wow | Unlocks |
 |---|---------|--------|-----|---------|
 | 0 | Package Detail View | S | ⭐ | — |
@@ -79,6 +81,71 @@ Read top-to-bottom. Each row is a step; effort column tells you the time.
 | 4 | CI Pipeline Generator | L | ⭐⭐ | — |
 | 5 | Pre-Flight Simulator (partial) | XL | ⭐⭐⭐ | — |
 | 6 | Conflict Forensics | XL | ⭐⭐⭐ | — |
+
+### VersionLens-Inspired Features
+
+Can be interleaved with core roadmap. Quick wins first.
+
+| # | Feature | Effort | Wow | Depends On |
+|---|---------|--------|-----|------------|
+| A | Sort Dependencies (27) | S | ⭐ | — |
+| B | CodeLens Toggle (29) | S | ⭐ | — |
+| C | Customizable Indicators (32) | S | ⭐ | — |
+| D | Context State Pattern (34) | M | ⭐ | — (enables cleaner E-G) |
+| E | Click-to-Update CodeLens (31) | M | ⭐⭐ | — |
+| F | Bulk Update Commands (26) | M | ⭐⭐ | — |
+| G | Prerelease Versions (30) | M | ⭐⭐ | — |
+| H | Custom Save Tasks (28) | M | ⭐ | — |
+| I | Private Registry Auth (33) | L | ⭐⭐ | — |
+
+**Note:** Vulnerability Radar (03) already covers OSV.dev integration — no new
+plan needed.
+
+---
+
+## S effort / ⭐ wow — VersionLens-Inspired Quick Wins
+
+Adapted from [vscode-versionlens](https://gitlab.com/versionlens/vscode-versionlens).
+1–2 days each. UX polish and developer convenience.
+
+| Feature | What | Plan |
+|---------|------|------|
+| **Sort Dependencies** | Alphabetically sort entries in dependencies, dev_dependencies, dependency_overrides. Single command. | [plan](plans/27-sort-dependencies.md) |
+| **CodeLens Toggle** | Show/Hide commands for CodeLens, status bar indicator, editor title button. Session-level override. | [plan](plans/29-codelens-toggle.md) |
+| **Customizable Indicators** | Let users customize emoji/text for status badges. Preset themes (minimal, text-only, high-contrast). | [plan](plans/32-customizable-indicators.md) |
+
+---
+
+## M effort / ⭐⭐ wow — VersionLens-Inspired Differentiators
+
+3–5 days each. High-impact UX improvements from VersionLens.
+
+| Feature | What | Plan |
+|---------|------|------|
+| **Click-to-Update CodeLens** | Click version in CodeLens to update immediately. Quick pick when multiple options. | [plan](plans/31-click-to-update-codelens.md) |
+| **Bulk Update Commands** | Update All to Latest/Major/Minor/Patch. Confirmation dialog. Progress notification. | [plan](plans/26-bulk-update-commands.md) |
+| **Prerelease Versions** | Show dev/beta/rc versions. Toggle command. Filter by tag. | [plan](plans/30-prerelease-versions.md) |
+
+---
+
+## M effort / ⭐ wow — VersionLens-Inspired Solid Additions
+
+3–5 days each. Workflow improvements.
+
+| Feature | What | Plan |
+|---------|------|------|
+| **Custom Save Tasks** | Run `flutter pub get` or custom command when pubspec.yaml saved with changes. | [plan](plans/28-custom-save-tasks.md) |
+| **Context State Pattern** | Centralized state management synced with VS Code context API. Cleaner `when` clauses. | [plan](plans/34-context-state-pattern.md) |
+
+---
+
+## L effort / ⭐⭐ wow — VersionLens-Inspired Infrastructure
+
+1–2 weeks each. Enterprise/team features.
+
+| Feature | What | Plan |
+|---------|------|------|
+| **Private Registry Auth** | Support private Pub servers with SecretStorage for credentials. Add/remove auth commands. | [plan](plans/33-private-registry-auth.md) |
 
 ---
 
