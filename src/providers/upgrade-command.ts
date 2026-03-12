@@ -2,7 +2,7 @@ import * as vscode from 'vscode';
 import { runPubGet, runFlutterTest } from '../services/flutter-cli';
 import {
     findPubspecYaml, buildVersionEdit, readVersionConstraint,
-} from './tree-commands';
+} from '../services/pubspec-editor';
 import { PackageItem } from './tree-items';
 
 const outputChannel = vscode.window.createOutputChannel('Saropa: Upgrade & Test');

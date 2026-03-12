@@ -4,7 +4,7 @@ import {
 } from '../services/pubspec-parser';
 import { fetchPackageInfo } from '../services/pub-dev-api';
 import { getLatestResults } from '../extension-activation';
-import { findPubspecYaml } from './tree-commands';
+import { findPubspecYaml } from '../services/pubspec-editor';
 
 const SDK_PACKAGES = new Set([
     'flutter', 'flutter_test', 'flutter_localizations',

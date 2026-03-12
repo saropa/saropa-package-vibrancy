@@ -8,6 +8,10 @@ import { ReportMetadata } from './services/report-exporter';
 import { CacheService } from './services/cache-service';
 import { ScanLogger } from './services/scan-logger';
 import { FlutterRelease } from './services/flutter-releases';
+import {
+    getGithubToken, getAllowlistSet, getScoringWeights,
+    getRepoOverrides, getPublisherTrustBonus, getIncludeDevDependencies,
+} from './services/config-service';
 
 export interface ScanConfig {
     readonly token: string;
@@ -20,17 +24,12 @@ export interface ScanConfig {
 }
 
 export function readScanConfig(): ScanConfig {
-    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
     return {
-        token: config.get<string>('githubToken', ''),
-        allowSet: new Set(config.get<string[]>('allowlist', [])),
-        weights: {
-            resolutionVelocity: config.get<number>('weights.resolutionVelocity', 0.5),
-            engagementLevel: config.get<number>('weights.engagementLevel', 0.4),
-            popularity: config.get<number>('weights.popularity', 0.1),
-        },
-        repoOverrides: config.get<Record<string, string>>('repoOverrides', {}),
-        publisherTrustBonus: config.get<number>('publisherTrustBonus', 15),
+        token: getGithubToken(),
+        allowSet: getAllowlistSet(),
+        weights: getScoringWeights(),
+        repoOverrides: getRepoOverrides(),
+        publisherTrustBonus: getPublisherTrustBonus(),
     };
 }
 
@@ -105,8 +104,7 @@ export async function findAndParseDeps(): Promise<ParsedDeps | null> {
     const yamlContent = Buffer.from(yamlBytes).toString('utf8');
     const lockContent = Buffer.from(lockBytes).toString('utf8');
 
-    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
-    const includeDevDeps = config.get<boolean>('includeDevDependencies', true);
+    const includeDevDeps = getIncludeDevDependencies();
 
     const { directDeps, devDeps, constraints } = parsePubspecYaml(yamlContent);
     const effectiveDevDeps = includeDevDeps ? devDeps : [];

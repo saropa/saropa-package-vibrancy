@@ -43,6 +43,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Tree view packages now expand into logical groups (Version, Update, Community, Size, Alerts) with colored emoji indicators for update severity and bloat rating
 - End-of-life diagnostic severity now configurable via `endOfLifeDiagnostics` setting (none/hint/smart); defaults to "none" to avoid warning fatigue for unfixable issues; changed message from "Replace" to "Deprecated:" when no replacement is known
 
+### Internal
+
+- Extracted pubspec editing utilities to `services/pubspec-editor.ts` to fix layer violation (services importing from providers)
+- Created centralized `services/config-service.ts` for typed access to all extension settings
+- Improved modularity: clear separation between providers (UI), services (data), and scoring (pure logic)
+
 ---
 
 ## [0.1.2]

@@ -3,6 +3,7 @@ import { VibrancyResult, FamilySplit, OverrideAnalysis } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
 import { categoryToSeverity } from '../scoring/status-classifier';
 import { formatAge, isOldOverride } from '../scoring/override-analyzer';
+import { getEndOfLifeDiagnostics } from '../services/config-service';
 
 const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
     1: vscode.DiagnosticSeverity.Warning,
@@ -38,8 +39,7 @@ export class VibrancyDiagnostics {
     /** Update diagnostics for a pubspec.yaml document. */
     update(uri: vscode.Uri, content: string, results: VibrancyResult[]): void {
         const diagnostics: vscode.Diagnostic[] = [];
-        const eolSetting = vscode.workspace.getConfiguration('saropaPackageVibrancy')
-            .get<string>('endOfLifeDiagnostics', 'none');
+        const eolSetting = getEndOfLifeDiagnostics();
 
         for (const result of results) {
             const range = findPackageRange(content, result.package.name);

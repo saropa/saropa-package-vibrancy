@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import { UpgradeStep, UpgradeStepResult, UpgradeReport } from '../types';
 import { runPubGet, runFlutterTest } from './flutter-cli';
-import { buildVersionEdit, readVersionConstraint, findPubspecYaml } from '../providers/tree-commands';
+import { buildVersionEdit, readVersionConstraint, findPubspecYaml } from './pubspec-editor';
 
 interface ExecutorConfig {
     readonly skipTests: boolean;
