@@ -1,6 +1,6 @@
 # Feature Roadmap
 
-14 planned features sorted by effort vs wow factor.
+15 planned features sorted by effort vs wow factor.
 
 ## Rating Scale
 
@@ -10,6 +10,16 @@
 | **M**  | 3–5 days, new logic     | ⭐⭐    | Impressive, clear differentiator |
 | **L**  | 1–2 weeks, new systems  | ⭐⭐⭐  | Jaw-drop, nobody else does this |
 | **XL** | 2+ weeks, multi-system  |         |                                 |
+
+---
+
+## S effort / ⭐ wow — Quick Wins
+
+1–2 days each. Polish and UX improvements that make the extension feel complete.
+
+| Feature | What | Plan |
+|---------|------|------|
+| **Package Detail View** | Selection-synced sidebar webview showing full package details. Replaces long tree suffixes with rich, searchable view. Output channel logging for persistence. | [plan](21-package-detail-view.md) |
 
 ---
 
@@ -78,6 +88,7 @@ Read top-to-bottom. Each row is a step; effort column tells you the time.
 
 | # | Feature | Effort | Wow | Unlocks |
 |---|---------|--------|-----|---------|
+| 0 | Package Detail View | S | ⭐ | — |
 | 1 | Family Conflict Detector | M | ⭐⭐ | Upgrade Sequencer (10) |
 | 2 | Adoption Gate | M | ⭐⭐ | — |
 | 3 | Dependency Budget | M | ⭐⭐ | CI Pipeline (20) |
@@ -100,6 +111,7 @@ Build these with the first plan that needs them.
 
 | File | Used By | Build With |
 |------|---------|------------|
+| `detail-logger.ts` | 21, others | #0 Package Detail View |
 | `pub-outdated.ts` | 02, 05 | #8 Why Can't I Upgrade |
 | `dep-graph.ts` | 04, 05, 10 | #9 Transitive X-Ray |
 | `package-families.ts` | 08, 10 | #1 Family Conflicts |
