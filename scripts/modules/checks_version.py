@@ -184,9 +184,10 @@ def validate_version_changelog() -> tuple[str, bool]:
 
 def _resolve_version_conflict(version: str, max_cl: str) -> str | None:
     """Handle version <= CHANGELOG max. Returns resolved version or None."""
-    # If the max version heading is itself marked unreleased, the user
-    # planned to release at that version — target it, not the next patch.
-    target = max_cl if _max_version_is_unpublished() else bump_patch(max_cl)
+    # If the max version heading is marked unreleased, OR if max_cl has no
+    # git tag yet, the user planned to release at that version — target it,
+    # not the next patch.
+    target = max_cl if (_max_version_is_unpublished() or not is_version_tagged(max_cl)) else bump_patch(max_cl)
 
     if is_version_tagged(version):
         warn(f"v{version} is already released (tag exists)")
