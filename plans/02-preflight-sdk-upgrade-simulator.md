@@ -1,5 +1,8 @@
 # Plan: Pre-Flight SDK Upgrade Simulator
 
+**Status: PARTIAL** — Infrastructure exists (`flutter-releases.ts`, `pub-outdated.ts`,
+`PubOutdatedEntry` type). Missing: risk classifier, preflight command, webview report.
+
 ## Problem
 
 Upgrading Flutter is a multi-day nightmare. Developers discover breakages
