@@ -42,6 +42,7 @@ const makeResult = (
     alternatives: [],
     latestPrerelease: null,
     prereleaseTag: null,
+    vulnerabilities: [],
     ...opts,
 });
 

@@ -171,3 +171,15 @@ export function getFreshnessWatchCustomPackages(): readonly string[] {
 export function getAnnotationWithSectionHeaders(): boolean {
     return getConfig().get<boolean>('annotateWithSectionHeaders', false);
 }
+
+// --- Vulnerability Scan Settings ---
+
+import { VulnSeverity } from '../types';
+
+export function getVulnScanEnabled(): boolean {
+    return getConfig().get<boolean>('enableVulnScan', true);
+}
+
+export function getVulnSeverityThreshold(): VulnSeverity {
+    return getConfig().get<VulnSeverity>('vulnSeverityThreshold', 'low');
+}

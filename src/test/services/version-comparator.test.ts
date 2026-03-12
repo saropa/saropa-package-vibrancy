@@ -55,6 +55,7 @@ describe('version-comparator', () => {
             alternatives: [],
             latestPrerelease: null,
             prereleaseTag: null,
+            vulnerabilities: [],
         });
 
         it('should include all direct dependencies in "all" mode', () => {

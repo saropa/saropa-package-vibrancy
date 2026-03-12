@@ -125,3 +125,4 @@ The following features have been implemented and their plans moved to
 - **Package Comparison View** (18) — `comparison-ranker.ts`, `comparison-html.ts`, `comparison-webview.ts`
 - **Private Registry Auth** (33) — `registry-service.ts`, `registry-commands.ts`
 - **CI Pipeline Generator** (20) — `ci-generator.ts`, `threshold-suggester.ts`
+- **Vulnerability Radar** (03) — `osv-api.ts`, `vuln-classifier.ts`

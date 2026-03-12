@@ -1,0 +1,95 @@
+{
+  "results": [
+    {
+      "vulns": [
+        {
+          "id": "GHSA-h23f-j5xy-6m2p",
+          "summary": "HTTP package vulnerable to header injection",
+          "details": "The HTTP package before version 1.1.0 is vulnerable to HTTP header injection attacks when handling user-supplied input in request headers.",
+          "severity": [
+            {
+              "type": "CVSS_V3",
+              "score": "CVSS:3.1/AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N"
+            }
+          ],
+          "affected": [
+            {
+              "package": {
+                "name": "http",
+                "ecosystem": "Pub"
+              },
+              "ranges": [
+                {
+                  "type": "SEMVER",
+                  "events": [
+                    { "introduced": "0" },
+                    { "fixed": "1.1.0" }
+                  ]
+                }
+              ]
+            }
+          ],
+          "references": [
+            {
+              "type": "ADVISORY",
+              "url": "https://github.com/advisories/GHSA-h23f-j5xy-6m2p"
+            },
+            {
+              "type": "WEB",
+              "url": "https://pub.dev/packages/http/changelog"
+            }
+          ],
+          "published": "2023-03-15T14:30:00Z",
+          "modified": "2023-03-20T10:00:00Z"
+        }
+      ]
+    },
+    {
+      "vulns": []
+    },
+    {
+      "vulns": [
+        {
+          "id": "GHSA-test-crit-ical",
+          "summary": "Critical vulnerability in crypto package",
+          "severity": [
+            {
+              "type": "CVSS_V3",
+              "score": "9.8"
+            }
+          ],
+          "affected": [
+            {
+              "ranges": [
+                {
+                  "type": "SEMVER",
+                  "events": [
+                    { "introduced": "0" },
+                    { "fixed": "3.0.0" }
+                  ]
+                }
+              ]
+            }
+          ],
+          "references": [
+            {
+              "type": "ADVISORY",
+              "url": "https://github.com/advisories/GHSA-test-crit-ical"
+            }
+          ]
+        },
+        {
+          "id": "GHSA-test-medi-um00",
+          "summary": "Medium severity issue in crypto",
+          "severity": [
+            {
+              "type": "CVSS_V3",
+              "score": "5.5"
+            }
+          ],
+          "references": []
+        }
+      ]
+    }
+  ]
+}

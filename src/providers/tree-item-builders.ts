@@ -2,6 +2,7 @@ import { VibrancyResult, UpdateInfo, DepGraphSummary, OverrideAnalysis, PackageI
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
 import { formatAge, isOldOverride } from '../scoring/override-analyzer';
+import { severityEmoji, severityLabel, worstSeverity } from '../scoring/vuln-classifier';
 import { DetailItem, GroupItem } from './tree-item-classes';
 
 /**
@@ -40,6 +41,9 @@ export function buildGroupItems(result: VibrancyResult): GroupItem[] {
 
     const deps = buildDependencyGroup(result);
     if (deps) { groups.push(deps); }
+
+    const security = buildSecurityGroup(result);
+    if (security) { groups.push(security); }
 
     const alerts = buildAlertsGroup(result);
     if (alerts) { groups.push(alerts); }
@@ -236,6 +240,41 @@ export function buildDependencyGroup(result: VibrancyResult): GroupItem | null {
     }
 
     return new GroupItem('📊 Dependencies', items);
+}
+
+function buildSecurityGroup(result: VibrancyResult): GroupItem | null {
+    if (result.vulnerabilities.length === 0) { return null; }
+
+    const items: DetailItem[] = [];
+    const worst = worstSeverity(result.vulnerabilities);
+    const worstLabel = worst ? severityLabel(worst) : 'Unknown';
+    const worstEmoji = worst ? severityEmoji(worst) : '🛡️';
+
+    items.push(new DetailItem(
+        `${worstEmoji} Severity`,
+        `${worstLabel} (${result.vulnerabilities.length} total)`,
+    ));
+
+    for (const vuln of result.vulnerabilities.slice(0, 5)) {
+        const emoji = severityEmoji(vuln.severity);
+        const summary = vuln.summary.length > 50
+            ? vuln.summary.substring(0, 47) + '...' : vuln.summary;
+        const fixInfo = vuln.fixedVersion ? ` [fix: ${vuln.fixedVersion}]` : '';
+        items.push(new DetailItem(
+            `${emoji} ${vuln.id}`,
+            `${summary}${fixInfo}`,
+            vuln.url,
+        ));
+    }
+
+    if (result.vulnerabilities.length > 5) {
+        items.push(new DetailItem(
+            '...',
+            `${result.vulnerabilities.length - 5} more vulnerabilities`,
+        ));
+    }
+
+    return new GroupItem('🛡️ Security', items);
 }
 
 /** Build detail items for DepGraphSummaryItem children. */

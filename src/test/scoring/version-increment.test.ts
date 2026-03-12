@@ -127,6 +127,7 @@ describe('version-increment', () => {
         alternatives: [],
         latestPrerelease: null,
         prereleaseTag: null,
+        vulnerabilities: [],
     });
 
         it('filters packages by all', () => {

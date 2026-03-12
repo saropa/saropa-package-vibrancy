@@ -27,6 +27,7 @@ function makeResult(
         blocker: null, upgradeBlockStatus: 'up-to-date',
         transitiveInfo: null, alternatives: [],
         latestPrerelease: null, prereleaseTag: null,
+        vulnerabilities: [],
         ...overrides,
     };
 }

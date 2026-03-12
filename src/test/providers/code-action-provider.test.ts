@@ -116,6 +116,7 @@ describe('VibrancyCodeActionProvider', () => {
                 ],
                 latestPrerelease: null,
                 prereleaseTag: null,
+                vulnerabilities: [],
             },
         ]);
 

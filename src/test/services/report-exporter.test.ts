@@ -43,6 +43,7 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
         drift: null,
         isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
         transitiveInfo: null, alternatives: [], latestPrerelease: null, prereleaseTag: null,
+        vulnerabilities: [],
         ...overrides,
     };
 }

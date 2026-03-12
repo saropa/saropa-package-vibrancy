@@ -44,6 +44,7 @@ describe('FreshnessWatcher', () => {
         alternatives: [],
         latestPrerelease: null,
         prereleaseTag: null,
+        vulnerabilities: [],
     });
 
     beforeEach(() => {

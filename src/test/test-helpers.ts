@@ -50,5 +50,6 @@ export function makeMinimalResult(options: MakeResultOptions = {}): VibrancyResu
         alternatives: [],
         latestPrerelease: null,
         prereleaseTag: null,
+        vulnerabilities: [],
     };
 }

@@ -128,6 +128,7 @@ export async function analyzePackage(
         alternatives,
         latestPrerelease: prereleaseInfo?.latestPrerelease ?? null,
         prereleaseTag: prereleaseInfo?.prereleaseTag ?? null,
+        vulnerabilities: [],
     };
 }
 

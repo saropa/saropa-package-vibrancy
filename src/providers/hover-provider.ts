@@ -4,6 +4,7 @@ import { categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
 import { formatPrereleaseTag } from '../scoring/prerelease-classifier';
+import { worstSeverity, severityEmoji, severityLabel } from '../scoring/vuln-classifier';
 
 export class VibrancyHoverProvider implements vscode.HoverProvider {
     private _results = new Map<string, VibrancyResult>();
@@ -91,6 +92,15 @@ function buildHoverContent(
         );
     }
 
+    if (result.vulnerabilities.length > 0) {
+        const worst = worstSeverity(result.vulnerabilities);
+        const icon = worst ? severityEmoji(worst) : '🛡️';
+        const label = worst ? severityLabel(worst) : 'Unknown';
+        md.appendMarkdown(
+            `| Security | ${icon} **${result.vulnerabilities.length} vulnerability(ies)** (${label}) |\n`,
+        );
+    }
+
     if (insight && insight.problems.length > 0) {
         md.appendMarkdown(`\n---\n`);
         md.appendMarkdown(`**⚠️ Action Items** (${insight.problems.length}):\n\n`);
@@ -171,6 +181,7 @@ function buildHoverContent(
     }
 
     appendFlaggedIssues(md, result);
+    appendVulnerabilities(md, result);
 
     if (result.knownIssue?.reason) {
         md.appendMarkdown(
@@ -207,6 +218,31 @@ function appendFlaggedIssues(
     if (flagged.length > 3) {
         md.appendMarkdown(
             `- *...and ${flagged.length - 3} more*\n`,
+        );
+    }
+}
+
+function appendVulnerabilities(
+    md: vscode.MarkdownString,
+    result: VibrancyResult,
+): void {
+    if (result.vulnerabilities.length === 0) { return; }
+    md.appendMarkdown(`\n---\n`);
+    md.appendMarkdown(
+        `**🛡️ Security Vulnerabilities** (${result.vulnerabilities.length}):\n\n`,
+    );
+    for (const vuln of result.vulnerabilities.slice(0, 5)) {
+        const icon = severityEmoji(vuln.severity);
+        const summary = truncateBody(vuln.summary);
+        const fixInfo = vuln.fixedVersion
+            ? ` — *fix: ${vuln.fixedVersion}*` : '';
+        md.appendMarkdown(
+            `${icon} [${vuln.id}](${vuln.url}): ${summary}${fixInfo}\n\n`,
+        );
+    }
+    if (result.vulnerabilities.length > 5) {
+        md.appendMarkdown(
+            `*...and ${result.vulnerabilities.length - 5} more*\n`,
         );
     }
 }

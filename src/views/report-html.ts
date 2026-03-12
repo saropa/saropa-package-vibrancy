@@ -1,6 +1,7 @@
 import { VibrancyResult } from '../types';
 import { categoryLabel, countByCategory } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
+import { worstSeverity, severityEmoji, severityLabel } from '../scoring/vuln-classifier';
 import { getReportStyles } from './report-styles';
 import { getReportScript } from './report-script';
 import { escapeHtml } from './html-utils';
@@ -36,6 +37,7 @@ function buildReportSummary(results: VibrancyResult[]): string {
         (sum, r) => sum + (r.archiveSizeBytes ?? 0), 0,
     );
     const totalSize = totalBytes > 0 ? formatSizeMB(totalBytes) : '—';
+    const vulnPackages = results.filter(r => r.vulnerabilities.length > 0).length;
 
     return `<div class="summary">
         <div class="summary-card"><div class="count">${results.length}</div><div class="label">Packages</div></div>
@@ -47,6 +49,7 @@ function buildReportSummary(results: VibrancyResult[]): string {
         <div class="summary-card eol"><div class="count">${counts.eol}</div><div class="label">End of Life</div></div>
         <div class="summary-card updates"><div class="count">${updates}</div><div class="label">Updates</div></div>
         <div class="summary-card unused"><div class="count">${results.filter(r => r.isUnused).length}</div><div class="label">Unused</div></div>
+        <div class="summary-card vulns"><div class="count">${vulnPackages}</div><div class="label">Vulnerable</div></div>
     </div>
     <p class="caveat">*Archive sizes before tree shaking. Actual app size will be smaller.</p>`;
 }
@@ -62,6 +65,7 @@ function buildReportTable(results: VibrancyResult[]): string {
             <th data-col="stars">Stars<span class="sort-arrow"></span></th>
             <th data-col="size">Size<span class="sort-arrow"></span></th>
             <th data-col="transitives">Transitives<span class="sort-arrow"></span></th>
+            <th data-col="vulns">Vulns<span class="sort-arrow"></span></th>
             <th data-col="license">License<span class="sort-arrow"></span></th>
             <th data-col="drift">Drift<span class="sort-arrow"></span></th>
             <th data-col="update">Update<span class="sort-arrow"></span></th>
@@ -99,11 +103,19 @@ function buildRow(r: VibrancyResult): string {
         : '—';
     const transitiveClass = flaggedCount > 0 ? 'transitive-flagged' : '';
 
+    const vulnCount = r.vulnerabilities.length;
+    const worst = worstSeverity(r.vulnerabilities);
+    const vulnEmoji = worst ? severityEmoji(worst) : '';
+    const vulnLabel = worst ? severityLabel(worst) : '';
+    const vulnText = vulnCount > 0 ? `${vulnEmoji} ${vulnCount} (${vulnLabel})` : '—';
+    const vulnClass = vulnCount > 0 ? `vuln-${worst}` : '';
+
     return `<tr data-name="${name}" data-version="${version}"
         data-score="${r.score}" data-category="${r.category}"
         data-published="${date}" data-stars="${stars}"
         data-size="${r.archiveSizeBytes ?? 0}"
         data-transitives="${transitiveCount}"
+        data-vulns="${vulnCount}"
         data-license="${escapeHtml(r.license ?? '')}"
         data-drift="${r.drift?.releasesBehind ?? ''}"
         data-update="${r.updateInfo?.updateStatus ?? 'unknown'}"
@@ -116,6 +128,7 @@ function buildRow(r: VibrancyResult): string {
         <td>${stars}</td>
         <td>${sizeText}</td>
         <td class="${transitiveClass}">${transitiveText}</td>
+        <td class="${vulnClass}">${vulnText}</td>
         <td>${escapeHtml(r.license ?? '—')}</td>
         <td>${r.drift ? `${r.drift.releasesBehind} (${r.drift.label})` : '—'}</td>
         <td class="${updateClass}">${updateText}</td>

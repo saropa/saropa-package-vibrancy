@@ -1,10 +1,11 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, FamilySplit, OverrideAnalysis, BudgetResult } from '../types';
+import { VibrancyResult, FamilySplit, OverrideAnalysis, BudgetResult, VulnSeverity, Vulnerability } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
 import { categoryToSeverity } from '../scoring/status-classifier';
 import { formatAge, isOldOverride } from '../scoring/override-analyzer';
-import { getEndOfLifeDiagnostics } from '../services/config-service';
+import { getEndOfLifeDiagnostics, getVulnSeverityThreshold } from '../services/config-service';
 import { buildExceededDiagnostics } from '../scoring/budget-checker';
+import { filterBySeverity } from '../scoring/vuln-classifier';
 
 const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
     1: vscode.DiagnosticSeverity.Warning,
@@ -92,6 +93,13 @@ export class VibrancyDiagnostics {
                 splitDiag.source = 'Saropa Package Vibrancy';
                 splitDiag.code = 'family-conflict';
                 diagnostics.push(splitDiag);
+            }
+
+            const threshold = getVulnSeverityThreshold();
+            const filteredVulns = filterBySeverity(result.vulnerabilities, threshold);
+            for (const vuln of filteredVulns) {
+                const vulnDiag = buildVulnDiagnostic(vscodeRange, vuln);
+                diagnostics.push(vulnDiag);
             }
 
             // Vibrant packages skip the vibrancy diagnostic above,
@@ -258,4 +266,29 @@ function buildFamilyConflictMessage(
         .join(', ');
     const ownVersion = ownGroup ? `v${ownGroup.majorVersion}` : '?';
     return `Family conflict: ${packageName} is in the ${split.familyLabel} family on major ${ownVersion}, but other members use major ${otherVersions}`;
+}
+
+const VULN_SEVERITY_MAP: Record<VulnSeverity, vscode.DiagnosticSeverity> = {
+    'critical': vscode.DiagnosticSeverity.Error,
+    'high': vscode.DiagnosticSeverity.Warning,
+    'medium': vscode.DiagnosticSeverity.Information,
+    'low': vscode.DiagnosticSeverity.Hint,
+};
+
+function buildVulnDiagnostic(
+    range: vscode.Range,
+    vuln: Vulnerability,
+): vscode.Diagnostic {
+    const fixInfo = vuln.fixedVersion
+        ? `. Fixed in ${vuln.fixedVersion}`
+        : '';
+    const msg = `Security: ${vuln.id} — ${vuln.summary}${fixInfo}`;
+    const severity = VULN_SEVERITY_MAP[vuln.severity];
+    const diag = new vscode.Diagnostic(range, msg, severity);
+    diag.source = 'Saropa Package Vibrancy';
+    diag.code = {
+        value: vuln.id,
+        target: vscode.Uri.parse(vuln.url),
+    };
+    return diag;
 }

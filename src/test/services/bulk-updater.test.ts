@@ -51,6 +51,7 @@ describe('bulk-updater', () => {
         alternatives: [],
         latestPrerelease: null,
         prereleaseTag: null,
+        vulnerabilities: [],
     });
 
     describe('getUpdatablePackages', () => {
