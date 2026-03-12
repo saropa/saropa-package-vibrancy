@@ -10,6 +10,8 @@ import { CodeLensToggle } from './ui/codelens-toggle';
 import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
 import { AboutPanel } from './views/about-webview';
+import { DetailViewProvider, DETAIL_VIEW_ID } from './views/detail-view-provider';
+import { DetailLogger, DETAIL_CHANNEL_NAME } from './services/detail-logger';
 import { exportReports, ReportMetadata } from './services/report-exporter';
 import { exportSbomReport } from './services/sbom-exporter';
 import { ScanLogger } from './services/scan-logger';
@@ -47,19 +49,23 @@ import {
 import { sortDependencies } from './services/pubspec-sorter';
 import { clearIndicatorCache } from './services/indicator-config';
 import { findPubspecYaml } from './services/pubspec-editor';
+import { VibrancyStateManager } from './state';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
 let lastReverseDeps: ReadonlyMap<string, readonly import('./types').DepEdge[]> | null = null;
 let lastOverrideAnalyses: OverrideAnalysis[] = [];
 let lastInsights: PackageInsight[] = [];
-let scanInProgress = false;
 let lastScanMeta: ReportMetadata = {
     flutterVersion: 'unknown',
     dartVersion: 'unknown',
     executionTimeMs: 0,
 };
 let freshnessWatcher: FreshnessWatcher | null = null;
+let stateManager: VibrancyStateManager | null = null;
+let detailViewProvider: DetailViewProvider | null = null;
+let detailLogger: DetailLogger | null = null;
+let detailChannel: vscode.OutputChannel | null = null;
 
 /** Get the latest scan results (used by providers). */
 export function getLatestResults(): readonly VibrancyResult[] {
@@ -69,6 +75,11 @@ export function getLatestResults(): readonly VibrancyResult[] {
 /** Get the latest consolidated insights (used by providers). */
 export function getLatestInsights(): readonly PackageInsight[] {
     return lastInsights;
+}
+
+/** Get the vibrancy state manager (used by providers). */
+export function getStateManager(): VibrancyStateManager | null {
+    return stateManager;
 }
 
 /** Main activation wiring. */
@@ -84,10 +95,17 @@ export function runActivation(context: vscode.ExtensionContext): void {
     );
     const diagnostics = new VibrancyDiagnostics(diagCollection);
 
-    setCodeLensToggle(codeLensToggle);
-    codeLensToggle.onDidChange(() => codeLensProvider.refresh());
+    stateManager = new VibrancyStateManager();
 
-    context.subscriptions.push(diagCollection, statusBar, codeLensToggle);
+    setCodeLensToggle(codeLensToggle);
+    codeLensToggle.onDidChange(enabled => {
+        if (stateManager) {
+            stateManager.codeLensEnabled.value = enabled;
+        }
+        codeLensProvider.refresh();
+    });
+
+    context.subscriptions.push(diagCollection, statusBar, codeLensToggle, stateManager);
 
     const adoptionGate = new AdoptionGateProvider(cache);
     adoptionGate.register(context);
@@ -101,12 +119,22 @@ export function runActivation(context: vscode.ExtensionContext): void {
         tree: treeProvider, hover: hoverProvider,
         codeLens: codeLensProvider, codeActions: codeActionProvider,
         statusBar, diagnostics, cache, adoptionGate, codeLensToggle,
+        state: stateManager,
     };
+
+    detailViewProvider = new DetailViewProvider(context.extensionUri);
+    context.subscriptions.push(
+        vscode.window.registerWebviewViewProvider(DETAIL_VIEW_ID, detailViewProvider),
+    );
+
+    detailChannel = vscode.window.createOutputChannel(DETAIL_CHANNEL_NAME);
+    detailLogger = new DetailLogger(detailChannel);
+    context.subscriptions.push(detailChannel);
 
     registerTreeView(context, treeProvider);
     registerProviders(context, hoverProvider, codeLensProvider, codeActionProvider);
     registerCommands(context, targets);
-    registerTreeCommands(context);
+    registerTreeCommands(context, detailViewProvider, detailLogger);
     registerUpgradeCommand(context);
     registerAnnotateCommand(context);
     registerFileWatcher(context, targets);
@@ -166,6 +194,16 @@ function registerTreeView(
     );
     tv.description = `v${context.extension.packageJSON.version}`;
     context.subscriptions.push(tv);
+
+    tv.onDidChangeSelection(e => {
+        if (!detailViewProvider) { return; }
+        if (e.selection.length === 1 && 'result' in e.selection[0]) {
+            const item = e.selection[0] as { result: VibrancyResult };
+            detailViewProvider.update(item.result);
+        } else {
+            detailViewProvider.clear();
+        }
+    });
 }
 
 function registerProviders(
@@ -199,6 +237,7 @@ interface ScanTargets {
     cache: CacheService;
     adoptionGate: AdoptionGateProvider;
     codeLensToggle: CodeLensToggle;
+    state: VibrancyStateManager;
 }
 
 function registerCommands(
@@ -301,12 +340,12 @@ async function autoScanIfPubspec(targets: ScanTargets): Promise<void> {
 }
 
 async function runScan(targets: ScanTargets): Promise<void> {
-    if (scanInProgress) { return; }
-    scanInProgress = true;
+    if (targets.state.isScanning.value) { return; }
+    targets.state.startScanning();
     try {
         await runScanInner(targets);
     } finally {
-        scanInProgress = false;
+        targets.state.stopScanning();
     }
 }
 
@@ -452,6 +491,7 @@ function publishResults(
     targets.tree.updateResults(results);
     targets.tree.updateDepGraphSummary(depGraphSummary);
     targets.tree.updateOverrideAnalyses(lastOverrideAnalyses);
+    targets.state.updateFromResults(results);
     updateFilteredTargets(targets, results, parsed);
 
     freshnessWatcher?.start(results);

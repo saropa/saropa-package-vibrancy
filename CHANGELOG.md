@@ -11,6 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Package Details sidebar view**: selection-synced webview below the tree view showing full package information—version, score, category, suggestions, alerts, community stats, platforms, and links; collapsible sections with smooth transitions; action buttons for upgrade and changelog; placeholder state when no package selected
+- **Vibrancy Details output channel**: dedicated output channel for searchable/persistent package logs; "Log to Output" context menu on tree items; "Log All Package Details" command for full scan dump with timestamps and formatted sections
+- **Click-to-update CodeLens**: CodeLens now shows separate clickable elements—click the status badge to focus the package in the tree view, click the version arrow (→ 2.0.0) to immediately update pubspec.yaml; instant feedback with success notification
 - **Sort Dependencies command**: alphabetically sort entries in dependencies, dev_dependencies, and dependency_overrides sections; SDK packages (flutter, flutter_test) optionally kept at top; accessible from Command Palette, tree view menu, and editor context menu
 - **CodeLens toggle**: show/hide vibrancy badges instantly via commands or status bar; click status bar indicator to toggle; editor title button when viewing pubspec.yaml; session-level override of setting
 - **Customizable status indicators**: configure emoji/text for each status category via `indicators` setting; choose display style (emoji/text/both/none) via `indicatorStyle` setting; preset options for accessibility and minimal displays

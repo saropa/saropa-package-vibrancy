@@ -45,6 +45,11 @@
           "id": "saropaPackageVibrancy.packages",
           "name": "Packages",
           "icon": "images/sidebar-icon.svg"
+        },
+        {
+          "id": "saropaPackageVibrancy.details",
+          "name": "Package Details",
+          "type": "webview"
         }
       ]
     },
@@ -181,13 +186,36 @@
       {
         "command": "saropaPackageVibrancy.toggleCodeLens",
         "title": "Saropa: Toggle Vibrancy Badges"
+      },
+      {
+        "command": "saropaPackageVibrancy.focusDetails",
+        "title": "Saropa: Focus Package Details",
+        "icon": "$(preview)"
+      },
+      {
+        "command": "saropaPackageVibrancy.logDetails",
+        "title": "Log to Output",
+        "icon": "$(output)"
+      },
+      {
+        "command": "saropaPackageVibrancy.logAllDetails",
+        "title": "Saropa: Log All Package Details",
+        "icon": "$(output)"
+      },
+      {
+        "command": "saropaPackageVibrancy.updateFromCodeLens",
+        "title": "Update Package Version"
+      },
+      {
+        "command": "saropaPackageVibrancy.focusPackageInTree",
+        "title": "Show Package in Tree View"
       }
     ],
     "menus": {
       "view/title": [
         {
           "command": "saropaPackageVibrancy.scan",
-          "when": "view == saropaPackageVibrancy.packages",
+          "when": "view == saropaPackageVibrancy.packages && !saropaPackageVibrancy.isScanning",
           "group": "navigation@1"
         },
         {
@@ -197,27 +225,27 @@
         },
         {
           "command": "saropaPackageVibrancy.planUpgrades",
-          "when": "view == saropaPackageVibrancy.packages",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults && !saropaPackageVibrancy.isScanning",
           "group": "navigation@3"
         },
         {
           "command": "saropaPackageVibrancy.annotatePubspec",
-          "when": "view == saropaPackageVibrancy.packages",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults",
           "group": "navigation@4"
         },
         {
           "command": "saropaPackageVibrancy.suppressByCategory",
-          "when": "view == saropaPackageVibrancy.packages",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults",
           "group": "suppress@1"
         },
         {
           "command": "saropaPackageVibrancy.unsuppressAll",
-          "when": "view == saropaPackageVibrancy.packages",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults",
           "group": "suppress@2"
         },
         {
           "command": "saropaPackageVibrancy.sortDependencies",
-          "when": "view == saropaPackageVibrancy.packages",
+          "when": "view == saropaPackageVibrancy.packages && !saropaPackageVibrancy.isScanning",
           "group": "organize@1"
         }
       ],
@@ -248,6 +276,14 @@
         {
           "command": "saropaPackageVibrancy.hideCodeLens",
           "when": "saropaPackageVibrancy.codeLensEnabled"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateFromCodeLens",
+          "when": "false"
+        },
+        {
+          "command": "saropaPackageVibrancy.focusPackageInTree",
+          "when": "false"
         }
       ],
       "view/item/context": [
@@ -305,6 +341,11 @@
           "command": "saropaPackageVibrancy.deleteUnused",
           "when": "viewItem =~ /vibrancyPackageUnused/",
           "group": "3_unused@2"
+        },
+        {
+          "command": "saropaPackageVibrancy.logDetails",
+          "when": "viewItem =~ /vibrancyPackage/",
+          "group": "4_output@1"
         }
       ]
     },

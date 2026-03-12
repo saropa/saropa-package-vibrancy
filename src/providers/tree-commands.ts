@@ -8,14 +8,26 @@ import {
     addSuppressedPackage, removeSuppressedPackage,
 } from '../services/config-service';
 import { DetailItem, PackageItem } from './tree-items';
+import { DetailViewProvider } from '../views/detail-view-provider';
+import { DetailLogger } from '../services/detail-logger';
+import { getLatestResults } from '../extension-activation';
+import { UpdateFromCodeLensArgs } from './codelens-provider';
 
 // Re-export for backward compatibility
 export { findPubspecYaml, buildVersionEdit, findPackageLines, readVersionConstraint };
 
+let _detailViewProvider: DetailViewProvider | null = null;
+let _detailLogger: DetailLogger | null = null;
+
 /** Register tree-item commands (navigate, open, update, copy, suppress). */
 export function registerTreeCommands(
     context: vscode.ExtensionContext,
+    detailViewProvider?: DetailViewProvider | null,
+    detailLogger?: DetailLogger | null,
 ): void {
+    _detailViewProvider = detailViewProvider ?? null;
+    _detailLogger = detailLogger ?? null;
+
     context.subscriptions.push(
         vscode.commands.registerCommand('saropaPackageVibrancy.goToPackage', goToPackage),
         vscode.commands.registerCommand('saropaPackageVibrancy.openOnPubDev', openOnPubDev),
@@ -26,6 +38,11 @@ export function registerTreeCommands(
         vscode.commands.registerCommand('saropaPackageVibrancy.openUrl', openUrl),
         vscode.commands.registerCommand('saropaPackageVibrancy.commentOutUnused', commentOutUnused),
         vscode.commands.registerCommand('saropaPackageVibrancy.deleteUnused', deleteUnused),
+        vscode.commands.registerCommand('saropaPackageVibrancy.focusDetails', focusDetails),
+        vscode.commands.registerCommand('saropaPackageVibrancy.logDetails', logDetails),
+        vscode.commands.registerCommand('saropaPackageVibrancy.logAllDetails', logAllDetails),
+        vscode.commands.registerCommand('saropaPackageVibrancy.updateFromCodeLens', updateFromCodeLens),
+        vscode.commands.registerCommand('saropaPackageVibrancy.focusPackageInTree', focusPackageInTree),
     );
 }
 
@@ -143,5 +160,90 @@ async function deleteUnused(item: PackageItem): Promise<void> {
     vscode.window.showInformationMessage(
         `Deleted ${item.result.package.name} from pubspec.yaml (backup: ${backupName})`,
     );
+}
+
+/** Focus the package details view in the sidebar. */
+function focusDetails(): void {
+    if (_detailViewProvider) {
+        _detailViewProvider.focus();
+    }
+}
+
+/** Log a package's details to the output channel. */
+function logDetails(item: PackageItem): void {
+    if (!_detailLogger) { return; }
+    _detailLogger.logPackage(item.result);
+    _detailLogger.show();
+}
+
+/** Log all package details to the output channel. */
+function logAllDetails(): void {
+    if (!_detailLogger) { return; }
+    const results = getLatestResults();
+    if (results.length === 0) {
+        vscode.window.showWarningMessage('Run a scan first');
+        return;
+    }
+    _detailLogger.clear();
+    _detailLogger.logAllPackages(results);
+    _detailLogger.show();
+}
+
+/** Update a package version directly from CodeLens click. */
+async function updateFromCodeLens(args: UpdateFromCodeLensArgs): Promise<void> {
+    if (!args || !args.packageName || !args.targetVersion) {
+        return;
+    }
+
+    const yamlUri = args.pubspecPath
+        ? vscode.Uri.file(args.pubspecPath)
+        : await findPubspecYaml();
+
+    if (!yamlUri) {
+        vscode.window.showWarningMessage('Could not find pubspec.yaml');
+        return;
+    }
+
+    const doc = await vscode.workspace.openTextDocument(yamlUri);
+    const newConstraint = `^${args.targetVersion}`;
+    const edit = buildVersionEdit(doc, args.packageName, newConstraint);
+
+    if (!edit) {
+        vscode.window.showWarningMessage(
+            `Could not locate version constraint for ${args.packageName}`,
+        );
+        return;
+    }
+
+    const wsEdit = new vscode.WorkspaceEdit();
+    wsEdit.replace(yamlUri, edit.range, edit.newText);
+    const applied = await vscode.workspace.applyEdit(wsEdit);
+
+    if (applied) {
+        await doc.save();
+        vscode.window.showInformationMessage(
+            `Updated ${args.packageName} to ${newConstraint}`,
+        );
+    } else {
+        vscode.window.showWarningMessage(
+            `Failed to update ${args.packageName}`,
+        );
+    }
+}
+
+/** Focus a package in the tree view and show its details. */
+async function focusPackageInTree(packageName: string): Promise<void> {
+    if (!packageName) { return; }
+
+    await vscode.commands.executeCommand(
+        'saropaPackageVibrancy.packages.focus',
+    );
+
+    const results = getLatestResults();
+    const result = results.find(r => r.package.name === packageName);
+
+    if (result && _detailViewProvider) {
+        _detailViewProvider.update(result);
+    }
 }
 
