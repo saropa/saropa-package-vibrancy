@@ -1,9 +1,10 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, FamilySplit, OverrideAnalysis } from '../types';
+import { VibrancyResult, FamilySplit, OverrideAnalysis, BudgetResult } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
 import { categoryToSeverity } from '../scoring/status-classifier';
 import { formatAge, isOldOverride } from '../scoring/override-analyzer';
 import { getEndOfLifeDiagnostics } from '../services/config-service';
+import { buildExceededDiagnostics } from '../scoring/budget-checker';
 
 const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
     1: vscode.DiagnosticSeverity.Warning,
@@ -14,6 +15,7 @@ const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
 export class VibrancyDiagnostics {
     private _splitsByPackage = new Map<string, FamilySplit>();
     private _overrideAnalyses: OverrideAnalysis[] = [];
+    private _budgetResults: BudgetResult[] = [];
 
     constructor(
         private readonly _collection: vscode.DiagnosticCollection,
@@ -34,6 +36,11 @@ export class VibrancyDiagnostics {
     /** Update override analyses for diagnostic generation. */
     updateOverrideAnalyses(analyses: OverrideAnalysis[]): void {
         this._overrideAnalyses = analyses;
+    }
+
+    /** Update budget check results. */
+    updateBudgetResults(results: readonly BudgetResult[]): void {
+        this._budgetResults = [...results];
     }
 
     /** Update diagnostics for a pubspec.yaml document. */
@@ -103,7 +110,26 @@ export class VibrancyDiagnostics {
         }
 
         this._addOverrideDiagnostics(content, diagnostics);
+        this._addBudgetDiagnostics(results, diagnostics);
         this._collection.set(uri, diagnostics);
+    }
+
+    private _addBudgetDiagnostics(
+        results: VibrancyResult[],
+        diagnostics: vscode.Diagnostic[],
+    ): void {
+        const messages = buildExceededDiagnostics(results, this._budgetResults);
+        if (messages.length === 0) { return; }
+
+        const range = new vscode.Range(0, 0, 0, 0);
+        for (const message of messages) {
+            const diag = new vscode.Diagnostic(
+                range, message, vscode.DiagnosticSeverity.Warning,
+            );
+            diag.source = 'Saropa Package Vibrancy';
+            diag.code = 'budget-exceeded';
+            diagnostics.push(diag);
+        }
     }
 
     private _addOverrideDiagnostics(

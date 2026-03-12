@@ -13,12 +13,15 @@ export {
     SectionGroupItem,
     SuppressedPackageItem,
     DetailItem,
+    PrereleaseItem,
     GroupItem,
     DepGraphSummaryItem,
     OverridesGroupItem,
     OverrideItem,
     ActionItemsGroupItem,
     InsightItem,
+    BudgetGroupItem,
+    BudgetItem,
 } from './tree-item-classes';
 
 // Re-export all builders

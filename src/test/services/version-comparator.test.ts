@@ -53,6 +53,8 @@ describe('version-comparator', () => {
             upgradeBlockStatus: 'up-to-date',
             transitiveInfo: null,
             alternatives: [],
+            latestPrerelease: null,
+            prereleaseTag: null,
         });
 
         it('should include all direct dependencies in "all" mode', () => {

@@ -18,7 +18,8 @@
     "prereqs",
     "pubspec",
     "Riverpod",
-    "Unsuppress"
+    "Unsuppress",
+    "versionlens"
   ],
   "cSpell.ignorePaths": [
     "src/data/known_issues.json"

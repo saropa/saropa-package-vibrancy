@@ -124,6 +124,8 @@ describe('VibrancyStateManager', () => {
             upgradeBlockStatus: 'up-to-date',
             transitiveInfo: null,
             alternatives: [],
+            latestPrerelease: null,
+            prereleaseTag: null,
             ...overrides,
         });
 
@@ -214,7 +216,7 @@ describe('VibrancyStateManager', () => {
                 updateInfo: { currentVersion: '1.0.0', latestVersion: '2.0.0', updateStatus: 'major', changelog: null },
                 license: null, drift: null, archiveSizeBytes: null, bloatRating: null, isUnused: false,
                 platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null,
-                upgradeBlockStatus: 'up-to-date', transitiveInfo: null, alternatives: [],
+                upgradeBlockStatus: 'up-to-date', transitiveInfo: null, alternatives: [], latestPrerelease: null, prereleaseTag: null,
             }]);
             manager.startScanning();
             manager.selectedPackage.value = 'some_package';

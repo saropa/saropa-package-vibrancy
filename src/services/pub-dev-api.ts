@@ -2,8 +2,15 @@ import { PubDevPackageInfo, PubDevMetrics } from '../types';
 import { CacheService } from './cache-service';
 import { ScanLogger } from './scan-logger';
 import { fetchWithRetry } from './fetch-retry';
+import { extractPrereleaseInfo, PrereleaseInfo } from '../scoring/prerelease-classifier';
 
 const BASE_URL = 'https://pub.dev/api/packages';
+
+/** Result of fetching package info including prerelease data. */
+export interface PackageInfoResult {
+    readonly info: PubDevPackageInfo | null;
+    readonly prerelease: PrereleaseInfo | null;
+}
 
 /** Fetch package metadata from pub.dev. */
 export async function fetchPackageInfo(
@@ -11,13 +18,26 @@ export async function fetchPackageInfo(
     cache?: CacheService,
     logger?: ScanLogger,
 ): Promise<PubDevPackageInfo | null> {
-    const cacheKey = `pub.info.${name}`;
-    const cached = cache?.get<PubDevPackageInfo>(cacheKey);
-    if (cached) {
-        logger?.cacheHit(cacheKey);
-        return cached;
+    const result = await fetchPackageInfoWithPrerelease(name, cache, logger);
+    return result.info;
+}
+
+/** Fetch package metadata from pub.dev including prerelease info. */
+export async function fetchPackageInfoWithPrerelease(
+    name: string,
+    cache?: CacheService,
+    logger?: ScanLogger,
+): Promise<PackageInfoResult> {
+    const infoCacheKey = `pub.info.${name}`;
+    const prereleaseCacheKey = `pub.prerelease.${name}`;
+
+    const cachedInfo = cache?.get<PubDevPackageInfo>(infoCacheKey);
+    const cachedPrerelease = cache?.get<PrereleaseInfo>(prereleaseCacheKey);
+    if (cachedInfo && cachedPrerelease !== undefined) {
+        logger?.cacheHit(infoCacheKey);
+        return { info: cachedInfo, prerelease: cachedPrerelease };
     }
-    logger?.cacheMiss(cacheKey);
+    logger?.cacheMiss(infoCacheKey);
 
     const url = `${BASE_URL}/${name}`;
     try {
@@ -25,7 +45,7 @@ export async function fetchPackageInfo(
         const t0 = Date.now();
         const resp = await fetchWithRetry(url, undefined, logger);
         logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
-        if (!resp.ok) { return null; }
+        if (!resp.ok) { return { info: null, prerelease: null }; }
 
         const json: any = await resp.json();
         const latest = json.latest ?? {};
@@ -50,11 +70,22 @@ export async function fetchPackageInfo(
             await cache?.set(`pub.archiveUrl.${name}`, archiveUrl);
         }
 
-        await cache?.set(cacheKey, info);
-        return info;
+        const versions: string[] = Array.isArray(json.versions)
+            ? json.versions.map((v: any) => v.version).filter(Boolean)
+            : [];
+        const prerelease = versions.length > 0
+            ? extractPrereleaseInfo(versions)
+            : null;
+
+        await cache?.set(infoCacheKey, info);
+        if (prerelease) {
+            await cache?.set(prereleaseCacheKey, prerelease);
+        }
+
+        return { info, prerelease };
     } catch {
         logger?.error(`Failed to fetch pub.dev info for ${name}`);
-        return null;
+        return { info: null, prerelease: null };
     }
 }
 

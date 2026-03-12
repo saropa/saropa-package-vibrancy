@@ -12,7 +12,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         resolutionVelocity: 0, engagementLevel: 0, popularity: 0,
         publisherTrust: 0, updateInfo: null,
         archiveSizeBytes: null, bloatRating: null, license: null, drift: null, isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
-        transitiveInfo: null, alternatives: [],
+        transitiveInfo: null, alternatives: [], latestPrerelease: null, prereleaseTag: null,
     };
 }
 

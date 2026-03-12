@@ -209,6 +209,38 @@
       {
         "command": "saropaPackageVibrancy.focusPackageInTree",
         "title": "Show Package in Tree View"
+      },
+      {
+        "command": "saropaPackageVibrancy.updateAllLatest",
+        "title": "Saropa: Update All Dependencies (Latest)",
+        "icon": "$(cloud-download)"
+      },
+      {
+        "command": "saropaPackageVibrancy.updateAllMajor",
+        "title": "Saropa: Update All Dependencies (Major Only)"
+      },
+      {
+        "command": "saropaPackageVibrancy.updateAllMinor",
+        "title": "Saropa: Update All Dependencies (Minor Only)"
+      },
+      {
+        "command": "saropaPackageVibrancy.updateAllPatch",
+        "title": "Saropa: Update All Dependencies (Patch Only)"
+      },
+      {
+        "command": "saropaPackageVibrancy.showPrereleases",
+        "title": "Saropa: Show Prerelease Versions",
+        "icon": "$(beaker)"
+      },
+      {
+        "command": "saropaPackageVibrancy.hidePrereleases",
+        "title": "Saropa: Hide Prerelease Versions",
+        "icon": "$(eye-closed)"
+      },
+      {
+        "command": "saropaPackageVibrancy.updateToPrerelease",
+        "title": "Update to Prerelease",
+        "icon": "$(beaker)"
       }
     ],
     "menus": {
@@ -247,6 +279,26 @@
           "command": "saropaPackageVibrancy.sortDependencies",
           "when": "view == saropaPackageVibrancy.packages && !saropaPackageVibrancy.isScanning",
           "group": "organize@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateAllLatest",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults && !saropaPackageVibrancy.isScanning",
+          "group": "2_bulk@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateAllMajor",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults && !saropaPackageVibrancy.isScanning",
+          "group": "2_bulk@2"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateAllMinor",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults && !saropaPackageVibrancy.isScanning",
+          "group": "2_bulk@3"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateAllPatch",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults && !saropaPackageVibrancy.isScanning",
+          "group": "2_bulk@4"
         }
       ],
       "editor/title": [
@@ -283,6 +335,18 @@
         },
         {
           "command": "saropaPackageVibrancy.focusPackageInTree",
+          "when": "false"
+        },
+        {
+          "command": "saropaPackageVibrancy.showPrereleases",
+          "when": "!saropaPackageVibrancy.showPrereleases"
+        },
+        {
+          "command": "saropaPackageVibrancy.hidePrereleases",
+          "when": "saropaPackageVibrancy.showPrereleases"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateToPrerelease",
           "when": "false"
         }
       ],
@@ -346,6 +410,11 @@
           "command": "saropaPackageVibrancy.logDetails",
           "when": "viewItem =~ /vibrancyPackage/",
           "group": "4_output@1"
+        },
+        {
+          "command": "saropaPackageVibrancy.updateToPrerelease",
+          "when": "viewItem == vibrancyPrerelease",
+          "group": "inline"
         }
       ]
     },
@@ -438,6 +507,7 @@
             "legacyLocked": { "type": "string", "description": "Indicator for legacy-locked packages (default: 🟠)" },
             "endOfLife": { "type": "string", "description": "Indicator for end-of-life packages (default: 🔴)" },
             "updateAvailable": { "type": "string", "description": "Indicator for available updates (default: ⬆)" },
+            "prerelease": { "type": "string", "description": "Indicator for prerelease versions (default: 🧪)" },
             "warning": { "type": "string", "description": "Indicator for warnings (default: ⚠)" },
             "unused": { "type": "string", "description": "Indicator for unused packages (default: 👻)" },
             "upToDate": { "type": "string", "description": "Indicator for up-to-date packages (default: ✓)" }
@@ -520,6 +590,11 @@
           "maximum": 50,
           "description": "Maximum number of upgrade steps to execute in one run"
         },
+        "saropaPackageVibrancy.bulkUpdateConfirmation": {
+          "type": "boolean",
+          "default": true,
+          "description": "Show confirmation dialog before bulk updating dependencies"
+        },
         "saropaPackageVibrancy.watchEnabled": {
           "type": "boolean",
           "default": true,
@@ -572,6 +647,74 @@
             "Group by pubspec section (dependencies, dev_dependencies)"
           ],
           "description": "How to group packages in the tree view"
+        },
+        "saropaPackageVibrancy.showPrereleases": {
+          "type": "boolean",
+          "default": false,
+          "description": "Show prerelease versions (dev, beta, rc) in CodeLens and tree view"
+        },
+        "saropaPackageVibrancy.prereleaseTagFilter": {
+          "type": "array",
+          "items": {
+            "type": "string"
+          },
+          "default": [],
+          "description": "Only show prereleases matching these tags (e.g., ['beta', 'rc']). Empty = show all prereleases."
+        },
+        "saropaPackageVibrancy.onSaveChanges": {
+          "type": "string",
+          "default": "",
+          "description": "Command to run when pubspec.yaml is saved with dependency changes. Empty = disabled. Examples: 'flutter pub get', 'task:My Build Task'"
+        },
+        "saropaPackageVibrancy.onSaveChangesDetection": {
+          "type": "string",
+          "enum": [
+            "any",
+            "dependencies"
+          ],
+          "default": "dependencies",
+          "enumDescriptions": [
+            "Run on any pubspec.yaml save",
+            "Run only when dependency sections change"
+          ],
+          "description": "When to trigger the on-save task"
+        },
+        "saropaPackageVibrancy.budget.maxDependencies": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": 1,
+          "description": "Maximum number of total dependencies allowed (null = no limit)"
+        },
+        "saropaPackageVibrancy.budget.maxTotalSizeMB": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": 0.1,
+          "description": "Maximum total archive size in megabytes (null = no limit)"
+        },
+        "saropaPackageVibrancy.budget.minAverageVibrancy": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": 0,
+          "maximum": 100,
+          "description": "Minimum average vibrancy score (0-100) required across all dependencies (null = no limit)"
+        },
+        "saropaPackageVibrancy.budget.maxEndOfLife": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": 0,
+          "description": "Maximum number of End-of-Life packages allowed (null = no limit)"
+        },
+        "saropaPackageVibrancy.budget.maxLegacyLocked": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": 0,
+          "description": "Maximum number of Legacy-Locked packages allowed (null = no limit)"
+        },
+        "saropaPackageVibrancy.budget.maxUnused": {
+          "type": ["number", "null"],
+          "default": null,
+          "minimum": 0,
+          "description": "Maximum number of unused dependencies allowed (null = no limit)"
         }
       }
     }

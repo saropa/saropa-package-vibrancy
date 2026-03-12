@@ -1,21 +1,24 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, FamilySplit, OverrideAnalysis, DepGraphSummary, DependencySection, PackageInsight } from '../types';
+import { VibrancyResult, FamilySplit, OverrideAnalysis, DepGraphSummary, DependencySection, PackageInsight, BudgetResult } from '../types';
 import {
     PackageItem, DetailItem, GroupItem, SuppressedGroupItem,
     SuppressedPackageItem, buildGroupItems, SectionGroupItem,
     OverridesGroupItem, OverrideItem, buildOverrideDetails,
     DepGraphSummaryItem, buildDepGraphSummaryDetails,
     ActionItemsGroupItem, InsightItem, buildInsightDetails,
+    BudgetGroupItem, BudgetItem, PrereleaseItem,
 } from './tree-items';
 import {
     FamilyConflictGroupItem, FamilySplitItem, buildFamilySplitDetails,
 } from './family-tree-items';
+import { arePrereleasesEnabled, getPrereleaseTagFilter } from '../ui/prerelease-toggle';
 
 type TreeNode =
     | PackageItem | GroupItem | DetailItem
     | SuppressedGroupItem | FamilyConflictGroupItem | FamilySplitItem
     | OverridesGroupItem | OverrideItem | DepGraphSummaryItem
-    | SectionGroupItem | ActionItemsGroupItem | InsightItem;
+    | SectionGroupItem | ActionItemsGroupItem | InsightItem
+    | BudgetGroupItem | BudgetItem | PrereleaseItem;
 
 export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     private _results: VibrancyResult[] = [];
@@ -23,6 +26,8 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     private _overrideAnalyses: OverrideAnalysis[] = [];
     private _depGraphSummary: DepGraphSummary | null = null;
     private _insights: PackageInsight[] = [];
+    private _budgetResults: BudgetResult[] = [];
+    private _budgetSummary: string = '';
     private readonly _onDidChangeTreeData = new vscode.EventEmitter<void>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
@@ -56,6 +61,13 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
         this._onDidChangeTreeData.fire();
     }
 
+    /** Update budget check results. */
+    updateBudgetResults(results: readonly BudgetResult[], summary: string): void {
+        this._budgetResults = [...results];
+        this._budgetSummary = summary;
+        this._onDidChangeTreeData.fire();
+    }
+
     /** Re-fire the change event to refresh the tree display. */
     refresh(): void {
         this._onDidChangeTreeData.fire();
@@ -72,6 +84,11 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     getChildren(element?: TreeNode): TreeNode[] {
         if (!element) {
             return this._buildRootChildren();
+        }
+        if (element instanceof BudgetGroupItem) {
+            return element.budgetResults
+                .filter(r => r.status !== 'unconfigured')
+                .map(r => new BudgetItem(r));
         }
         if (element instanceof ActionItemsGroupItem) {
             return element.insights.map(i => new InsightItem(i));
@@ -103,7 +120,22 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
             return element.results.map(r => new PackageItem(r));
         }
         if (element instanceof PackageItem) {
-            return buildGroupItems(element.result);
+            const children: TreeNode[] = [];
+            if (arePrereleasesEnabled() && element.result.latestPrerelease) {
+                const tagFilter = getPrereleaseTagFilter();
+                const tag = element.result.prereleaseTag;
+                const passesFilter = tagFilter.length === 0
+                    || (tag && tagFilter.some(f => f.toLowerCase() === tag.toLowerCase()));
+                if (passesFilter) {
+                    children.push(new PrereleaseItem(
+                        element.result.package.name,
+                        element.result.latestPrerelease,
+                        element.result.prereleaseTag,
+                    ));
+                }
+            }
+            children.push(...buildGroupItems(element.result));
+            return children;
         }
         if (element instanceof GroupItem) {
             return element.children;
@@ -113,6 +145,14 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
 
     private _buildRootChildren(): TreeNode[] {
         const items: TreeNode[] = [];
+
+        const configuredBudgets = this._budgetResults.filter(
+            r => r.status !== 'unconfigured',
+        );
+        if (configuredBudgets.length > 0) {
+            items.push(new BudgetGroupItem(this._budgetResults, this._budgetSummary));
+        }
+
         if (this._insights.length > 0) {
             items.push(new ActionItemsGroupItem(this._insights));
         }

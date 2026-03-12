@@ -5,7 +5,7 @@ import {
 import { CacheService } from './services/cache-service';
 import { ScanLogger } from './services/scan-logger';
 import {
-    fetchPackageInfo, fetchPackageMetrics, fetchPublisher,
+    fetchPackageInfoWithPrerelease, fetchPackageMetrics, fetchPublisher,
     fetchArchiveSize,
 } from './services/pub-dev-api';
 import { calcBloatRating } from './scoring/bloat-calculator';
@@ -53,11 +53,13 @@ export async function analyzePackage(
     const knownIssue = findKnownIssue(dep.name);
     if (knownIssue) { log?.info(`Known issue: ${knownIssue.status}`); }
 
-    const [pubDev, metrics, publisher] = await Promise.all([
-        fetchPackageInfo(dep.name, params.cache, log),
+    const [pubDevResult, metrics, publisher] = await Promise.all([
+        fetchPackageInfoWithPrerelease(dep.name, params.cache, log),
         fetchPackageMetrics(dep.name, params.cache, log),
         fetchPublisher(dep.name, params.cache, log),
     ]);
+    const pubDev = pubDevResult.info;
+    const prereleaseInfo = pubDevResult.prerelease;
 
     const repoUrl = resolveRepoUrl(dep.name, pubDev?.repositoryUrl, params);
     const { github, repoInfo } = await fetchGitHubData(repoUrl, params);
@@ -124,6 +126,8 @@ export async function analyzePackage(
         upgradeBlockStatus: 'up-to-date',
         transitiveInfo: null,
         alternatives,
+        latestPrerelease: prereleaseInfo?.latestPrerelease ?? null,
+        prereleaseTag: prereleaseInfo?.prereleaseTag ?? null,
     };
 }
 

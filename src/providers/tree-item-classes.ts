@@ -2,8 +2,10 @@ import * as vscode from 'vscode';
 import {
     VibrancyResult, VibrancyCategory, DepGraphSummary,
     OverrideAnalysis, DependencySection, PackageInsight,
+    BudgetResult,
 } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
+import { formatPrereleaseTag } from '../scoring/prerelease-classifier';
 
 /**
  * Tree item class definitions.
@@ -131,6 +133,29 @@ export class DetailItem extends vscode.TreeItem {
     }
 }
 
+export class PrereleaseItem extends vscode.TreeItem {
+    constructor(
+        public readonly packageName: string,
+        public readonly prereleaseVersion: string,
+        public readonly prereleaseTag: string | null,
+    ) {
+        const tag = formatPrereleaseTag(prereleaseTag);
+        super(`🧪 Prerelease: ${prereleaseVersion}`, vscode.TreeItemCollapsibleState.None);
+        this.description = tag;
+        this.iconPath = new vscode.ThemeIcon(
+            'beaker',
+            new vscode.ThemeColor('editorInfo.foreground'),
+        );
+        this.tooltip = `Update to prerelease version ${prereleaseVersion} (${tag})`;
+        this.contextValue = 'vibrancyPrerelease';
+        this.command = {
+            command: 'saropaPackageVibrancy.updateToPrerelease',
+            title: 'Update to Prerelease',
+            arguments: [packageName, prereleaseVersion],
+        };
+    }
+}
+
 export class GroupItem extends vscode.TreeItem {
     constructor(
         label: string,
@@ -232,5 +257,88 @@ export class InsightItem extends vscode.TreeItem {
             title: 'Go to pubspec.yaml',
             arguments: [insight.name],
         };
+    }
+}
+
+function budgetStatusIcon(status: string): string {
+    switch (status) {
+        case 'under': return 'pass';
+        case 'warning': return 'warning';
+        case 'exceeded': return 'error';
+        default: return 'circle-outline';
+    }
+}
+
+function budgetStatusColor(status: string): vscode.ThemeColor {
+    switch (status) {
+        case 'under': return new vscode.ThemeColor('testing.iconPassed');
+        case 'warning': return new vscode.ThemeColor('editorWarning.foreground');
+        case 'exceeded': return new vscode.ThemeColor('editorError.foreground');
+        default: return new vscode.ThemeColor('disabledForeground');
+    }
+}
+
+export class BudgetGroupItem extends vscode.TreeItem {
+    constructor(
+        public readonly budgetResults: readonly BudgetResult[],
+        summary: string,
+    ) {
+        super('📊 Budget', vscode.TreeItemCollapsibleState.Expanded);
+        this.description = summary;
+
+        const hasExceeded = budgetResults.some(r => r.status === 'exceeded');
+        const hasWarning = budgetResults.some(r => r.status === 'warning');
+
+        if (hasExceeded) {
+            this.iconPath = new vscode.ThemeIcon(
+                'error',
+                new vscode.ThemeColor('editorError.foreground'),
+            );
+        } else if (hasWarning) {
+            this.iconPath = new vscode.ThemeIcon(
+                'warning',
+                new vscode.ThemeColor('editorWarning.foreground'),
+            );
+        } else {
+            this.iconPath = new vscode.ThemeIcon(
+                'pass',
+                new vscode.ThemeColor('testing.iconPassed'),
+            );
+        }
+
+        this.tooltip = 'Dependency health budget status';
+        this.contextValue = 'vibrancyBudgetGroup';
+    }
+}
+
+export class BudgetItem extends vscode.TreeItem {
+    constructor(public readonly budgetResult: BudgetResult) {
+        super(budgetResult.dimension, vscode.TreeItemCollapsibleState.None);
+        this.description = budgetResult.details;
+
+        const emoji = budgetResult.status === 'under' ? '✅'
+            : budgetResult.status === 'warning' ? '⚠️'
+                : budgetResult.status === 'exceeded' ? '❌' : '';
+
+        if (budgetResult.status !== 'unconfigured' && emoji) {
+            this.description = `${budgetResult.details} ${emoji}`;
+        }
+
+        this.iconPath = new vscode.ThemeIcon(
+            budgetStatusIcon(budgetResult.status),
+            budgetStatusColor(budgetResult.status),
+        );
+
+        if (budgetResult.status === 'exceeded') {
+            this.tooltip = `Exceeded: ${budgetResult.details}. Action required.`;
+        } else if (budgetResult.status === 'warning') {
+            this.tooltip = `Warning: ${budgetResult.details}. Approaching limit.`;
+        } else if (budgetResult.status === 'under') {
+            this.tooltip = `OK: ${budgetResult.details}`;
+        } else {
+            this.tooltip = `${budgetResult.dimension}: ${budgetResult.details} (no limit set)`;
+        }
+
+        this.contextValue = 'vibrancyBudgetItem';
     }
 }

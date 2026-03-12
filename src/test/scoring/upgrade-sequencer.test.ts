@@ -37,6 +37,8 @@ function makeResult(
         upgradeBlockStatus: opts.blocked ? 'blocked' : 'upgradable',
         transitiveInfo: null,
         alternatives: [],
+        latestPrerelease: null,
+        prereleaseTag: null,
     };
 }
 

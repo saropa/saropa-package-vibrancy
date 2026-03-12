@@ -141,6 +141,14 @@ export const workspace: Record<string, any> = {
         readFile: async () => new Uint8Array(),
         writeFile: async () => { /* no-op */ },
     },
+    onDidSaveTextDocument: (_listener: (doc: any) => void) => ({
+        dispose: () => { /* no-op */ },
+    }),
+    onDidOpenTextDocument: (_listener: (doc: any) => void) => ({
+        dispose: () => { /* no-op */ },
+    }),
+    textDocuments: [] as any[],
+    getWorkspaceFolder: (_uri: any) => null,
 };
 
 export const languages = {

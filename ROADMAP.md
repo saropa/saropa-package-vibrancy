@@ -13,16 +13,6 @@ Planned features sorted by effort vs wow factor.
 
 ---
 
-## S effort / ⭐ wow — Quick Wins
-
-1–2 days each. Polish and UX improvements that make the extension feel complete.
-
-| Feature | What | Plan |
-|---------|------|------|
-| **Package Detail View** | Selection-synced sidebar webview showing full package details. Replaces long tree suffixes with rich, searchable view. Output channel logging for persistence. | [plan](plans/21-package-detail-view.md) |
-
----
-
 ## M effort / ⭐⭐ wow — Core Differentiators
 
 3–5 days each. These are what make Saropa clearly better than everything else.
@@ -31,6 +21,7 @@ Planned features sorted by effort vs wow factor.
 |---------|------|------|
 | **Package Comparison View** | Select 2–3 packages, open side-by-side webview comparing score, size, platforms, stars, license. Winner highlighting. | [plan](plans/18-package-comparison-view.md) |
 | **Dependency Budget** | Project-level limits: max deps, min avg vibrancy, max EOL. Visual gauge in sidebar. Non-zero exit code for CI. | [plan](plans/16-dependency-budget.md) |
+| **Prerelease Versions** | Show dev/beta/rc versions. Toggle command. Filter by tag. | [plan](plans/30-prerelease-versions.md) |
 
 ---
 
@@ -51,6 +42,7 @@ Planned features sorted by effort vs wow factor.
 | Feature | What | Depends On | Plan |
 |---------|------|------------|------|
 | **CI Pipeline Generator** | One command generates a GitHub Actions / GitLab CI workflow with auto-configured thresholds. Capstone feature. | Budget (16) | [plan](plans/20-ci-pipeline-generator.md) |
+| **Private Registry Auth** | Support private Pub servers with SecretStorage for credentials. Add/remove auth commands. | — | [plan](plans/33-private-registry-auth.md) |
 
 ---
 
@@ -62,7 +54,6 @@ extension." Save for last — they build on everything else.
 | Feature | What | Depends On | Plan |
 |---------|------|------------|------|
 | **Pre-Flight SDK Upgrade Simulator** | "What breaks if I upgrade to Flutter 3.29?" Simulates upgrade, cross-references with vibrancy data, shows before/after risk report. **Partial:** `flutter-releases.ts`, `pub-outdated.ts` exist. | — | [plan](plans/02-preflight-sdk-upgrade-simulator.md) |
-| **Conflict Forensics** | Parse `pub get` failure stderr into readable constraint chains. Enrich with vibrancy scores. Quick-fix actions to resolve. Solves the #1 Flutter pain point. | — | [plan](plans/01-conflict-forensics.md) |
 
 ---
 
@@ -70,82 +61,18 @@ extension." Save for last — they build on everything else.
 
 Read top-to-bottom. Each row is a step; effort column tells you the time.
 
-### Core Roadmap
-
 | # | Feature | Effort | Wow | Unlocks |
 |---|---------|--------|-----|---------|
-| 0 | Package Detail View | S | ⭐ | — |
-| 1 | Dependency Budget | M | ⭐⭐ | CI Pipeline (20) |
-| 2 | Comparison View | M | ⭐⭐ | — |
-| 3 | Changelog Diff Webview | M | ⭐ | — |
-| 4 | CI Pipeline Generator | L | ⭐⭐ | — |
-| 5 | Pre-Flight Simulator (partial) | XL | ⭐⭐⭐ | — |
-| 6 | Conflict Forensics | XL | ⭐⭐⭐ | — |
-
-### VersionLens-Inspired Features
-
-Can be interleaved with core roadmap. Quick wins first.
-
-| # | Feature | Effort | Wow | Depends On |
-|---|---------|--------|-----|------------|
-| A | Sort Dependencies (27) | S | ⭐ | — |
-| B | CodeLens Toggle (29) | S | ⭐ | — |
-| C | Customizable Indicators (32) | S | ⭐ | — |
-| D | Context State Pattern (34) | M | ⭐ | — (enables cleaner E-G) |
-| E | Click-to-Update CodeLens (31) | M | ⭐⭐ | — |
-| F | Bulk Update Commands (26) | M | ⭐⭐ | — |
-| G | Prerelease Versions (30) | M | ⭐⭐ | — |
-| H | Custom Save Tasks (28) | M | ⭐ | — |
-| I | Private Registry Auth (33) | L | ⭐⭐ | — |
+| 1 | Dependency Budget (16) | M | ⭐⭐ | CI Pipeline (20) |
+| 2 | Comparison View (18) | M | ⭐⭐ | — |
+| 3 | Prerelease Versions (30) | M | ⭐⭐ | — |
+| 4 | Changelog Diff Webview (15) | M | ⭐ | — |
+| 5 | Private Registry Auth (33) | L | ⭐⭐ | — |
+| 6 | CI Pipeline Generator (20) | L | ⭐⭐ | — |
+| 7 | Pre-Flight Simulator (02) | XL | ⭐⭐⭐ | — |
 
 **Note:** Vulnerability Radar (03) already covers OSV.dev integration — no new
 plan needed.
-
----
-
-## S effort / ⭐ wow — VersionLens-Inspired Quick Wins
-
-Adapted from [vscode-versionlens](https://gitlab.com/versionlens/vscode-versionlens).
-1–2 days each. UX polish and developer convenience.
-
-| Feature | What | Plan |
-|---------|------|------|
-| **Sort Dependencies** | Alphabetically sort entries in dependencies, dev_dependencies, dependency_overrides. Single command. | [plan](plans/27-sort-dependencies.md) |
-| **CodeLens Toggle** | Show/Hide commands for CodeLens, status bar indicator, editor title button. Session-level override. | [plan](plans/29-codelens-toggle.md) |
-| **Customizable Indicators** | Let users customize emoji/text for status badges. Preset themes (minimal, text-only, high-contrast). | [plan](plans/32-customizable-indicators.md) |
-
----
-
-## M effort / ⭐⭐ wow — VersionLens-Inspired Differentiators
-
-3–5 days each. High-impact UX improvements from VersionLens.
-
-| Feature | What | Plan |
-|---------|------|------|
-| **Click-to-Update CodeLens** | Click version in CodeLens to update immediately. Quick pick when multiple options. | [plan](plans/31-click-to-update-codelens.md) |
-| **Bulk Update Commands** | Update All to Latest/Major/Minor/Patch. Confirmation dialog. Progress notification. | [plan](plans/26-bulk-update-commands.md) |
-| **Prerelease Versions** | Show dev/beta/rc versions. Toggle command. Filter by tag. | [plan](plans/30-prerelease-versions.md) |
-
----
-
-## M effort / ⭐ wow — VersionLens-Inspired Solid Additions
-
-3–5 days each. Workflow improvements.
-
-| Feature | What | Plan |
-|---------|------|------|
-| **Custom Save Tasks** | Run `flutter pub get` or custom command when pubspec.yaml saved with changes. | [plan](plans/28-custom-save-tasks.md) |
-| **Context State Pattern** | Centralized state management synced with VS Code context API. Cleaner `when` clauses. | [plan](plans/34-context-state-pattern.md) |
-
----
-
-## L effort / ⭐⭐ wow — VersionLens-Inspired Infrastructure
-
-1–2 weeks each. Enterprise/team features.
-
-| Feature | What | Plan |
-|---------|------|------|
-| **Private Registry Auth** | Support private Pub servers with SecretStorage for credentials. Add/remove auth commands. | [plan](plans/33-private-registry-auth.md) |
 
 ---
 
@@ -155,7 +82,7 @@ Build these with the first plan that needs them.
 
 | File | Used By | Status |
 |------|---------|--------|
-| `detail-logger.ts` | 21, others | Not started |
+| `detail-logger.ts` | 21 | ✅ Built |
 | `pub-outdated.ts` | 02 | ✅ Built (for plan 05) |
 | `flutter-releases.ts` | 02 | ✅ Built |
 
@@ -164,13 +91,34 @@ Build these with the first plan that needs them.
 ## Completed Features
 
 The following features have been implemented and their plans moved to
-`plans/history/`:
+`plans/history/`.
 
+### 2026-03-11
+
+- **Conflict Forensics** (01) — `blocker-enricher.ts`
 - **Transitive Dependency X-Ray** (04) — `dep-graph.ts`, `transitive-analyzer.ts`
 - **"Why Can't I Upgrade?"** (05) — `pub-outdated.ts`, `blocker-analyzer.ts`
 - **Package Family Conflict Detector** (08) — `family-conflict-detector.ts`
+- **Dependency Drift Timeline** (09) — `drift-calculator.ts`
 - **Upgrade Sequencer** (10) — `upgrade-sequencer.ts`
 - **Package Adoption Gate** (11) — `adoption-gate.ts`
-- **dependency_overrides Tracker** (14) — `override-parser.ts`, `override-analyzer.ts`
+- **Inline CodeLens Vibrancy Badges** (12) — `codelens-provider.ts`
+- **Lock-File Diff Narrator** (13) — `lock-diff.ts`, `diff-narrator.ts`
+- **Smart dependency_overrides Tracker** (14) — `override-parser.ts`, `override-analyzer.ts`
+- **SBOM Generator** (17) — `sbom-generator.ts`, `sbom-exporter.ts`
 - **Dependency Freshness Watch** (19) — `freshness-watcher.ts`, `version-comparator.ts`
+- **License in Tree View** — `license-classifier.ts`
+- **Unused Dependency Detection** — `unused-detector.ts`, `import-scanner.ts`
+
+### 2026-03-12
+
+- **Package Detail View** (21) — `detail-logger.ts`, webview panel
+- **Post-Processing Consolidator** (23) — `consolidate-insights.ts`
+- **Bulk Update Commands** (26) — `bulk-updater.ts`, `version-increment.ts`
+- **Sort Dependencies** (27) — `pubspec-sorter.ts`
+- **Custom Save Tasks** (28) — `dependency-differ.ts`, `save-task-runner.ts`
+- **CodeLens Toggle** (29) — `context-state.ts`, status bar
+- **Click-to-Update CodeLens** (31) — `upgrade-command.ts`
+- **Customizable Indicators** (32) — `indicator-config.ts`
+- **Context State Pattern** (34) — `state/context-state.ts`, `state/vibrancy-state.ts`
 - **Alternative Package Suggestions** — `pub-dev-search.ts`

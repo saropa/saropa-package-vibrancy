@@ -3,14 +3,22 @@ import { VibrancyResult } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
 import { CodeLensDetail } from '../scoring/codelens-formatter';
 import { CodeLensToggle } from '../ui/codelens-toggle';
+import { PrereleaseToggle, arePrereleasesEnabled, getPrereleaseTagFilter } from '../ui/prerelease-toggle';
 import { getCategoryIndicator, getIndicator } from '../services/indicator-config';
 import { categoryLabel } from '../scoring/status-classifier';
+import { formatPrereleaseTag } from '../scoring/prerelease-classifier';
 
 let globalToggle: CodeLensToggle | null = null;
+let globalPrereleaseToggle: PrereleaseToggle | null = null;
 
 /** Set the global toggle instance (called from extension-activation). */
 export function setCodeLensToggle(toggle: CodeLensToggle): void {
     globalToggle = toggle;
+}
+
+/** Set the global prerelease toggle instance (called from extension-activation). */
+export function setPrereleaseToggle(toggle: PrereleaseToggle): void {
+    globalPrereleaseToggle = toggle;
 }
 
 /** Arguments for the updateFromCodeLens command. */
@@ -109,7 +117,34 @@ function buildLensesForPackage(
         }));
     }
 
+    if (isPrereleaseEnabled() && result.latestPrerelease) {
+        const tagFilter = getPrereleaseTagFilter();
+        const tag = result.prereleaseTag;
+        const passesFilter = tagFilter.length === 0
+            || (tag && tagFilter.some(f => f.toLowerCase() === tag.toLowerCase()));
+        if (passesFilter) {
+            const displayTag = formatPrereleaseTag(tag);
+            const args: UpdateFromCodeLensArgs = {
+                packageName: name,
+                targetVersion: result.latestPrerelease,
+                pubspecPath,
+            };
+            lenses.push(new vscode.CodeLens(range, {
+                title: `🧪 ${result.latestPrerelease} (${displayTag})`,
+                command: 'saropaPackageVibrancy.updateFromCodeLens',
+                arguments: [args],
+            }));
+        }
+    }
+
     return lenses;
+}
+
+function isPrereleaseEnabled(): boolean {
+    if (globalPrereleaseToggle) {
+        return globalPrereleaseToggle.isEnabled;
+    }
+    return arePrereleasesEnabled();
 }
 
 function formatStatusTitle(result: VibrancyResult, detail: CodeLensDetail): string {

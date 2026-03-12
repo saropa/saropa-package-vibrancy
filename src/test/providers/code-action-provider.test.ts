@@ -114,6 +114,8 @@ describe('VibrancyCodeActionProvider', () => {
                 alternatives: [
                     { name: 'better_pkg', source: 'discovery', score: 80, likes: 500 },
                 ],
+                latestPrerelease: null,
+                prereleaseTag: null,
             },
         ]);
 

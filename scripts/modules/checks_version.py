@@ -184,23 +184,20 @@ def validate_version_changelog() -> tuple[str, bool]:
 
 def _resolve_version_conflict(version: str, max_cl: str) -> str | None:
     """Handle version <= CHANGELOG max. Returns resolved version or None."""
-    # If the max version heading is marked unreleased, OR if max_cl has no
-    # git tag yet, the user planned to release at that version — target it,
-    # not the next patch.
-    target = max_cl if (_max_version_is_unpublished() or not is_version_tagged(max_cl)) else bump_patch(max_cl)
+    # Target = CHANGELOG max if not tagged, otherwise bump past it
+    target = max_cl if not is_version_tagged(max_cl) else bump_patch(max_cl)
 
     if is_version_tagged(version):
         warn(f"v{version} is already released (tag exists)")
-        if _changelog_has_unpublished():
-            version, ok_ = _offer_bump(version, target, "Bump to release changelog")
-            return version if ok_ else None
-        # No unreleased section — offer publish-as-is
-        if ask_yn(f"Publish v{version} as-is (e.g. sync to Open VSX)?"):
-            ok(f"Publishing v{version} as-is")
-            return version
-        version, ok_ = _offer_bump(version, target, "Version conflict not resolved")
+        # Only offer "publish as-is" when version == max_cl (store sync)
+        if version == max_cl:
+            if ask_yn(f"Publish v{version} as-is (e.g. sync to Open VSX)?"):
+                ok(f"Publishing v{version} as-is")
+                return version
+        # Bump to target
+        version, ok_ = _offer_bump(version, target, "Bump to release")
         return version if ok_ else None
 
     warn(f"package.json v{version} <= CHANGELOG max v{max_cl}")
-    version, ok_ = _offer_bump(version, target, "Version conflict not resolved")
+    version, ok_ = _offer_bump(version, target, "Bump to release")
     return version if ok_ else None

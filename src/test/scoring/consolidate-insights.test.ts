@@ -40,6 +40,8 @@ const makeResult = (
     upgradeBlockStatus: 'up-to-date',
     transitiveInfo: null,
     alternatives: [],
+    latestPrerelease: null,
+    prereleaseTag: null,
     ...opts,
 });
 

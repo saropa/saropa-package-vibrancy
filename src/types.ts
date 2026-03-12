@@ -153,6 +153,10 @@ export interface VibrancyResult {
     readonly upgradeBlockStatus: UpgradeBlockStatus;
     readonly transitiveInfo: TransitiveInfo | null;
     readonly alternatives: readonly AlternativeSuggestion[];
+    /** Latest prerelease version if newer than stable (e.g., '2.0.0-dev.1'). */
+    readonly latestPrerelease: string | null;
+    /** Prerelease tag extracted from version (e.g., 'dev', 'beta', 'rc'). */
+    readonly prereleaseTag: string | null;
 }
 
 /** A single package entry from `dart pub outdated --json`. */
@@ -263,6 +267,29 @@ export type WatchFilterMode = 'all' | 'unhealthy' | 'custom';
 export interface SharedDep {
     readonly name: string;
     readonly usedBy: readonly string[];
+}
+
+/** Budget configuration for dependency health policy. */
+export interface BudgetConfig {
+    readonly maxDependencies: number | null;
+    readonly maxTotalSizeMB: number | null;
+    readonly minAverageVibrancy: number | null;
+    readonly maxEndOfLife: number | null;
+    readonly maxLegacyLocked: number | null;
+    readonly maxUnused: number | null;
+}
+
+/** Status classification for a budget dimension. */
+export type BudgetStatus = 'under' | 'warning' | 'exceeded' | 'unconfigured';
+
+/** Result of checking one budget dimension. */
+export interface BudgetResult {
+    readonly dimension: string;
+    readonly actual: number;
+    readonly limit: number | null;
+    readonly percentage: number | null;
+    readonly status: BudgetStatus;
+    readonly details: string;
 }
 
 /** Summary of the full dependency graph. */

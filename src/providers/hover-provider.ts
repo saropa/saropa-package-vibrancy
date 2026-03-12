@@ -3,6 +3,7 @@ import { VibrancyResult, UpdateInfo, FamilySplit, PackageInsight } from '../type
 import { categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
+import { formatPrereleaseTag } from '../scoring/prerelease-classifier';
 
 export class VibrancyHoverProvider implements vscode.HoverProvider {
     private _results = new Map<string, VibrancyResult>();
@@ -116,6 +117,10 @@ function buildHoverContent(
     if (result.pubDev) {
         const date = result.pubDev.publishedDate.split('T')[0];
         md.appendMarkdown(`| Latest Version | ${result.pubDev.latestVersion} |\n`);
+        if (result.latestPrerelease) {
+            const tag = formatPrereleaseTag(result.prereleaseTag);
+            md.appendMarkdown(`| Prerelease | 🧪 ${result.latestPrerelease} (${tag}) |\n`);
+        }
         md.appendMarkdown(`| Published | ${date} |\n`);
         md.appendMarkdown(`| Pub Points | ${result.pubDev.pubPoints} |\n`);
     }

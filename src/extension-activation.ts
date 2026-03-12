@@ -3,10 +3,11 @@ import { CacheService } from './services/cache-service';
 import { VibrancyTreeProvider } from './providers/tree-data-provider';
 import { VibrancyDiagnostics } from './providers/diagnostics';
 import { VibrancyCodeActionProvider } from './providers/code-action-provider';
-import { VibrancyCodeLensProvider, setCodeLensToggle } from './providers/codelens-provider';
+import { VibrancyCodeLensProvider, setCodeLensToggle, setPrereleaseToggle } from './providers/codelens-provider';
 import { VibrancyHoverProvider } from './providers/hover-provider';
 import { VibrancyStatusBar } from './ui/status-bar';
 import { CodeLensToggle } from './ui/codelens-toggle';
+import { PrereleaseToggle } from './ui/prerelease-toggle';
 import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
 import { AboutPanel } from './views/about-webview';
@@ -50,12 +51,20 @@ import { sortDependencies } from './services/pubspec-sorter';
 import { clearIndicatorCache } from './services/indicator-config';
 import { findPubspecYaml } from './services/pubspec-editor';
 import { VibrancyStateManager } from './state';
+import {
+    readBudgetConfig, checkBudgets, formatBudgetSummary, hasBudgets,
+} from './scoring/budget-checker';
+import { BudgetResult } from './types';
+import { SaveTaskRunner } from './services/save-task-runner';
+import { bulkUpdate } from './services/bulk-updater';
+import { IncrementFilter } from './scoring/version-increment';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
 let lastReverseDeps: ReadonlyMap<string, readonly import('./types').DepEdge[]> | null = null;
 let lastOverrideAnalyses: OverrideAnalysis[] = [];
 let lastInsights: PackageInsight[] = [];
+let lastBudgetResults: BudgetResult[] = [];
 let lastScanMeta: ReportMetadata = {
     flutterVersion: 'unknown',
     dartVersion: 'unknown',
@@ -66,6 +75,7 @@ let stateManager: VibrancyStateManager | null = null;
 let detailViewProvider: DetailViewProvider | null = null;
 let detailLogger: DetailLogger | null = null;
 let detailChannel: vscode.OutputChannel | null = null;
+let saveTaskRunner: SaveTaskRunner | null = null;
 
 /** Get the latest scan results (used by providers). */
 export function getLatestResults(): readonly VibrancyResult[] {
@@ -89,6 +99,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     const hoverProvider = new VibrancyHoverProvider();
     const codeLensProvider = new VibrancyCodeLensProvider();
     const codeLensToggle = new CodeLensToggle();
+    const prereleaseToggle = new PrereleaseToggle();
     const statusBar = new VibrancyStatusBar();
     const diagCollection = vscode.languages.createDiagnosticCollection(
         'saropa-vibrancy',
@@ -98,14 +109,19 @@ export function runActivation(context: vscode.ExtensionContext): void {
     stateManager = new VibrancyStateManager();
 
     setCodeLensToggle(codeLensToggle);
+    setPrereleaseToggle(prereleaseToggle);
     codeLensToggle.onDidChange(enabled => {
         if (stateManager) {
             stateManager.codeLensEnabled.value = enabled;
         }
         codeLensProvider.refresh();
     });
+    prereleaseToggle.onDidChange(() => {
+        codeLensProvider.refresh();
+        treeProvider.refresh();
+    });
 
-    context.subscriptions.push(diagCollection, statusBar, codeLensToggle, stateManager);
+    context.subscriptions.push(diagCollection, statusBar, codeLensToggle, prereleaseToggle, stateManager);
 
     const adoptionGate = new AdoptionGateProvider(cache);
     adoptionGate.register(context);
@@ -115,11 +131,14 @@ export function runActivation(context: vscode.ExtensionContext): void {
     freshnessWatcher = new FreshnessWatcher(cache);
     freshnessWatcher.setOnNewVersions(handleNewVersions);
 
+    saveTaskRunner = new SaveTaskRunner();
+    context.subscriptions.push(saveTaskRunner);
+
     const targets: ScanTargets = {
         tree: treeProvider, hover: hoverProvider,
         codeLens: codeLensProvider, codeActions: codeActionProvider,
         statusBar, diagnostics, cache, adoptionGate, codeLensToggle,
-        state: stateManager,
+        prereleaseToggle, state: stateManager,
     };
 
     detailViewProvider = new DetailViewProvider(context.extensionUri);
@@ -139,7 +158,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     registerAnnotateCommand(context);
     registerFileWatcher(context, targets);
     registerSuppressListener(context, targets);
-    registerConfigListener(context, codeLensProvider);
+    registerConfigListener(context, codeLensProvider, treeProvider);
     autoScanIfPubspec(targets);
 }
 
@@ -172,6 +191,7 @@ function registerSuppressListener(
 function registerConfigListener(
     context: vscode.ExtensionContext,
     codeLensProvider: VibrancyCodeLensProvider,
+    treeProvider: VibrancyTreeProvider,
 ): void {
     context.subscriptions.push(
         vscode.workspace.onDidChangeConfiguration(e => {
@@ -179,6 +199,11 @@ function registerConfigListener(
                 || e.affectsConfiguration('saropaPackageVibrancy.indicatorStyle')) {
                 clearIndicatorCache();
                 codeLensProvider.refresh();
+            }
+            if (e.affectsConfiguration('saropaPackageVibrancy.showPrereleases')
+                || e.affectsConfiguration('saropaPackageVibrancy.prereleaseTagFilter')) {
+                codeLensProvider.refresh();
+                treeProvider.refresh();
             }
         }),
     );
@@ -237,6 +262,7 @@ interface ScanTargets {
     cache: CacheService;
     adoptionGate: AdoptionGateProvider;
     codeLensToggle: CodeLensToggle;
+    prereleaseToggle: PrereleaseToggle;
     state: VibrancyStateManager;
 }
 
@@ -323,6 +349,35 @@ function registerCommands(
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.toggleCodeLens',
             () => targets.codeLensToggle.toggle(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.showPrereleases',
+            () => targets.prereleaseToggle.show(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.hidePrereleases',
+            () => targets.prereleaseToggle.hide(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.updateToPrerelease',
+            (packageName: string, version: string) =>
+                updateToPrerelease(packageName, version),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.updateAllLatest',
+            () => runBulkUpdate('all', targets),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.updateAllMajor',
+            () => runBulkUpdate('major', targets),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.updateAllMinor',
+            () => runBulkUpdate('minor', targets),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.updateAllPatch',
+            () => runBulkUpdate('patch', targets),
         ),
     );
 }
@@ -492,6 +547,20 @@ function publishResults(
     targets.tree.updateDepGraphSummary(depGraphSummary);
     targets.tree.updateOverrideAnalyses(lastOverrideAnalyses);
     targets.state.updateFromResults(results);
+
+    const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+    const budgetConfig = readBudgetConfig(key => config.get(key));
+    if (hasBudgets(budgetConfig)) {
+        lastBudgetResults = checkBudgets(results, budgetConfig);
+        const budgetSummary = formatBudgetSummary(lastBudgetResults);
+        targets.tree.updateBudgetResults(lastBudgetResults, budgetSummary);
+        targets.diagnostics.updateBudgetResults(lastBudgetResults);
+    } else {
+        lastBudgetResults = [];
+        targets.tree.updateBudgetResults([], '');
+        targets.diagnostics.updateBudgetResults([]);
+    }
+
     updateFilteredTargets(targets, results, parsed);
 
     freshnessWatcher?.start(results);
@@ -799,5 +868,70 @@ async function runSortDependencies(): Promise<void> {
     vscode.window.showInformationMessage(
         `Sorted ${result.entriesMoved} dependencies in ${result.sectionsModified.join(', ')}`,
     );
+}
+
+async function updateToPrerelease(
+    packageName: string,
+    version: string,
+): Promise<void> {
+    const pubspecUri = await findPubspecYaml();
+    if (!pubspecUri) {
+        vscode.window.showWarningMessage('No pubspec.yaml found');
+        return;
+    }
+
+    const confirm = await vscode.window.showWarningMessage(
+        `Update ${packageName} to prerelease ${version}? Prereleases may contain breaking changes.`,
+        { modal: true },
+        'Update',
+    );
+
+    if (confirm !== 'Update') { return; }
+
+    const doc = await vscode.workspace.openTextDocument(pubspecUri);
+    const edit = new vscode.WorkspaceEdit();
+    const text = doc.getText();
+    const lines = text.split('\n');
+
+    let found = false;
+    const escapedName = packageName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+    for (let i = 0; i < lines.length; i++) {
+        const line = lines[i];
+        const match = line.match(new RegExp(`^(\\s*${escapedName}:\\s*)(\\S+.*?)$`));
+        if (match) {
+            const start = new vscode.Position(i, match[1].length);
+            const end = new vscode.Position(i, line.length);
+            edit.replace(doc.uri, new vscode.Range(start, end), `^${version}`);
+            found = true;
+            break;
+        }
+    }
+
+    if (!found) {
+        vscode.window.showWarningMessage(`Package ${packageName} not found in pubspec.yaml`);
+        return;
+    }
+
+    await vscode.workspace.applyEdit(edit);
+    await doc.save();
+    vscode.window.showInformationMessage(`Updated ${packageName} to ${version}`);
+}
+
+async function runBulkUpdate(
+    filter: IncrementFilter,
+    targets: ScanTargets,
+): Promise<void> {
+    if (latestResults.length === 0) {
+        vscode.window.showWarningMessage('Run a scan first');
+        return;
+    }
+
+    const result = await bulkUpdate(latestResults, {
+        incrementFilter: filter,
+    });
+
+    if (result.updated.length > 0 && !result.cancelled) {
+        await runScan(targets);
+    }
 }
 
