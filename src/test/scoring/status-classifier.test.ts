@@ -52,6 +52,7 @@ describe('status-classifier', () => {
                     publisher: null,
                     license: null,
                     description: null,
+                    topics: [],
                 },
             });
             assert.strictEqual(cat, 'end-of-life');

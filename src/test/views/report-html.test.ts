@@ -20,6 +20,7 @@ function makeResult(
             publisher: null,
             license: null,
             description: null,
+            topics: [],
         },
         github: { stars: 42, openIssues: 5, closedIssuesLast90d: 3,
             mergedPrsLast90d: 2, avgCommentsPerIssue: 1.5,
@@ -37,6 +38,7 @@ function makeResult(
         license: null,
         drift: null,
         isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
+        transitiveInfo: null, alternatives: [],
     };
 }
 

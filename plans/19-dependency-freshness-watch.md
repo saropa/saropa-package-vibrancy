@@ -1,5 +1,7 @@
 # Plan: Dependency Freshness Watch
 
+**Status: Implemented** (v0.1.3)
+
 ## Problem
 
 Developers discover new package versions days or weeks after release — often

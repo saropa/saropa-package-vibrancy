@@ -25,6 +25,7 @@ function makeResult(
         drift: null,
         isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null,
         blocker: null, upgradeBlockStatus: 'up-to-date',
+        transitiveInfo: null, alternatives: [],
         ...overrides,
     };
 }

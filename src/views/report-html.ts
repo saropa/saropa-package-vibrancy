@@ -61,6 +61,7 @@ function buildReportTable(results: VibrancyResult[]): string {
             <th data-col="published">Published<span class="sort-arrow"></span></th>
             <th data-col="stars">Stars<span class="sort-arrow"></span></th>
             <th data-col="size">Size<span class="sort-arrow"></span></th>
+            <th data-col="transitives">Transitives<span class="sort-arrow"></span></th>
             <th data-col="license">License<span class="sort-arrow"></span></th>
             <th data-col="drift">Drift<span class="sort-arrow"></span></th>
             <th data-col="update">Update<span class="sort-arrow"></span></th>
@@ -91,10 +92,18 @@ function buildRow(r: VibrancyResult): string {
         : r.updateInfo?.updateStatus === 'patch' ? 'update-patch'
         : '';
 
+    const transitiveCount = r.transitiveInfo?.transitiveCount ?? 0;
+    const flaggedCount = r.transitiveInfo?.flaggedCount ?? 0;
+    const transitiveText = transitiveCount > 0
+        ? (flaggedCount > 0 ? `${transitiveCount} (${flaggedCount}⚠)` : `${transitiveCount}`)
+        : '—';
+    const transitiveClass = flaggedCount > 0 ? 'transitive-flagged' : '';
+
     return `<tr data-name="${name}" data-version="${version}"
         data-score="${r.score}" data-category="${r.category}"
         data-published="${date}" data-stars="${stars}"
         data-size="${r.archiveSizeBytes ?? 0}"
+        data-transitives="${transitiveCount}"
         data-license="${escapeHtml(r.license ?? '')}"
         data-drift="${r.drift?.releasesBehind ?? ''}"
         data-update="${r.updateInfo?.updateStatus ?? 'unknown'}"
@@ -106,6 +115,7 @@ function buildRow(r: VibrancyResult): string {
         <td>${date}</td>
         <td>${stars}</td>
         <td>${sizeText}</td>
+        <td class="${transitiveClass}">${transitiveText}</td>
         <td>${escapeHtml(r.license ?? '—')}</td>
         <td>${r.drift ? `${r.drift.releasesBehind} (${r.drift.label})` : '—'}</td>
         <td class="${updateClass}">${updateText}</td>

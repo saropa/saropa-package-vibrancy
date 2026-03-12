@@ -34,6 +34,19 @@ describe('pub-dev-api', () => {
             assert.strictEqual(info.repositoryUrl, 'https://github.com/dart-lang/http');
             assert.strictEqual(info.description, 'A composable, multi-platform, Future-based API for HTTP requests.');
             assert.strictEqual(info.isDiscontinued, false);
+            assert.deepStrictEqual(info.topics, ['networking', 'http']);
+        });
+
+        it('should return empty topics array when not present', async () => {
+            const body = JSON.stringify({
+                name: 'simple',
+                latest: { version: '1.0.0', pubspec: {} },
+            });
+            fetchStub.resolves(new Response(body, { status: 200 }));
+
+            const info = await fetchPackageInfo('simple');
+            assert.ok(info);
+            assert.deepStrictEqual(info.topics, []);
         });
 
         it('should return null for 404', async () => {

@@ -24,6 +24,7 @@ export interface PubDevPackageInfo {
     readonly publisher: string | null;
     readonly license: string | null;
     readonly description: string | null;
+    readonly topics: readonly string[];
 }
 
 /** A GitHub issue flagged as high-signal for compatibility/deprecation. */
@@ -105,6 +106,23 @@ export interface DriftInfo {
     readonly latestFlutterVersion: string;
 }
 
+/** Transitive dependency info for one direct dependency. */
+export interface TransitiveInfo {
+    readonly directDep: string;
+    readonly transitiveCount: number;
+    readonly flaggedCount: number;
+    readonly transitives: readonly string[];
+    readonly sharedDeps: readonly string[];
+}
+
+/** A suggested alternative package. */
+export interface AlternativeSuggestion {
+    readonly name: string;
+    readonly source: 'curated' | 'discovery';
+    readonly score: number | null;
+    readonly likes: number;
+}
+
 /** Computed vibrancy result for one package. */
 export interface VibrancyResult {
     readonly package: PackageDependency;
@@ -128,6 +146,8 @@ export interface VibrancyResult {
     readonly wasmReady: boolean | null;
     readonly blocker: BlockerInfo | null;
     readonly upgradeBlockStatus: UpgradeBlockStatus;
+    readonly transitiveInfo: TransitiveInfo | null;
+    readonly alternatives: readonly AlternativeSuggestion[];
 }
 
 /** A single package entry from `dart pub outdated --json`. */
@@ -217,4 +237,48 @@ export interface FamilySplit {
     readonly familyLabel: string;
     readonly versionGroups: readonly FamilyVersionGroup[];
     readonly suggestion: string;
+}
+
+/** Notification for a newly detected package version. */
+export interface NewVersionNotification {
+    readonly name: string;
+    readonly currentVersion: string;
+    readonly newVersion: string;
+    readonly updateType: 'patch' | 'minor' | 'major';
+}
+
+/** Watch filter mode for freshness watcher. */
+export type WatchFilterMode = 'all' | 'unhealthy' | 'custom';
+
+/** A shared transitive dependency used by multiple direct deps. */
+export interface SharedDep {
+    readonly name: string;
+    readonly usedBy: readonly string[];
+}
+
+/** Summary of the full dependency graph. */
+export interface DepGraphSummary {
+    readonly directCount: number;
+    readonly transitiveCount: number;
+    readonly totalUnique: number;
+    readonly overrideCount: number;
+    readonly sharedDeps: readonly SharedDep[];
+}
+
+/** A single entry from the dependency_overrides section. */
+export interface OverrideEntry {
+    readonly name: string;
+    readonly version: string;
+    readonly line: number;
+    readonly isPathDep: boolean;
+    readonly isGitDep: boolean;
+}
+
+/** Analysis result for a single override. */
+export interface OverrideAnalysis {
+    readonly entry: OverrideEntry;
+    readonly status: 'active' | 'stale';
+    readonly blocker: string | null;
+    readonly addedDate: Date | null;
+    readonly ageDays: number | null;
 }

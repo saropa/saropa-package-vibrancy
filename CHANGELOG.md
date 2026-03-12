@@ -11,6 +11,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- Transitive Dependency X-Ray: parses full dependency graph via `dart pub deps --json`, counts transitive dependencies per direct package, identifies shared transitives (single points of failure), flags risky transitives (discontinued/EOL), surfaces dependency graph summary at top of tree view, adds transitive count to hover tooltips and report table
+- Alternative Package Suggestions: for packages scoring below 40 (Legacy-Locked/End-of-Life), automatically suggests healthier alternatives by searching pub.dev for packages with matching topics; curated replacements from known_issues.json shown as "Recommended", discovery suggestions shown as "Similar"; displayed in tree view Alternatives group, hover tooltips, and quick-fix code actions
+- Smart dependency_overrides Tracker: parses overrides section, detects stale overrides (no longer needed), tracks override age via git history, surfaces in tree view as collapsible group, adds inline diagnostics with severity levels, and provides quick-fix to remove stale overrides
+- Dependency Freshness Watch: background polling for new package versions with configurable interval (1-24 hours), filter modes (all/unhealthy/custom), and VS Code toast notifications with one-click actions
 - Unused dependency detection: scans lib/, bin/, and test/ for imports and flags dependencies with no matching imports
 - CodeLens vibrancy badges above each dependency line in pubspec.yaml with clickable score and update segments
 - SPDX license display in tree view, hover tooltips, and reports

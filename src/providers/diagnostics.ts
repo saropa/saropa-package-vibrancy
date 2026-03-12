@@ -1,7 +1,8 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, FamilySplit } from '../types';
+import { VibrancyResult, FamilySplit, OverrideAnalysis } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
 import { categoryToSeverity } from '../scoring/status-classifier';
+import { formatAge, isOldOverride } from '../scoring/override-analyzer';
 
 const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
     1: vscode.DiagnosticSeverity.Warning,
@@ -11,6 +12,7 @@ const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
 
 export class VibrancyDiagnostics {
     private _splitsByPackage = new Map<string, FamilySplit>();
+    private _overrideAnalyses: OverrideAnalysis[] = [];
 
     constructor(
         private readonly _collection: vscode.DiagnosticCollection,
@@ -26,6 +28,11 @@ export class VibrancyDiagnostics {
                 }
             }
         }
+    }
+
+    /** Update override analyses for diagnostic generation. */
+    updateOverrideAnalyses(analyses: OverrideAnalysis[]): void {
+        this._overrideAnalyses = analyses;
     }
 
     /** Update diagnostics for a pubspec.yaml document. */
@@ -92,7 +99,65 @@ export class VibrancyDiagnostics {
             }
         }
 
+        this._addOverrideDiagnostics(content, diagnostics);
         this._collection.set(uri, diagnostics);
+    }
+
+    private _addOverrideDiagnostics(
+        content: string,
+        diagnostics: vscode.Diagnostic[],
+    ): void {
+        const lines = content.split('\n');
+
+        for (const analysis of this._overrideAnalyses) {
+            const lineNum = analysis.entry.line;
+            if (lineNum < 0 || lineNum >= lines.length) { continue; }
+
+            const line = lines[lineNum];
+            const match = line.match(/^\s{2}(\w[\w_]*)/);
+            if (!match) { continue; }
+
+            const startChar = line.indexOf(match[1]);
+            const endChar = startChar + match[1].length;
+            const vscodeRange = new vscode.Range(
+                lineNum, startChar,
+                lineNum, endChar,
+            );
+
+            if (analysis.status === 'stale') {
+                const msg = `Stale override: no conflict detected for ${analysis.entry.name}. Safe to remove.`;
+                const diag = new vscode.Diagnostic(
+                    vscodeRange, msg, vscode.DiagnosticSeverity.Warning,
+                );
+                diag.source = 'Saropa Package Vibrancy';
+                diag.code = 'stale-override';
+                diagnostics.push(diag);
+            } else {
+                const blockerInfo = analysis.blocker
+                    ? ` — bypasses constraint from ${analysis.blocker}`
+                    : '';
+                const ageInfo = analysis.ageDays !== null
+                    ? `. Added ${formatAge(analysis.ageDays)} ago`
+                    : '';
+                const msg = `Active override on ${analysis.entry.name}${blockerInfo}${ageInfo}.`;
+                const diag = new vscode.Diagnostic(
+                    vscodeRange, msg, vscode.DiagnosticSeverity.Information,
+                );
+                diag.source = 'Saropa Package Vibrancy';
+                diag.code = 'active-override';
+                diagnostics.push(diag);
+
+                if (isOldOverride(analysis)) {
+                    const oldMsg = `Override on ${analysis.entry.name} is ${formatAge(analysis.ageDays!)} old. Review whether it's still needed.`;
+                    const oldDiag = new vscode.Diagnostic(
+                        vscodeRange, oldMsg, vscode.DiagnosticSeverity.Hint,
+                    );
+                    oldDiag.source = 'Saropa Package Vibrancy';
+                    oldDiag.code = 'old-override';
+                    diagnostics.push(oldDiag);
+                }
+            }
+        }
     }
 
     clear(): void {

@@ -28,6 +28,8 @@ function makeResult(
         wasmReady: null,
         blocker: null,
         upgradeBlockStatus: 'up-to-date',
+        transitiveInfo: null,
+        alternatives: [],
     };
 }
 

@@ -112,6 +112,14 @@ function buildHoverContent(
         );
     }
 
+    if (result.transitiveInfo && result.transitiveInfo.transitiveCount > 0) {
+        const t = result.transitiveInfo;
+        const flaggedText = t.flaggedCount > 0 ? ` (${t.flaggedCount} flagged)` : '';
+        md.appendMarkdown(
+            `| Transitive Deps | ${t.transitiveCount}${flaggedText} |\n`,
+        );
+    }
+
     if (result.updateInfo
         && result.updateInfo.updateStatus !== 'up-to-date') {
         md.appendMarkdown(`\n---\n`);
@@ -137,6 +145,8 @@ function buildHoverContent(
             `\n---\n**Known Issue:** ${result.knownIssue.reason}\n`,
         );
     }
+
+    appendAlternatives(md, result);
 
     md.appendMarkdown(
         `\n[View on pub.dev](https://pub.dev/packages/${result.package.name})`,
@@ -199,4 +209,25 @@ function appendChangelogSection(
 function truncateBody(body: string): string {
     if (!body) { return ''; }
     return body.length > 200 ? body.substring(0, 197) + '...' : body;
+}
+
+function appendAlternatives(
+    md: vscode.MarkdownString,
+    result: VibrancyResult,
+): void {
+    if (!result.alternatives?.length) { return; }
+
+    md.appendMarkdown(`\n---\n`);
+    const hasCurated = result.alternatives.some(a => a.source === 'curated');
+    const header = hasCurated ? 'Recommended Replacement' : 'Consider Also';
+    md.appendMarkdown(`**${header}:**\n\n`);
+
+    for (const alt of result.alternatives) {
+        const badge = alt.source === 'curated' ? '⭐' : '💡';
+        const scoreText = alt.score !== null ? ` (${Math.round(alt.score / 10)}/10)` : '';
+        const likesText = alt.likes > 0 ? ` — ${alt.likes} likes` : '';
+        md.appendMarkdown(
+            `${badge} [${alt.name}](https://pub.dev/packages/${alt.name})${scoreText}${likesText}\n`,
+        );
+    }
 }

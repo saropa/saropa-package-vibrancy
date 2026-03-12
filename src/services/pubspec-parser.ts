@@ -128,3 +128,34 @@ export function findPackageRange(
 
     return null;
 }
+
+/**
+ * Parse dependency_overrides section from pubspec.yaml content.
+ * Returns array of package names that are overridden.
+ */
+export function parseDependencyOverrides(content: string): string[] {
+    const overrides: string[] = [];
+    const lines = content.split('\n');
+
+    let inOverrides = false;
+
+    for (const line of lines) {
+        const trimmed = line.trimEnd();
+
+        if (/^dependency_overrides\s*:/.test(trimmed)) {
+            inOverrides = true;
+            continue;
+        }
+        if (inOverrides && /^\S/.test(trimmed)) {
+            break;
+        }
+        if (!inOverrides) { continue; }
+
+        const match = trimmed.match(/^\s{2}(\w[\w_]*)\s*:/);
+        if (match) {
+            overrides.push(match[1]);
+        }
+    }
+
+    return overrides;
+}

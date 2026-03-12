@@ -8,7 +8,8 @@
       "name": "http",
       "version": "1.2.0",
       "repository": "https://github.com/dart-lang/http",
-      "description": "A composable, multi-platform, Future-based API for HTTP requests."
+      "description": "A composable, multi-platform, Future-based API for HTTP requests.",
+      "topics": ["networking", "http"]
     },
     "published": "2024-01-15T10:30:00Z"
   }

@@ -1,8 +1,10 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, FamilySplit } from '../types';
+import { VibrancyResult, FamilySplit, OverrideAnalysis, DepGraphSummary } from '../types';
 import {
     PackageItem, DetailItem, GroupItem, SuppressedGroupItem,
     SuppressedPackageItem, buildGroupItems,
+    OverridesGroupItem, OverrideItem, buildOverrideDetails,
+    DepGraphSummaryItem, buildDepGraphSummaryDetails,
 } from './tree-items';
 import {
     FamilyConflictGroupItem, FamilySplitItem, buildFamilySplitDetails,
@@ -10,11 +12,14 @@ import {
 
 type TreeNode =
     | PackageItem | GroupItem | DetailItem
-    | SuppressedGroupItem | FamilyConflictGroupItem | FamilySplitItem;
+    | SuppressedGroupItem | FamilyConflictGroupItem | FamilySplitItem
+    | OverridesGroupItem | OverrideItem | DepGraphSummaryItem;
 
 export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     private _results: VibrancyResult[] = [];
     private _familySplits: FamilySplit[] = [];
+    private _overrideAnalyses: OverrideAnalysis[] = [];
+    private _depGraphSummary: DepGraphSummary | null = null;
     private readonly _onDidChangeTreeData = new vscode.EventEmitter<void>();
     readonly onDidChangeTreeData = this._onDidChangeTreeData.event;
 
@@ -27,6 +32,18 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     /** Update detected family version splits. */
     updateFamilySplits(splits: FamilySplit[]): void {
         this._familySplits = splits;
+        this._onDidChangeTreeData.fire();
+    }
+
+    /** Update dependency graph summary. */
+    updateDepGraphSummary(summary: DepGraphSummary | null): void {
+        this._depGraphSummary = summary;
+        this._onDidChangeTreeData.fire();
+    }
+
+    /** Update override analyses. */
+    updateOverrideAnalyses(analyses: OverrideAnalysis[]): void {
+        this._overrideAnalyses = analyses;
         this._onDidChangeTreeData.fire();
     }
 
@@ -53,6 +70,15 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
         if (element instanceof FamilySplitItem) {
             return buildFamilySplitDetails(element.split);
         }
+        if (element instanceof OverridesGroupItem) {
+            return element.analyses.map(a => new OverrideItem(a));
+        }
+        if (element instanceof OverrideItem) {
+            return buildOverrideDetails(element.analysis);
+        }
+        if (element instanceof DepGraphSummaryItem) {
+            return buildDepGraphSummaryDetails(element.summary);
+        }
         if (element instanceof SuppressedGroupItem) {
             return this._getSuppressedResults().map(
                 r => new SuppressedPackageItem(r),
@@ -69,6 +95,12 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
 
     private _buildRootChildren(): TreeNode[] {
         const items: TreeNode[] = [];
+        if (this._depGraphSummary) {
+            items.push(new DepGraphSummaryItem(this._depGraphSummary));
+        }
+        if (this._overrideAnalyses.length > 0) {
+            items.push(new OverridesGroupItem(this._overrideAnalyses));
+        }
         if (this._familySplits.length > 0) {
             items.push(
                 new FamilyConflictGroupItem(this._familySplits),

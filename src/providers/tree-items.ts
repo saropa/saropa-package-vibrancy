@@ -1,8 +1,9 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, VibrancyCategory, UpdateInfo } from '../types';
+import { VibrancyResult, VibrancyCategory, UpdateInfo, DepGraphSummary, OverrideAnalysis } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
+import { formatAge, isOldOverride } from '../scoring/override-analyzer';
 
 function categoryColor(cat: VibrancyCategory): vscode.ThemeColor {
     switch (cat) {
@@ -122,8 +123,14 @@ export function buildGroupItems(result: VibrancyResult): GroupItem[] {
     const size = buildSizeGroup(result);
     if (size) { groups.push(size); }
 
+    const deps = buildDependencyGroup(result);
+    if (deps) { groups.push(deps); }
+
     const alerts = buildAlertsGroup(result);
     if (alerts) { groups.push(alerts); }
+
+    const alternatives = buildAlternativesGroup(result);
+    if (alternatives) { groups.push(alternatives); }
 
     return groups;
 }
@@ -292,5 +299,170 @@ function appendFlaggedItems(
             issue.url || undefined,
         ));
     }
+}
+
+/** Build Dependencies group for transitive analysis. */
+export function buildDependencyGroup(result: VibrancyResult): GroupItem | null {
+    const info = result.transitiveInfo;
+    if (!info || info.transitiveCount === 0) { return null; }
+
+    const items: DetailItem[] = [];
+
+    const countDesc = info.flaggedCount > 0
+        ? `${info.transitiveCount} (${info.flaggedCount} flagged)`
+        : `${info.transitiveCount}`;
+    items.push(new DetailItem('Transitive', `${countDesc} packages`));
+
+    if (info.sharedDeps.length > 0) {
+        const sharedList = info.sharedDeps.slice(0, 3).join(', ');
+        const more = info.sharedDeps.length > 3
+            ? ` +${info.sharedDeps.length - 3}` : '';
+        items.push(new DetailItem('🔗 Shared', `${sharedList}${more}`));
+    }
+
+    return new GroupItem('📊 Dependencies', items);
+}
+
+/** Tree item for dependency graph summary at top of tree. */
+export class DepGraphSummaryItem extends vscode.TreeItem {
+    constructor(public readonly summary: DepGraphSummary) {
+        super('Dependency Graph', vscode.TreeItemCollapsibleState.Collapsed);
+        this.iconPath = new vscode.ThemeIcon('graph');
+        this.contextValue = 'vibrancyDepGraphSummary';
+    }
+}
+
+/** Build detail items for DepGraphSummaryItem children. */
+export function buildDepGraphSummaryDetails(
+    summary: DepGraphSummary,
+): DetailItem[] {
+    const items: DetailItem[] = [];
+
+    items.push(new DetailItem('Direct', `${summary.directCount} packages`));
+    items.push(new DetailItem('Transitive', `${summary.transitiveCount} packages`));
+    items.push(new DetailItem('Total Unique', `${summary.totalUnique} packages`));
+
+    if (summary.overrideCount > 0) {
+        items.push(new DetailItem('⚠️ Overrides', `${summary.overrideCount} in pubspec.yaml`));
+    }
+
+    if (summary.sharedDeps.length > 0) {
+        for (const shared of summary.sharedDeps.slice(0, 3)) {
+            items.push(new DetailItem(`🔗 ${shared.name}`, `used by ${shared.usedBy.length} direct deps`));
+        }
+    }
+
+    return items;
+}
+
+/** Top-level group for dependency overrides. */
+export class OverridesGroupItem extends vscode.TreeItem {
+    constructor(public readonly analyses: readonly OverrideAnalysis[]) {
+        super(
+            `Overrides (${analyses.length})`,
+            vscode.TreeItemCollapsibleState.Expanded,
+        );
+        const staleCount = analyses.filter(a => a.status === 'stale').length;
+        this.iconPath = new vscode.ThemeIcon(
+            'wrench',
+            staleCount > 0
+                ? new vscode.ThemeColor('editorWarning.foreground')
+                : new vscode.ThemeColor('editorInfo.foreground'),
+        );
+        this.tooltip = staleCount > 0
+            ? `${staleCount} stale override(s) may be safe to remove.`
+            : 'Dependency overrides in pubspec.yaml.';
+        this.contextValue = 'vibrancyOverridesGroup';
+    }
+}
+
+/** A single override entry in the tree view. */
+export class OverrideItem extends vscode.TreeItem {
+    constructor(public readonly analysis: OverrideAnalysis) {
+        super(
+            `${analysis.entry.name}: ${analysis.entry.version}`,
+            vscode.TreeItemCollapsibleState.Collapsed,
+        );
+        this.description = analysis.status === 'stale' ? '⚠️ Stale' : '';
+        this.iconPath = new vscode.ThemeIcon(
+            analysis.status === 'stale' ? 'warning' : 'wrench',
+            analysis.status === 'stale'
+                ? new vscode.ThemeColor('editorWarning.foreground')
+                : new vscode.ThemeColor('editorInfo.foreground'),
+        );
+        this.tooltip = analysis.status === 'stale'
+            ? 'No conflict detected — this override may be safe to remove.'
+            : `Active override — ${analysis.blocker ?? 'resolves a conflict'}.`;
+        this.contextValue = analysis.status === 'stale'
+            ? 'vibrancyOverrideStale'
+            : 'vibrancyOverrideActive';
+        this.command = {
+            command: 'saropaPackageVibrancy.goToOverride',
+            title: 'Go to override in pubspec.yaml',
+            arguments: [analysis.entry.name],
+        };
+    }
+}
+
+/** Build detail items for an override node. */
+export function buildOverrideDetails(analysis: OverrideAnalysis): DetailItem[] {
+    const items: DetailItem[] = [];
+
+    if (analysis.status === 'active') {
+        items.push(new DetailItem(
+            '✓ Status',
+            `Active — ${analysis.blocker ?? 'resolves constraint'}`,
+        ));
+    } else {
+        items.push(new DetailItem(
+            '⚠️ Status',
+            'Stale — no conflict detected, safe to remove',
+        ));
+    }
+
+    if (analysis.ageDays !== null) {
+        const ageStr = formatAge(analysis.ageDays);
+        const dateStr = analysis.addedDate
+            ? ` (since ${analysis.addedDate.toISOString().split('T')[0]})`
+            : '';
+        items.push(new DetailItem('📅 Age', `${ageStr}${dateStr}`));
+        if (isOldOverride(analysis) && analysis.status === 'active') {
+            items.push(new DetailItem(
+                '💡 Hint',
+                'Review whether this override is still needed',
+            ));
+        }
+    }
+
+    if (analysis.entry.isPathDep) {
+        items.push(new DetailItem('📁 Type', 'Local path dependency'));
+    } else if (analysis.entry.isGitDep) {
+        items.push(new DetailItem('🔗 Type', 'Git dependency'));
+    }
+
+    items.push(new DetailItem('⚠️ Risk', 'Bypasses version constraints'));
+
+    return items;
+}
+
+function buildAlternativesGroup(result: VibrancyResult): GroupItem | null {
+    if (!result.alternatives?.length) { return null; }
+
+    const items: DetailItem[] = [];
+    for (const alt of result.alternatives) {
+        const badge = alt.source === 'curated' ? 'Recommended' : 'Similar';
+        const scoreText = alt.score !== null ? ` (${Math.round(alt.score / 10)}/10)` : '';
+        const likesText = alt.likes > 0 ? `, ${alt.likes} likes` : '';
+        const url = `https://pub.dev/packages/${alt.name}`;
+        const emoji = alt.source === 'curated' ? '⭐' : '💡';
+
+        items.push(new DetailItem(
+            `${emoji} ${alt.name}`,
+            `${badge}${scoreText}${likesText}`,
+            url,
+        ));
+    }
+
+    return new GroupItem('💡 Alternatives', items);
 }
 

@@ -42,6 +42,7 @@ export async function fetchPackageInfo(
             publisher: null,
             license: pubspec.license ?? null,
             description: pubspec.description ?? null,
+            topics: Array.isArray(pubspec.topics) ? pubspec.topics : [],
         };
 
         const archiveUrl = latest.archive_url ?? null;

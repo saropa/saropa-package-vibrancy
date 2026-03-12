@@ -20,6 +20,7 @@ function makeResult(name: string, score: number): VibrancyResult {
         license: null,
         drift: null,
         isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
+        transitiveInfo: null, alternatives: [],
     };
 }
 

@@ -27,17 +27,31 @@ import { AdoptionGateProvider } from './providers/adoption-gate';
 import { enrichWithBlockers } from './services/blocker-enricher';
 import { buildUpgradeOrder } from './scoring/upgrade-sequencer';
 import { executeUpgradePlan, formatUpgradePlan, formatUpgradeReport } from './services/upgrade-executor';
-import { buildReverseDeps } from './services/dep-graph';
+import { fetchDepGraph, buildReverseDeps } from './services/dep-graph';
+import { parseDependencyOverrides } from './services/pubspec-parser';
+import {
+    countTransitives, findSharedDeps, enrichTransitiveInfo, buildDepGraphSummary,
+} from './scoring/transitive-analyzer';
+import { allKnownIssues } from './scoring/known-issues';
+import { parseOverrides } from './services/override-parser';
+import { getOverrideAges } from './services/override-age';
+import { analyzeOverrides } from './scoring/override-analyzer';
+import { OverrideAnalysis, NewVersionNotification } from './types';
+import {
+    FreshnessWatcher, formatNotificationMessage, createNotificationActions,
+} from './services/freshness-watcher';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
 let lastReverseDeps: ReadonlyMap<string, readonly import('./types').DepEdge[]> | null = null;
+let lastOverrideAnalyses: OverrideAnalysis[] = [];
 let scanInProgress = false;
 let lastScanMeta: ReportMetadata = {
     flutterVersion: 'unknown',
     dartVersion: 'unknown',
     executionTimeMs: 0,
 };
+let freshnessWatcher: FreshnessWatcher | null = null;
 
 /** Get the latest scan results (used by providers). */
 export function getLatestResults(): readonly VibrancyResult[] {
@@ -61,14 +75,19 @@ export function runActivation(context: vscode.ExtensionContext): void {
     const adoptionGate = new AdoptionGateProvider(cache);
     adoptionGate.register(context);
 
+const codeActionProvider = new VibrancyCodeActionProvider();
+
+    freshnessWatcher = new FreshnessWatcher(cache);
+    freshnessWatcher.setOnNewVersions(handleNewVersions);
+
     const targets: ScanTargets = {
         tree: treeProvider, hover: hoverProvider,
-        codeLens: codeLensProvider, statusBar, diagnostics, cache,
-        adoptionGate,
+        codeLens: codeLensProvider, codeActions: codeActionProvider,
+        statusBar, diagnostics, cache, adoptionGate,
     };
 
     registerTreeView(context, treeProvider);
-    registerProviders(context, hoverProvider, codeLensProvider);
+    registerProviders(context, hoverProvider, codeLensProvider, codeActionProvider);
     registerCommands(context, targets);
     registerTreeCommands(context);
     registerUpgradeCommand(context);
@@ -120,6 +139,7 @@ function registerProviders(
     context: vscode.ExtensionContext,
     hoverProvider: VibrancyHoverProvider,
     codeLensProvider: VibrancyCodeLensProvider,
+    codeActionProvider: VibrancyCodeActionProvider,
 ): void {
     const pubspecSelector = { language: 'yaml', pattern: '**/pubspec.yaml' };
 
@@ -127,7 +147,7 @@ function registerProviders(
         vscode.languages.registerHoverProvider(pubspecSelector, hoverProvider),
         vscode.languages.registerCodeActionsProvider(
             pubspecSelector,
-            new VibrancyCodeActionProvider(),
+            codeActionProvider,
             { providedCodeActionKinds: [vscode.CodeActionKind.QuickFix] },
         ),
         vscode.languages.registerCodeLensProvider(
@@ -140,6 +160,7 @@ interface ScanTargets {
     tree: VibrancyTreeProvider;
     hover: VibrancyHoverProvider;
     codeLens: VibrancyCodeLensProvider;
+    codeActions: VibrancyCodeActionProvider;
     statusBar: VibrancyStatusBar;
     diagnostics: VibrancyDiagnostics;
     cache: CacheService;
@@ -193,6 +214,10 @@ function registerCommands(
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.planUpgrades',
             () => planAndExecuteUpgrades(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.goToOverride',
+            (packageName: string) => goToOverride(packageName),
         ),
     );
 }
@@ -269,8 +294,56 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             const enrichResult = await enrichWithBlockers(
                 withUnused, workspaceRoot.fsPath, logger,
             );
-            const results = enrichResult.results;
+            let results = enrichResult.results;
             lastReverseDeps = enrichResult.reverseDeps;
+
+            progress.report({ message: 'Analyzing dependency graph...' });
+            const depGraph = await fetchDepGraph(workspaceRoot.fsPath);
+            let depGraphSummary: import('./types').DepGraphSummary | null = null;
+            if (depGraph.success && depGraph.packages.length > 0) {
+                const directDeps = deps.filter(d => d.isDirect).map(d => d.name);
+                const overrides = parseDependencyOverrides(parsed.yamlContent);
+                const knownIssuesMap = allKnownIssues();
+
+                const transitiveInfos = countTransitives(directDeps, depGraph.packages);
+                const sharedDeps = findSharedDeps(directDeps, depGraph.packages);
+                const enrichedInfos = enrichTransitiveInfo(
+                    transitiveInfos, sharedDeps, knownIssuesMap,
+                );
+
+                const transitiveMap = new Map(
+                    enrichedInfos.map((t): [string, import('./types').TransitiveInfo] => [t.directDep, t]),
+                );
+                results = results.map(r => ({
+                    ...r,
+                    transitiveInfo: transitiveMap.get(r.package.name) ?? null,
+                })) as VibrancyResult[];
+
+                depGraphSummary = buildDepGraphSummary(
+                    directDeps, depGraph.packages, overrides.length,
+                );
+                logger.info(
+                    `Dep graph: ${depGraphSummary!.directCount} direct, ` +
+                    `${depGraphSummary!.transitiveCount} transitive, ` +
+                    `${overrides.length} overrides`,
+                );
+            }
+
+            progress.report({ message: 'Analyzing overrides...' });
+            const overrideAnalyses = await runOverrideAnalysis(
+                parsed.yamlContent,
+                deps,
+                depGraph.success ? depGraph.packages : [],
+                workspaceRoot.fsPath,
+                logger,
+            );
+            lastOverrideAnalyses = overrideAnalyses;
+            if (overrideAnalyses.length > 0) {
+                const staleCount = overrideAnalyses.filter(a => a.status === 'stale').length;
+                logger.info(
+                    `Overrides: ${overrideAnalyses.length} total, ${staleCount} stale`,
+                );
+            }
 
             latestResults = results;
             lastParsedDeps = parsed;
@@ -283,7 +356,7 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                 `legacy:${counts.legacy} eol:${counts.eol}`,
             );
 
-            publishResults(targets, results, parsed);
+            publishResults(targets, results, parsed, depGraphSummary);
             notifyLockDiff(oldVersions, results);
 
             try {
@@ -304,11 +377,16 @@ function publishResults(
     targets: ScanTargets,
     results: VibrancyResult[],
     parsed: ParsedDeps,
+    depGraphSummary: import('./types').DepGraphSummary | null = null,
 ): void {
     targets.adoptionGate.clearDecorations();
     targets.tree.updateResults(results);
+    targets.tree.updateDepGraphSummary(depGraphSummary);
+    targets.tree.updateOverrideAnalyses(lastOverrideAnalyses);
     targets.statusBar.update(results);
     updateFilteredTargets(targets, results, parsed);
+
+    freshnessWatcher?.start(results);
 }
 
 function updateFilteredTargets(
@@ -323,7 +401,9 @@ function updateFilteredTargets(
     targets.hover.updateResults(active);
     targets.hover.updateFamilySplits(splits);
     targets.codeLens.updateResults(active);
+    targets.codeActions.updateResults(active);
     targets.diagnostics.updateFamilySplits(splits);
+    targets.diagnostics.updateOverrideAnalyses(lastOverrideAnalyses);
     targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
 }
 
@@ -399,5 +479,75 @@ async function requireResults<T>(
     if (result) {
         vscode.window.showInformationMessage(successMsg(result));
     }
+}
+
+async function runOverrideAnalysis(
+    yamlContent: string,
+    deps: import('./types').PackageDependency[],
+    depGraphPackages: readonly import('./services/dep-graph').DepGraphPackage[],
+    workspaceRoot: string,
+    logger: ScanLogger,
+): Promise<OverrideAnalysis[]> {
+    try {
+        const overrideEntries = parseOverrides(yamlContent);
+        if (overrideEntries.length === 0) {
+            return [];
+        }
+
+        const packageNames = overrideEntries.map(e => e.name);
+        const ages = await getOverrideAges(packageNames, workspaceRoot);
+
+        return analyzeOverrides(overrideEntries, deps, [...depGraphPackages], ages);
+    } catch (err) {
+        logger.info(`Override analysis failed: ${err}`);
+        return [];
+    }
+}
+
+async function goToOverride(packageName: string): Promise<void> {
+    const analysis = lastOverrideAnalyses.find(a => a.entry.name === packageName);
+    if (!analysis || !lastParsedDeps) { return; }
+
+    const doc = await vscode.workspace.openTextDocument(lastParsedDeps.yamlUri);
+    const editor = await vscode.window.showTextDocument(doc);
+
+    const line = analysis.entry.line;
+    const lineText = doc.lineAt(line).text;
+    const match = lineText.match(/^\s{2}(\w[\w_]*)/);
+    const startChar = match ? lineText.indexOf(match[1]) : 2;
+    const endChar = match ? startChar + match[1].length : lineText.length;
+
+    const range = new vscode.Range(line, startChar, line, endChar);
+    editor.selection = new vscode.Selection(range.start, range.end);
+    editor.revealRange(range, vscode.TextEditorRevealType.InCenter);
+}
+
+async function handleNewVersions(
+    notifications: NewVersionNotification[],
+): Promise<void> {
+    if (notifications.length === 0) { return; }
+
+    const message = formatNotificationMessage(notifications);
+    const actions = createNotificationActions();
+
+    const choice = await vscode.window.showInformationMessage(
+        message,
+        ...actions,
+    );
+
+    switch (choice) {
+        case 'View Details':
+            vscode.commands.executeCommand('saropaPackageVibrancy.showReport');
+            break;
+        case 'Update All':
+            vscode.commands.executeCommand('saropaPackageVibrancy.planUpgrades');
+            break;
+        case 'Dismiss':
+            break;
+    }
+}
+
+export function stopFreshnessWatcher(): void {
+    freshnessWatcher?.stop();
 }
 

@@ -5,6 +5,7 @@ import {
     parsePubspecYaml,
     parsePubspecLock,
     findPackageRange,
+    parseDependencyOverrides,
 } from '../../services/pubspec-parser';
 
 const fixturesDir = path.join(__dirname, '..', '..', '..', 'src', 'test', 'fixtures');
@@ -122,6 +123,55 @@ describe('pubspec-parser', () => {
             assert.ok(range);
             const lines = yamlContent.split('\n');
             assert.ok(lines[range.line].includes('provider'));
+        });
+    });
+
+    describe('parseDependencyOverrides', () => {
+        it('should extract overridden package names', () => {
+            const content = `
+name: my_app
+dependencies:
+  http: ^1.0.0
+
+dependency_overrides:
+  intl: ^0.18.0
+  path: ^1.8.0
+`;
+            const overrides = parseDependencyOverrides(content);
+            assert.deepStrictEqual(overrides, ['intl', 'path']);
+        });
+
+        it('should return empty array when no overrides section', () => {
+            const content = `
+name: my_app
+dependencies:
+  http: ^1.0.0
+`;
+            const overrides = parseDependencyOverrides(content);
+            assert.deepStrictEqual(overrides, []);
+        });
+
+        it('should stop at next top-level section', () => {
+            const content = `
+dependency_overrides:
+  intl: ^0.18.0
+
+dev_dependencies:
+  test: ^1.0.0
+`;
+            const overrides = parseDependencyOverrides(content);
+            assert.deepStrictEqual(overrides, ['intl']);
+        });
+
+        it('should handle empty overrides section', () => {
+            const content = `
+dependency_overrides:
+
+dependencies:
+  http: ^1.0.0
+`;
+            const overrides = parseDependencyOverrides(content);
+            assert.deepStrictEqual(overrides, []);
         });
     });
 });

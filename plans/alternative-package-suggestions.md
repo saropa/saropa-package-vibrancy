@@ -1,5 +1,7 @@
 # Plan: Alternative Package Suggestions
 
+**Status: IMPLEMENTED** (2026-03-12)
+
 ## Goal
 
 When a package scores poorly, suggest healthier alternatives that serve the

@@ -1,6 +1,6 @@
 import {
     VibrancyResult, PackageDependency, GitHubMetrics, KnownIssue,
-    PubDevMetrics,
+    PubDevMetrics, AlternativeSuggestion,
 } from './types';
 import { CacheService } from './services/cache-service';
 import { ScanLogger } from './services/scan-logger';
@@ -24,6 +24,7 @@ import {
     ScoringWeights,
 } from './scoring/vibrancy-calculator';
 import { classifyStatus } from './scoring/status-classifier';
+import { searchAlternatives, buildAlternatives } from './services/pub-dev-search';
 
 interface RepoInfo {
     readonly owner: string;
@@ -39,6 +40,7 @@ interface AnalyzeParams {
     readonly repoOverrides?: Record<string, string>;
     readonly publisherTrustBonus?: number;
     readonly flutterReleases?: readonly FlutterRelease[];
+    readonly existingPackages?: readonly string[];
 }
 
 /** Analyze a single package and compute its vibrancy result. */
@@ -99,6 +101,16 @@ export async function analyzePackage(
     const merged = mergeMetrics(metrics, knownIssue, publisher);
     logDataGaps(dep.name, metrics, knownIssue, log);
 
+    const alternatives = await resolveAlternatives({
+        score: scores.score,
+        topics: pubDev?.topics ?? [],
+        curatedReplacement: knownIssue?.replacement,
+        packageName: dep.name,
+        existingPackages: params.existingPackages ?? [],
+        cache: params.cache,
+        logger: log,
+    });
+
     return {
         package: dep, pubDev: pubDevWithPoints, github, knownIssue,
         ...scores, category, updateInfo,
@@ -109,6 +121,8 @@ export async function analyzePackage(
         wasmReady: merged.wasmReady,
         blocker: null,
         upgradeBlockStatus: 'up-to-date',
+        transitiveInfo: null,
+        alternatives,
     };
 }
 
@@ -182,6 +196,37 @@ function daysSince(isoDate: string): number | undefined {
     const ms = Date.parse(isoDate);
     if (isNaN(ms)) { return undefined; }
     return Math.max(0, Math.floor((Date.now() - ms) / 86_400_000));
+}
+
+const ALTERNATIVES_SCORE_THRESHOLD = 40;
+
+async function resolveAlternatives(params: {
+    readonly score: number;
+    readonly topics: readonly string[];
+    readonly curatedReplacement: string | undefined;
+    readonly packageName: string;
+    readonly existingPackages: readonly string[];
+    readonly cache: CacheService;
+    readonly logger?: ScanLogger;
+}): Promise<readonly AlternativeSuggestion[]> {
+    if (params.curatedReplacement) {
+        return buildAlternatives(params.curatedReplacement, []);
+    }
+
+    if (params.score >= ALTERNATIVES_SCORE_THRESHOLD) {
+        return [];
+    }
+
+    if (params.topics.length === 0) {
+        return [];
+    }
+
+    const exclude = [params.packageName, ...params.existingPackages];
+    const discovery = await searchAlternatives(
+        params.topics, exclude, params.cache, params.logger,
+    );
+
+    return buildAlternatives(undefined, discovery);
 }
 
 function computeScores(params: {

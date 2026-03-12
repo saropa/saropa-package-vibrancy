@@ -35,6 +35,8 @@ function makeResult(
         verifiedPublisher: false, wasmReady: null,
         blocker: null,
         upgradeBlockStatus: opts.blocked ? 'blocked' : 'upgradable',
+        transitiveInfo: null,
+        alternatives: [],
     };
 }
 

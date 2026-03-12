@@ -23,6 +23,7 @@ function makeResult(
         license: null,
         drift: null,
         isUnused: false, platforms: null, verifiedPublisher: false, wasmReady: null, blocker: null, upgradeBlockStatus: 'up-to-date',
+        transitiveInfo: null, alternatives: [],
         ...overrides,
     };
 }
@@ -130,6 +131,7 @@ describe('sbom-generator', () => {
                     pubPoints: 130, publisher: 'dart.dev',
                     license: 'BSD-3-Clause',
                     description: null,
+                    topics: [],
                 },
             })];
             const bom = generateSbom(results, META);
