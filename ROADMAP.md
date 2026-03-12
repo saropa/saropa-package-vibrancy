@@ -19,9 +19,9 @@ Planned features sorted by effort vs wow factor.
 
 | Feature | What | Plan |
 |---------|------|------|
-| **Package Comparison View** | Select 2–3 packages, open side-by-side webview comparing score, size, platforms, stars, license. Winner highlighting. | [plan](plans/18-package-comparison-view.md) |
-| **Dependency Budget** | Project-level limits: max deps, min avg vibrancy, max EOL. Visual gauge in sidebar. Non-zero exit code for CI. | [plan](plans/16-dependency-budget.md) |
-| **Prerelease Versions** | Show dev/beta/rc versions. Toggle command. Filter by tag. | [plan](plans/30-prerelease-versions.md) |
+| ~~**Package Comparison View**~~ | ✅ Completed | — |
+| ~~**Dependency Budget**~~ | ✅ Completed | — |
+| ~~**Prerelease Versions**~~ | ✅ Completed | — |
 
 ---
 
@@ -63,9 +63,9 @@ Read top-to-bottom. Each row is a step; effort column tells you the time.
 
 | # | Feature | Effort | Wow | Unlocks |
 |---|---------|--------|-----|---------|
-| 1 | Dependency Budget (16) | M | ⭐⭐ | CI Pipeline (20) |
-| 2 | Comparison View (18) | M | ⭐⭐ | — |
-| 3 | Prerelease Versions (30) | M | ⭐⭐ | — |
+| 1 | ~~Dependency Budget (16)~~ | ✅ | ⭐⭐ | CI Pipeline (20) |
+| 2 | ~~Comparison View (18)~~ | ✅ | ⭐⭐ | — |
+| 3 | ~~Prerelease Versions (30)~~ | ✅ | ⭐⭐ | — |
 | 4 | Changelog Diff Webview (15) | M | ⭐ | — |
 | 5 | Private Registry Auth (33) | L | ⭐⭐ | — |
 | 6 | CI Pipeline Generator (20) | L | ⭐⭐ | — |
@@ -122,3 +122,4 @@ The following features have been implemented and their plans moved to
 - **Customizable Indicators** (32) — `indicator-config.ts`
 - **Context State Pattern** (34) — `state/context-state.ts`, `state/vibrancy-state.ts`
 - **Alternative Package Suggestions** — `pub-dev-search.ts`
+- **Package Comparison View** (18) — `comparison-ranker.ts`, `comparison-html.ts`, `comparison-webview.ts`

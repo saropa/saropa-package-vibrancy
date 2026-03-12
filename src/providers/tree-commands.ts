@@ -12,6 +12,8 @@ import { DetailViewProvider } from '../views/detail-view-provider';
 import { DetailLogger } from '../services/detail-logger';
 import { getLatestResults } from '../extension-activation';
 import { UpdateFromCodeLensArgs } from './codelens-provider';
+import { ComparisonPanel } from '../views/comparison-webview';
+import { resultToComparisonData } from '../scoring/comparison-ranker';
 
 // Re-export for backward compatibility
 export { findPubspecYaml, buildVersionEdit, findPackageLines, readVersionConstraint };
@@ -43,6 +45,7 @@ export function registerTreeCommands(
         vscode.commands.registerCommand('saropaPackageVibrancy.logAllDetails', logAllDetails),
         vscode.commands.registerCommand('saropaPackageVibrancy.updateFromCodeLens', updateFromCodeLens),
         vscode.commands.registerCommand('saropaPackageVibrancy.focusPackageInTree', focusPackageInTree),
+        vscode.commands.registerCommand('saropaPackageVibrancy.compareSelected', compareSelected),
     );
 }
 
@@ -245,5 +248,28 @@ async function focusPackageInTree(packageName: string): Promise<void> {
     if (result && _detailViewProvider) {
         _detailViewProvider.update(result);
     }
+}
+
+/** Compare selected packages in a side-by-side view. */
+function compareSelected(
+    _item: PackageItem,
+    selectedItems: PackageItem[],
+): void {
+    const items = selectedItems ?? [];
+
+    if (items.length < 2) {
+        vscode.window.showWarningMessage('Select 2-3 packages to compare');
+        return;
+    }
+
+    if (items.length > 3) {
+        vscode.window.showWarningMessage('Maximum 3 packages for comparison');
+        return;
+    }
+
+    const comparisonData = items.map(item =>
+        resultToComparisonData(item.result, true));
+
+    ComparisonPanel.createOrShow(comparisonData);
 }
 

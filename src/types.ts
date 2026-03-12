@@ -157,6 +157,8 @@ export interface VibrancyResult {
     readonly latestPrerelease: string | null;
     /** Prerelease tag extracted from version (e.g., 'dev', 'beta', 'rc'). */
     readonly prereleaseTag: string | null;
+    /** Security vulnerabilities affecting this package version. */
+    readonly vulnerabilities: readonly Vulnerability[];
 }
 
 /** A single package entry from `dart pub outdated --json`. */
@@ -263,6 +265,19 @@ export interface NewVersionNotification {
 /** Watch filter mode for freshness watcher. */
 export type WatchFilterMode = 'all' | 'unhealthy' | 'custom';
 
+/** Severity tier for a security vulnerability. */
+export type VulnSeverity = 'critical' | 'high' | 'medium' | 'low';
+
+/** A security vulnerability affecting a package. */
+export interface Vulnerability {
+    readonly id: string;
+    readonly summary: string;
+    readonly severity: VulnSeverity;
+    readonly cvssScore: number | null;
+    readonly fixedVersion: string | null;
+    readonly url: string;
+}
+
 /** A shared transitive dependency used by multiple direct deps. */
 export interface SharedDep {
     readonly name: string;
@@ -356,4 +371,48 @@ export interface PackageInsight {
     readonly suggestedAction: string | null;
     readonly actionType: ActionType;
     readonly unlocksIfFixed: readonly string[];
+}
+
+/** CI platform targets for workflow generation. */
+export type CiPlatform = 'github-actions' | 'gitlab-ci' | 'shell-script';
+
+/** Thresholds for CI vibrancy checks. */
+export interface CiThresholds {
+    readonly maxEndOfLife: number;
+    readonly maxLegacyLocked: number;
+    readonly minAverageVibrancy: number;
+    readonly failOnVulnerability: boolean;
+}
+
+/** Data for package comparison view. */
+export interface ComparisonData {
+    readonly name: string;
+    readonly vibrancyScore: number | null;
+    readonly category: VibrancyCategory | null;
+    readonly latestVersion: string;
+    readonly publishedDate: string | null;
+    readonly publisher: string | null;
+    readonly pubPoints: number;
+    readonly stars: number | null;
+    readonly openIssues: number | null;
+    readonly archiveSizeBytes: number | null;
+    readonly bloatRating: number | null;
+    readonly license: string | null;
+    readonly platforms: readonly string[];
+    readonly inProject: boolean;
+}
+
+/** Dimension-wise winner info for package comparison. */
+export interface DimensionWinner {
+    readonly dimension: string;
+    readonly winnerName: string;
+    readonly value: string;
+    readonly allValues: readonly { name: string; value: string; isWinner: boolean }[];
+}
+
+/** Ranked comparison result. */
+export interface RankedComparison {
+    readonly packages: readonly ComparisonData[];
+    readonly winners: readonly DimensionWinner[];
+    readonly recommendation: string;
 }

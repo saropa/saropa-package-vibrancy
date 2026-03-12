@@ -11,6 +11,7 @@ import { PrereleaseToggle } from './ui/prerelease-toggle';
 import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
 import { AboutPanel } from './views/about-webview';
+import { ComparisonPanel } from './views/comparison-webview';
 import { DetailViewProvider, DETAIL_VIEW_ID } from './views/detail-view-provider';
 import { DetailLogger, DETAIL_CHANNEL_NAME } from './services/detail-logger';
 import { exportReports, ReportMetadata } from './services/report-exporter';
@@ -46,7 +47,9 @@ import {
 } from './services/freshness-watcher';
 import {
     addSuppressedPackage, addSuppressedPackages, clearSuppressedPackages,
+    getVulnScanEnabled,
 } from './services/config-service';
+import { queryVulnerabilities } from './services/osv-api';
 import { sortDependencies } from './services/pubspec-sorter';
 import { clearIndicatorCache } from './services/indicator-config';
 import { findPubspecYaml } from './services/pubspec-editor';
@@ -54,10 +57,23 @@ import { VibrancyStateManager } from './state';
 import {
     readBudgetConfig, checkBudgets, formatBudgetSummary, hasBudgets,
 } from './scoring/budget-checker';
-import { BudgetResult } from './types';
+import { BudgetResult, ComparisonData } from './types';
+import { resultToComparisonData } from './scoring/comparison-ranker';
+import {
+    fetchPackageInfo, fetchPackageMetrics, fetchPublisher, fetchArchiveSize,
+} from './services/pub-dev-api';
+import { extractGitHubRepo, fetchRepoMetrics } from './services/github-api';
+import { calcBloatRating } from './scoring/bloat-calculator';
 import { SaveTaskRunner } from './services/save-task-runner';
 import { bulkUpdate } from './services/bulk-updater';
 import { IncrementFilter } from './scoring/version-increment';
+import { RegistryService } from './services/registry-service';
+import { registerRegistryCommands } from './providers/registry-commands';
+import { suggestThresholds, formatThresholdsSummary } from './services/threshold-suggester';
+import {
+    generateCiWorkflow, getDefaultOutputPath, getAvailablePlatforms,
+} from './services/ci-generator';
+import { CiPlatform, CiThresholds } from './types';
 
 let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
@@ -76,6 +92,7 @@ let detailViewProvider: DetailViewProvider | null = null;
 let detailLogger: DetailLogger | null = null;
 let detailChannel: vscode.OutputChannel | null = null;
 let saveTaskRunner: SaveTaskRunner | null = null;
+let registryService: RegistryService | null = null;
 
 /** Get the latest scan results (used by providers). */
 export function getLatestResults(): readonly VibrancyResult[] {
@@ -92,9 +109,17 @@ export function getStateManager(): VibrancyStateManager | null {
     return stateManager;
 }
 
+/** Get the registry service (used by providers). */
+export function getRegistryService(): RegistryService | null {
+    return registryService;
+}
+
 /** Main activation wiring. */
 export function runActivation(context: vscode.ExtensionContext): void {
     const cache = new CacheService(context.globalState);
+    registryService = new RegistryService(context.secrets);
+    context.subscriptions.push(registryService);
+
     const treeProvider = new VibrancyTreeProvider();
     const hoverProvider = new VibrancyHoverProvider();
     const codeLensProvider = new VibrancyCodeLensProvider();
@@ -156,6 +181,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     registerTreeCommands(context, detailViewProvider, detailLogger);
     registerUpgradeCommand(context);
     registerAnnotateCommand(context);
+    registerRegistryCommands(context, registryService);
     registerFileWatcher(context, targets);
     registerSuppressListener(context, targets);
     registerConfigListener(context, codeLensProvider, treeProvider);
@@ -379,6 +405,14 @@ function registerCommands(
             'saropaPackageVibrancy.updateAllPatch',
             () => runBulkUpdate('patch', targets),
         ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.generateCiConfig',
+            () => generateCiConfig(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.comparePackages',
+            () => runComparePackages(targets.cache),
+        ),
     );
 }
 
@@ -506,6 +540,29 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                 logger.info(
                     `Overrides: ${overrideAnalyses.length} total, ${staleCount} stale`,
                 );
+            }
+
+            if (getVulnScanEnabled()) {
+                progress.report({ message: 'Scanning for vulnerabilities...' });
+                const vulnQueries = results.map(r => ({
+                    name: r.package.name,
+                    version: r.package.version,
+                }));
+                const vulnResults = await queryVulnerabilities(
+                    vulnQueries, targets.cache, logger,
+                );
+                const vulnMap = new Map(
+                    vulnResults.map(vr => [`${vr.name}@${vr.version}`, vr.vulnerabilities]),
+                );
+                results = results.map(r => {
+                    const vulns = vulnMap.get(`${r.package.name}@${r.package.version}`) ?? [];
+                    return vulns.length > 0 ? { ...r, vulnerabilities: vulns } : r;
+                }) as VibrancyResult[];
+
+                const vulnCount = results.filter(r => r.vulnerabilities.length > 0).length;
+                if (vulnCount > 0) {
+                    logger.info(`Vulnerabilities: ${vulnCount} package(s) affected`);
+                }
             }
 
             latestResults = results;
@@ -933,5 +990,285 @@ async function runBulkUpdate(
     if (result.updated.length > 0 && !result.cancelled) {
         await runScan(targets);
     }
+}
+
+async function generateCiConfig(): Promise<void> {
+    if (latestResults.length === 0) {
+        vscode.window.showWarningMessage('Run a scan first to generate CI config with appropriate thresholds');
+        return;
+    }
+
+    const platforms = getAvailablePlatforms();
+    const platformSelection = await vscode.window.showQuickPick(
+        platforms.map(p => ({
+            label: p.label,
+            description: p.description,
+            id: p.id,
+        })),
+        {
+            title: 'Generate CI Pipeline',
+            placeHolder: 'Select CI platform',
+        },
+    );
+
+    if (!platformSelection) { return; }
+
+    const platform = platformSelection.id as CiPlatform;
+    const suggested = suggestThresholds(latestResults);
+
+    const thresholds = await promptThresholds(suggested);
+    if (!thresholds) { return; }
+
+    const content = generateCiWorkflow(platform, thresholds);
+    const defaultPath = getDefaultOutputPath(platform);
+
+    const folders = vscode.workspace.workspaceFolders;
+    if (!folders || folders.length === 0) {
+        vscode.window.showErrorMessage('No workspace folder open');
+        return;
+    }
+
+    const targetPath = vscode.Uri.joinPath(folders[0].uri, defaultPath);
+
+    let shouldWrite = true;
+    try {
+        await vscode.workspace.fs.stat(targetPath);
+        const overwrite = await vscode.window.showWarningMessage(
+            `${defaultPath} already exists. Overwrite?`,
+            { modal: true },
+            'Overwrite',
+        );
+        shouldWrite = overwrite === 'Overwrite';
+    } catch {
+        const parentDir = vscode.Uri.joinPath(targetPath, '..');
+        try {
+            await vscode.workspace.fs.stat(parentDir);
+        } catch {
+            await vscode.workspace.fs.createDirectory(parentDir);
+        }
+    }
+
+    if (!shouldWrite) { return; }
+
+    await vscode.workspace.fs.writeFile(targetPath, Buffer.from(content, 'utf-8'));
+
+    const doc = await vscode.workspace.openTextDocument(targetPath);
+    await vscode.window.showTextDocument(doc);
+
+    vscode.window.showInformationMessage(
+        `CI pipeline generated: ${defaultPath}`,
+    );
+}
+
+async function promptThresholds(
+    suggested: CiThresholds,
+): Promise<CiThresholds | undefined> {
+    const summary = formatThresholdsSummary(suggested);
+
+    const action = await vscode.window.showQuickPick(
+        [
+            {
+                label: '$(check) Use suggested thresholds',
+                description: summary,
+                action: 'use',
+            },
+            {
+                label: '$(edit) Customize thresholds...',
+                description: 'Edit each threshold value',
+                action: 'edit',
+            },
+        ],
+        {
+            title: 'Configure CI Thresholds',
+            placeHolder: 'Based on current scan results',
+        },
+    );
+
+    if (!action) { return undefined; }
+
+    if (action.action === 'use') {
+        return suggested;
+    }
+
+    const maxEol = await vscode.window.showInputBox({
+        title: 'Max End-of-Life Packages',
+        prompt: 'Maximum number of EOL packages allowed (current PRs with more will fail)',
+        value: String(suggested.maxEndOfLife),
+        validateInput: v => {
+            const n = parseInt(v, 10);
+            return isNaN(n) || n < 0 ? 'Enter a non-negative number' : undefined;
+        },
+    });
+    if (maxEol === undefined) { return undefined; }
+
+    const maxLegacy = await vscode.window.showInputBox({
+        title: 'Max Legacy-Locked Packages',
+        prompt: 'Maximum number of legacy-locked packages allowed',
+        value: String(suggested.maxLegacyLocked),
+        validateInput: v => {
+            const n = parseInt(v, 10);
+            return isNaN(n) || n < 0 ? 'Enter a non-negative number' : undefined;
+        },
+    });
+    if (maxLegacy === undefined) { return undefined; }
+
+    const minVibrancy = await vscode.window.showInputBox({
+        title: 'Minimum Average Vibrancy',
+        prompt: 'Minimum average vibrancy score (0-100) required',
+        value: String(suggested.minAverageVibrancy),
+        validateInput: v => {
+            const n = parseInt(v, 10);
+            return isNaN(n) || n < 0 || n > 100 ? 'Enter a number between 0 and 100' : undefined;
+        },
+    });
+    if (minVibrancy === undefined) { return undefined; }
+
+    const failOnVuln = await vscode.window.showQuickPick(
+        [
+            { label: 'Yes', description: 'Fail CI on known vulnerabilities', value: true },
+            { label: 'No', description: 'Warn but do not fail', value: false },
+        ],
+        {
+            title: 'Fail on Vulnerabilities?',
+            placeHolder: 'Should the CI fail when vulnerabilities are detected?',
+        },
+    );
+    if (!failOnVuln) { return undefined; }
+
+    return {
+        maxEndOfLife: parseInt(maxEol, 10),
+        maxLegacyLocked: parseInt(maxLegacy, 10),
+        minAverageVibrancy: parseInt(minVibrancy, 10),
+        failOnVulnerability: failOnVuln.value,
+    };
+}
+
+async function runComparePackages(cache: CacheService): Promise<void> {
+    const packageNames = await promptForPackageNames();
+    if (!packageNames || packageNames.length < 2) {
+        vscode.window.showWarningMessage('Select 2-3 packages to compare');
+        return;
+    }
+
+    if (packageNames.length > 3) {
+        vscode.window.showWarningMessage('Maximum 3 packages for comparison');
+        return;
+    }
+
+    const comparisonData = await vscode.window.withProgress(
+        {
+            location: vscode.ProgressLocation.Notification,
+            title: 'Fetching package data...',
+            cancellable: false,
+        },
+        async () => {
+            const resolvedNames = new Set(latestResults.map(r => r.package.name));
+            const data: ComparisonData[] = [];
+
+            for (const name of packageNames) {
+                const existing = latestResults.find(r => r.package.name === name);
+                if (existing) {
+                    data.push(resultToComparisonData(existing, true));
+                } else {
+                    const fetched = await fetchComparisonData(name, cache);
+                    if (fetched) {
+                        data.push({ ...fetched, inProject: resolvedNames.has(name) });
+                    }
+                }
+            }
+
+            return data;
+        },
+    );
+
+    if (comparisonData.length < 2) {
+        vscode.window.showWarningMessage('Could not fetch enough package data');
+        return;
+    }
+
+    ComparisonPanel.createOrShow(comparisonData);
+}
+
+async function promptForPackageNames(): Promise<string[] | undefined> {
+    const scannedItems = latestResults.map(r => ({
+        label: r.package.name,
+        description: `${r.score}/100 — ${r.category}`,
+        picked: false,
+    }));
+
+    if (scannedItems.length > 0) {
+        const selection = await vscode.window.showQuickPick(scannedItems, {
+            title: 'Select packages to compare',
+            placeHolder: 'Choose 2-3 packages (or type to search pub.dev)',
+            canPickMany: true,
+        });
+
+        if (selection && selection.length >= 2) {
+            return selection.map(s => s.label);
+        }
+    }
+
+    const input = await vscode.window.showInputBox({
+        title: 'Compare Packages',
+        prompt: 'Enter 2-3 package names separated by commas',
+        placeHolder: 'e.g., http, dio, chopper',
+    });
+
+    if (!input) { return undefined; }
+
+    return input.split(',')
+        .map(s => s.trim())
+        .filter(s => s.length > 0);
+}
+
+async function fetchComparisonData(
+    name: string,
+    cache: CacheService,
+): Promise<ComparisonData | null> {
+    const [info, metrics, publisher, archiveSize] = await Promise.all([
+        fetchPackageInfo(name, cache),
+        fetchPackageMetrics(name, cache),
+        fetchPublisher(name, cache),
+        fetchArchiveSize(name, cache),
+    ]);
+
+    if (!info) { return null; }
+
+    let stars: number | null = null;
+    let openIssues: number | null = null;
+
+    if (info.repositoryUrl?.includes('github.com')) {
+        const extracted = extractGitHubRepo(info.repositoryUrl);
+        if (extracted) {
+            const ghMetrics = await fetchRepoMetrics(
+                extracted.owner,
+                extracted.repo,
+                { cache },
+            );
+            if (ghMetrics) {
+                stars = ghMetrics.stars;
+                openIssues = ghMetrics.openIssues;
+            }
+        }
+    }
+
+    const bloatRating = archiveSize !== null ? calcBloatRating(archiveSize) : null;
+
+    return {
+        name,
+        vibrancyScore: null,
+        category: null,
+        latestVersion: info.latestVersion,
+        publishedDate: info.publishedDate?.split('T')[0] ?? null,
+        publisher,
+        pubPoints: metrics.pubPoints,
+        stars,
+        openIssues,
+        archiveSizeBytes: archiveSize,
+        bloatRating,
+        license: info.license,
+        platforms: metrics.platforms,
+        inProject: false,
+    };
 }
 

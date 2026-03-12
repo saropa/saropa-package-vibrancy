@@ -241,6 +241,36 @@
         "command": "saropaPackageVibrancy.updateToPrerelease",
         "title": "Update to Prerelease",
         "icon": "$(beaker)"
+      },
+      {
+        "command": "saropaPackageVibrancy.generateCiConfig",
+        "title": "Saropa: Generate CI Pipeline",
+        "icon": "$(server-process)"
+      },
+      {
+        "command": "saropaPackageVibrancy.addRegistryAuth",
+        "title": "Saropa: Add Registry Authentication",
+        "icon": "$(key)"
+      },
+      {
+        "command": "saropaPackageVibrancy.removeRegistryAuth",
+        "title": "Saropa: Remove Registry Authentication",
+        "icon": "$(trash)"
+      },
+      {
+        "command": "saropaPackageVibrancy.listRegistries",
+        "title": "Saropa: List Configured Registries",
+        "icon": "$(list-unordered)"
+      },
+      {
+        "command": "saropaPackageVibrancy.comparePackages",
+        "title": "Saropa: Compare Packages",
+        "icon": "$(diff)"
+      },
+      {
+        "command": "saropaPackageVibrancy.compareSelected",
+        "title": "Compare Selected Packages",
+        "icon": "$(diff)"
       }
     ],
     "menus": {
@@ -299,6 +329,11 @@
           "command": "saropaPackageVibrancy.updateAllPatch",
           "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults && !saropaPackageVibrancy.isScanning",
           "group": "2_bulk@4"
+        },
+        {
+          "command": "saropaPackageVibrancy.generateCiConfig",
+          "when": "view == saropaPackageVibrancy.packages && saropaPackageVibrancy.hasResults",
+          "group": "3_ci@1"
         }
       ],
       "editor/title": [
@@ -347,6 +382,10 @@
         },
         {
           "command": "saropaPackageVibrancy.updateToPrerelease",
+          "when": "false"
+        },
+        {
+          "command": "saropaPackageVibrancy.compareSelected",
           "when": "false"
         }
       ],
@@ -412,6 +451,11 @@
           "group": "4_output@1"
         },
         {
+          "command": "saropaPackageVibrancy.compareSelected",
+          "when": "viewItem =~ /vibrancyPackage/ && listMultiSelection",
+          "group": "5_compare@1"
+        },
+        {
           "command": "saropaPackageVibrancy.updateToPrerelease",
           "when": "viewItem == vibrancyPrerelease",
           "group": "inline"
@@ -465,6 +509,27 @@
           "description": "Override GitHub repository URLs for packages where pub.dev data is wrong. Keys are package names, values are GitHub URLs (e.g. { \"my_pkg\": \"https://github.com/org/my_pkg\" })",
           "additionalProperties": {
             "type": "string"
+          }
+        },
+        "saropaPackageVibrancy.registries": {
+          "type": "object",
+          "default": {},
+          "description": "Registry configuration for private Pub servers. Tokens are stored securely in VS Code Secret Storage.",
+          "additionalProperties": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "description": "Display name for this registry"
+              },
+              "packages": {
+                "type": "array",
+                "items": {
+                  "type": "string"
+                },
+                "description": "Package names hosted on this registry (empty = auto-detect from pubspec)"
+              }
+            }
           }
         },
         "saropaPackageVibrancy.showLockDiffNotifications": {
@@ -715,6 +780,28 @@
           "default": null,
           "minimum": 0,
           "description": "Maximum number of unused dependencies allowed (null = no limit)"
+        },
+        "saropaPackageVibrancy.enableVulnScan": {
+          "type": "boolean",
+          "default": true,
+          "description": "Query OSV database for known vulnerabilities in dependencies"
+        },
+        "saropaPackageVibrancy.vulnSeverityThreshold": {
+          "type": "string",
+          "enum": [
+            "critical",
+            "high",
+            "medium",
+            "low"
+          ],
+          "default": "low",
+          "enumDescriptions": [
+            "Only show critical vulnerabilities (CVSS 9.0+)",
+            "Show high and critical vulnerabilities (CVSS 7.0+)",
+            "Show medium, high, and critical vulnerabilities (CVSS 4.0+)",
+            "Show all vulnerabilities"
+          ],
+          "description": "Minimum severity level for displaying vulnerability diagnostics"
         }
       }
     }
