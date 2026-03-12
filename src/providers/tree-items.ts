@@ -1,9 +1,24 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, VibrancyCategory, UpdateInfo, DepGraphSummary, OverrideAnalysis } from '../types';
+import {
+    VibrancyResult, VibrancyCategory, UpdateInfo, DepGraphSummary,
+    OverrideAnalysis, DependencySection,
+} from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
 import { formatAge, isOldOverride } from '../scoring/override-analyzer';
+
+const SECTION_LABELS: Record<DependencySection, string> = {
+    dependencies: 'Dependencies',
+    dev_dependencies: 'Dev Dependencies',
+    transitive: 'Transitive',
+};
+
+const SECTION_ICONS: Record<DependencySection, string> = {
+    dependencies: 'package',
+    dev_dependencies: 'tools',
+    transitive: 'references',
+};
 
 function categoryColor(cat: VibrancyCategory): vscode.ThemeColor {
     switch (cat) {
@@ -63,6 +78,20 @@ export class SuppressedGroupItem extends vscode.TreeItem {
             new vscode.ThemeColor('disabledForeground'),
         );
         this.contextValue = 'vibrancySuppressedGroup';
+    }
+}
+
+/** Groups packages by their pubspec section. */
+export class SectionGroupItem extends vscode.TreeItem {
+    constructor(
+        public readonly section: DependencySection,
+        public readonly results: VibrancyResult[],
+    ) {
+        const label = SECTION_LABELS[section];
+        const count = results.length;
+        super(`${label} (${count})`, vscode.TreeItemCollapsibleState.Expanded);
+        this.iconPath = new vscode.ThemeIcon(SECTION_ICONS[section]);
+        this.contextValue = 'vibrancySectionGroup';
     }
 }
 

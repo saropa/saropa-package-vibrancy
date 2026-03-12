@@ -1,8 +1,8 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, FamilySplit, OverrideAnalysis, DepGraphSummary } from '../types';
+import { VibrancyResult, FamilySplit, OverrideAnalysis, DepGraphSummary, DependencySection } from '../types';
 import {
     PackageItem, DetailItem, GroupItem, SuppressedGroupItem,
-    SuppressedPackageItem, buildGroupItems,
+    SuppressedPackageItem, buildGroupItems, SectionGroupItem,
     OverridesGroupItem, OverrideItem, buildOverrideDetails,
     DepGraphSummaryItem, buildDepGraphSummaryDetails,
 } from './tree-items';
@@ -13,7 +13,8 @@ import {
 type TreeNode =
     | PackageItem | GroupItem | DetailItem
     | SuppressedGroupItem | FamilyConflictGroupItem | FamilySplitItem
-    | OverridesGroupItem | OverrideItem | DepGraphSummaryItem;
+    | OverridesGroupItem | OverrideItem | DepGraphSummaryItem
+    | SectionGroupItem;
 
 export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
     private _results: VibrancyResult[] = [];
@@ -84,6 +85,9 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
                 r => new SuppressedPackageItem(r),
             );
         }
+        if (element instanceof SectionGroupItem) {
+            return element.results.map(r => new PackageItem(r));
+        }
         if (element instanceof PackageItem) {
             return buildGroupItems(element.result);
         }
@@ -110,14 +114,47 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
         const active = this._results.filter(
             r => !suppressed.has(r.package.name),
         );
-        for (const r of active) {
-            items.push(new PackageItem(r));
+
+        const grouping = this._getTreeGrouping();
+        if (grouping === 'section') {
+            this._buildSectionGroups(active, items);
+        } else {
+            for (const r of active) {
+                items.push(new PackageItem(r));
+            }
         }
+
         const suppressedCount = this._results.length - active.length;
         if (suppressedCount > 0) {
             items.push(new SuppressedGroupItem(suppressedCount));
         }
         return items;
+    }
+
+    private _getTreeGrouping(): 'none' | 'section' {
+        const config = vscode.workspace.getConfiguration('saropaPackageVibrancy');
+        return config.get<'none' | 'section'>('treeGrouping', 'none');
+    }
+
+    private _buildSectionGroups(
+        results: VibrancyResult[],
+        items: TreeNode[],
+    ): void {
+        const sections: DependencySection[] = [
+            'dependencies',
+            'dev_dependencies',
+            'transitive',
+        ];
+
+        for (const section of sections) {
+            const sectionResults = results
+                .filter(r => r.package.section === section)
+                .sort((a, b) => a.score - b.score);
+
+            if (sectionResults.length > 0) {
+                items.push(new SectionGroupItem(section, sectionResults));
+            }
+        }
     }
 
     private _getSuppressedSet(): Set<string> {

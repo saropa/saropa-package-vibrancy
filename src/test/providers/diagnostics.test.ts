@@ -2,7 +2,7 @@ import * as assert from 'assert';
 import * as vscode from 'vscode';
 import { VibrancyDiagnostics } from '../../providers/diagnostics';
 import { VibrancyResult } from '../../types';
-import { MockDiagnosticCollection } from '../vscode-mock';
+import { MockDiagnosticCollection, setTestConfig, clearTestConfig } from '../vscode-mock';
 
 const PUBSPEC_CONTENT = `dependencies:
   http: ^1.0.0
@@ -16,7 +16,7 @@ function makeResult(
     category: VibrancyResult['category'],
 ): VibrancyResult {
     return {
-        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
+        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true, section: 'dependencies' },
         pubDev: null,
         github: null,
         knownIssue: null,
@@ -43,13 +43,19 @@ describe('VibrancyDiagnostics', () => {
     const uri = vscode.Uri.file('/test/pubspec.yaml');
 
     beforeEach(() => {
+        clearTestConfig();
         collection = new MockDiagnosticCollection('test');
         diagnostics = new VibrancyDiagnostics(
             collection as unknown as vscode.DiagnosticCollection,
         );
     });
 
+    afterEach(() => {
+        clearTestConfig();
+    });
+
     it('should create diagnostics for non-vibrant packages', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const results = [
             makeResult('http', 80, 'vibrant'),
             makeResult('flutter_bloc', 35, 'legacy-locked'),
@@ -61,6 +67,18 @@ describe('VibrancyDiagnostics', () => {
         assert.strictEqual(diags!.length, 2);
     });
 
+    it('should skip end-of-life diagnostics when setting is none', () => {
+        const results = [
+            makeResult('flutter_bloc', 35, 'legacy-locked'),
+            makeResult('old_pkg', 5, 'end-of-life'),
+        ];
+        diagnostics.update(uri, PUBSPEC_CONTENT, results);
+        const diags = collection.get(uri);
+        assert.ok(diags);
+        assert.strictEqual(diags!.length, 1);
+        assert.strictEqual(diags![0].code, 'legacy-locked');
+    });
+
     it('should skip vibrant packages', () => {
         const results = [makeResult('http', 85, 'vibrant')];
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
@@ -69,11 +87,38 @@ describe('VibrancyDiagnostics', () => {
         assert.strictEqual(diags!.length, 0);
     });
 
-    it('should set Warning severity for end-of-life', () => {
+    it('should set Hint severity for end-of-life with hint setting', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const results = [makeResult('old_pkg', 5, 'end-of-life')];
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
         const diags = collection.get(uri)!;
+        assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Hint);
+    });
+
+    it('should set Warning severity for end-of-life with smart setting and replacement', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'smart');
+        const result: VibrancyResult = {
+            ...makeResult('old_pkg', 5, 'end-of-life'),
+            knownIssue: {
+                name: 'old_pkg',
+                status: 'discontinued',
+                reason: undefined,
+                as_of: undefined,
+                replacement: 'new_pkg',
+                migrationNotes: undefined,
+            },
+        };
+        diagnostics.update(uri, PUBSPEC_CONTENT, [result]);
+        const diags = collection.get(uri)!;
         assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Warning);
+    });
+
+    it('should set Hint severity for end-of-life with smart setting but no replacement', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'smart');
+        const results = [makeResult('old_pkg', 5, 'end-of-life')];
+        diagnostics.update(uri, PUBSPEC_CONTENT, results);
+        const diags = collection.get(uri)!;
+        assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Hint);
     });
 
     it('should set Information severity for legacy-locked', () => {
@@ -83,11 +128,12 @@ describe('VibrancyDiagnostics', () => {
         assert.strictEqual(diags[0].severity, vscode.DiagnosticSeverity.Information);
     });
 
-    it('should use Replace verb for end-of-life messages', () => {
+    it('should use Deprecated label for end-of-life messages without replacement', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const results = [makeResult('old_pkg', 5, 'end-of-life')];
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
         const diags = collection.get(uri)!;
-        assert.strictEqual(diags[0].message, 'Replace old_pkg (1/10)');
+        assert.strictEqual(diags[0].message, 'Deprecated: old_pkg (1/10)');
     });
 
     it('should use Review verb for legacy-locked messages', () => {
@@ -105,6 +151,7 @@ describe('VibrancyDiagnostics', () => {
     });
 
     it('should suggest replacement in message when known', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const result: VibrancyResult = {
             ...makeResult('old_pkg', 5, 'end-of-life'),
             knownIssue: {
@@ -122,6 +169,7 @@ describe('VibrancyDiagnostics', () => {
     });
 
     it('should include known issue reason in message', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const result: VibrancyResult = {
             ...makeResult('old_pkg', 5, 'end-of-life'),
             knownIssue: {
@@ -139,6 +187,7 @@ describe('VibrancyDiagnostics', () => {
     });
 
     it('should set source to Saropa Package Vibrancy', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const results = [makeResult('old_pkg', 5, 'end-of-life')];
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
         const diags = collection.get(uri)!;
@@ -160,6 +209,7 @@ describe('VibrancyDiagnostics', () => {
     });
 
     it('should add unused diagnostic alongside category diagnostic', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const result: VibrancyResult = {
             ...makeResult('old_pkg', 5, 'end-of-life'),
             isUnused: true,
@@ -172,6 +222,7 @@ describe('VibrancyDiagnostics', () => {
     });
 
     it('should clear diagnostics', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const results = [makeResult('old_pkg', 5, 'end-of-life')];
         diagnostics.update(uri, PUBSPEC_CONTENT, results);
         diagnostics.clear();

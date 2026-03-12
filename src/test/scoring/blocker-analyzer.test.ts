@@ -18,7 +18,7 @@ function makeResult(name: string, score: number): VibrancyResult {
     return {
         package: {
             name, version: '1.0.0', constraint: '^1.0.0',
-            source: 'hosted', isDirect: true,
+            source: 'hosted', isDirect: true, section: 'dependencies',
         },
         pubDev: null, github: null, knownIssue: null,
         score, category: score >= 70 ? 'vibrant' : 'end-of-life',

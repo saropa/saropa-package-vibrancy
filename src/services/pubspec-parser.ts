@@ -1,4 +1,4 @@
-import { PackageDependency, PackageRange } from '../types';
+import { PackageDependency, PackageRange, DependencySection } from '../types';
 
 /**
  * Parse pubspec.yaml content to extract dependency names.
@@ -43,6 +43,17 @@ export function parsePubspecYaml(content: string): {
     return { directDeps, devDeps, constraints };
 }
 
+/** Determine which section a package belongs to. */
+function getSection(
+    name: string,
+    directSet: Set<string>,
+    devSet: Set<string>,
+): DependencySection {
+    if (directSet.has(name)) { return 'dependencies'; }
+    if (devSet.has(name)) { return 'dev_dependencies'; }
+    return 'transitive';
+}
+
 /**
  * Parse pubspec.lock content to extract package dependencies.
  */
@@ -50,10 +61,12 @@ export function parsePubspecLock(
     lockContent: string,
     directDeps: string[],
     constraints: Record<string, string> = {},
+    devDeps: string[] = [],
 ): PackageDependency[] {
     const packages: PackageDependency[] = [];
     const lines = lockContent.split('\n');
     const directSet = new Set(directDeps);
+    const devSet = new Set(devDeps);
 
     let currentName: string | null = null;
     let currentVersion = '';
@@ -69,7 +82,8 @@ export function parsePubspecLock(
                     version: currentVersion,
                     constraint: constraints[currentName] ?? currentVersion,
                     source: currentSource,
-                    isDirect: directSet.has(currentName),
+                    isDirect: directSet.has(currentName) || devSet.has(currentName),
+                    section: getSection(currentName, directSet, devSet),
                 });
             }
             currentName = nameMatch[1];
@@ -97,7 +111,8 @@ export function parsePubspecLock(
             version: currentVersion,
             constraint: constraints[currentName] ?? currentVersion,
             source: currentSource,
-            isDirect: directSet.has(currentName),
+            isDirect: directSet.has(currentName) || devSet.has(currentName),
+            section: getSection(currentName, directSet, devSet),
         });
     }
 

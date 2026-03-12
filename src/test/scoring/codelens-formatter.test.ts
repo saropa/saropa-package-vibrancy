@@ -6,7 +6,7 @@ import { VibrancyResult } from '../../types';
 
 function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
     return {
-        package: { name: 'http', version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
+        package: { name: 'http', version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true, section: 'dependencies' },
         pubDev: null,
         github: null,
         knownIssue: null,

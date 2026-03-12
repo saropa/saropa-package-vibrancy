@@ -108,9 +108,24 @@ export const commands = {
     },
 };
 
+const testConfigValues: Record<string, any> = {};
+
+export function setTestConfig(section: string, key: string, value: any): void {
+    testConfigValues[`${section}.${key}`] = value;
+}
+
+export function clearTestConfig(): void {
+    for (const key of Object.keys(testConfigValues)) {
+        delete testConfigValues[key];
+    }
+}
+
 export const workspace: Record<string, any> = {
-    getConfiguration: (_section?: string) => ({
-        get: <T>(_key: string, defaultValue?: T): T | undefined => defaultValue,
+    getConfiguration: (section?: string) => ({
+        get: <T>(key: string, defaultValue?: T): T | undefined => {
+            const fullKey = section ? `${section}.${key}` : key;
+            return fullKey in testConfigValues ? testConfigValues[fullKey] : defaultValue;
+        },
         update: async (_key: string, _value: any, _target?: any): Promise<void> => {},
     }),
     findFiles: async (_include: any, _exclude?: any): Promise<any[]> => [],

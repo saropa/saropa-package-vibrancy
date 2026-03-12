@@ -30,7 +30,7 @@ describe('version-comparator', () => {
             score: number,
             isDirect: boolean,
         ): VibrancyResult => ({
-            package: { name, version, constraint: `^${version}`, source: 'hosted', isDirect },
+            package: { name, version, constraint: `^${version}`, source: 'hosted', isDirect, section: 'dependencies' },
             pubDev: null,
             github: null,
             knownIssue: null,

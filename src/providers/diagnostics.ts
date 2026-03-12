@@ -38,6 +38,8 @@ export class VibrancyDiagnostics {
     /** Update diagnostics for a pubspec.yaml document. */
     update(uri: vscode.Uri, content: string, results: VibrancyResult[]): void {
         const diagnostics: vscode.Diagnostic[] = [];
+        const eolSetting = vscode.workspace.getConfiguration('saropaPackageVibrancy')
+            .get<string>('endOfLifeDiagnostics', 'none');
 
         for (const result of results) {
             const range = findPackageRange(content, result.package.name);
@@ -49,16 +51,17 @@ export class VibrancyDiagnostics {
             );
 
             if (result.category !== 'vibrant') {
-                const sevValue = categoryToSeverity(result.category);
-                const severity = SEVERITY_MAP[sevValue] ?? vscode.DiagnosticSeverity.Hint;
-
-                const message = buildMessage(result);
-                const diag = new vscode.Diagnostic(
-                    vscodeRange, message, severity,
-                );
-                diag.source = 'Saropa Package Vibrancy';
-                diag.code = result.category;
-                diagnostics.push(diag);
+                const shouldSkip = result.category === 'end-of-life' && eolSetting === 'none';
+                if (!shouldSkip) {
+                    const severity = computeSeverity(result, eolSetting);
+                    const message = buildMessage(result);
+                    const diag = new vscode.Diagnostic(
+                        vscodeRange, message, severity,
+                    );
+                    diag.source = 'Saropa Package Vibrancy';
+                    diag.code = result.category;
+                    diagnostics.push(diag);
+                }
             }
 
             if (result.isUnused) {
@@ -165,6 +168,20 @@ export class VibrancyDiagnostics {
     }
 }
 
+function computeSeverity(
+    result: VibrancyResult,
+    eolSetting: string,
+): vscode.DiagnosticSeverity {
+    if (result.category === 'end-of-life') {
+        if (eolSetting === 'smart' && result.knownIssue?.replacement) {
+            return vscode.DiagnosticSeverity.Warning;
+        }
+        return vscode.DiagnosticSeverity.Hint;
+    }
+    const sevValue = categoryToSeverity(result.category);
+    return SEVERITY_MAP[sevValue] ?? vscode.DiagnosticSeverity.Hint;
+}
+
 function buildMessage(result: VibrancyResult): string {
     const score = Math.round(result.score / 10);
     const name = result.package.name;
@@ -173,7 +190,7 @@ function buildMessage(result: VibrancyResult): string {
     if (result.knownIssue?.replacement) {
         msg = `Replace ${name} with ${result.knownIssue.replacement}`;
     } else if (result.category === 'end-of-life') {
-        msg = `Replace ${name}`;
+        msg = `Deprecated: ${name}`;
     } else if (result.category === 'legacy-locked') {
         msg = `Review ${name}`;
     } else {

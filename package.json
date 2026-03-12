@@ -308,6 +308,21 @@
           ],
           "description": "Controls how much detail the CodeLens annotations show"
         },
+        "saropaPackageVibrancy.endOfLifeDiagnostics": {
+          "type": "string",
+          "enum": [
+            "none",
+            "hint",
+            "smart"
+          ],
+          "default": "none",
+          "enumDescriptions": [
+            "No diagnostics for end-of-life packages (view in sidebar only)",
+            "Show as Hint (subtle underline)",
+            "Show as Warning only when a replacement is known, otherwise Hint"
+          ],
+          "description": "How to display end-of-life package diagnostics in the editor"
+        },
         "saropaPackageVibrancy.weights.resolutionVelocity": {
           "type": "number",
           "default": 0.5,
@@ -382,6 +397,24 @@
           },
           "default": [],
           "description": "Package names to watch for new versions (only used when watchFilter is 'custom')"
+        },
+        "saropaPackageVibrancy.annotateSectionHeaders": {
+          "type": "boolean",
+          "default": true,
+          "description": "Insert decorative section headers above major pubspec sections (dependencies, dev_dependencies, dependency_overrides)"
+        },
+        "saropaPackageVibrancy.treeGrouping": {
+          "type": "string",
+          "enum": [
+            "none",
+            "section"
+          ],
+          "default": "none",
+          "enumDescriptions": [
+            "Flat list sorted by vibrancy score (worst first)",
+            "Group by pubspec section (dependencies, dev_dependencies)"
+          ],
+          "description": "How to group packages in the tree view"
         }
       }
     }

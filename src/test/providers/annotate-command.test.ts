@@ -1,5 +1,12 @@
 import * as assert from 'assert';
-import { formatAnnotation, buildAnnotationEdits } from '../../providers/annotate-command';
+import {
+    formatAnnotation,
+    buildAnnotationEdits,
+    formatSectionHeader,
+    buildSectionHeaderEdits,
+    buildSubSectionHeaderEdits,
+    buildOverrideMarkerEdit,
+} from '../../providers/annotate-command';
 
 /** Create a minimal fake TextDocument from raw text. */
 function makeFakeDoc(text: string): any {
@@ -103,7 +110,7 @@ describe('annotate-command', () => {
             );
 
             assert.strictEqual(edits.length, 1);
-            assert.ok(edits[0].deleteRange);
+            assert.strictEqual(edits[0].deleteRanges.length, 1);
             assert.ok(edits[0].text.includes('New description'));
         });
 
@@ -120,7 +127,7 @@ describe('annotate-command', () => {
             );
 
             assert.strictEqual(edits.length, 1);
-            assert.ok(edits[0].deleteRange);
+            assert.strictEqual(edits[0].deleteRanges.length, 1);
             assert.ok(edits[0].text.includes('Added description'));
         });
 
@@ -133,7 +140,7 @@ describe('annotate-command', () => {
             );
 
             assert.strictEqual(edits.length, 1);
-            assert.ok(!edits[0].deleteRange);
+            assert.strictEqual(edits[0].deleteRanges.length, 0);
         });
 
         it('should handle empty string description as missing', () => {
@@ -157,7 +164,270 @@ describe('annotate-command', () => {
             );
 
             assert.strictEqual(edits.length, 1);
-            assert.ok(!edits[0].deleteRange);
+            assert.strictEqual(edits[0].deleteRanges.length, 0);
+        });
+
+        it('should detect URL with /changelog suffix', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  # Old description\n'
+                + '  # https://pub.dev/packages/http/changelog\n'
+                + '  http: ^1.6.0',
+            );
+            const descriptions = new Map([['http', 'New description']]);
+
+            const edits = buildAnnotationEdits(
+                doc, ['http'], descriptions,
+            );
+
+            assert.strictEqual(edits.length, 1);
+            assert.strictEqual(edits[0].deleteRanges.length, 1);
+            assert.ok(edits[0].text.includes('New description'));
+        });
+
+        it('should remove multiple annotation blocks', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  # First description\n'
+                + '  # https://pub.dev/packages/http/changelog\n'
+                + '  # NOTE: user comment\n'
+                + '  # Second description\n'
+                + '  # https://pub.dev/packages/http\n'
+                + '  http: ^1.6.0',
+            );
+            const descriptions = new Map([['http', 'Final description']]);
+
+            const edits = buildAnnotationEdits(
+                doc, ['http'], descriptions,
+            );
+
+            assert.strictEqual(edits.length, 1);
+            assert.strictEqual(edits[0].deleteRanges.length, 2);
+            assert.ok(edits[0].text.includes('Final description'));
+        });
+
+        it('should preserve user comments between annotations', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  # https://pub.dev/packages/http/changelog\n'
+                + '  # Because version conflict...\n'
+                + '  # https://pub.dev/packages/http\n'
+                + '  http: ^1.6.0',
+            );
+            const descriptions = new Map([['http', 'HTTP client']]);
+
+            const edits = buildAnnotationEdits(
+                doc, ['http'], descriptions,
+            );
+
+            assert.strictEqual(edits.length, 1);
+            assert.strictEqual(edits[0].deleteRanges.length, 2);
+        });
+    });
+
+    describe('formatSectionHeader', () => {
+        it('should create header with centered title', () => {
+            const result = formatSectionHeader('DEPENDENCIES');
+            assert.ok(result.includes('DEPENDENCIES'));
+            assert.ok(result.includes('##########'));
+        });
+
+        it('should include blank lines above', () => {
+            const result = formatSectionHeader('TEST');
+            const lines = result.split('\n');
+            assert.strictEqual(lines[0], '');
+        });
+
+        it('should include 9 single hash lines', () => {
+            const result = formatSectionHeader('TEST');
+            const hashLines = result.split('\n').filter(l => l.trim() === '#');
+            assert.strictEqual(hashLines.length, 9);
+        });
+
+        it('should have proper indentation', () => {
+            const result = formatSectionHeader('TEST');
+            const lines = result.split('\n').filter(l => l.trim().length > 0);
+            for (const line of lines) {
+                assert.ok(
+                    line.startsWith('  '),
+                    `Line should be indented: "${line}"`,
+                );
+            }
+        });
+    });
+
+    describe('buildSectionHeaderEdits', () => {
+        it('should create edit for dependencies section', () => {
+            const doc = makeFakeDoc(
+                'name: test\n'
+                + 'dependencies:\n'
+                + '  http: ^1.6.0',
+            );
+
+            const edits = buildSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 1);
+            assert.ok(edits[0].text.includes('DEPENDENCIES'));
+        });
+
+        it('should create edits for multiple sections', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  http: ^1.6.0\n'
+                + 'dev_dependencies:\n'
+                + '  test: ^1.0.0\n'
+                + 'dependency_overrides:\n'
+                + '  http: ^2.0.0',
+            );
+
+            const edits = buildSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 3);
+        });
+
+        it('should detect and replace existing section header', () => {
+            const doc = makeFakeDoc(
+                '##################################\n'
+                + '########  OLD HEADER  ############\n'
+                + '##################################\n'
+                + 'dependencies:\n'
+                + '  http: ^1.6.0',
+            );
+
+            const edits = buildSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 1);
+            assert.ok(edits[0].deleteRange);
+        });
+
+        it('should not create edit for missing sections', () => {
+            const doc = makeFakeDoc('name: test\nversion: 1.0.0');
+
+            const edits = buildSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 0);
+        });
+    });
+
+    describe('buildSubSectionHeaderEdits', () => {
+        it('should create edit for assets within flutter', () => {
+            const doc = makeFakeDoc(
+                'flutter:\n'
+                + '  uses-material-design: true\n'
+                + '  assets:\n'
+                + '    - images/',
+            );
+
+            const edits = buildSubSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 1);
+            assert.ok(edits[0].text.includes('ASSETS'));
+        });
+
+        it('should create edit for fonts within flutter', () => {
+            const doc = makeFakeDoc(
+                'flutter:\n'
+                + '  fonts:\n'
+                + '    - family: Roboto',
+            );
+
+            const edits = buildSubSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 1);
+            assert.ok(edits[0].text.includes('FONTS'));
+        });
+
+        it('should create edits for both assets and fonts', () => {
+            const doc = makeFakeDoc(
+                'flutter:\n'
+                + '  assets:\n'
+                + '    - images/\n'
+                + '  fonts:\n'
+                + '    - family: Roboto',
+            );
+
+            const edits = buildSubSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 2);
+        });
+
+        it('should not create edit for assets outside flutter', () => {
+            const doc = makeFakeDoc(
+                'other:\n'
+                + '  assets:\n'
+                + '    - images/',
+            );
+
+            const edits = buildSubSectionHeaderEdits(doc);
+
+            assert.strictEqual(edits.length, 0);
+        });
+    });
+
+    describe('buildOverrideMarkerEdit', () => {
+        it('should create marker above first overridden dependency', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  http: ^1.0.0\n'
+                + '  provider: ^6.0.0\n'
+                + '  bloc: ^8.0.0',
+            );
+
+            const edit = buildOverrideMarkerEdit(
+                doc,
+                ['http', 'provider', 'bloc'],
+                ['provider'],
+            );
+
+            assert.ok(edit);
+            assert.ok(edit.text.includes('DEP OVERRIDDEN BELOW'));
+            assert.strictEqual(edit.insertPos.line, 2);
+        });
+
+        it('should return null when no overrides exist', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  http: ^1.0.0',
+            );
+
+            const edit = buildOverrideMarkerEdit(doc, ['http'], []);
+
+            assert.strictEqual(edit, null);
+        });
+
+        it('should return null when no deps match overrides', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  http: ^1.0.0',
+            );
+
+            const edit = buildOverrideMarkerEdit(
+                doc,
+                ['http'],
+                ['some_other_pkg'],
+            );
+
+            assert.strictEqual(edit, null);
+        });
+
+        it('should detect and replace existing marker', () => {
+            const doc = makeFakeDoc(
+                'dependencies:\n'
+                + '  http: ^1.0.0\n'
+                + '##################################\n'
+                + '###  DEP OVERRIDDEN BELOW  #######\n'
+                + '##################################\n'
+                + '  provider: ^6.0.0',
+            );
+
+            const edit = buildOverrideMarkerEdit(
+                doc,
+                ['http', 'provider'],
+                ['provider'],
+            );
+
+            assert.ok(edit);
+            assert.ok(edit.deleteRange);
         });
     });
 });

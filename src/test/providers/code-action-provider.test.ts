@@ -15,8 +15,8 @@ function makeMockDocument(): vscode.TextDocument {
 function makeDiagnostic(source: string): vscode.Diagnostic {
     return {
         range: new vscode.Range(0, 0, 0, 11),
-        message: 'Replace old_package (1/10)',
-        severity: vscode.DiagnosticSeverity.Warning,
+        message: 'Deprecated: old_package (1/10)',
+        severity: vscode.DiagnosticSeverity.Hint,
         source,
         code: 'end-of-life',
     };
@@ -88,7 +88,7 @@ describe('VibrancyCodeActionProvider', () => {
 
         provider.updateResults([
             {
-                package: { name: 'test_pkg', version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
+                package: { name: 'test_pkg', version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true, section: 'dependencies' },
                 pubDev: null,
                 github: null,
                 knownIssue: null,

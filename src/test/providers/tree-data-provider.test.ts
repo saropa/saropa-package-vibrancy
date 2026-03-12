@@ -5,15 +5,18 @@ import { workspace } from '../vscode-mock';
 import { VibrancyTreeProvider } from '../../providers/tree-data-provider';
 import {
     PackageItem, GroupItem, DetailItem, SuppressedGroupItem,
-    SuppressedPackageItem, buildGroupItems,
+    SuppressedPackageItem, buildGroupItems, SectionGroupItem,
 } from '../../providers/tree-items';
-import { VibrancyResult, GitHubMetrics } from '../../types';
+import { VibrancyResult, GitHubMetrics, DependencySection } from '../../types';
 
 function makeResult(
-    name: string, score: number, updateStatus?: string,
+    name: string,
+    score: number,
+    updateStatus?: string,
+    section: DependencySection = 'dependencies',
 ): VibrancyResult {
     return {
-        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
+        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true, section },
         pubDev: null,
         github: null,
         knownIssue: null,
@@ -317,5 +320,100 @@ describe('buildGroupItems', () => {
             '📦 Version', '⬆️ Update', '📊 Community',
             '📏 Size', '🚨 Alerts',
         ]);
+    });
+});
+
+describe('section grouping', () => {
+    let provider: VibrancyTreeProvider;
+    let sandbox: sinon.SinonSandbox;
+
+    beforeEach(() => {
+        sandbox = sinon.createSandbox();
+        provider = new VibrancyTreeProvider();
+    });
+
+    afterEach(() => {
+        sandbox.restore();
+    });
+
+    function stubGrouping(mode: 'none' | 'section'): void {
+        sandbox.stub(workspace, 'getConfiguration').returns({
+            get: <T>(key: string, defaultValue?: T): T | undefined => {
+                if (key === 'treeGrouping') { return mode as unknown as T; }
+                if (key === 'suppressedPackages') { return [] as unknown as T; }
+                return defaultValue;
+            },
+            update: async () => {},
+        });
+    }
+
+    it('should show flat list when grouping is none', () => {
+        stubGrouping('none');
+        provider.updateResults([
+            makeResult('http', 80, undefined, 'dependencies'),
+            makeResult('test', 70, undefined, 'dev_dependencies'),
+        ]);
+        const children = provider.getChildren();
+        assert.strictEqual(children.length, 2);
+        assert.ok(children.every(c => c instanceof PackageItem));
+    });
+
+    it('should show section groups when grouping is section', () => {
+        stubGrouping('section');
+        provider.updateResults([
+            makeResult('http', 80, undefined, 'dependencies'),
+            makeResult('test', 70, undefined, 'dev_dependencies'),
+        ]);
+        const children = provider.getChildren();
+        assert.strictEqual(children.length, 2);
+        assert.ok(children.every(c => c instanceof SectionGroupItem));
+    });
+
+    it('should group packages by section', () => {
+        stubGrouping('section');
+        provider.updateResults([
+            makeResult('http', 80, undefined, 'dependencies'),
+            makeResult('provider', 75, undefined, 'dependencies'),
+            makeResult('test', 70, undefined, 'dev_dependencies'),
+        ]);
+        const children = provider.getChildren() as SectionGroupItem[];
+        const deps = children.find(c => c.section === 'dependencies')!;
+        const devDeps = children.find(c => c.section === 'dev_dependencies')!;
+
+        assert.strictEqual(deps.results.length, 2);
+        assert.strictEqual(devDeps.results.length, 1);
+    });
+
+    it('should return PackageItems as children of SectionGroupItem', () => {
+        stubGrouping('section');
+        provider.updateResults([
+            makeResult('http', 80, undefined, 'dependencies'),
+        ]);
+        const groups = provider.getChildren() as SectionGroupItem[];
+        const packages = provider.getChildren(groups[0]);
+        assert.strictEqual(packages.length, 1);
+        assert.ok(packages[0] instanceof PackageItem);
+    });
+
+    it('should show correct label with count', () => {
+        stubGrouping('section');
+        provider.updateResults([
+            makeResult('http', 80, undefined, 'dependencies'),
+            makeResult('bloc', 75, undefined, 'dependencies'),
+        ]);
+        const groups = provider.getChildren() as SectionGroupItem[];
+        assert.strictEqual(groups[0].label, 'Dependencies (2)');
+    });
+
+    it('should sort packages within section by score', () => {
+        stubGrouping('section');
+        provider.updateResults([
+            makeResult('good', 90, undefined, 'dependencies'),
+            makeResult('bad', 20, undefined, 'dependencies'),
+        ]);
+        const groups = provider.getChildren() as SectionGroupItem[];
+        const deps = groups.find(c => c.section === 'dependencies')!;
+        assert.strictEqual(deps.results[0].package.name, 'bad');
+        assert.strictEqual(deps.results[1].package.name, 'good');
     });
 });

@@ -33,6 +33,7 @@ describe('override-analyzer', () => {
             constraint,
             source: 'hosted',
             isDirect,
+            section: 'dependencies',
         });
 
         const makeGraphPkg = (

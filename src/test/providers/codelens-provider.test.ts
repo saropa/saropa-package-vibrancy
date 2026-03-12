@@ -8,7 +8,7 @@ function makeResult(
     overrides: Partial<VibrancyResult> = {},
 ): VibrancyResult {
     return {
-        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true },
+        package: { name, version: '1.0.0', constraint: '^1.0.0', source: 'hosted', isDirect: true, section: 'dependencies' },
         pubDev: null,
         github: null,
         knownIssue: null,

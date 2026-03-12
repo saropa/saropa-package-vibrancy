@@ -1,6 +1,9 @@
 /** Status categories for package vibrancy. */
 export type VibrancyCategory = 'vibrant' | 'quiet' | 'legacy-locked' | 'end-of-life';
 
+/** Which pubspec section a dependency belongs to. */
+export type DependencySection = 'dependencies' | 'dev_dependencies' | 'transitive';
+
 /** A dependency extracted from pubspec.lock. */
 export interface PackageDependency {
     readonly name: string;
@@ -10,6 +13,8 @@ export interface PackageDependency {
     readonly constraint: string;
     readonly source: string;
     readonly isDirect: boolean;
+    /** Which pubspec section this dependency belongs to. */
+    readonly section: DependencySection;
 }
 
 /** Pub.dev metadata for a package. */

@@ -23,6 +23,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - License and health metric fields in known issues database
 - Clickable URLs in tree view detail items via openUrl command
 - Annotate Dependencies command: adds pub.dev description and URL comments above each dependency in pubspec.yaml
+- Decorative section headers: optional ornamental comment blocks above major pubspec sections (dependencies, dev_dependencies, dependency_overrides, flutter, flutter_launcher_icons, flutter_native_splash) and sub-sections (assets, fonts within flutter)
+- Override marker: auto-inserts "DEP OVERRIDDEN BELOW" header above the first dependency that has a corresponding override
+- Tree view section grouping: optional grouping by pubspec section (dependencies, dev_dependencies, transitive) via `treeGrouping` setting
+- Section tracking: `DependencySection` type tracks which pubspec section each package belongs to
+
+### Improved
+
+- Smarter annotation detection: recognizes URL suffixes like `/changelog`, removes ALL duplicate annotations scattered in comments, preserves user comments (NOTE:, TODO:, FIXME:, Because, etc.)
 
 ### Fixed
 
@@ -33,6 +41,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Enriched About panel with full company profile, consumer apps, developer ecosystem, social links, and company details from ABOUT_SAROPA.md
 - Tree view packages now expand into logical groups (Version, Update, Community, Size, Alerts) with colored emoji indicators for update severity and bloat rating
+- End-of-life diagnostic severity now configurable via `endOfLifeDiagnostics` setting (none/hint/smart); defaults to "none" to avoid warning fatigue for unfixable issues; changed message from "Replace" to "Deprecated:" when no replacement is known
 
 ---
 

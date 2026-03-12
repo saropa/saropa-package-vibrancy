@@ -12,6 +12,7 @@ function makeResult(
             constraint: `^${version}`,
             source: 'hosted',
             isDirect: true,
+            section: 'dependencies',
         },
         pubDev: null,
         github: null,

@@ -109,8 +109,8 @@ export async function findAndParseDeps(): Promise<ParsedDeps | null> {
     const includeDevDeps = config.get<boolean>('includeDevDependencies', true);
 
     const { directDeps, devDeps, constraints } = parsePubspecYaml(yamlContent);
-    const allDirect = includeDevDeps ? [...directDeps, ...devDeps] : directDeps;
-    const deps = parsePubspecLock(lockContent, allDirect, constraints)
+    const effectiveDevDeps = includeDevDeps ? devDeps : [];
+    const deps = parsePubspecLock(lockContent, directDeps, constraints, effectiveDevDeps)
         .filter(d => d.isDirect && d.source === 'hosted');
 
     return { deps, yamlUri: yamlFiles[0], yamlContent };

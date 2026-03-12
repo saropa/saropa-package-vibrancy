@@ -17,7 +17,7 @@ function makeResult(
         package: {
             name, version: opts.currentVersion ?? '1.0.0',
             constraint: `^${opts.currentVersion ?? '1.0.0'}`,
-            source: 'hosted', isDirect: true,
+            source: 'hosted', isDirect: true, section: 'dependencies',
         },
         pubDev: null, github: null, knownIssue: null,
         score: opts.score ?? 70, category: 'vibrant',
