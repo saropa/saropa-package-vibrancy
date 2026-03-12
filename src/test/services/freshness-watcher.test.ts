@@ -121,6 +121,7 @@ describe('FreshnessWatcher', () => {
                 currentVersion: '1.0.0',
                 newVersion: '1.0.1',
                 updateType: 'patch',
+                blockedBy: null,
             };
             detectStub.resolves([notification]);
 
@@ -215,6 +216,7 @@ describe('formatNotificationMessage', () => {
             currentVersion: '1.0.0',
             newVersion: '1.0.1',
             updateType: 'patch',
+            blockedBy: null,
         }];
 
         const message = formatNotificationMessage(notifications);
@@ -226,8 +228,8 @@ describe('formatNotificationMessage', () => {
 
     it('should format multiple notifications with count', () => {
         const notifications: NewVersionNotification[] = [
-            { name: 'http', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' },
-            { name: 'path', currentVersion: '2.0.0', newVersion: '3.0.0', updateType: 'major' },
+            { name: 'http', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch', blockedBy: null },
+            { name: 'path', currentVersion: '2.0.0', newVersion: '3.0.0', updateType: 'major', blockedBy: null },
         ];
 
         const message = formatNotificationMessage(notifications);
@@ -240,11 +242,11 @@ describe('formatNotificationMessage', () => {
 
     it('should truncate long lists with "+N more"', () => {
         const notifications: NewVersionNotification[] = [
-            { name: 'a', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' },
-            { name: 'b', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' },
-            { name: 'c', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' },
-            { name: 'd', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' },
-            { name: 'e', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' },
+            { name: 'a', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch', blockedBy: null },
+            { name: 'b', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch', blockedBy: null },
+            { name: 'c', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch', blockedBy: null },
+            { name: 'd', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch', blockedBy: null },
+            { name: 'e', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch', blockedBy: null },
         ];
 
         const message = formatNotificationMessage(notifications);

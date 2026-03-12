@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { VibrancyResult } from '../types';
+import { VibrancyResult, PackageInsight } from '../types';
 
 export class VibrancyStatusBar implements vscode.Disposable {
     private readonly _item: vscode.StatusBarItem;
@@ -15,8 +15,8 @@ export class VibrancyStatusBar implements vscode.Disposable {
         this.hide();
     }
 
-    /** Update with scan results. */
-    update(results: VibrancyResult[]): void {
+    /** Update with scan results and insights. */
+    update(results: VibrancyResult[], insights: readonly PackageInsight[] = []): void {
         if (results.length === 0) {
             this.hide();
             return;
@@ -30,11 +30,21 @@ export class VibrancyStatusBar implements vscode.Disposable {
             r => r.updateInfo && r.updateInfo.updateStatus !== 'up-to-date',
         ).length;
 
+        const actionCount = insights.length;
         const displayScore = Math.round(rounded / 10);
-        this._item.text = `${icon} Vibrancy: ${displayScore}/10`;
+
+        let text = `${icon} Vibrancy: ${displayScore}/10`;
+        if (actionCount > 0) {
+            text += ` $(target) ${actionCount}`;
+        }
+        this._item.text = text;
+
         let tooltip = `${results.length} packages scanned.`;
         if (updateCount > 0) {
             tooltip += ` ${updateCount} update(s) available.`;
+        }
+        if (actionCount > 0) {
+            tooltip += ` ${actionCount} action item(s).`;
         }
         tooltip += ' Click for report.';
         this._item.tooltip = tooltip;

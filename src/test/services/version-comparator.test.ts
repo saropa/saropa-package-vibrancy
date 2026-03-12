@@ -65,8 +65,8 @@ describe('version-comparator', () => {
             const watchList = buildWatchList(results, 'all');
 
             assert.strictEqual(watchList.length, 2);
-            assert.deepStrictEqual(watchList[0], { name: 'http', currentVersion: '1.0.0' });
-            assert.deepStrictEqual(watchList[1], { name: 'path', currentVersion: '2.0.0' });
+            assert.deepStrictEqual(watchList[0], { name: 'http', currentVersion: '1.0.0', blockedBy: null });
+            assert.deepStrictEqual(watchList[1], { name: 'path', currentVersion: '2.0.0', blockedBy: null });
         });
 
         it('should filter unhealthy packages in "unhealthy" mode', () => {
@@ -123,7 +123,7 @@ describe('version-comparator', () => {
                 description: null,
             });
 
-            const watchList = [{ name: 'http', currentVersion: '1.0.0' }];
+            const watchList = [{ name: 'http', currentVersion: '1.0.0', blockedBy: null }];
             const notifications = await detectNewVersions(watchList, cache);
 
             assert.strictEqual(notifications.length, 1);
@@ -147,7 +147,7 @@ describe('version-comparator', () => {
                 description: null,
             });
 
-            const watchList = [{ name: 'http', currentVersion: '1.0.0' }];
+            const watchList = [{ name: 'http', currentVersion: '1.0.0', blockedBy: null }];
             const notifications = await detectNewVersions(watchList, cache);
 
             assert.strictEqual(notifications.length, 1);
@@ -168,7 +168,7 @@ describe('version-comparator', () => {
                 description: null,
             });
 
-            const watchList = [{ name: 'http', currentVersion: '1.0.0' }];
+            const watchList = [{ name: 'http', currentVersion: '1.0.0', blockedBy: null }];
             const notifications = await detectNewVersions(watchList, cache);
 
             assert.strictEqual(notifications.length, 1);
@@ -189,7 +189,7 @@ describe('version-comparator', () => {
                 description: null,
             });
 
-            const watchList = [{ name: 'http', currentVersion: '1.0.0' }];
+            const watchList = [{ name: 'http', currentVersion: '1.0.0', blockedBy: null }];
             const notifications = await detectNewVersions(watchList, cache);
 
             assert.strictEqual(notifications.length, 0);
@@ -211,7 +211,7 @@ describe('version-comparator', () => {
                 description: null,
             });
 
-            const watchList = [{ name: 'http', currentVersion: '1.0.0' }];
+            const watchList = [{ name: 'http', currentVersion: '1.0.0', blockedBy: null }];
             const notifications = await detectNewVersions(watchList, cache);
 
             assert.strictEqual(notifications.length, 0);
@@ -220,7 +220,7 @@ describe('version-comparator', () => {
         it('should handle API failures gracefully', async () => {
             fetchStub.resolves(null);
 
-            const watchList = [{ name: 'http', currentVersion: '1.0.0' }];
+            const watchList = [{ name: 'http', currentVersion: '1.0.0', blockedBy: null }];
             const notifications = await detectNewVersions(watchList, cache);
 
             assert.strictEqual(notifications.length, 0);
@@ -230,8 +230,8 @@ describe('version-comparator', () => {
     describe('markAllSeen', () => {
         it('should mark all notifications as seen', async () => {
             const notifications = [
-                { name: 'http', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' as const },
-                { name: 'path', currentVersion: '2.0.0', newVersion: '2.1.0', updateType: 'minor' as const },
+                { name: 'http', currentVersion: '1.0.0', newVersion: '1.0.1', updateType: 'patch' as const, blockedBy: null },
+                { name: 'path', currentVersion: '2.0.0', newVersion: '2.1.0', updateType: 'minor' as const, blockedBy: null },
             ];
 
             await markAllSeen(notifications, cache);

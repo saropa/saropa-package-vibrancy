@@ -11,6 +11,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+- **Action Items Consolidator**: cross-references all feature signals (vibrancy score, overrides, transitives, family conflicts, unused deps, blockers) into a unified "Action Items" view at the top of the tree; ranks packages by combined risk score; suggests specific actions ("Remove this package", "Upgrade blocker first", "Upgrade all Firebase packages together"); shows what gets unblocked when a problem is fixed; surfaces in tree view, hover tooltips, and status bar
+- Transitive risk now penalizes vibrancy score: packages with EOL/discontinued transitives or >20 transitive deps receive score penalties
+- Freshness watch notifications now include blocker info: "http 1.3.0 available [blocked by meta]"
+- Unused packages no longer show alternative suggestions (removal is the better action)
+- Upgrade sequencer now shows which overrides may become stale after an upgrade
 - Transitive Dependency X-Ray: parses full dependency graph via `dart pub deps --json`, counts transitive dependencies per direct package, identifies shared transitives (single points of failure), flags risky transitives (discontinued/EOL), surfaces dependency graph summary at top of tree view, adds transitive count to hover tooltips and report table
 - Alternative Package Suggestions: for packages scoring below 40 (Legacy-Locked/End-of-Life), automatically suggests healthier alternatives by searching pub.dev for packages with matching topics; curated replacements from known_issues.json shown as "Recommended", discovery suggestions shown as "Similar"; displayed in tree view Alternatives group, hover tooltips, and quick-fix code actions
 - Smart dependency_overrides Tracker: parses overrides section, detects stale overrides (no longer needed), tracks override age via git history, surfaces in tree view as collapsible group, adds inline diagnostics with severity levels, and provides quick-fix to remove stale overrides

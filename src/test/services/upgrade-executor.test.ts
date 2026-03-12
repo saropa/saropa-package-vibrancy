@@ -5,7 +5,7 @@ import {
 import { UpgradeStep, UpgradeReport } from '../../types';
 
 function makeStep(name: string, order: number, opts?: {
-    updateType?: string; familyId?: string | null;
+    updateType?: string; familyId?: string | null; mayResolveOverride?: string | null;
 }): UpgradeStep {
     return {
         packageName: name,
@@ -14,6 +14,7 @@ function makeStep(name: string, order: number, opts?: {
         updateType: (opts?.updateType ?? 'minor') as UpgradeStep['updateType'],
         familyId: opts?.familyId ?? null,
         order,
+        mayResolveOverride: opts?.mayResolveOverride ?? null,
     };
 }
 

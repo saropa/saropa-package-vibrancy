@@ -25,18 +25,20 @@ import { snapshotVersions, notifyLockDiff } from './services/lock-diff-notifier'
 import { detectFamilySplits } from './scoring/family-conflict-detector';
 import { AdoptionGateProvider } from './providers/adoption-gate';
 import { enrichWithBlockers } from './services/blocker-enricher';
-import { buildUpgradeOrder } from './scoring/upgrade-sequencer';
+import { buildUpgradeOrder, setOverrideAnalyses } from './scoring/upgrade-sequencer';
 import { executeUpgradePlan, formatUpgradePlan, formatUpgradeReport } from './services/upgrade-executor';
 import { fetchDepGraph, buildReverseDeps } from './services/dep-graph';
 import { parseDependencyOverrides } from './services/pubspec-parser';
 import {
     countTransitives, findSharedDeps, enrichTransitiveInfo, buildDepGraphSummary,
+    calcTransitiveRiskPenalty,
 } from './scoring/transitive-analyzer';
 import { allKnownIssues } from './scoring/known-issues';
 import { parseOverrides } from './services/override-parser';
 import { getOverrideAges } from './services/override-age';
 import { analyzeOverrides } from './scoring/override-analyzer';
-import { OverrideAnalysis, NewVersionNotification } from './types';
+import { OverrideAnalysis, NewVersionNotification, PackageInsight } from './types';
+import { consolidateInsights } from './scoring/consolidate-insights';
 import {
     FreshnessWatcher, formatNotificationMessage, createNotificationActions,
 } from './services/freshness-watcher';
@@ -45,6 +47,7 @@ let latestResults: VibrancyResult[] = [];
 let lastParsedDeps: ParsedDeps | null = null;
 let lastReverseDeps: ReadonlyMap<string, readonly import('./types').DepEdge[]> | null = null;
 let lastOverrideAnalyses: OverrideAnalysis[] = [];
+let lastInsights: PackageInsight[] = [];
 let scanInProgress = false;
 let lastScanMeta: ReportMetadata = {
     flutterVersion: 'unknown',
@@ -56,6 +59,11 @@ let freshnessWatcher: FreshnessWatcher | null = null;
 /** Get the latest scan results (used by providers). */
 export function getLatestResults(): readonly VibrancyResult[] {
     return latestResults;
+}
+
+/** Get the latest consolidated insights (used by providers). */
+export function getLatestInsights(): readonly PackageInsight[] {
+    return lastInsights;
 }
 
 /** Main activation wiring. */
@@ -75,7 +83,7 @@ export function runActivation(context: vscode.ExtensionContext): void {
     const adoptionGate = new AdoptionGateProvider(cache);
     adoptionGate.register(context);
 
-const codeActionProvider = new VibrancyCodeActionProvider();
+    const codeActionProvider = new VibrancyCodeActionProvider();
 
     freshnessWatcher = new FreshnessWatcher(cache);
     freshnessWatcher.setOnNewVersions(handleNewVersions);
@@ -287,7 +295,7 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             ));
             const withUnused = rawResults.map(r =>
                 unusedNames.has(r.package.name)
-                    ? { ...r, isUnused: true } : r,
+                    ? { ...r, isUnused: true, alternatives: [] } : r,
             );
 
             progress.report({ message: 'Analyzing upgrade blockers...' });
@@ -314,10 +322,13 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
                 const transitiveMap = new Map(
                     enrichedInfos.map((t): [string, import('./types').TransitiveInfo] => [t.directDep, t]),
                 );
-                results = results.map(r => ({
-                    ...r,
-                    transitiveInfo: transitiveMap.get(r.package.name) ?? null,
-                })) as VibrancyResult[];
+                results = results.map(r => {
+                    const tInfo = transitiveMap.get(r.package.name) ?? null;
+                    if (!tInfo) { return r; }
+                    const penalty = calcTransitiveRiskPenalty(tInfo);
+                    const adjustedScore = Math.max(0, r.score - penalty);
+                    return { ...r, transitiveInfo: tInfo, score: adjustedScore };
+                }) as VibrancyResult[];
 
                 depGraphSummary = buildDepGraphSummary(
                     directDeps, depGraph.packages, overrides.length,
@@ -383,7 +394,6 @@ function publishResults(
     targets.tree.updateResults(results);
     targets.tree.updateDepGraphSummary(depGraphSummary);
     targets.tree.updateOverrideAnalyses(lastOverrideAnalyses);
-    targets.statusBar.update(results);
     updateFilteredTargets(targets, results, parsed);
 
     freshnessWatcher?.start(results);
@@ -397,14 +407,20 @@ function updateFilteredTargets(
     const suppressed = getSuppressedSet();
     const active = results.filter(r => !suppressed.has(r.package.name));
     const splits = detectFamilySplits(active);
+
+    lastInsights = consolidateInsights(active, lastOverrideAnalyses, splits);
+
     targets.tree.updateFamilySplits(splits);
+    targets.tree.updateInsights(lastInsights);
     targets.hover.updateResults(active);
     targets.hover.updateFamilySplits(splits);
+    targets.hover.updateInsights(lastInsights);
     targets.codeLens.updateResults(active);
     targets.codeActions.updateResults(active);
     targets.diagnostics.updateFamilySplits(splits);
     targets.diagnostics.updateOverrideAnalyses(lastOverrideAnalyses);
     targets.diagnostics.update(parsed.yamlUri, parsed.yamlContent, active);
+    targets.statusBar.update(results, lastInsights);
 }
 
 let upgradeChannel: vscode.OutputChannel | null = null;
@@ -422,6 +438,7 @@ async function planAndExecuteUpgrades(): Promise<void> {
     }
     upgradeChannel.clear();
 
+    setOverrideAnalyses(lastOverrideAnalyses);
     const reverseDeps = lastReverseDeps ?? new Map();
     const steps = buildUpgradeOrder(latestResults, reverseDeps);
     if (steps.length === 0) {

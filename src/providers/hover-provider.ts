@@ -1,5 +1,5 @@
 import * as vscode from 'vscode';
-import { VibrancyResult, UpdateInfo, FamilySplit } from '../types';
+import { VibrancyResult, UpdateInfo, FamilySplit, PackageInsight } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
@@ -7,6 +7,7 @@ import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
 export class VibrancyHoverProvider implements vscode.HoverProvider {
     private _results = new Map<string, VibrancyResult>();
     private _splitsByPackage = new Map<string, FamilySplit>();
+    private _insightsByPackage = new Map<string, PackageInsight>();
 
     /** Update cached results (called after scan). */
     updateResults(results: VibrancyResult[]): void {
@@ -28,6 +29,14 @@ export class VibrancyHoverProvider implements vscode.HoverProvider {
         }
     }
 
+    /** Update consolidated insights for hover display. */
+    updateInsights(insights: readonly PackageInsight[]): void {
+        this._insightsByPackage.clear();
+        for (const insight of insights) {
+            this._insightsByPackage.set(insight.name, insight);
+        }
+    }
+
     provideHover(
         document: vscode.TextDocument,
         position: vscode.Position,
@@ -42,8 +51,9 @@ export class VibrancyHoverProvider implements vscode.HoverProvider {
         if (!result) { return null; }
 
         const split = this._splitsByPackage.get(word);
+        const insight = this._insightsByPackage.get(word);
         return new vscode.Hover(
-            buildHoverContent(result, split), wordRange,
+            buildHoverContent(result, split, insight), wordRange,
         );
     }
 }
@@ -51,6 +61,7 @@ export class VibrancyHoverProvider implements vscode.HoverProvider {
 function buildHoverContent(
     result: VibrancyResult,
     split?: FamilySplit,
+    insight?: PackageInsight,
 ): vscode.MarkdownString {
     const md = new vscode.MarkdownString();
     md.isTrusted = true;
@@ -77,6 +88,22 @@ function buildHoverContent(
         md.appendMarkdown(
             `| Status | **Unused** — no imports detected |\n`,
         );
+    }
+
+    if (insight && insight.problems.length > 0) {
+        md.appendMarkdown(`\n---\n`);
+        md.appendMarkdown(`**⚠️ Action Items** (${insight.problems.length}):\n\n`);
+        for (const problem of insight.problems) {
+            const emoji = problem.severity === 'high' ? '🔴'
+                : problem.severity === 'medium' ? '🟡' : '🔵';
+            md.appendMarkdown(`${emoji} ${problem.message}\n\n`);
+        }
+        if (insight.suggestedAction) {
+            md.appendMarkdown(`**💡 Suggested:** ${insight.suggestedAction}\n`);
+        }
+        if (insight.unlocksIfFixed.length > 0) {
+            md.appendMarkdown(`\n*Unlocks: ${insight.unlocksIfFixed.join(', ')}*\n`);
+        }
     }
 
     if (result.license) {

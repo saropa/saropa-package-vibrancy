@@ -189,6 +189,8 @@ export interface UpgradeStep {
     readonly updateType: UpdateStatus;
     readonly familyId: string | null;
     readonly order: number;
+    /** Override that may become stale after this upgrade. */
+    readonly mayResolveOverride: string | null;
 }
 
 /** Outcome of executing one upgrade step. */
@@ -250,6 +252,8 @@ export interface NewVersionNotification {
     readonly currentVersion: string;
     readonly newVersion: string;
     readonly updateType: 'patch' | 'minor' | 'major';
+    /** If upgrade is blocked, the name of the blocking package. */
+    readonly blockedBy: string | null;
 }
 
 /** Watch filter mode for freshness watcher. */
@@ -286,4 +290,43 @@ export interface OverrideAnalysis {
     readonly blocker: string | null;
     readonly addedDate: Date | null;
     readonly ageDays: number | null;
+}
+
+/** Problem types that can affect a package. */
+export type ProblemType =
+    | 'unhealthy'
+    | 'stale-override'
+    | 'active-override'
+    | 'family-conflict'
+    | 'risky-transitive'
+    | 'blocked-upgrade'
+    | 'unused'
+    | 'license-risk';
+
+/** A problem affecting a package. */
+export interface Problem {
+    readonly type: ProblemType;
+    readonly severity: 'high' | 'medium' | 'low';
+    readonly message: string;
+    readonly relatedPackage?: string;
+}
+
+/** Suggested action types. */
+export type ActionType =
+    | 'remove'
+    | 'upgrade-blocker'
+    | 'upgrade-family'
+    | 'remove-override'
+    | 'replace'
+    | 'upgrade'
+    | 'none';
+
+/** Consolidated insight for a package. */
+export interface PackageInsight {
+    readonly name: string;
+    readonly combinedRiskScore: number;
+    readonly problems: readonly Problem[];
+    readonly suggestedAction: string | null;
+    readonly actionType: ActionType;
+    readonly unlocksIfFixed: readonly string[];
 }

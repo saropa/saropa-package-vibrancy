@@ -1,5 +1,15 @@
-import { VibrancyResult, DepEdge, UpgradeStep, UpdateStatus } from '../types';
+import { VibrancyResult, DepEdge, UpgradeStep, UpdateStatus, OverrideAnalysis } from '../types';
 import { matchFamily } from '../data/package-families';
+
+let currentOverrideAnalyses: readonly OverrideAnalysis[] = [];
+
+/**
+ * Set override analyses for the current upgrade planning session.
+ * Called before buildUpgradeOrder to provide override context.
+ */
+export function setOverrideAnalyses(analyses: readonly OverrideAnalysis[]): void {
+    currentOverrideAnalyses = analyses;
+}
 
 const UPDATE_RISK: Record<string, number> = {
     'patch': 1, 'minor': 2, 'major': 3, 'unknown': 4,
@@ -7,6 +17,8 @@ const UPDATE_RISK: Record<string, number> = {
 
 /**
  * Build a safe upgrade order for all upgradable packages.
+ *
+ * Call setOverrideAnalyses() before this to enable override resolution hints.
  *
  * Skips blocked packages. Orders by:
  * 1. Topological sort (dependencies before dependents)
@@ -146,6 +158,7 @@ function toStep(
     r: VibrancyResult, order: number,
 ): UpgradeStep {
     const family = matchFamily(r.package.name);
+    const mayResolveOverride = findOverrideBlockedBy(r.package.name);
     return {
         packageName: r.package.name,
         currentVersion: r.updateInfo!.currentVersion,
@@ -153,7 +166,21 @@ function toStep(
         updateType: r.updateInfo!.updateStatus as UpdateStatus,
         familyId: family?.id ?? null,
         order,
+        mayResolveOverride,
     };
+}
+
+/**
+ * Check if any active override is blocked by this package.
+ * If upgrading this package might resolve the conflict, return the override name.
+ */
+function findOverrideBlockedBy(packageName: string): string | null {
+    for (const analysis of currentOverrideAnalyses) {
+        if (analysis.status === 'active' && analysis.blocker === packageName) {
+            return analysis.entry.name;
+        }
+    }
+    return null;
 }
 
 function assignOrder(items: VibrancyResult[]): UpgradeStep[] {

@@ -167,6 +167,25 @@ export function enrichTransitiveInfo(
 }
 
 /**
+ * Calculate score penalty based on transitive dependency risks.
+ * - Each flagged (EOL/discontinued) transitive: -2 points (max -10)
+ * - High transitive count (>20): -1 to -5 points based on count
+ */
+export function calcTransitiveRiskPenalty(info: TransitiveInfo): number {
+    let penalty = 0;
+
+    const flaggedPenalty = Math.min(info.flaggedCount * 2, 10);
+    penalty += flaggedPenalty;
+
+    if (info.transitiveCount > 20) {
+        const countPenalty = Math.min(Math.floor((info.transitiveCount - 20) / 10), 5);
+        penalty += countPenalty;
+    }
+
+    return penalty;
+}
+
+/**
  * Build summary of the full dependency graph.
  */
 export function buildDepGraphSummary(

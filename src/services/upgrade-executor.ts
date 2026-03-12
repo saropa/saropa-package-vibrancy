@@ -122,10 +122,14 @@ export function formatUpgradePlan(
     const lines = [`Upgrade Plan (${steps.length} packages):\n`];
     for (const step of steps) {
         const family = step.familyId ? `  ← family: ${step.familyId}` : '';
+        const override = step.mayResolveOverride
+            ? `  → may resolve override: ${step.mayResolveOverride}`
+            : '';
         lines.push(
             `  ${step.order}. [${step.updateType}]  `
             + `${step.packageName} ${step.currentVersion} → ${step.targetVersion}`
-            + family,
+            + family
+            + override,
         );
     }
     lines.push('\nEach step: bump version → pub get → flutter test → next');

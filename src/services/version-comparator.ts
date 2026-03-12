@@ -11,6 +11,8 @@ const BATCH_SIZE = 5;
 export interface WatchEntry {
     readonly name: string;
     readonly currentVersion: string;
+    /** If upgrade is blocked, the name of the blocking package. */
+    readonly blockedBy: string | null;
 }
 
 /**
@@ -69,6 +71,7 @@ async function checkPackageVersion(
         currentVersion: entry.currentVersion,
         newVersion: latestVersion,
         updateType,
+        blockedBy: entry.blockedBy,
     };
 }
 
@@ -95,6 +98,7 @@ export async function markAllSeen(
 /**
  * Build watch list from scan results based on filter mode.
  * Only includes direct dependencies; transitive deps are excluded.
+ * Includes blocker info if the package has an upgrade blocker.
  */
 export function buildWatchList(
     results: readonly VibrancyResult[],
@@ -104,29 +108,26 @@ export function buildWatchList(
 ): WatchEntry[] {
     const directResults = results.filter(r => r.package.isDirect);
 
+    const toEntry = (r: VibrancyResult): WatchEntry => ({
+        name: r.package.name,
+        currentVersion: r.package.version,
+        blockedBy: r.blocker?.blockerPackage ?? null,
+    });
+
     switch (filterMode) {
         case 'all':
-            return directResults.map(r => ({
-                name: r.package.name,
-                currentVersion: r.package.version,
-            }));
+            return directResults.map(toEntry);
 
         case 'unhealthy':
             return directResults
                 .filter(r => r.score < unhealthyThreshold)
-                .map(r => ({
-                    name: r.package.name,
-                    currentVersion: r.package.version,
-                }));
+                .map(toEntry);
 
         case 'custom': {
             const customSet = new Set(customList ?? []);
             return directResults
                 .filter(r => customSet.has(r.package.name))
-                .map(r => ({
-                    name: r.package.name,
-                    currentVersion: r.package.version,
-                }));
+                .map(toEntry);
         }
     }
 }

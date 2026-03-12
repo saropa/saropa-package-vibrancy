@@ -157,6 +157,7 @@ export class FreshnessWatcher {
 /**
  * Format notifications into a user-friendly message for VS Code toast.
  * Keeps message concise for better display in notification area.
+ * Includes blocker info when upgrades are blocked.
  */
 export function formatNotificationMessage(
     notifications: readonly NewVersionNotification[],
@@ -165,17 +166,20 @@ export function formatNotificationMessage(
 
     if (notifications.length === 1) {
         const n = notifications[0];
-        return `📦 ${n.name} ${n.currentVersion} → ${n.newVersion} (${n.updateType})`;
+        const blockerNote = n.blockedBy ? ` [blocked by ${n.blockedBy}]` : '';
+        return `📦 ${n.name} ${n.currentVersion} → ${n.newVersion} (${n.updateType})${blockerNote}`;
     }
 
     const majorCount = notifications.filter(n => n.updateType === 'major').length;
+    const blockedCount = notifications.filter(n => n.blockedBy !== null).length;
     const names = notifications.slice(0, 3).map(n => n.name).join(', ');
     const suffix = notifications.length > 3
         ? ` +${notifications.length - 3} more`
         : '';
     const majorNote = majorCount > 0 ? ` (${majorCount} major)` : '';
+    const blockedNote = blockedCount > 0 ? ` (${blockedCount} blocked)` : '';
 
-    return `📦 ${notifications.length} packages updated: ${names}${suffix}${majorNote}`;
+    return `📦 ${notifications.length} packages updated: ${names}${suffix}${majorNote}${blockedNote}`;
 }
 
 export function createNotificationActions(): readonly string[] {

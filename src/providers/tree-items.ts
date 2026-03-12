@@ -1,7 +1,7 @@
 import * as vscode from 'vscode';
 import {
     VibrancyResult, VibrancyCategory, UpdateInfo, DepGraphSummary,
-    OverrideAnalysis, DependencySection,
+    OverrideAnalysis, DependencySection, PackageInsight,
 } from '../types';
 import { categoryIcon, categoryLabel } from '../scoring/status-classifier';
 import { formatSizeMB } from '../scoring/bloat-calculator';
@@ -493,5 +493,87 @@ function buildAlternativesGroup(result: VibrancyResult): GroupItem | null {
     }
 
     return new GroupItem('💡 Alternatives', items);
+}
+
+function severityIcon(severity: 'high' | 'medium' | 'low'): string {
+    switch (severity) {
+        case 'high': return 'error';
+        case 'medium': return 'warning';
+        case 'low': return 'info';
+    }
+}
+
+function severityColor(severity: 'high' | 'medium' | 'low'): vscode.ThemeColor {
+    switch (severity) {
+        case 'high': return new vscode.ThemeColor('editorError.foreground');
+        case 'medium': return new vscode.ThemeColor('editorWarning.foreground');
+        case 'low': return new vscode.ThemeColor('editorInfo.foreground');
+    }
+}
+
+/** Group item showing consolidated action items. */
+export class ActionItemsGroupItem extends vscode.TreeItem {
+    constructor(public readonly insights: readonly PackageInsight[]) {
+        super(`Action Items (${insights.length})`, vscode.TreeItemCollapsibleState.Expanded);
+        this.iconPath = new vscode.ThemeIcon(
+            'target',
+            new vscode.ThemeColor('editorWarning.foreground'),
+        );
+        this.tooltip = `${insights.length} package(s) need attention. Sorted by risk.`;
+        this.contextValue = 'vibrancyActionItemsGroup';
+    }
+}
+
+/** A single package insight in the action items list. */
+export class InsightItem extends vscode.TreeItem {
+    constructor(public readonly insight: PackageInsight) {
+        const problemCount = insight.problems.length;
+        super(insight.name, vscode.TreeItemCollapsibleState.Collapsed);
+        this.description = `${insight.combinedRiskScore} risk — ${problemCount} problem(s)`;
+
+        const highestSeverity = insight.problems.reduce<'low' | 'medium' | 'high'>(
+            (max, p) => {
+                if (p.severity === 'high') { return 'high'; }
+                if (p.severity === 'medium' && max !== 'high') { return 'medium'; }
+                return max;
+            },
+            'low',
+        );
+        this.iconPath = new vscode.ThemeIcon(
+            severityIcon(highestSeverity),
+            severityColor(highestSeverity),
+        );
+        this.tooltip = insight.suggestedAction ?? `${problemCount} problem(s) detected`;
+        this.contextValue = 'vibrancyInsight';
+        this.command = {
+            command: 'saropaPackageVibrancy.goToPackage',
+            title: 'Go to pubspec.yaml',
+            arguments: [insight.name],
+        };
+    }
+}
+
+/** Build detail items for an insight node. */
+export function buildInsightDetails(insight: PackageInsight): DetailItem[] {
+    const items: DetailItem[] = [];
+
+    for (const problem of insight.problems) {
+        const emoji = problem.severity === 'high' ? '🔴'
+            : problem.severity === 'medium' ? '🟡' : '🔵';
+        items.push(new DetailItem(`${emoji} ${problem.type}`, problem.message));
+    }
+
+    if (insight.suggestedAction) {
+        items.push(new DetailItem('💡 Suggested', insight.suggestedAction));
+    }
+
+    if (insight.unlocksIfFixed.length > 0) {
+        items.push(new DetailItem(
+            '🔓 Unlocks',
+            insight.unlocksIfFixed.join(', '),
+        ));
+    }
+
+    return items;
 }
 
