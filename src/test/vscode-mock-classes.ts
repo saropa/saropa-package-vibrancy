@@ -227,3 +227,32 @@ export class WorkspaceEdit {
     }
     getEdits(): any[] { return this._edits; }
 }
+
+export class MockSecretStorage {
+    private _data = new Map<string, string>();
+    private _changeEmitter = new EventEmitter();
+
+    get onDidChange() { return this._changeEmitter.event; }
+
+    async get(key: string): Promise<string | undefined> {
+        return this._data.get(key);
+    }
+
+    async store(key: string, value: string): Promise<void> {
+        this._data.set(key, value);
+        this._changeEmitter.fire({ key });
+    }
+
+    async delete(key: string): Promise<void> {
+        this._data.delete(key);
+        this._changeEmitter.fire({ key });
+    }
+
+    keys(): readonly string[] {
+        return [...this._data.keys()];
+    }
+
+    clear(): void {
+        this._data.clear();
+    }
+}

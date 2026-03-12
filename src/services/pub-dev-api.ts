@@ -3,8 +3,32 @@ import { CacheService } from './cache-service';
 import { ScanLogger } from './scan-logger';
 import { fetchWithRetry } from './fetch-retry';
 import { extractPrereleaseInfo, PrereleaseInfo } from '../scoring/prerelease-classifier';
+import {
+    RegistryService,
+    buildPackageApiUrl,
+    buildMetricsApiUrl,
+    buildPublisherApiUrl,
+    buildRegistryHeaders,
+} from './registry-service';
 
-const BASE_URL = 'https://pub.dev/api/packages';
+const PUB_DEV_URL = 'https://pub.dev';
+
+/** Simple hash for registry URL to use in cache keys. */
+function hashUrl(url: string): string {
+    let hash = 0;
+    for (let i = 0; i < url.length; i++) {
+        const char = url.charCodeAt(i);
+        hash = ((hash << 5) - hash) + char;
+        hash = hash & hash;
+    }
+    return Math.abs(hash).toString(36);
+}
+
+/** Options for registry-aware API calls. */
+export interface RegistryOptions {
+    readonly registryService?: RegistryService;
+    readonly registryUrl?: string;
+}
 
 /** Result of fetching package info including prerelease data. */
 export interface PackageInfoResult {
@@ -12,24 +36,30 @@ export interface PackageInfoResult {
     readonly prerelease: PrereleaseInfo | null;
 }
 
-/** Fetch package metadata from pub.dev. */
+/** Fetch package metadata from a registry. */
 export async function fetchPackageInfo(
     name: string,
     cache?: CacheService,
     logger?: ScanLogger,
+    registryOpts?: RegistryOptions,
 ): Promise<PubDevPackageInfo | null> {
-    const result = await fetchPackageInfoWithPrerelease(name, cache, logger);
+    const result = await fetchPackageInfoWithPrerelease(name, cache, logger, registryOpts);
     return result.info;
 }
 
-/** Fetch package metadata from pub.dev including prerelease info. */
+/** Fetch package metadata from a registry including prerelease info. */
 export async function fetchPackageInfoWithPrerelease(
     name: string,
     cache?: CacheService,
     logger?: ScanLogger,
+    registryOpts?: RegistryOptions,
 ): Promise<PackageInfoResult> {
-    const infoCacheKey = `pub.info.${name}`;
-    const prereleaseCacheKey = `pub.prerelease.${name}`;
+    const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
+    const registryService = registryOpts?.registryService;
+    const cachePrefix = registryUrl === PUB_DEV_URL ? 'pub' : `reg.${hashUrl(registryUrl)}`;
+
+    const infoCacheKey = `${cachePrefix}.info.${name}`;
+    const prereleaseCacheKey = `${cachePrefix}.prerelease.${name}`;
 
     const cachedInfo = cache?.get<PubDevPackageInfo>(infoCacheKey);
     const cachedPrerelease = cache?.get<PrereleaseInfo>(prereleaseCacheKey);
@@ -39,11 +69,15 @@ export async function fetchPackageInfoWithPrerelease(
     }
     logger?.cacheMiss(infoCacheKey);
 
-    const url = `${BASE_URL}/${name}`;
+    const url = buildPackageApiUrl(registryUrl, name);
+    const headers = registryService
+        ? await buildRegistryHeaders(registryUrl, registryService)
+        : {};
+
     try {
         logger?.apiRequest('GET', url);
         const t0 = Date.now();
-        const resp = await fetchWithRetry(url, undefined, logger);
+        const resp = await fetchWithRetry(url, { headers }, logger);
         logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
         if (!resp.ok) { return { info: null, prerelease: null }; }
 
@@ -67,7 +101,7 @@ export async function fetchPackageInfoWithPrerelease(
 
         const archiveUrl = latest.archive_url ?? null;
         if (archiveUrl) {
-            await cache?.set(`pub.archiveUrl.${name}`, archiveUrl);
+            await cache?.set(`${cachePrefix}.archiveUrl.${name}`, archiveUrl);
         }
 
         const versions: string[] = Array.isArray(json.versions)
@@ -84,23 +118,29 @@ export async function fetchPackageInfoWithPrerelease(
 
         return { info, prerelease };
     } catch {
-        logger?.error(`Failed to fetch pub.dev info for ${name}`);
+        logger?.error(`Failed to fetch package info for ${name} from ${registryUrl}`);
         return { info: null, prerelease: null };
     }
 }
 
 const WASM_TAGS = ['is:wasm-ready', 'sdk:wasm'];
 
-/** Fetch pub.dev metrics: points, platforms, and WASM readiness. */
+/** Fetch registry metrics: points, platforms, and WASM readiness. */
 export async function fetchPackageMetrics(
     name: string,
     cache?: CacheService,
     logger?: ScanLogger,
+    registryOpts?: RegistryOptions,
 ): Promise<PubDevMetrics> {
     const fallback: PubDevMetrics = {
         pubPoints: 0, platforms: [], wasmReady: null,
     };
-    const cacheKey = `pub.metrics.${name}`;
+
+    const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
+    const registryService = registryOpts?.registryService;
+    const cachePrefix = registryUrl === PUB_DEV_URL ? 'pub' : `reg.${hashUrl(registryUrl)}`;
+
+    const cacheKey = `${cachePrefix}.metrics.${name}`;
     const cached = cache?.get<PubDevMetrics>(cacheKey);
     if (cached) {
         logger?.cacheHit(cacheKey);
@@ -108,11 +148,15 @@ export async function fetchPackageMetrics(
     }
     logger?.cacheMiss(cacheKey);
 
-    const url = `${BASE_URL}/${name}/metrics`;
+    const url = buildMetricsApiUrl(registryUrl, name);
+    const headers = registryService
+        ? await buildRegistryHeaders(registryUrl, registryService)
+        : {};
+
     try {
         logger?.apiRequest('GET', url);
         const t0 = Date.now();
-        const resp = await fetchWithRetry(url, undefined, logger);
+        const resp = await fetchWithRetry(url, { headers }, logger);
         logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
         if (!resp.ok) { return fallback; }
 
@@ -127,7 +171,7 @@ export async function fetchPackageMetrics(
         await cache?.set(cacheKey, result);
         return result;
     } catch {
-        logger?.error(`Failed to fetch pub.dev metrics for ${name}`);
+        logger?.error(`Failed to fetch metrics for ${name} from ${registryUrl}`);
         return fallback;
     }
 }
@@ -139,13 +183,18 @@ function extractPlatforms(tags: string[]): string[] {
         .sort();
 }
 
-/** Fetch verified publisher ID from pub.dev. */
+/** Fetch verified publisher ID from a registry. */
 export async function fetchPublisher(
     name: string,
     cache?: CacheService,
     logger?: ScanLogger,
+    registryOpts?: RegistryOptions,
 ): Promise<string | null> {
-    const cacheKey = `pub.publisher.${name}`;
+    const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
+    const registryService = registryOpts?.registryService;
+    const cachePrefix = registryUrl === PUB_DEV_URL ? 'pub' : `reg.${hashUrl(registryUrl)}`;
+
+    const cacheKey = `${cachePrefix}.publisher.${name}`;
     const cached = cache?.get<string | null>(cacheKey);
     if (cached !== undefined) {
         logger?.cacheHit(cacheKey);
@@ -153,11 +202,15 @@ export async function fetchPublisher(
     }
     logger?.cacheMiss(cacheKey);
 
-    const url = `${BASE_URL}/${name}/publisher`;
+    const url = buildPublisherApiUrl(registryUrl, name);
+    const headers = registryService
+        ? await buildRegistryHeaders(registryUrl, registryService)
+        : {};
+
     try {
         logger?.apiRequest('GET', url);
         const t0 = Date.now();
-        const resp = await fetchWithRetry(url, undefined, logger);
+        const resp = await fetchWithRetry(url, { headers }, logger);
         logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
         if (!resp.ok) { return null; }
 
@@ -167,7 +220,7 @@ export async function fetchPublisher(
         await cache?.set(cacheKey, publisherId);
         return publisherId;
     } catch {
-        logger?.error(`Failed to fetch publisher for ${name}`);
+        logger?.error(`Failed to fetch publisher for ${name} from ${registryUrl}`);
         return null;
     }
 }
@@ -177,8 +230,13 @@ export async function fetchArchiveSize(
     name: string,
     cache?: CacheService,
     logger?: ScanLogger,
+    registryOpts?: RegistryOptions,
 ): Promise<number | null> {
-    const cacheKey = `pub.archiveSize.${name}`;
+    const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
+    const registryService = registryOpts?.registryService;
+    const cachePrefix = registryUrl === PUB_DEV_URL ? 'pub' : `reg.${hashUrl(registryUrl)}`;
+
+    const cacheKey = `${cachePrefix}.archiveSize.${name}`;
     const cached = cache?.get<number>(cacheKey);
     if (cached !== null && cached !== undefined) {
         logger?.cacheHit(cacheKey);
@@ -186,25 +244,38 @@ export async function fetchArchiveSize(
     }
     logger?.cacheMiss(cacheKey);
 
-    const archiveUrl = await resolveArchiveUrl(name, cache, logger);
+    const archiveUrl = await resolveArchiveUrl(name, cache, logger, registryOpts);
     if (!archiveUrl) { return null; }
 
-    return headContentLength(archiveUrl, cacheKey, cache, logger);
+    const headers = registryService
+        ? await buildRegistryHeaders(registryUrl, registryService)
+        : {};
+
+    return headContentLength(archiveUrl, cacheKey, cache, logger, headers);
 }
 
 async function resolveArchiveUrl(
     name: string,
     cache?: CacheService,
     logger?: ScanLogger,
+    registryOpts?: RegistryOptions,
 ): Promise<string | null> {
-    const cachedUrl = cache?.get<string>(`pub.archiveUrl.${name}`);
+    const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
+    const registryService = registryOpts?.registryService;
+    const cachePrefix = registryUrl === PUB_DEV_URL ? 'pub' : `reg.${hashUrl(registryUrl)}`;
+
+    const cachedUrl = cache?.get<string>(`${cachePrefix}.archiveUrl.${name}`);
     if (cachedUrl) { return cachedUrl; }
 
-    const url = `${BASE_URL}/${name}`;
+    const url = buildPackageApiUrl(registryUrl, name);
+    const headers = registryService
+        ? await buildRegistryHeaders(registryUrl, registryService)
+        : {};
+
     try {
         logger?.apiRequest('GET', url);
         const t0 = Date.now();
-        const resp = await fetchWithRetry(url, undefined, logger);
+        const resp = await fetchWithRetry(url, { headers }, logger);
         logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
         if (!resp.ok) { return null; }
 
@@ -220,12 +291,13 @@ async function headContentLength(
     cacheKey: string,
     cache?: CacheService,
     logger?: ScanLogger,
+    headers?: Record<string, string>,
 ): Promise<number | null> {
     try {
         logger?.apiRequest('HEAD', archiveUrl);
         const t0 = Date.now();
         const resp = await fetchWithRetry(
-            archiveUrl, { method: 'HEAD' }, logger,
+            archiveUrl, { method: 'HEAD', headers }, logger,
         );
         logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
         if (!resp.ok) { return null; }

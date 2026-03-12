@@ -41,8 +41,8 @@ Planned features sorted by effort vs wow factor.
 
 | Feature | What | Depends On | Plan |
 |---------|------|------------|------|
-| **CI Pipeline Generator** | One command generates a GitHub Actions / GitLab CI workflow with auto-configured thresholds. Capstone feature. | Budget (16) | [plan](plans/20-ci-pipeline-generator.md) |
-| **Private Registry Auth** | Support private Pub servers with SecretStorage for credentials. Add/remove auth commands. | — | [plan](plans/33-private-registry-auth.md) |
+| ~~**CI Pipeline Generator**~~ | ✅ Completed | — | — |
+| ~~**Private Registry Auth**~~ | ✅ Completed | — | — |
 
 ---
 
@@ -67,8 +67,8 @@ Read top-to-bottom. Each row is a step; effort column tells you the time.
 | 2 | ~~Comparison View (18)~~ | ✅ | ⭐⭐ | — |
 | 3 | ~~Prerelease Versions (30)~~ | ✅ | ⭐⭐ | — |
 | 4 | Changelog Diff Webview (15) | M | ⭐ | — |
-| 5 | Private Registry Auth (33) | L | ⭐⭐ | — |
-| 6 | CI Pipeline Generator (20) | L | ⭐⭐ | — |
+| 5 | ~~Private Registry Auth (33)~~ | ✅ | ⭐⭐ | — |
+| 6 | ~~CI Pipeline Generator (20)~~ | ✅ | ⭐⭐ | — |
 | 7 | Pre-Flight Simulator (02) | XL | ⭐⭐⭐ | — |
 
 **Note:** Vulnerability Radar (03) already covers OSV.dev integration — no new
@@ -123,3 +123,5 @@ The following features have been implemented and their plans moved to
 - **Context State Pattern** (34) — `state/context-state.ts`, `state/vibrancy-state.ts`
 - **Alternative Package Suggestions** — `pub-dev-search.ts`
 - **Package Comparison View** (18) — `comparison-ranker.ts`, `comparison-html.ts`, `comparison-webview.ts`
+- **Private Registry Auth** (33) — `registry-service.ts`, `registry-commands.ts`
+- **CI Pipeline Generator** (20) — `ci-generator.ts`, `threshold-suggester.ts`

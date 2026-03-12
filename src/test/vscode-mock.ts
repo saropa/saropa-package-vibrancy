@@ -14,6 +14,7 @@ export {
     MockDiagnosticCollection,
     MockMemento,
     MockOutputChannel,
+    MockSecretStorage,
     MockWebviewPanel,
     Position,
     Range,
