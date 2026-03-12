@@ -31,6 +31,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Smarter annotation detection: recognizes URL suffixes like `/changelog`, removes ALL duplicate annotations scattered in comments, preserves user comments (NOTE:, TODO:, FIXME:, Because, etc.)
 
+### Fixed
+
+- Packages without GitHub repositories no longer falsely classified as "end-of-life"; publish recency now contributes to engagement score even when GitHub data is unavailable
+
 ### Changed
 
 - End-of-life diagnostic severity now configurable via `endOfLifeDiagnostics` setting (none/hint/smart); defaults to "none" to avoid warning fatigue for unfixable issues; changed message from "Replace" to "Deprecated:" when no replacement is known

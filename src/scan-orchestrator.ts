@@ -20,6 +20,7 @@ import {
     calcPopularity,
     calcFlaggedIssuePenalty,
     calcPublisherTrust,
+    calcPublishRecency,
     computeVibrancyScore,
     ScoringWeights,
 } from './scoring/vibrancy-calculator';
@@ -242,8 +243,13 @@ function computeScores(params: {
         ? daysSince(publishedDate) : undefined;
     const resolutionVelocity = github
         ? calcResolutionVelocity(github) : 0;
+    // When GitHub data is unavailable, use publish recency as engagement proxy.
+    // Halve it to match calcEngagementLevel's (commentScore + recency) / 2 formula.
     const engagementLevel = github
-        ? calcEngagementLevel(github, daysSincePublish) : 0;
+        ? calcEngagementLevel(github, daysSincePublish)
+        : daysSincePublish !== undefined
+            ? calcPublishRecency(daysSincePublish) / 2
+            : 0;
     const popularity = calcPopularity(pubPoints, github?.stars ?? 0);
     const publisherTrust = calcPublisherTrust(
         publisher, params.maxPublisherBonus,

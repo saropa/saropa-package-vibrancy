@@ -1,4 +1,5 @@
 .claude/**
+.env
 .vscode/**
 .vscode-test/**
 src/**
