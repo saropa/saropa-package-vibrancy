@@ -7,7 +7,7 @@ Alphabetically sorted dependencies are easier to scan, reduce merge conflicts,
 and follow common style guides. Currently developers must manually reorder
 entries.
 
-VersionLens provides a "Sort Dependencies" command that alphabetizes all
+Similar extensions provide a "Sort Dependencies" command that alphabetizes all
 dependency entries in place.
 
 ## Goal

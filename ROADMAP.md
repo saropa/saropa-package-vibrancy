@@ -37,7 +37,6 @@ Planned features sorted by effort vs wow factor.
 | 07 | Dependency Impact Score | — |
 | 22 | Modularity Refactoring | Internal cleanup |
 | 24 | Feature Graph Events | Internal |
-| 25 | Unified Problem Model | — |
 
 ---
 

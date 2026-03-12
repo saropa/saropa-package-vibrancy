@@ -13,13 +13,14 @@
   ],
   "mochaExplorer.timeout": 5000,
   "cSpell.words": [
+    "Cloudsmith",
     "firestore",
     "flutterfire",
     "prereqs",
     "pubspec",
     "Riverpod",
     "Unsuppress",
-    "versionlens"
+    "Vulns"
   ],
   "cSpell.ignorePaths": [
     "src/data/known_issues.json"

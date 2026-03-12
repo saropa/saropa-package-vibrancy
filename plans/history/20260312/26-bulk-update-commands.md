@@ -7,7 +7,7 @@ attention. The current `planUpgrades` command provides intelligent sequencing
 but requires stepping through each upgrade. Developers often want a quick
 "update everything" option with control over version bump granularity.
 
-VersionLens provides four bulk update commands: latest, major, minor, patch.
+Similar extensions provide bulk update commands: latest, major, minor, patch.
 This gives developers control over risk level while still being fast.
 
 ## Goal

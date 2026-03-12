@@ -7,7 +7,7 @@ contain important fixes or features before stable release. Currently, the
 extension only shows the latest stable version. Developers working on the
 edge (or needing critical fixes) have no visibility into available prereleases.
 
-VersionLens shows prerelease versions separately with a toggle command,
+Similar extensions show prerelease versions separately with a toggle command,
 allowing developers to see both stable and prerelease options.
 
 ## Goal

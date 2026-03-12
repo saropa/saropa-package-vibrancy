@@ -7,7 +7,7 @@ to resolve dependencies. This is a friction point that interrupts workflow.
 Some teams also want to run linting, formatting, or custom scripts after
 dependency changes.
 
-VersionLens provides a "custom install task" feature that runs a configured
+Similar extensions provide a "custom install task" feature that runs a configured
 VS Code task when package files are saved.
 
 ## Goal

@@ -7,7 +7,7 @@ The current CodeLens visibility is controlled only via settings
 which interrupts workflow. Developers may want to quickly toggle CodeLens
 on/off without leaving the editor.
 
-VersionLens provides "Show Version Lenses" and "Hide Version Lenses" commands
+Similar extensions provide "Show Version Lenses" and "Hide Version Lenses" commands
 that toggle visibility with a single action, plus a status bar indicator.
 
 ## Goal

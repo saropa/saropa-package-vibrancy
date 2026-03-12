@@ -6,7 +6,7 @@ Teams using private Pub servers (e.g., self-hosted `pub_server`, Cloudsmith,
 Artifactory) cannot use the extension because it queries pub.dev exclusively.
 The extension fails silently or shows "not found" for private packages.
 
-VersionLens supports URL-based authentication for private registries, storing
+Similar extensions support URL-based authentication for private registries, storing
 credentials securely in VS Code's SecretStorage.
 
 ## Goal

@@ -10,7 +10,7 @@ but doesn't leverage VS Code's full context state system. This leads to:
 - Duplicate visibility logic across providers
 - State not shared between components
 
-VersionLens uses a `ContextState<T>` pattern that syncs extension state with
+Similar extensions use a `ContextState<T>` pattern that syncs extension state with
 VS Code's context API, enabling fine-grained UI control.
 
 ## Goal

@@ -9,7 +9,7 @@ Quiet, Legacy-Locked, End of Life). Users may prefer:
 - Custom symbols matching their team's conventions
 - No indicators at all (minimal mode)
 
-VersionLens allows customizing the indicator symbols via settings.
+Similar extensions allow customizing the indicator symbols via settings.
 
 ## Goal
 

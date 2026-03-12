@@ -8,7 +8,7 @@ Currently, CodeLens displays version information but updating requires:
 3. Manually editing the pubspec.yaml
 
 This is friction when the developer is already looking at the CodeLens and
-sees an available update. VersionLens allows clicking directly on the version
+sees an available update. Similar extensions allow clicking directly on the version
 number to apply the update.
 
 ## Goal
