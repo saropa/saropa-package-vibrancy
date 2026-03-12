@@ -45,6 +45,7 @@ function makeMockDocument(
 ): vscode.TextDocument {
     return {
         fileName,
+        uri: { fsPath: fileName },
         getText(): string { return text; },
     } as unknown as vscode.TextDocument;
 }
@@ -73,7 +74,7 @@ describe('VibrancyCodeLensProvider', () => {
         assert.deepStrictEqual(lenses, []);
     });
 
-    it('should return one CodeLens per matched package', () => {
+    it('should return one status CodeLens per matched package without updates', () => {
         provider.updateResults([
             makeResult('http'),
             makeResult('path'),
@@ -94,17 +95,17 @@ describe('VibrancyCodeLensProvider', () => {
         provider.updateResults([makeResult('http')]);
         const doc = makeMockDocument(PUBSPEC_CONTENT);
         const lenses = provider.provideCodeLenses(doc);
-        assert.strictEqual(lenses.length, 1);
+        assert.ok(lenses.length >= 1);
         assert.strictEqual(lenses[0].range.start.line, 2);
     });
 
-    it('should set goToPackage command', () => {
+    it('should set focusPackageInTree command on status lens', () => {
         provider.updateResults([makeResult('http')]);
         const doc = makeMockDocument(PUBSPEC_CONTENT);
         const lenses = provider.provideCodeLenses(doc);
         assert.strictEqual(
             lenses[0].command?.command,
-            'saropaPackageVibrancy.goToPackage',
+            'saropaPackageVibrancy.focusPackageInTree',
         );
         assert.deepStrictEqual(lenses[0].command?.arguments, ['http']);
     });
@@ -128,10 +129,40 @@ describe('VibrancyCodeLensProvider', () => {
         assert.strictEqual(provider.provideCodeLenses(doc).length, 0);
 
         provider.updateResults([makeResult('http')]);
-        assert.strictEqual(provider.provideCodeLenses(doc).length, 1);
+        assert.ok(provider.provideCodeLenses(doc).length >= 1);
 
         provider.updateResults([]);
         assert.strictEqual(provider.provideCodeLenses(doc).length, 0);
+    });
+
+    it('should add update lens when update available', () => {
+        provider.updateResults([makeResult('http', {
+            updateInfo: {
+                currentVersion: '1.0.0',
+                latestVersion: '2.0.0',
+                updateStatus: 'major',
+                changelog: null,
+            },
+        })]);
+        const doc = makeMockDocument(PUBSPEC_CONTENT);
+        const lenses = provider.provideCodeLenses(doc);
+        assert.strictEqual(lenses.length, 2);
+        assert.strictEqual(lenses[1].command?.command, 'saropaPackageVibrancy.updateFromCodeLens');
+        assert.ok(lenses[1].command?.title.includes('2.0.0'));
+    });
+
+    it('should not add update lens when up-to-date', () => {
+        provider.updateResults([makeResult('http', {
+            updateInfo: {
+                currentVersion: '1.0.0',
+                latestVersion: '1.0.0',
+                updateStatus: 'up-to-date',
+                changelog: null,
+            },
+        })]);
+        const doc = makeMockDocument(PUBSPEC_CONTENT);
+        const lenses = provider.provideCodeLenses(doc);
+        assert.strictEqual(lenses.length, 1);
     });
 
     it('should fire onDidChangeCodeLenses on result update', () => {

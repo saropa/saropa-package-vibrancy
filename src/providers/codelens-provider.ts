@@ -1,16 +1,23 @@
 import * as vscode from 'vscode';
 import { VibrancyResult } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
-import {
-    formatCodeLensTitle, CodeLensDetail,
-} from '../scoring/codelens-formatter';
+import { CodeLensDetail } from '../scoring/codelens-formatter';
 import { CodeLensToggle } from '../ui/codelens-toggle';
+import { getCategoryIndicator, getIndicator } from '../services/indicator-config';
+import { categoryLabel } from '../scoring/status-classifier';
 
 let globalToggle: CodeLensToggle | null = null;
 
 /** Set the global toggle instance (called from extension-activation). */
 export function setCodeLensToggle(toggle: CodeLensToggle): void {
     globalToggle = toggle;
+}
+
+/** Arguments for the updateFromCodeLens command. */
+export interface UpdateFromCodeLensArgs {
+    readonly packageName: string;
+    readonly targetVersion: string;
+    readonly pubspecPath: string;
 }
 
 export class VibrancyCodeLensProvider implements vscode.CodeLensProvider {
@@ -38,7 +45,8 @@ export class VibrancyCodeLensProvider implements vscode.CodeLensProvider {
 
         const content = document.getText();
         const detail = readDetailLevel();
-        return buildLenses(content, this._results, detail);
+        const pubspecPath = document.uri.fsPath;
+        return buildLenses(content, this._results, detail, pubspecPath);
     }
 
     dispose(): void {
@@ -50,6 +58,7 @@ function buildLenses(
     content: string,
     results: ReadonlyMap<string, VibrancyResult>,
     detail: CodeLensDetail,
+    pubspecPath: string,
 ): vscode.CodeLens[] {
     const lenses: vscode.CodeLens[] = [];
 
@@ -61,15 +70,72 @@ function buildLenses(
             pkgRange.line, pkgRange.startChar,
             pkgRange.line, pkgRange.endChar,
         );
-        const title = formatCodeLensTitle(result, detail);
+
+        lenses.push(...buildLensesForPackage(result, range, detail, pubspecPath));
+    }
+
+    return lenses;
+}
+
+function buildLensesForPackage(
+    result: VibrancyResult,
+    range: vscode.Range,
+    detail: CodeLensDetail,
+    pubspecPath: string,
+): vscode.CodeLens[] {
+    const lenses: vscode.CodeLens[] = [];
+    const name = result.package.name;
+
+    lenses.push(new vscode.CodeLens(range, {
+        title: formatStatusTitle(result, detail),
+        command: 'saropaPackageVibrancy.focusPackageInTree',
+        arguments: [name],
+    }));
+
+    const latestVersion = result.updateInfo?.latestVersion;
+    const hasUpdate = latestVersion
+        && result.updateInfo?.updateStatus !== 'up-to-date';
+
+    if (hasUpdate) {
+        const args: UpdateFromCodeLensArgs = {
+            packageName: name,
+            targetVersion: latestVersion,
+            pubspecPath,
+        };
         lenses.push(new vscode.CodeLens(range, {
-            title,
-            command: 'saropaPackageVibrancy.goToPackage',
-            arguments: [name],
+            title: `→ ${latestVersion}`,
+            command: 'saropaPackageVibrancy.updateFromCodeLens',
+            arguments: [args],
         }));
     }
 
     return lenses;
+}
+
+function formatStatusTitle(result: VibrancyResult, detail: CodeLensDetail): string {
+    const indicator = getCategoryIndicator(result.category);
+    const displayScore = Math.round(result.score / 10);
+    const label = categoryLabel(result.category);
+
+    let title = `${indicator} ${displayScore}/10 ${label}`;
+
+    if (detail === 'minimal') {
+        return title;
+    }
+
+    if (result.isUnused) {
+        title += ` · ${getIndicator('unused')} Unused`;
+    }
+
+    if (detail === 'full') {
+        if (result.knownIssue?.replacement) {
+            title += ` · ${getIndicator('warning')} Replace with ${result.knownIssue.replacement}`;
+        } else if (result.knownIssue?.reason) {
+            title += ` · ${getIndicator('warning')} Known issue`;
+        }
+    }
+
+    return title;
 }
 
 function isEnabled(): boolean {
