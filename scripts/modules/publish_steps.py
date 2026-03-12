@@ -6,6 +6,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 
 from .constants import C, MARKETPLACE_URL, PROJECT_ROOT, REPO_URL
 from .display import ask_yn, fail, heading, info, ok, warn
@@ -177,7 +178,11 @@ def extract_changelog_section(version: str) -> str:
 
 
 def create_github_release(version: str, vsix_path: str | None = None) -> bool:
-    """Create GitHub release with CHANGELOG notes and optional .vsix."""
+    """Create GitHub release with CHANGELOG notes and optional .vsix.
+
+    Uses a temp file for release notes to avoid Windows command line length
+    limits (~8191 chars) when changelog sections are large.
+    """
     check = run(f"gh release view v{version}")
     if check.returncode == 0:
         info(f"Release v{version} already exists — skipping")
@@ -185,11 +190,29 @@ def create_github_release(version: str, vsix_path: str | None = None) -> bool:
 
     notes = extract_changelog_section(version)
     vsix_arg = f" {vsix_path}" if vsix_path else ""
-    result = run(
-        f'gh release create v{version}{vsix_arg} '
-        f'--title "v{version}" '
-        f'--notes "{notes}"',
-    )
+
+    # Write notes to temp file to avoid command line length limits on Windows
+    with tempfile.NamedTemporaryFile(
+        mode="w",
+        suffix=".md",
+        delete=False,
+        encoding="utf-8",
+    ) as notes_file:
+        notes_file.write(notes)
+        notes_path = notes_file.name
+
+    try:
+        result = run(
+            f'gh release create v{version}{vsix_arg} '
+            f'--title "v{version}" '
+            f'--notes-file "{notes_path}"',
+        )
+    finally:
+        # Clean up temp file
+        try:
+            os.unlink(notes_path)
+        except OSError:
+            pass
 
     if result.returncode != 0:
         fail("GitHub release creation failed")
