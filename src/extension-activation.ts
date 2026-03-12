@@ -34,9 +34,7 @@ import {
     calcTransitiveRiskPenalty,
 } from './scoring/transitive-analyzer';
 import { allKnownIssues } from './scoring/known-issues';
-import { parseOverrides } from './services/override-parser';
-import { getOverrideAges } from './services/override-age';
-import { analyzeOverrides } from './scoring/override-analyzer';
+import { runOverrideAnalysis } from './services/override-runner';
 import { OverrideAnalysis, NewVersionNotification, PackageInsight } from './types';
 import { consolidateInsights } from './scoring/consolidate-insights';
 import {
@@ -495,29 +493,6 @@ async function requireResults<T>(
     const result = await action(latestResults);
     if (result) {
         vscode.window.showInformationMessage(successMsg(result));
-    }
-}
-
-async function runOverrideAnalysis(
-    yamlContent: string,
-    deps: import('./types').PackageDependency[],
-    depGraphPackages: readonly import('./services/dep-graph').DepGraphPackage[],
-    workspaceRoot: string,
-    logger: ScanLogger,
-): Promise<OverrideAnalysis[]> {
-    try {
-        const overrideEntries = parseOverrides(yamlContent);
-        if (overrideEntries.length === 0) {
-            return [];
-        }
-
-        const packageNames = overrideEntries.map(e => e.name);
-        const ages = await getOverrideAges(packageNames, workspaceRoot);
-
-        return analyzeOverrides(overrideEntries, deps, [...depGraphPackages], ages);
-    } catch (err) {
-        logger.info(`Override analysis failed: ${err}`);
-        return [];
     }
 }
 

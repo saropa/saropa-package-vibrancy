@@ -52,6 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Extracted pubspec editing utilities to `services/pubspec-editor.ts` to fix layer violation (services importing from providers)
 - Created centralized `services/config-service.ts` for typed access to all extension settings
+- Split `tree-items.ts` (579 lines) into `tree-item-classes.ts` and `tree-item-builders.ts` for better maintainability
+- Extracted `override-runner.ts` from `extension-activation.ts`
 - Improved modularity: clear separation between providers (UI), services (data), and scoring (pure logic)
 
 ---
