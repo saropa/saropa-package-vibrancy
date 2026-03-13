@@ -1,6 +1,6 @@
 import { VibrancyResult } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
-import { isReplacementPackageName } from '../scoring/known-issues';
+import { isReplacementPackageName, getReplacementDisplayText } from '../scoring/known-issues';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { escapeHtml } from './html-utils';
 import { getDetailStyles } from './detail-view-styles';
@@ -128,11 +128,17 @@ function buildSuggestionSection(r: VibrancyResult): string {
     const suggestions: string[] = [];
 
     if (r.knownIssue?.replacement) {
-        const repl = r.knownIssue.replacement;
-        if (isReplacementPackageName(repl)) {
-            suggestions.push(`Consider migrating to ${escapeHtml(repl)}.`);
-        } else {
-            suggestions.push(`Consider: ${escapeHtml(repl)}.`);
+        const displayReplacement = getReplacementDisplayText(
+            r.knownIssue.replacement,
+            r.package.version,
+            r.knownIssue.replacementObsoleteFromVersion,
+        );
+        if (displayReplacement) {
+            if (isReplacementPackageName(displayReplacement)) {
+                suggestions.push(`Consider migrating to ${escapeHtml(displayReplacement)}.`);
+            } else {
+                suggestions.push(`Consider: ${escapeHtml(displayReplacement)}.`);
+            }
         }
     }
 

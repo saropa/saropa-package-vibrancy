@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import knownIssuesData from '../../data/known_issues.json';
-import { findKnownIssue, allKnownIssues, isReplacementPackageName } from '../../scoring/known-issues';
+import { findKnownIssue, allKnownIssues, isReplacementPackageName, getReplacementDisplayText } from '../../scoring/known-issues';
 
 describe('known-issues', () => {
     it('should have unique names', () => {
@@ -118,6 +118,26 @@ describe('known-issues', () => {
             assert.strictEqual(isReplacementPackageName('Update to latest version'), false);
             assert.strictEqual(isReplacementPackageName('Use Native Channels'), false);
             assert.strictEqual(isReplacementPackageName('Native `showDialog`'), false);
+        });
+    });
+
+    describe('getReplacementDisplayText', () => {
+        it('should return replacement when no obsolete-from-version or when version below', () => {
+            assert.strictEqual(getReplacementDisplayText('dio', '1.0.0'), 'dio');
+            assert.strictEqual(getReplacementDisplayText('Update to latest version', '1.0.0'), 'Update to latest version');
+            assert.strictEqual(getReplacementDisplayText('Update to v9+', '8.0.0', '9.0.0'), 'Update to v9+');
+            assert.strictEqual(getReplacementDisplayText('Update to v9+', '5.0.0', '9.0.0'), 'Update to v9+');
+        });
+
+        it('should return undefined when replacementObsoleteFromVersion set and current >= it', () => {
+            assert.strictEqual(getReplacementDisplayText('Update to v9+', '10.0.0', '9.0.0'), undefined);
+            assert.strictEqual(getReplacementDisplayText('Update to v9+', '9.0.0', '9.0.0'), undefined);
+            assert.strictEqual(getReplacementDisplayText('Update to v9+', '9.1.0', '9.0.0'), undefined);
+        });
+
+        it('should support single-segment threshold (e.g. "9")', () => {
+            assert.strictEqual(getReplacementDisplayText('Update to v9+', '10', '9'), undefined);
+            assert.strictEqual(getReplacementDisplayText('Update to v9+', '8', '9'), 'Update to v9+');
         });
     });
 });

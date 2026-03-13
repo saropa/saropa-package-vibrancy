@@ -13,7 +13,7 @@ import { calcDrift } from './scoring/drift-calculator';
 import { FlutterRelease } from './services/flutter-releases';
 import { extractGitHubRepo, fetchRepoMetrics } from './services/github-api';
 import { extractRepoSubpath, buildUpdateInfo } from './services/changelog-service';
-import { findKnownIssue, isReplacementPackageName } from './scoring/known-issues';
+import { findKnownIssue, isReplacementPackageName, getReplacementDisplayText } from './scoring/known-issues';
 import {
     effectiveResolutionVelocity,
     calcEngagementLevel,
@@ -108,6 +108,7 @@ export async function analyzePackage(
         score: scores.score,
         topics: pubDev?.topics ?? [],
         curatedReplacement: knownIssue?.replacement,
+        replacementObsoleteFromVersion: knownIssue?.replacementObsoleteFromVersion,
         currentVersion: dep.version,
         packageName: dep.name,
         existingPackages: params.existingPackages ?? [],
@@ -207,43 +208,25 @@ function daysSince(isoDate: string): number | undefined {
 
 const ALTERNATIVES_SCORE_THRESHOLD = 40;
 
-/**
- * For "Update to vN+" style replacements: returns the replacement only when the
- * current version is below that major (e.g. v8 sees "Update to v9+", v10 does not).
- * Non-matching replacement strings are returned unchanged.
- */
-function effectiveCuratedReplacement(
-    curated: string,
-    currentVersion: string | undefined,
-): string | undefined {
-    const match = /^Update to v(\d+)\+$/i.exec(curated.trim());
-    if (!match || !currentVersion) {
-        return curated;
-    }
-    const minMajor = parseInt(match[1], 10);
-    const dot = currentVersion.indexOf('.');
-    const majorStr = dot === -1 ? currentVersion : currentVersion.substring(0, dot);
-    const currentMajor = parseInt(majorStr, 10);
-    if (Number.isNaN(currentMajor) || currentMajor < minMajor) {
-        return curated;
-    }
-    return undefined;
-}
-
 async function resolveAlternatives(params: {
     readonly score: number;
     readonly topics: readonly string[];
     readonly curatedReplacement: string | undefined;
+    readonly replacementObsoleteFromVersion?: string;
     readonly currentVersion: string | undefined;
     readonly packageName: string;
     readonly existingPackages: readonly string[];
     readonly cache: CacheService;
     readonly logger?: ScanLogger;
 }): Promise<readonly AlternativeSuggestion[]> {
-    // Only use curated replacement when it's a package name (not e.g. "Update to v9+").
-    // Then apply version check so "Update to v9+" is not suggested when already on v9+.
+    // Only use curated replacement when it's a package name; use explicit version field
+    // so we never suggest "Update to v9+" when already on v9+.
     const curatedOnlyIfPackage = params.curatedReplacement && isReplacementPackageName(params.curatedReplacement)
-        ? effectiveCuratedReplacement(params.curatedReplacement, params.currentVersion)
+        ? getReplacementDisplayText(
+            params.curatedReplacement,
+            params.currentVersion,
+            params.replacementObsoleteFromVersion,
+        )
         : undefined;
     if (curatedOnlyIfPackage) {
         return buildAlternatives(curatedOnlyIfPackage, []);

@@ -16,6 +16,9 @@ function normalizeIssue(raw: Record<string, unknown>): KnownIssue {
         reason: raw.reason as string | undefined,
         as_of: raw.as_of as string | undefined,
         replacement: normalizeOptional(raw.replacement),
+        replacementObsoleteFromVersion: typeof raw.replacementObsoleteFromVersion === 'number'
+            ? `${raw.replacementObsoleteFromVersion}.0.0`
+            : normalizeOptional(raw.replacementObsoleteFromVersion as string),
         migrationNotes: normalizeOptional(raw.migrationNotes),
         archiveSizeBytes: typeof raw.archiveSizeBytes === 'number'
             ? raw.archiveSizeBytes : undefined,
@@ -53,6 +56,49 @@ for (const entry of issues) {
  */
 export function isReplacementPackageName(replacement: string): boolean {
     return /^[a-z0-9_]+$/.test(replacement.trim());
+}
+
+/** Parse version into numeric segments (e.g. "9.0.0" -> [9,0,0], "10" -> [10]). */
+function parseVersionSegments(version: string): number[] {
+    const base = version.trim().replace(/[-+].*$/, '');
+    return base.split('.').map(s => {
+        const n = parseInt(s, 10);
+        return Number.isNaN(n) ? 0 : n;
+    });
+}
+
+/** True when version a >= b (segment-wise comparison). */
+function versionGte(a: string, b: string): boolean {
+    const pa = parseVersionSegments(a);
+    const pb = parseVersionSegments(b);
+    const len = Math.max(pa.length, pb.length);
+    for (let i = 0; i < len; i++) {
+        const va = pa[i] ?? 0;
+        const vb = pb[i] ?? 0;
+        if (va !== vb) { return va > vb; }
+    }
+    return true;
+}
+
+/**
+ * Returns the replacement text to show to the user, or undefined if it should not be
+ * shown. When replacementObsoleteFromVersion is set (e.g. "9.0.0"), returns undefined
+ * when currentVersion >= that version so we never recommend "Update to v9+" when the
+ * user is already on 9 or 10. Uses explicit version string from JSON; we parse both
+ * versions for comparison.
+ */
+export function getReplacementDisplayText(
+    replacement: string,
+    currentVersion: string | undefined,
+    replacementObsoleteFromVersion?: string,
+): string | undefined {
+    if (!replacementObsoleteFromVersion || !currentVersion) {
+        return replacement;
+    }
+    if (versionGte(currentVersion, replacementObsoleteFromVersion)) {
+        return undefined;
+    }
+    return replacement;
 }
 
 /** Look up a package in the bundled known-issues database. */

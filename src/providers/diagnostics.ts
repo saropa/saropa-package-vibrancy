@@ -6,7 +6,7 @@ import { formatAge, isOldOverride } from '../scoring/override-analyzer';
 import { getEndOfLifeDiagnostics, getVulnSeverityThreshold } from '../services/config-service';
 import { buildExceededDiagnostics } from '../scoring/budget-checker';
 import { filterBySeverity } from '../scoring/vuln-classifier';
-import { isReplacementPackageName } from '../scoring/known-issues';
+import { isReplacementPackageName, getReplacementDisplayText } from '../scoring/known-issues';
 
 const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
     1: vscode.DiagnosticSeverity.Warning,
@@ -208,7 +208,14 @@ function computeSeverity(
     eolSetting: string,
 ): vscode.DiagnosticSeverity {
     if (result.category === 'end-of-life') {
-        if (eolSetting === 'smart' && result.knownIssue?.replacement) {
+        const displayReplacement = result.knownIssue?.replacement
+        ? getReplacementDisplayText(
+            result.knownIssue.replacement,
+            result.package.version,
+            result.knownIssue.replacementObsoleteFromVersion,
+        )
+        : undefined;
+        if (eolSetting === 'smart' && displayReplacement) {
             return vscode.DiagnosticSeverity.Warning;
         }
         return vscode.DiagnosticSeverity.Hint;
@@ -221,12 +228,19 @@ function buildMessage(result: VibrancyResult): string {
     const score = Math.round(result.score / 10);
     const name = result.package.name;
     const replacement = result.knownIssue?.replacement;
+    const displayReplacement = replacement
+        ? getReplacementDisplayText(
+            replacement,
+            result.package.version,
+            result.knownIssue?.replacementObsoleteFromVersion,
+        )
+        : undefined;
 
     let msg: string;
-    if (replacement && isReplacementPackageName(replacement)) {
-        msg = `Replace ${name} with ${replacement}`;
-    } else if (replacement) {
-        msg = `Deprecated: ${name} — ${replacement}`;
+    if (displayReplacement && isReplacementPackageName(displayReplacement)) {
+        msg = `Replace ${name} with ${displayReplacement}`;
+    } else if (displayReplacement) {
+        msg = `Deprecated: ${name} — ${displayReplacement}`;
     } else if (result.category === 'end-of-life') {
         msg = `Deprecated: ${name}`;
     } else if (result.category === 'legacy-locked') {

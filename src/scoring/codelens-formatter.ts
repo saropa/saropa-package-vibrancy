@@ -1,5 +1,5 @@
 import { VibrancyCategory, VibrancyResult } from '../types';
-import { isReplacementPackageName } from './known-issues';
+import { isReplacementPackageName, getReplacementDisplayText } from './known-issues';
 import { categoryLabel } from './status-classifier';
 import { formatSizeMB } from './bloat-calculator';
 import {
@@ -30,11 +30,18 @@ function formatUpdateSegment(result: VibrancyResult): string {
 function formatAlertSegment(result: VibrancyResult): string | null {
     const warning = getIndicator('warning');
     const replacement = result.knownIssue?.replacement;
-    if (replacement) {
-        if (isReplacementPackageName(replacement)) {
-            return `${warning} Replace with ${replacement}`;
+    const displayReplacement = replacement
+        ? getReplacementDisplayText(
+            replacement,
+            result.package.version,
+            result.knownIssue?.replacementObsoleteFromVersion,
+        )
+        : undefined;
+    if (displayReplacement) {
+        if (isReplacementPackageName(displayReplacement)) {
+            return `${warning} Replace with ${displayReplacement}`;
         }
-        return `${warning} Consider: ${replacement}`;
+        return `${warning} Consider: ${displayReplacement}`;
     }
     if (result.knownIssue?.reason) {
         return `${warning} Known issue`;

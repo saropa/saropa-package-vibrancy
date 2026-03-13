@@ -54,4 +54,4 @@ This keeps the data format unchanged and fixes the broken behaviour and wording 
 
 ---
 
-**Implementation completed.** Single predicate `isReplacementPackageName()` in `scoring/known-issues.ts`; all consumers (diagnostics, code actions, CodeLens, detail view, detail logger, scan-orchestrator) branch on it. Unit tests cover package-name vs instruction-style replacement in known-issues, diagnostics, code-action-provider, and codelens-formatter.
+**Implementation completed.** Single predicate `isReplacementPackageName()` and version-aware helper `getReplacementDisplayText(replacement, currentVersion, replacementObsoleteFromVersion?)` in `scoring/known-issues.ts`. The **problem JSON** uses an explicit optional field `replacementObsoleteFromVersion` (e.g. `"9.0.0"`) so we never infer a version from the replacement message text. When set, we parse both the user's version and this string and hide the replacement when current >= threshold. Comparison is segment-wise (handles "9", "9.0", "9.0.0"). Entries that need it (e.g. flutter_secure_storage, flutter_sound_v7) have `"replacementObsoleteFromVersion": "9.0.0"` alongside `"replacement": "Update to v9+"`.

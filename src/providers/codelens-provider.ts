@@ -7,7 +7,7 @@ import { PrereleaseToggle, arePrereleasesEnabled, getPrereleaseTagFilter } from 
 import { getCategoryIndicator, getIndicator } from '../services/indicator-config';
 import { categoryLabel } from '../scoring/status-classifier';
 import { formatPrereleaseTag } from '../scoring/prerelease-classifier';
-import { isReplacementPackageName } from '../scoring/known-issues';
+import { isReplacementPackageName, getReplacementDisplayText } from '../scoring/known-issues';
 
 let globalToggle: CodeLensToggle | null = null;
 let globalPrereleaseToggle: PrereleaseToggle | null = null;
@@ -165,10 +165,17 @@ function formatStatusTitle(result: VibrancyResult, detail: CodeLensDetail): stri
 
     if (detail === 'full') {
         const replacement = result.knownIssue?.replacement;
-        if (replacement) {
-            const label = isReplacementPackageName(replacement)
-                ? `Replace with ${replacement}`
-                : `Consider: ${replacement}`;
+        const displayReplacement = replacement
+            ? getReplacementDisplayText(
+                replacement,
+                result.package.version,
+                result.knownIssue?.replacementObsoleteFromVersion,
+            )
+            : undefined;
+        if (displayReplacement) {
+            const label = isReplacementPackageName(displayReplacement)
+                ? `Replace with ${displayReplacement}`
+                : `Consider: ${displayReplacement}`;
             title += ` · ${getIndicator('warning')} ${label}`;
         } else if (result.knownIssue?.reason) {
             title += ` · ${getIndicator('warning')} Known issue`;
