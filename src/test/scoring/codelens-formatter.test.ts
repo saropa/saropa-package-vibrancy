@@ -115,6 +115,17 @@ describe('formatCodeLensTitle', () => {
             assert.ok(title.includes('⚠ Known issue'));
         });
 
+        it('should show Consider for instruction-style replacement', () => {
+            const result = makeResult({
+                knownIssue: {
+                    name: 'old_pkg', status: 'end_of_life',
+                    replacement: 'Update to v9+',
+                },
+            });
+            const title = formatCodeLensTitle(result, 'standard');
+            assert.ok(title.includes('Consider: Update to v9+'));
+        });
+
         it('should include unused warning', () => {
             const result = makeResult({ isUnused: true });
             const title = formatCodeLensTitle(result, 'standard');

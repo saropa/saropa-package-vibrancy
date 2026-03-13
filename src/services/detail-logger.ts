@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { VibrancyResult, FlaggedIssue } from '../types';
 import { categoryLabel } from '../scoring/status-classifier';
+import { isReplacementPackageName } from '../scoring/known-issues';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 
 /** Output channel name for package details logging. */
@@ -108,7 +109,12 @@ export class DetailLogger {
         const suggestions: string[] = [];
 
         if (result.knownIssue?.replacement) {
-            suggestions.push(`Consider migrating to ${result.knownIssue.replacement}.`);
+            const repl = result.knownIssue.replacement;
+            if (isReplacementPackageName(repl)) {
+                suggestions.push(`Consider migrating to ${repl}.`);
+            } else {
+                suggestions.push(`Consider: ${repl}.`);
+            }
         }
 
         if (result.knownIssue?.migrationNotes) {

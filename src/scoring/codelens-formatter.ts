@@ -1,4 +1,5 @@
 import { VibrancyCategory, VibrancyResult } from '../types';
+import { isReplacementPackageName } from './known-issues';
 import { categoryLabel } from './status-classifier';
 import { formatSizeMB } from './bloat-calculator';
 import {
@@ -28,8 +29,12 @@ function formatUpdateSegment(result: VibrancyResult): string {
 
 function formatAlertSegment(result: VibrancyResult): string | null {
     const warning = getIndicator('warning');
-    if (result.knownIssue?.replacement) {
-        return `${warning} Replace with ${result.knownIssue.replacement}`;
+    const replacement = result.knownIssue?.replacement;
+    if (replacement) {
+        if (isReplacementPackageName(replacement)) {
+            return `${warning} Replace with ${replacement}`;
+        }
+        return `${warning} Consider: ${replacement}`;
     }
     if (result.knownIssue?.reason) {
         return `${warning} Known issue`;

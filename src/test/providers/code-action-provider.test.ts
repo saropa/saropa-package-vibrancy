@@ -65,6 +65,20 @@ describe('VibrancyCodeActionProvider', () => {
         }
     });
 
+    it('should not offer Replace code action when replacement is instruction-style', () => {
+        const doc = {
+            ...makeMockDocument(),
+            getText: (_range?: vscode.Range) => 'flutter_secure_storage',
+        } as unknown as vscode.TextDocument;
+        const diag = makeDiagnostic('Saropa Package Vibrancy');
+        const context = { diagnostics: [diag] } as unknown as vscode.CodeActionContext;
+        const actions = provider.provideCodeActions(
+            doc, new vscode.Range(0, 0, 0, 24), context,
+        );
+        const replaceAction = actions.find(a => a.title.startsWith('Replace with'));
+        assert.ok(!replaceAction?.title.includes('Update to v9+'), 'Must not replace package name with instruction text');
+    });
+
     it('should only provide suppress action for unknown packages', () => {
         const doc = {
             ...makeMockDocument(),

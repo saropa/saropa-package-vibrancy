@@ -6,6 +6,7 @@ import { formatAge, isOldOverride } from '../scoring/override-analyzer';
 import { getEndOfLifeDiagnostics, getVulnSeverityThreshold } from '../services/config-service';
 import { buildExceededDiagnostics } from '../scoring/budget-checker';
 import { filterBySeverity } from '../scoring/vuln-classifier';
+import { isReplacementPackageName } from '../scoring/known-issues';
 
 const SEVERITY_MAP: Record<number, vscode.DiagnosticSeverity> = {
     1: vscode.DiagnosticSeverity.Warning,
@@ -219,10 +220,13 @@ function computeSeverity(
 function buildMessage(result: VibrancyResult): string {
     const score = Math.round(result.score / 10);
     const name = result.package.name;
+    const replacement = result.knownIssue?.replacement;
 
     let msg: string;
-    if (result.knownIssue?.replacement) {
-        msg = `Replace ${name} with ${result.knownIssue.replacement}`;
+    if (replacement && isReplacementPackageName(replacement)) {
+        msg = `Replace ${name} with ${replacement}`;
+    } else if (replacement) {
+        msg = `Deprecated: ${name} — ${replacement}`;
     } else if (result.category === 'end-of-life') {
         msg = `Deprecated: ${name}`;
     } else if (result.category === 'legacy-locked') {

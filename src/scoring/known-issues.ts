@@ -44,6 +44,17 @@ for (const entry of issues) {
     issueMap.set(issue.name, issue);
 }
 
+/**
+ * True when replacement is a pub package name (safe to use in "Replace with X" and in
+ * pubspec edits). False for instructions or freeform text (e.g. "Update to v9+",
+ * "Update to latest version", "Use Native Channels"). Consumers should use this to
+ * choose message format (Replace with X vs Deprecated — X / Consider: X) and to
+ * avoid offering a code action that would write non-package text into pubspec.yaml.
+ */
+export function isReplacementPackageName(replacement: string): boolean {
+    return /^[a-z0-9_]+$/.test(replacement.trim());
+}
+
 /** Look up a package in the bundled known-issues database. */
 export function findKnownIssue(packageName: string): KnownIssue | null {
     return issueMap.get(packageName) ?? null;

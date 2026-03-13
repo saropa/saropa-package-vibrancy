@@ -13,10 +13,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-*Upcoming changes; nothing released yet.*
+*TODO*
 
 ### Fixed
 
+- **Commands: goToLine not found, copyAsJson/similar argument errors**: Problems view "Go to line" now works (command implemented and registered). "Copy as JSON" and other tree-item commands no longer throw "conversion failure from undefined" when invoked without a valid Packages view item—they show a clear warning instead. Added missing `showChangelog` command so the Package Details "Changelog" button opens the package’s pub.dev changelog.
+- **Known-issue replacement semantics**: The `replacement` field in known issues can be either a package name (e.g. `dio`) or an instruction (e.g. `Update to v9+`). The extension now treats them correctly: only package-name replacements are used for "Replace with X" diagnostics, code actions (so the pubspec is never overwritten with instruction text), and alternative suggestions; instruction-style text is shown as "Deprecated: X — Y" or "Consider: Y". Version-aware logic still suggests "Update to v9+" only when the resolved version is below v9.
 - **Dev dependencies no longer flagged as unused**: Packages in `dev_dependencies` (e.g. `build_runner`, `drift_dev`, `flutter_lints`) are no longer suggested for removal when no imports are found. They are used by tooling (codegen, linters) and typically have no direct imports in source.
 
 ---

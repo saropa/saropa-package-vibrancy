@@ -1,6 +1,6 @@
 import * as assert from 'assert';
 import knownIssuesData from '../../data/known_issues.json';
-import { findKnownIssue, allKnownIssues } from '../../scoring/known-issues';
+import { findKnownIssue, allKnownIssues, isReplacementPackageName } from '../../scoring/known-issues';
 
 describe('known-issues', () => {
     it('should have unique names', () => {
@@ -104,5 +104,20 @@ describe('known-issues', () => {
                 );
             }
         }
+    });
+
+    describe('isReplacementPackageName', () => {
+        it('should return true for pub package names', () => {
+            assert.strictEqual(isReplacementPackageName('dio'), true);
+            assert.strictEqual(isReplacementPackageName('path_provider'), true);
+            assert.strictEqual(isReplacementPackageName('flutter_secure_storage'), true);
+        });
+
+        it('should return false for upgrade instructions and freeform text', () => {
+            assert.strictEqual(isReplacementPackageName('Update to v9+'), false);
+            assert.strictEqual(isReplacementPackageName('Update to latest version'), false);
+            assert.strictEqual(isReplacementPackageName('Use Native Channels'), false);
+            assert.strictEqual(isReplacementPackageName('Native `showDialog`'), false);
+        });
     });
 });

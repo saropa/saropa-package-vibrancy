@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { VibrancyResult, AlternativeSuggestion } from '../types';
-import { findKnownIssue } from '../scoring/known-issues';
+import { findKnownIssue, isReplacementPackageName } from '../scoring/known-issues';
 
 export class VibrancyCodeActionProvider implements vscode.CodeActionProvider {
     private _results = new Map<string, VibrancyResult>();
@@ -25,7 +25,7 @@ export class VibrancyCodeActionProvider implements vscode.CodeActionProvider {
             const packageName = document.getText(diag.range);
             const issue = findKnownIssue(packageName);
 
-            if (issue?.replacement) {
+            if (issue?.replacement && isReplacementPackageName(issue.replacement)) {
                 const action = new vscode.CodeAction(
                     `Replace with ${issue.replacement}`,
                     vscode.CodeActionKind.QuickFix,

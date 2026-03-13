@@ -169,6 +169,24 @@ describe('VibrancyDiagnostics', () => {
         assert.ok(diags[0].message.startsWith('Replace old_pkg with new_pkg'));
     });
 
+    it('should use Deprecated — instruction when replacement is not a package name', () => {
+        setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
+        const result: VibrancyResult = {
+            ...makeResult('old_pkg', 5, 'end-of-life'),
+            knownIssue: {
+                name: 'old_pkg',
+                status: 'end_of_life',
+                reason: 'Pre-v5 keychain logic.',
+                as_of: '2026-03-09',
+                replacement: 'Update to v9+',
+                migrationNotes: 'Critical update.',
+            },
+        };
+        diagnostics.update(uri, PUBSPEC_CONTENT, [result]);
+        const diags = collection.get(uri)!;
+        assert.ok(diags[0].message.startsWith('Deprecated: old_pkg — Update to v9+'));
+    });
+
     it('should include known issue reason in message', () => {
         setTestConfig('saropaPackageVibrancy', 'endOfLifeDiagnostics', 'hint');
         const result: VibrancyResult = {
