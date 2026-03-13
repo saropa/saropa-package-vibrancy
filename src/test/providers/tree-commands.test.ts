@@ -79,6 +79,14 @@ describe('tree-commands', () => {
             assert.strictEqual(messageMock.infos.length, 1);
             assert.ok(messageMock.infos[0].includes('bloc'));
         });
+
+        it('should show warning when invoked without valid package item', async () => {
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.copyAsJson', undefined,
+            );
+            assert.strictEqual(messageMock.warnings.length, 1);
+            assert.ok(messageMock.warnings[0].includes('Packages view'));
+        });
     });
 
     describe('openOnPubDev', () => {
@@ -127,6 +135,66 @@ describe('tree-commands', () => {
 
             assert.strictEqual(shownDoc, fakeDoc);
             assert.ok(shownOptions?.selection);
+        });
+    });
+
+    describe('goToLine', () => {
+        it('should do nothing when no pubspec.yaml found', async () => {
+            sandbox.stub(workspace, 'findFiles').resolves([]);
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.goToLine', 5,
+            );
+            assert.strictEqual(workspace.openTextDocument?.callCount ?? 0, 0);
+        });
+
+        it('should open pubspec at given 0-based line', async () => {
+            const fakeUri = vscode.Uri.file('/test/pubspec.yaml');
+            sandbox.stub(workspace, 'findFiles').resolves([fakeUri]);
+            const fakeDoc = { getText: () => '', fileName: '/test/pubspec.yaml' };
+            sandbox.stub(workspace, 'openTextDocument').resolves(fakeDoc as any);
+            let shownSelection: any = null;
+            sandbox.stub(vscode.window, 'showTextDocument').callsFake(
+                async (_doc: any, options?: any) => {
+                    shownSelection = options?.selection;
+                    return {} as any;
+                },
+            );
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.goToLine', 3,
+            );
+            assert.ok(shownSelection);
+            assert.strictEqual(shownSelection.start.line, 3);
+        });
+
+        it('should do nothing when line is undefined or negative', async () => {
+            const showDocStub = sandbox.stub(vscode.window, 'showTextDocument').resolves({} as any);
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.goToLine', undefined,
+            );
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.goToLine', -1,
+            );
+            assert.strictEqual(showDocStub.callCount, 0);
+        });
+    });
+
+    describe('showChangelog', () => {
+        it('should open pub.dev changelog URL for package', async () => {
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.showChangelog', 'http',
+            );
+            assert.strictEqual(envMock.openedUrls.length, 1);
+            assert.ok(envMock.openedUrls[0].includes('pub.dev/packages/http/changelog'));
+        });
+
+        it('should do nothing when packageName is undefined or empty', async () => {
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.showChangelog', undefined,
+            );
+            await vscode.commands.executeCommand(
+                'saropaPackageVibrancy.showChangelog', '',
+            );
+            assert.strictEqual(envMock.openedUrls.length, 0);
         });
     });
 

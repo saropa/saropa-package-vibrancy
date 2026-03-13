@@ -105,9 +105,19 @@
         "icon": "$(go-to-file)"
       },
       {
+        "command": "saropaPackageVibrancy.goToLine",
+        "title": "Go to line in pubspec.yaml",
+        "icon": "$(go-to-file)"
+      },
+      {
         "command": "saropaPackageVibrancy.openOnPubDev",
         "title": "Open on pub.dev",
         "icon": "$(link-external)"
+      },
+      {
+        "command": "saropaPackageVibrancy.showChangelog",
+        "title": "Open Changelog on pub.dev",
+        "icon": "$(book)"
       },
       {
         "command": "saropaPackageVibrancy.updateToLatest",

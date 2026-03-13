@@ -21,6 +21,21 @@ export { findPubspecYaml, buildVersionEdit, findPackageLines, readVersionConstra
 let _detailViewProvider: DetailViewProvider | null = null;
 let _detailLogger: DetailLogger | null = null;
 
+/**
+ * Guard for commands that require a PackageItem from the Packages view.
+ * Returns true if item has result.package.name; otherwise shows a warning and returns false.
+ */
+function requirePackageItem(
+    item: PackageItem | undefined,
+    actionLabel: string,
+): item is PackageItem {
+    if (item?.result?.package?.name) { return true; }
+    vscode.window.showWarningMessage(
+        `${actionLabel} is only available for package items in the Packages view.`,
+    );
+    return false;
+}
+
 /** Register tree-item commands (navigate, open, update, copy, suppress). */
 export function registerTreeCommands(
     context: vscode.ExtensionContext,
@@ -32,7 +47,9 @@ export function registerTreeCommands(
 
     context.subscriptions.push(
         vscode.commands.registerCommand('saropaPackageVibrancy.goToPackage', goToPackage),
+        vscode.commands.registerCommand('saropaPackageVibrancy.goToLine', goToLine),
         vscode.commands.registerCommand('saropaPackageVibrancy.openOnPubDev', openOnPubDev),
+        vscode.commands.registerCommand('saropaPackageVibrancy.showChangelog', showChangelog),
         vscode.commands.registerCommand('saropaPackageVibrancy.updateToLatest', updateToLatest),
         vscode.commands.registerCommand('saropaPackageVibrancy.copyAsJson', copyAsJson),
         vscode.commands.registerCommand('saropaPackageVibrancy.suppressPackage', suppressPackage),
@@ -50,7 +67,8 @@ export function registerTreeCommands(
 }
 
 /** Navigate to a package's entry in pubspec.yaml. */
-async function goToPackage(packageName: string): Promise<void> {
+async function goToPackage(packageName: string | undefined): Promise<void> {
+    if (!packageName || typeof packageName !== 'string') { return; }
     const yamlUri = await findPubspecYaml();
     if (!yamlUri) { return; }
 
@@ -63,9 +81,29 @@ async function goToPackage(packageName: string): Promise<void> {
     await vscode.window.showTextDocument(doc, { selection: sel });
 }
 
+/** Open pubspec.yaml at a given 0-based line. Used when clicking a problem in the Problems view. */
+async function goToLine(line: number | undefined): Promise<void> {
+    if (line == null || typeof line !== 'number' || line < 0) { return; }
+    const yamlUri = await findPubspecYaml();
+    if (!yamlUri) { return; }
+
+    const doc = await vscode.workspace.openTextDocument(yamlUri);
+    const pos = new vscode.Position(line, 0);
+    const sel = new vscode.Selection(pos, pos);
+    await vscode.window.showTextDocument(doc, { selection: sel });
+}
+
 /** Open a package's pub.dev page in the browser. */
-async function openOnPubDev(item: PackageItem): Promise<void> {
+async function openOnPubDev(item: PackageItem | undefined): Promise<void> {
+    if (!requirePackageItem(item, 'Open on pub.dev')) { return; }
     const url = `https://pub.dev/packages/${item.result.package.name}`;
+    await vscode.env.openExternal(vscode.Uri.parse(url));
+}
+
+/** Open a package's changelog on pub.dev (used by detail view). */
+async function showChangelog(packageName: string | undefined): Promise<void> {
+    if (!packageName || typeof packageName !== 'string') { return; }
+    const url = `https://pub.dev/packages/${packageName}/changelog`;
     await vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
@@ -78,7 +116,8 @@ async function openUrl(urlOrItem: string | DetailItem): Promise<void> {
 }
 
 /** Replace the version constraint in pubspec.yaml with ^latest. */
-async function updateToLatest(item: PackageItem): Promise<void> {
+async function updateToLatest(item: PackageItem | undefined): Promise<void> {
+    if (!requirePackageItem(item, 'Update to Latest')) { return; }
     const latest = item.result.updateInfo?.latestVersion;
     if (!latest) { return; }
 
@@ -101,7 +140,8 @@ async function updateToLatest(item: PackageItem): Promise<void> {
 }
 
 /** Copy the package's vibrancy result to the clipboard as JSON. */
-async function copyAsJson(item: PackageItem): Promise<void> {
+async function copyAsJson(item: PackageItem | undefined): Promise<void> {
+    if (!requirePackageItem(item, 'Copy as JSON')) { return; }
     const json = JSON.stringify(item.result, null, 2);
     await vscode.env.clipboard.writeText(json);
     vscode.window.showInformationMessage(
@@ -110,18 +150,21 @@ async function copyAsJson(item: PackageItem): Promise<void> {
 }
 
 /** Add a package to the suppressed list in workspace settings. */
-async function suppressPackage(item: PackageItem): Promise<void> {
+async function suppressPackage(item: PackageItem | undefined): Promise<void> {
+    if (!requirePackageItem(item, 'Suppress')) { return; }
     await addSuppressedPackage(item.result.package.name);
 }
 
 /** Remove a package from the suppressed list in workspace settings. */
-async function unsuppressPackage(item: PackageItem): Promise<void> {
+async function unsuppressPackage(item: PackageItem | undefined): Promise<void> {
+    if (!requirePackageItem(item, 'Unsuppress')) { return; }
     await removeSuppressedPackage(item.result.package.name);
 }
 
 
 /** Comment out an unused dependency in pubspec.yaml. */
-async function commentOutUnused(item: PackageItem): Promise<void> {
+async function commentOutUnused(item: PackageItem | undefined): Promise<void> {
+    if (!requirePackageItem(item, 'Comment Out Unused')) { return; }
     const yamlUri = await findPubspecYaml();
     if (!yamlUri) { return; }
 
@@ -138,7 +181,8 @@ async function commentOutUnused(item: PackageItem): Promise<void> {
 }
 
 /** Delete an unused dependency from pubspec.yaml, creating a backup. */
-async function deleteUnused(item: PackageItem): Promise<void> {
+async function deleteUnused(item: PackageItem | undefined): Promise<void> {
+    if (!requirePackageItem(item, 'Delete Unused')) { return; }
     const yamlUri = await findPubspecYaml();
     if (!yamlUri) { return; }
 
@@ -173,7 +217,8 @@ function focusDetails(): void {
 }
 
 /** Log a package's details to the output channel. */
-function logDetails(item: PackageItem): void {
+function logDetails(item: PackageItem | undefined): void {
+    if (!requirePackageItem(item, 'Log to Output')) { return; }
     if (!_detailLogger) { return; }
     _detailLogger.logPackage(item.result);
     _detailLogger.show();
@@ -252,10 +297,11 @@ async function focusPackageInTree(packageName: string): Promise<void> {
 
 /** Compare selected packages in a side-by-side view. */
 function compareSelected(
-    _item: PackageItem,
-    selectedItems: PackageItem[],
+    _item: PackageItem | undefined,
+    selectedItems?: PackageItem[],
 ): void {
-    const items = selectedItems ?? [];
+    const raw = Array.isArray(selectedItems) ? selectedItems : [];
+    const items = raw.filter((i): i is PackageItem => !!i?.result);
 
     if (items.length < 2) {
         vscode.window.showWarningMessage('Select 2-3 packages to compare');
