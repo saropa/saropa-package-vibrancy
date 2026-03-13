@@ -11,7 +11,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+*Upcoming changes; nothing released yet.*
+
+### Fixed
+
+- **Dev dependencies no longer flagged as unused**: Packages in `dev_dependencies` (e.g. `build_runner`, `drift_dev`, `flutter_lints`) are no longer suggested for removal when no imports are found. They are used by tooling (codegen, linters) and typically have no direct imports in source.
+
+---
+
 ## [1.0.1]
+
+*Adds a second source for security advisories (GitHub Advisory Database alongside OSV) and keeps the extension’s own dependencies up to date via Dependabot.*
 
 ### Added
 
@@ -21,6 +33,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [1.0.0]
+
+*Major release: vulnerability scanning with inline diagnostics and tree view, CI pipeline generator, private registry auth, package comparison view, dependency budgets, prerelease version display, custom save tasks, bulk update commands, package details sidebar, and a unified problem model. Plus transitive X-ray, alternative suggestions, override tracking, freshness watch, and many UX and internal improvements.*
 
 ### Added
 
@@ -79,6 +93,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.3]
 
+*Unused dependency detection, CodeLens vibrancy badges on each dependency line, SPDX license display, dependency drift timeline, package family conflict detection (e.g. Firebase/Riverpod/Bloc), and an “Annotate Dependencies” command. Fixes for “Update available” when already on latest and sidebar icon.*
+
 ### Added
 
 - Unused dependency detection: scans lib/, bin/, and test/ for imports and flags dependencies with no matching imports
@@ -104,6 +120,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.1.2]
 
+*About panel (version, Marketplace, GitHub), extension version in the sidebar header, and redesigned Saropa-family icons for the extension and sidebar.*
+
 ### Added
 
 - About panel with version number, Marketplace link, and GitHub link (info icon in sidebar header)
@@ -116,6 +134,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [0.1.1]
+
+*Flagged-issues detection from GitHub, suppress-by-package, upgrade-and-test with rollback, report export (Markdown/JSON), retry/backoff for APIs, and a larger known-issues database. Diagnostic wording and severity tuned for the Problems panel.*
 
 ### Added
 
@@ -147,6 +167,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ---
 
 ## [0.1.0]
+
+*Initial release: outdated dependency detection, vibrancy scoring (Vibrant / Quiet / Legacy-Locked / End of Life), tree view and webview report, inline diagnostics and hover tooltips, quick-fix code actions, status bar, and Pub.dev + GitHub API integration with caching.*
 
 ### Added
 

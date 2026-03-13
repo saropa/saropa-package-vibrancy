@@ -17,7 +17,7 @@ import { DetailLogger, DETAIL_CHANNEL_NAME } from './services/detail-logger';
 import { exportReports, ReportMetadata } from './services/report-exporter';
 import { exportSbomReport } from './services/sbom-exporter';
 import { ScanLogger } from './services/scan-logger';
-import { VibrancyResult } from './types';
+import { VibrancyResult, isUnusedRemovalEligibleSection } from './types';
 import { countByCategory } from './scoring/status-classifier';
 import { registerTreeCommands } from './providers/tree-commands';
 import { registerUpgradeCommand } from './providers/upgrade-command';
@@ -493,8 +493,9 @@ async function runScanInner(targets: ScanTargets): Promise<void> {
             const unusedNames = new Set(detectUnused(
                 deps.map(d => d.name), imported,
             ));
+            // Only mark as unused when eligible for removal; dev_dependencies are used by tooling.
             const withUnused = rawResults.map(r =>
-                unusedNames.has(r.package.name)
+                unusedNames.has(r.package.name) && isUnusedRemovalEligibleSection(r.package.section)
                     ? { ...r, isUnused: true, alternatives: [] } : r,
             );
 

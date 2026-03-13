@@ -4,6 +4,14 @@ export type VibrancyCategory = 'vibrant' | 'quiet' | 'legacy-locked' | 'end-of-l
 /** Which pubspec section a dependency belongs to. */
 export type DependencySection = 'dependencies' | 'dev_dependencies' | 'transitive';
 
+/**
+ * True if a dependency in this section may be suggested for removal when unused.
+ * Dev dependencies (build_runner, linters, codegen) are used by tooling, not imports.
+ */
+export function isUnusedRemovalEligibleSection(section: DependencySection): boolean {
+    return section !== 'dev_dependencies';
+}
+
 /** A dependency extracted from pubspec.lock. */
 export interface PackageDependency {
     readonly name: string;

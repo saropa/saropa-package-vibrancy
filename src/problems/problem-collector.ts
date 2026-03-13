@@ -1,5 +1,6 @@
 import {
     VibrancyResult, OverrideAnalysis, FamilySplit, PackageRange,
+    isUnusedRemovalEligibleSection,
 } from '../types';
 import {
     ProblemSeverity, generateProblemId,
@@ -56,7 +57,8 @@ export function collectProblemsForPackage(
         registry.add(createUnhealthyProblem(result, line));
     }
 
-    if (result.isUnused) {
+    // Dev dependencies (linters, codegen) are not suggested for removal when unused.
+    if (result.isUnused && isUnusedRemovalEligibleSection(result.package.section)) {
         registry.add(createUnusedProblem(name, line));
     }
 
