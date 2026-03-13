@@ -276,6 +276,7 @@ function computeScores(params: {
     const { github, pubPoints, publishedDate, publisher } = params;
     const daysSincePublish = publishedDate
         ? daysSince(publishedDate) : undefined;
+    // Resolution from GitHub (issues/PRs) or, when 0, from publish recency on same 0–100 scale.
     const resolutionVelocity = effectiveResolutionVelocity(github, daysSincePublish);
     // When GitHub data is unavailable, use publish recency as engagement proxy.
     // Halve it to match calcEngagementLevel's (commentScore + recency) / 2 formula.

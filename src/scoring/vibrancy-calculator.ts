@@ -42,6 +42,31 @@ export function calcResolutionVelocity(metrics: GitHubMetrics): number {
     return clamp((normalize(closureRate, 50) + recencyBonus) / 2);
 }
 
+/**
+ * When GitHub resolution is 0, we use publish recency as the resolution signal.
+ * We use the same 0–100 scale as GitHub-based resolution so recency and
+ * issue/PR vibrancy are treated equally (each can contribute up to 50% of the score).
+ */
+export const RESOLUTION_PUBLISH_RECENCY_CAP = 100;
+
+/**
+ * Effective resolution velocity: GitHub-based resolution, or when that is 0,
+ * publish recency on the same 0–100 scale. Release-active but issue-quiet
+ * packages (e.g. uuid) then get a resolution score commensurate with recency.
+ */
+export function effectiveResolutionVelocity(
+    github: GitHubMetrics | null,
+    daysSinceLastPublish: number | undefined,
+): number {
+    const fromGitHub = github ? calcResolutionVelocity(github) : 0;
+    if (fromGitHub > 0) { return fromGitHub; }
+    if (daysSinceLastPublish === undefined || daysSinceLastPublish >= 365) {
+        return 0;
+    }
+    const fromPublish = calcPublishRecency(daysSinceLastPublish);
+    return Math.min(RESOLUTION_PUBLISH_RECENCY_CAP, fromPublish);
+}
+
 /** Publish recency on a 365-day window (vs GitHub's 100-day window). */
 export function calcPublishRecency(daysSinceLastPublish: number): number {
     return clamp(100 - (daysSinceLastPublish * 100 / 365));

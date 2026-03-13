@@ -1,6 +1,7 @@
 import * as assert from 'assert';
 import {
     calcResolutionVelocity,
+    effectiveResolutionVelocity,
     calcEngagementLevel,
     calcPopularity,
     calcPublishRecency,
@@ -8,6 +9,7 @@ import {
     calcPublisherTrust,
     computeVibrancyScore,
     MAJOR_PUBLISHERS,
+    RESOLUTION_PUBLISH_RECENCY_CAP,
 } from '../../scoring/vibrancy-calculator';
 import { GitHubMetrics } from '../../types';
 
@@ -52,6 +54,38 @@ describe('vibrancy-calculator', () => {
                 daysSinceLastClose: 0,
             }));
             assert.ok(high >= 0 && high <= 100);
+        });
+    });
+
+    describe('effectiveResolutionVelocity', () => {
+        it('should use GitHub resolution when > 0', () => {
+            const rv = effectiveResolutionVelocity(makeMetrics({
+                closedIssuesLast90d: 10,
+                mergedPrsLast90d: 5,
+                daysSinceLastClose: 7,
+            }), 20);
+            assert.ok(rv > 20, 'should use GitHub-derived resolution');
+        });
+
+        it('should use publish recency when GitHub resolution is 0 and publish recent', () => {
+            const inactive = makeMetrics({
+                closedIssuesLast90d: 0,
+                mergedPrsLast90d: 0,
+                daysSinceLastClose: 999,
+            });
+            const rv = effectiveResolutionVelocity(inactive, 20);
+            assert.ok(rv >= 90 && rv <= RESOLUTION_PUBLISH_RECENCY_CAP,
+                `recent publish should supply full resolution scale: got ${rv}`);
+        });
+
+        it('should return 0 when no GitHub and no recent publish', () => {
+            assert.strictEqual(effectiveResolutionVelocity(null, undefined), 0);
+            assert.strictEqual(effectiveResolutionVelocity(null, 400), 0);
+        });
+
+        it('should allow publish-based resolution up to 100 (same scale as GitHub)', () => {
+            const rv = effectiveResolutionVelocity(null, 1);
+            assert.ok(rv >= 99 && rv <= 100, 'just-published should get ~100 resolution');
         });
     });
 
