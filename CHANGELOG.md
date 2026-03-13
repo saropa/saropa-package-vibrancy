@@ -11,9 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-## [Unreleased]
+## [1.1.0]
 
-*TODO*
+*In this release we fix scoring for recently published packages (so they are no longer misclassified as Legacy-Locked), implement the missing goToLine and showChangelog commands and guard tree commands against bad arguments, handle known-issue replacement semantics correctly (package names vs instructions, with optional version thresholds), and stop suggesting removal of dev_dependencies when no imports are found.*
 
 ### Fixed
 

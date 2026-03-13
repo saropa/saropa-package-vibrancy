@@ -14,6 +14,7 @@
   "mochaExplorer.timeout": 5000,
   "cSpell.words": [
     "Cloudsmith",
+    "codegen",
     "firestore",
     "flutterfire",
     "prereqs",
