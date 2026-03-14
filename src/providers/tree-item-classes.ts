@@ -187,7 +187,7 @@ export class OverridesGroupItem extends vscode.TreeItem {
                 : new vscode.ThemeColor('editorInfo.foreground'),
         );
         this.tooltip = staleCount > 0
-            ? `${staleCount} stale override(s) may be safe to remove.`
+            ? `${staleCount} override(s) with no version conflict detected.`
             : 'Dependency overrides in pubspec.yaml.';
         this.contextValue = 'vibrancyOverridesGroup';
     }
@@ -207,7 +207,7 @@ export class OverrideItem extends vscode.TreeItem {
                 : new vscode.ThemeColor('editorInfo.foreground'),
         );
         this.tooltip = analysis.status === 'stale'
-            ? 'No conflict detected — this override may be safe to remove.'
+            ? 'No version conflict detected — review this override.'
             : `Active override — ${analysis.blocker ?? 'resolves a conflict'}.`;
         this.contextValue = analysis.status === 'stale'
             ? 'vibrancyOverrideStale'

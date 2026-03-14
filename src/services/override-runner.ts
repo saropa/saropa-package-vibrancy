@@ -3,6 +3,7 @@ import { DepGraphPackage } from './dep-graph';
 import { parseOverrides } from './override-parser';
 import { getOverrideAges } from './override-age';
 import { analyzeOverrides } from '../scoring/override-analyzer';
+import { findKnownIssue } from '../scoring/known-issues';
 import { ScanLogger } from './scan-logger';
 
 /**
@@ -25,9 +26,22 @@ export async function runOverrideAnalysis(
         const packageNames = overrideEntries.map(e => e.name);
         const ages = await getOverrideAges(packageNames, workspaceRoot);
 
-        return analyzeOverrides(overrideEntries, [...deps], [...depGraphPackages], ages);
+        const analyses = analyzeOverrides(overrideEntries, [...deps], [...depGraphPackages], ages);
+        return applyKnownOverrideReasons(analyses);
     } catch (err) {
         logger.info(`Override analysis failed: ${err}`);
         return [];
     }
+}
+
+/** Flip stale overrides to active when a known override reason exists. */
+export function applyKnownOverrideReasons(
+    analyses: OverrideAnalysis[],
+): OverrideAnalysis[] {
+    return analyses.map(a => {
+        if (a.status !== 'stale') { return a; }
+        const reason = findKnownIssue(a.entry.name)?.overrideReason;
+        if (!reason) { return a; }
+        return { ...a, status: 'active' as const, blocker: reason };
+    });
 }

@@ -26,7 +26,13 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 ### Fixed
 
 - **Package Details panel now responds to all selections**: Clicking override items in the Packages tree and problem items in the Problems tree now shows the corresponding package details. Previously only scored package items updated the detail panel.
-- **No more false-positive override warnings**: Path and git overrides (e.g. `font_awesome_flutter` Pro icon setup) are no longer flagged in the Problems panel. Active version overrides are also silenced — only stale overrides (safe to remove) produce a diagnostic.
+- **No more false-positive override warnings**: Path and git overrides (e.g. `font_awesome_flutter` Pro icon setup) are no longer flagged in the Problems panel. Active version overrides are also silenced — only stale overrides produce a diagnostic.
+- **Stale override message improved**: Changed from "Safe to remove" to "No version conflict detected — remove if unneeded", since the tool cannot detect all override reasons (e.g. runtime/build incompatibilities).
+- **Known override reasons**: Added `overrideReason` field to the known-issues database so packages with intentional version pins (e.g. `path_provider_foundation` build hooks issue) are no longer flagged as stale.
+
+### Added
+
+- **"Remove override" quick fix**: Stale override diagnostics now offer a one-click code action to delete the override entry from `dependency_overrides`.
 
 ---
 

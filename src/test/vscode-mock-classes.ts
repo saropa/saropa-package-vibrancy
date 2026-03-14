@@ -225,6 +225,9 @@ export class WorkspaceEdit {
     replace(uri: any, range: any, newText: string): void {
         this._edits.push({ uri, range, newText });
     }
+    delete(uri: any, range: any): void {
+        this._edits.push({ uri, range, newText: '' });
+    }
     getEdits(): any[] { return this._edits; }
 }
 

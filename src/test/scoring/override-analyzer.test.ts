@@ -4,6 +4,7 @@ import {
     isOldOverride,
     groupByStatus,
 } from '../../scoring/override-analyzer';
+import { applyKnownOverrideReasons } from '../../services/override-runner';
 import { OverrideEntry, PackageDependency, OverrideAnalysis } from '../../types';
 import { DepGraphPackage } from '../../services/dep-graph';
 
@@ -172,6 +173,47 @@ describe('override-analyzer', () => {
             const { active, stale } = groupByStatus(analyses);
             assert.strictEqual(active.length, 0);
             assert.strictEqual(stale.length, 2);
+        });
+    });
+
+    describe('applyKnownOverrideReasons', () => {
+        it('should flip stale to active when known override reason exists', () => {
+            const analyses: OverrideAnalysis[] = [{
+                entry: { name: 'path_provider_foundation', version: '2.4.0', line: 10, isPathDep: false, isGitDep: false },
+                status: 'stale',
+                blocker: null,
+                addedDate: null,
+                ageDays: null,
+            }];
+            const result = applyKnownOverrideReasons(analyses);
+            assert.strictEqual(result[0].status, 'active');
+            assert.ok(result[0].blocker);
+        });
+
+        it('should not change stale status when no known override reason', () => {
+            const analyses: OverrideAnalysis[] = [{
+                entry: { name: 'unknown_pkg', version: '1.0.0', line: 10, isPathDep: false, isGitDep: false },
+                status: 'stale',
+                blocker: null,
+                addedDate: null,
+                ageDays: null,
+            }];
+            const result = applyKnownOverrideReasons(analyses);
+            assert.strictEqual(result[0].status, 'stale');
+            assert.strictEqual(result[0].blocker, null);
+        });
+
+        it('should not change already-active overrides', () => {
+            const analyses: OverrideAnalysis[] = [{
+                entry: { name: 'path_provider_foundation', version: '2.4.0', line: 10, isPathDep: false, isGitDep: false },
+                status: 'active',
+                blocker: 'direct constraint',
+                addedDate: null,
+                ageDays: null,
+            }];
+            const result = applyKnownOverrideReasons(analyses);
+            assert.strictEqual(result[0].status, 'active');
+            assert.strictEqual(result[0].blocker, 'direct constraint');
         });
     });
 });

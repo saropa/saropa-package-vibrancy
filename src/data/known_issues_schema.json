@@ -83,6 +83,10 @@
               "enum": ["android", "ios", "linux", "macos", "web", "windows"]
             },
             "description": "The platforms supported by the package."
+          },
+          "overrideReason": {
+            "type": ["string", "null"],
+            "description": "Why a dependency_overrides pin is needed despite no version conflict."
           }
         },
         "required": ["name", "status", "as_of"],

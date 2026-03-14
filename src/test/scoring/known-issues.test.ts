@@ -95,6 +95,13 @@ describe('known-issues', () => {
         assert.strictEqual(typeof issue.verifiedPublisher, 'boolean');
     });
 
+    it('should parse overrideReason when present', () => {
+        const issue = findKnownIssue('path_provider_foundation');
+        assert.ok(issue);
+        assert.strictEqual(typeof issue.overrideReason, 'string');
+        assert.ok(issue.overrideReason!.length > 0);
+    });
+
     it('should have migrationNotes when replacement is present', () => {
         for (const [name, issue] of allKnownIssues()) {
             if (issue.replacement) {

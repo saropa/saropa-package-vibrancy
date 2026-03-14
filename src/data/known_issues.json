@@ -1386,6 +1386,12 @@
       ]
     },
     {
+      "name": "path_provider_foundation",
+      "status": "active",
+      "overrideReason": "v2.6.0 uses objective_c build hooks incompatible with custom_lint analyzer plugins",
+      "as_of": "2026-03-14"
+    },
+    {
       "name": "path_provider_ex",
       "status": "end_of_life",
       "reason": "Redundant; the official `path_provider` covers all external storage needs now.",

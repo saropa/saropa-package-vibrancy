@@ -37,6 +37,7 @@ function normalizeIssue(raw: Record<string, unknown>): KnownIssue {
                 (p: unknown): p is string => typeof p === 'string',
             )
             : undefined,
+        overrideReason: normalizeOptional(raw.overrideReason),
     };
 }
 

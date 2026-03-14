@@ -312,7 +312,7 @@ export function buildOverrideDetails(analysis: OverrideAnalysis): DetailItem[] {
     } else {
         items.push(new DetailItem(
             '⚠️ Status',
-            'Stale — no conflict detected, safe to remove',
+            'Stale — no version conflict detected',
         ));
     }
 
