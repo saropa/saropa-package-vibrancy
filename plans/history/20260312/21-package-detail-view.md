@@ -305,3 +305,5 @@ treeView.onDidChangeSelection(e => {
 ---
 
 **Update (2025-03):** Selection sync extended so that selecting a package from the **Action Items** (Problems) list also updates the Package Details panel. The tree provider exposes `getResultByName(name)` to resolve an InsightItem’s package name to a `VibrancyResult`. See `bugs/history/20250314/package-detail-selection-from-action-items.md`.
+
+**Update (2026-03):** Selection sync extended to cover OverrideItem (Packages tree) and PackageWithProblemsItem (Problems tree). Shared boilerplate extracted into `syncDetailOnSelection` helper. Both trees now resolve package names via `getResultByName()` and update the detail panel.

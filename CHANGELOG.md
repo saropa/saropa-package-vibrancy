@@ -25,6 +25,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ### Fixed
 
+- **Package Details panel now responds to all selections**: Clicking override items in the Packages tree and problem items in the Problems tree now shows the corresponding package details. Previously only scored package items updated the detail panel.
 - **No more false-positive override warnings**: Path and git overrides (e.g. `font_awesome_flutter` Pro icon setup) are no longer flagged in the Problems panel. Active version overrides are also silenced — only stale overrides (safe to remove) produce a diagnostic.
 
 ---
