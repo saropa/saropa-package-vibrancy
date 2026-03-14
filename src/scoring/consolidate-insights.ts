@@ -9,7 +9,6 @@ const PROBLEM_WEIGHTS: Record<ProblemType, number> = {
     'risky-transitive': 15,
     'blocked-upgrade': 10,
     'stale-override': 10,
-    'active-override': 5,
     'unused': 5,
     'license-risk': 20,
 };
@@ -125,21 +124,13 @@ export function collectProblems(
     }
 
     const override = overrideMap.get(result.package.name);
-    if (override) {
-        if (override.status === 'stale') {
-            problems.push({
-                type: 'stale-override',
-                severity: 'low',
-                message: 'Override is stale — safe to remove',
-            });
-        } else {
-            problems.push({
-                type: 'active-override',
-                severity: 'low',
-                message: `Override active — blocks ${override.blocker ?? 'unknown'}`,
-                relatedPackage: override.blocker ?? undefined,
-            });
-        }
+    if (override?.status === 'stale'
+        && !override.entry.isPathDep && !override.entry.isGitDep) {
+        problems.push({
+            type: 'stale-override',
+            severity: 'low',
+            message: 'No version conflict detected — review this override',
+        });
     }
 
     const split = splitMap.get(result.package.name);

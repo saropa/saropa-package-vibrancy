@@ -23,6 +23,10 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 - **GitHub license fallback**: When a package's pub.dev listing has no SPDX license, the extension now extracts `license.spdx_id` from the GitHub repository API as a fallback. License resolution chain: pub.dev → GitHub → known-issues → unknown.
 - **Pubspec editor tests**: Added unit tests for `buildVersionEdit`, `readVersionConstraint`, `findPackageLines`, and `buildBackupUri`.
 
+### Fixed
+
+- **No more false-positive override warnings**: Path and git overrides (e.g. `font_awesome_flutter` Pro icon setup) are no longer flagged in the Problems panel. Active version overrides are also silenced — only stale overrides (safe to remove) produce a diagnostic.
+
 ---
 
 ## [1.2.0]

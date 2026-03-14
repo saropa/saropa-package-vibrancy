@@ -4,7 +4,7 @@ import {
 } from '../types';
 import {
     ProblemSeverity, generateProblemId,
-    UnhealthyPackageProblem, StaleOverrideProblem, ActiveOverrideProblem,
+    UnhealthyPackageProblem, StaleOverrideProblem,
     FamilyConflictProblem, RiskyTransitiveProblem, BlockedUpgradeProblem,
     UnusedProblem, LicenseRiskProblem, VulnerabilityProblem,
 } from './problem-types';
@@ -71,12 +71,9 @@ export function collectProblemsForPackage(
     }
 
     const override = overrideMap.get(name);
-    if (override) {
-        if (override.status === 'stale') {
-            registry.add(createStaleOverrideProblem(override, line));
-        } else {
-            registry.add(createActiveOverrideProblem(override, line));
-        }
+    if (override?.status === 'stale'
+        && !override.entry.isPathDep && !override.entry.isGitDep) {
+        registry.add(createStaleOverrideProblem(override, line));
     }
 
     const split = splitMap.get(name);
@@ -104,18 +101,16 @@ export function collectOverrideProblems(
     registry: ProblemRegistry,
 ): void {
     for (const override of overrides) {
+        if (override.status !== 'stale') { continue; }
+        if (override.entry.isPathDep || override.entry.isGitDep) { continue; }
+
         const existingProblems = registry.getForPackage(override.entry.name);
         const hasOverrideProblem = existingProblems.some(
-            p => p.type === 'stale-override' || p.type === 'active-override',
+            p => p.type === 'stale-override',
         );
         if (hasOverrideProblem) { continue; }
 
-        const line = override.entry.line;
-        if (override.status === 'stale') {
-            registry.add(createStaleOverrideProblem(override, line));
-        } else {
-            registry.add(createActiveOverrideProblem(override, line));
-        }
+        registry.add(createStaleOverrideProblem(override, override.entry.line));
     }
 }
 
@@ -130,16 +125,6 @@ export function linkRelatedProblems(registry: ProblemRegistry): void {
         const blockerProblems = registry.getForPackage(blocked.blockerPackage);
         for (const blockerProblem of blockerProblems) {
             registry.link(blockerProblem.id, blocked.id, 'blocks');
-        }
-    }
-
-    const activeOverrides = registry.getByType('active-override');
-    for (const override of activeOverrides) {
-        if (override.type !== 'active-override' || !override.blockedPackage) { continue; }
-
-        const blockedProblems = registry.getForPackage(override.blockedPackage);
-        for (const blockedProblem of blockedProblems) {
-            registry.link(override.id, blockedProblem.id, 'blocks');
         }
     }
 
@@ -250,22 +235,6 @@ function createStaleOverrideProblem(
         severity: 'low',
         line,
         overrideName: override.entry.name,
-        ageDays: override.ageDays,
-    };
-}
-
-function createActiveOverrideProblem(
-    override: OverrideAnalysis,
-    line: number,
-): ActiveOverrideProblem {
-    return {
-        id: generateProblemId(override.entry.name, 'active-override'),
-        type: 'active-override',
-        package: override.entry.name,
-        severity: 'low',
-        line,
-        overrideName: override.entry.name,
-        blockedPackage: override.blocker,
         ageDays: override.ageDays,
     };
 }

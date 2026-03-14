@@ -352,7 +352,6 @@ export interface OverrideAnalysis {
 export type ProblemType =
     | 'unhealthy'
     | 'stale-override'
-    | 'active-override'
     | 'family-conflict'
     | 'risky-transitive'
     | 'blocked-upgrade'

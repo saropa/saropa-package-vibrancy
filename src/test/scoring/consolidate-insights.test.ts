@@ -140,6 +140,44 @@ describe('consolidate-insights', () => {
             assert.strictEqual(problems[0].type, 'stale-override');
         });
 
+        it('should skip path overrides (intentional setup, not a problem)', () => {
+            const result = makeResult('font_awesome_flutter', 80);
+            const pathOverride: OverrideAnalysis = {
+                entry: { name: 'font_awesome_flutter', version: '1.0.0', line: 10, isPathDep: true, isGitDep: false },
+                status: 'active',
+                blocker: 'local path override',
+                addedDate: null,
+                ageDays: null,
+            };
+            const overrideMap = new Map([['font_awesome_flutter', pathOverride]]);
+            const problems = collectProblems(result, overrideMap, new Map());
+
+            assert.strictEqual(problems.length, 0);
+        });
+
+        it('should skip git overrides (intentional setup, not a problem)', () => {
+            const result = makeResult('custom_pkg', 80);
+            const gitOverride: OverrideAnalysis = {
+                entry: { name: 'custom_pkg', version: '1.0.0', line: 10, isPathDep: false, isGitDep: true },
+                status: 'active',
+                blocker: 'git override',
+                addedDate: null,
+                ageDays: null,
+            };
+            const overrideMap = new Map([['custom_pkg', gitOverride]]);
+            const problems = collectProblems(result, overrideMap, new Map());
+
+            assert.strictEqual(problems.length, 0);
+        });
+
+        it('should skip active version overrides (not a problem)', () => {
+            const result = makeResult('intl', 80);
+            const overrideMap = new Map([['intl', makeOverride('intl', 'active', 'some_pkg')]]);
+            const problems = collectProblems(result, overrideMap, new Map());
+
+            assert.strictEqual(problems.length, 0);
+        });
+
         it('should collect family-conflict problem', () => {
             const result = makeResult('firebase_core', 70);
             const split = makeSplit('firebase', [['firebase_core'], ['cloud_firestore']]);

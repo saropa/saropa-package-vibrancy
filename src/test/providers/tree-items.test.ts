@@ -215,3 +215,48 @@ describe('flagged issue URLs', () => {
         assert.strictEqual(alerts.children[0].url, undefined);
     });
 });
+
+describe('detail sync duck-typing contracts', () => {
+    it('PackageItem exposes result for selection handler', () => {
+        const result = makeResult('http', 80);
+        const item = new PackageItem(result);
+        assert.ok('result' in item);
+        assert.strictEqual(item.result, result);
+    });
+
+    it('InsightItem exposes insight.name for selection handler', () => {
+        const insight: PackageInsight = {
+            name: 'http',
+            combinedRiskScore: 5,
+            problems: [],
+            suggestedAction: null,
+            actionType: 'none',
+            unlocksIfFixed: [],
+        };
+        const item = new InsightItem(insight);
+        assert.ok('insight' in item);
+        assert.strictEqual(item.insight.name, 'http');
+    });
+
+    it('OverrideItem exposes analysis.entry.name for selection handler', () => {
+        const analysis: OverrideAnalysis = {
+            entry: { name: 'http', version: '1.0.0', line: 0, isPathDep: false, isGitDep: false },
+            status: 'active',
+            blocker: null,
+            addedDate: null,
+            ageDays: null,
+        };
+        const item = new OverrideItem(analysis);
+        assert.ok('analysis' in item);
+        assert.strictEqual(item.analysis.entry.name, 'http');
+    });
+
+    it('PackageWithProblemsItem exposes pkgProblems.package for selection handler', () => {
+        const item = new PackageWithProblemsItem(
+            { package: 'http', problems: [], priorityScore: 0, highestSeverity: 'low' },
+            null,
+        );
+        assert.ok('pkgProblems' in item);
+        assert.strictEqual(item.pkgProblems.package, 'http');
+    });
+});

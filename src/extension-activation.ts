@@ -187,7 +187,15 @@ export function runActivation(context: vscode.ExtensionContext): void {
     context.subscriptions.push(detailChannel);
 
     problemTreeProvider = new ProblemTreeProvider();
-    registerProblemTreeView(context, problemTreeProvider);
+    const problemTreeView = registerProblemTreeView(context, problemTreeProvider);
+    syncDetailOnSelection(problemTreeView, item => {
+        if ('pkgProblems' in (item as object)) {
+            return treeProvider.getResultByName(
+                (item as { pkgProblems: { package: string } }).pkgProblems.package,
+            );
+        }
+        return undefined;
+    });
 
     registerTreeView(context, treeProvider);
     registerProviders(context, hoverProvider, codeLensProvider, codeActionProvider);
@@ -260,27 +268,41 @@ function registerTreeView(
     tv.description = `v${context.extension.packageJSON.version}`;
     context.subscriptions.push(tv);
 
-    // Sync Package Details panel: both package list (PackageItem) and Action Items (InsightItem) update the detail view.
+    syncDetailOnSelection(tv, item => {
+        if ('result' in (item as object)) {
+            return (item as { result: VibrancyResult }).result;
+        }
+        if ('insight' in (item as object)) {
+            return provider.getResultByName(
+                (item as { insight: { name: string } }).insight.name,
+            );
+        }
+        if ('analysis' in (item as object)) {
+            return provider.getResultByName(
+                (item as { analysis: { entry: { name: string } } }).analysis.entry.name,
+            );
+        }
+        return undefined;
+    });
+}
+
+/** Wire a tree view selection to the Package Details panel. */
+function syncDetailOnSelection(
+    tv: vscode.TreeView<unknown>,
+    resolve: (item: unknown) => VibrancyResult | undefined,
+): void {
     tv.onDidChangeSelection(e => {
         if (!detailViewProvider) { return; }
         if (e.selection.length !== 1) {
             detailViewProvider.clear();
             return;
         }
-        const item = e.selection[0];
-        if ('result' in item) {
-            detailViewProvider.update((item as { result: VibrancyResult }).result);
-            return;
+        const result = resolve(e.selection[0]);
+        if (result) {
+            detailViewProvider.update(result);
+        } else {
+            detailViewProvider.clear();
         }
-        if ('insight' in item) {
-            const name = (item as { insight: { name: string } }).insight.name;
-            const result = provider.getResultByName(name);
-            if (result) {
-                detailViewProvider.update(result);
-                return;
-            }
-        }
-        detailViewProvider.clear();
     });
 }
 
@@ -753,6 +775,7 @@ async function planAndExecuteUpgrades(): Promise<void> {
         () => executeUpgradePlan(steps, upgradeChannel!, {
             skipTests: config.get<boolean>('upgradeSkipTests', false),
             maxSteps: config.get<number>('upgradeMaxSteps', 20),
+            autoCommit: config.get<boolean>('upgradeAutoCommit', false),
         }),
     );
 

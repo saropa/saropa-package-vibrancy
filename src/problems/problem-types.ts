@@ -25,14 +25,6 @@ export interface StaleOverrideProblem extends BaseProblem {
     readonly ageDays: number | null;
 }
 
-/** Override is active and blocking something. */
-export interface ActiveOverrideProblem extends BaseProblem {
-    readonly type: 'active-override';
-    readonly overrideName: string;
-    readonly blockedPackage: string | null;
-    readonly ageDays: number | null;
-}
-
 /** Family packages on different major versions. */
 export interface FamilyConflictProblem extends BaseProblem {
     readonly type: 'family-conflict';
@@ -83,7 +75,6 @@ export interface VulnerabilityProblem extends BaseProblem {
 export type Problem =
     | UnhealthyPackageProblem
     | StaleOverrideProblem
-    | ActiveOverrideProblem
     | FamilyConflictProblem
     | RiskyTransitiveProblem
     | BlockedUpgradeProblem
@@ -115,11 +106,7 @@ export function problemMessage(problem: Problem): string {
                 ? 'Package is end-of-life'
                 : `Score ${problem.score}/100 — ${problem.category}`;
         case 'stale-override':
-            return 'Override is stale — safe to remove';
-        case 'active-override':
-            return problem.blockedPackage
-                ? `Override active — blocks ${problem.blockedPackage}`
-                : 'Override active';
+            return 'No version conflict detected — review this override';
         case 'family-conflict':
             return `${problem.familyLabel} v${problem.currentMajor} conflicts with ${problem.conflictingPackages.join(', ')}`;
         case 'risky-transitive':
@@ -142,7 +129,6 @@ export function problemTypeLabel(type: ProblemType): string {
     switch (type) {
         case 'unhealthy': return 'Unhealthy';
         case 'stale-override': return 'Stale Override';
-        case 'active-override': return 'Active Override';
         case 'family-conflict': return 'Family Conflict';
         case 'risky-transitive': return 'Risky Transitive';
         case 'blocked-upgrade': return 'Blocked Upgrade';

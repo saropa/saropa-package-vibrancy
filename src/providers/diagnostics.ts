@@ -2,7 +2,6 @@ import * as vscode from 'vscode';
 import { VibrancyResult, FamilySplit, OverrideAnalysis, BudgetResult, VulnSeverity, Vulnerability } from '../types';
 import { findPackageRange } from '../services/pubspec-parser';
 import { categoryToSeverity } from '../scoring/status-classifier';
-import { formatAge, isOldOverride } from '../scoring/override-analyzer';
 import { getEndOfLifeDiagnostics, getVulnSeverityThreshold } from '../services/config-service';
 import { buildExceededDiagnostics } from '../scoring/budget-checker';
 import { filterBySeverity } from '../scoring/vuln-classifier';
@@ -148,6 +147,9 @@ export class VibrancyDiagnostics {
         const lines = content.split('\n');
 
         for (const analysis of this._overrideAnalyses) {
+            if (analysis.status !== 'stale') { continue; }
+            if (analysis.entry.isPathDep || analysis.entry.isGitDep) { continue; }
+
             const lineNum = analysis.entry.line;
             if (lineNum < 0 || lineNum >= lines.length) { continue; }
 
@@ -162,39 +164,13 @@ export class VibrancyDiagnostics {
                 lineNum, endChar,
             );
 
-            if (analysis.status === 'stale') {
-                const msg = `Stale override: no conflict detected for ${analysis.entry.name}. Safe to remove.`;
-                const diag = new vscode.Diagnostic(
-                    vscodeRange, msg, vscode.DiagnosticSeverity.Warning,
-                );
-                diag.source = 'Saropa Package Vibrancy';
-                diag.code = 'stale-override';
-                diagnostics.push(diag);
-            } else {
-                const blockerInfo = analysis.blocker
-                    ? ` — bypasses constraint from ${analysis.blocker}`
-                    : '';
-                const ageInfo = analysis.ageDays !== null
-                    ? `. Added ${formatAge(analysis.ageDays)} ago`
-                    : '';
-                const msg = `Active override on ${analysis.entry.name}${blockerInfo}${ageInfo}.`;
-                const diag = new vscode.Diagnostic(
-                    vscodeRange, msg, vscode.DiagnosticSeverity.Information,
-                );
-                diag.source = 'Saropa Package Vibrancy';
-                diag.code = 'active-override';
-                diagnostics.push(diag);
-
-                if (isOldOverride(analysis)) {
-                    const oldMsg = `Override on ${analysis.entry.name} is ${formatAge(analysis.ageDays!)} old. Review whether it's still needed.`;
-                    const oldDiag = new vscode.Diagnostic(
-                        vscodeRange, oldMsg, vscode.DiagnosticSeverity.Hint,
-                    );
-                    oldDiag.source = 'Saropa Package Vibrancy';
-                    oldDiag.code = 'old-override';
-                    diagnostics.push(oldDiag);
-                }
-            }
+            const msg = `No version conflict detected for ${analysis.entry.name} — remove from dependency_overrides if unneeded.`;
+            const diag = new vscode.Diagnostic(
+                vscodeRange, msg, vscode.DiagnosticSeverity.Warning,
+            );
+            diag.source = 'Saropa Package Vibrancy';
+            diag.code = 'stale-override';
+            diagnostics.push(diag);
         }
     }
 

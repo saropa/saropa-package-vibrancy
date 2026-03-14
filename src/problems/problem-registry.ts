@@ -19,7 +19,6 @@ const TYPE_WEIGHTS: Record<ProblemType, number> = {
     'risky-transitive': 15,
     'blocked-upgrade': 10,
     'stale-override': 10,
-    'active-override': 5,
     'unused': 5,
 };
 
@@ -318,17 +317,6 @@ export function convertLegacyProblem(
                 severity,
                 line,
                 overrideName: packageName,
-                ageDays: null,
-            };
-        case 'active-override':
-            return {
-                id,
-                type: 'active-override',
-                package: packageName,
-                severity,
-                line,
-                overrideName: packageName,
-                blockedPackage: legacy.relatedPackage ?? null,
                 ageDays: null,
             };
         case 'family-conflict':
