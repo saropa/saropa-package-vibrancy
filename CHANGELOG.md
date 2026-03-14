@@ -13,7 +13,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ---
 
-## [Unreleased]
+## [1.3.1]
 
 ### Fixed
 
@@ -28,7 +28,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [1.3.0]
 
-*License detection now falls back to GitHub when pub.dev has no data, the upgrade sequencer gains an auto-commit option, and override tracking no longer produces false-positive warnings for path, git, or active overrides.*
+_License detection now falls back to GitHub when pub.dev has no data, the upgrade sequencer gains an auto-commit option, and override tracking no longer produces false-positive warnings for path, git, or active overrides._
 
 ### Added
 
@@ -51,7 +51,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [1.2.0]
 
-*Package Details now syncs when selecting from Action Items, and family conflict detection no longer over-flags unrelated Google packages.*
+_Package Details now syncs when selecting from Action Items, and family conflict detection no longer over-flags unrelated Google packages._
 
 ### Fixed
 
@@ -62,7 +62,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [1.1.0]
 
-*In this release we fix scoring for recently published packages (so they are no longer misclassified as Legacy-Locked), implement the missing goToLine and showChangelog commands and guard tree commands against bad arguments, handle known-issue replacement semantics correctly (package names vs instructions, with optional version thresholds), and stop suggesting removal of dev_dependencies when no imports are found.*
+_In this release we fix scoring for recently published packages (so they are no longer misclassified as Legacy-Locked), implement the missing goToLine and showChangelog commands and guard tree commands against bad arguments, handle known-issue replacement semantics correctly (package names vs instructions, with optional version thresholds), and stop suggesting removal of dev_dependencies when no imports are found._
 
 ### Fixed
 
@@ -75,7 +75,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [1.0.1]
 
-*Adds a second source for security advisories (GitHub Advisory Database alongside OSV) and keeps the extension’s own dependencies up to date via Dependabot.*
+_Adds a second source for security advisories (GitHub Advisory Database alongside OSV) and keeps the extension’s own dependencies up to date via Dependabot._
 
 ### Added
 
@@ -86,7 +86,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [1.0.0]
 
-*Major release: vulnerability scanning with inline diagnostics and tree view, CI pipeline generator, private registry auth, package comparison view, dependency budgets, prerelease version display, custom save tasks, bulk update commands, package details sidebar, and a unified problem model. Plus transitive X-ray, alternative suggestions, override tracking, freshness watch, and many UX and internal improvements.*
+_Major release: vulnerability scanning with inline diagnostics and tree view, CI pipeline generator, private registry auth, package comparison view, dependency budgets, prerelease version display, custom save tasks, bulk update commands, package details sidebar, and a unified problem model. Plus transitive X-ray, alternative suggestions, override tracking, freshness watch, and many UX and internal improvements._
 
 ### Added
 
@@ -145,7 +145,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [0.1.3]
 
-*Unused dependency detection, CodeLens vibrancy badges on each dependency line, SPDX license display, dependency drift timeline, package family conflict detection (e.g. Firebase/Riverpod/Bloc), and an “Annotate Dependencies” command. Fixes for “Update available” when already on latest and sidebar icon.*
+_Unused dependency detection, CodeLens vibrancy badges on each dependency line, SPDX license display, dependency drift timeline, package family conflict detection (e.g. Firebase/Riverpod/Bloc), and an “Annotate Dependencies” command. Fixes for “Update available” when already on latest and sidebar icon._
 
 ### Added
 
@@ -172,7 +172,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [0.1.2]
 
-*About panel (version, Marketplace, GitHub), extension version in the sidebar header, and redesigned Saropa-family icons for the extension and sidebar.*
+_About panel (version, Marketplace, GitHub), extension version in the sidebar header, and redesigned Saropa-family icons for the extension and sidebar._
 
 ### Added
 
@@ -187,7 +187,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [0.1.1]
 
-*Flagged-issues detection from GitHub, suppress-by-package, upgrade-and-test with rollback, report export (Markdown/JSON), retry/backoff for APIs, and a larger known-issues database. Diagnostic wording and severity tuned for the Problems panel.*
+_Flagged-issues detection from GitHub, suppress-by-package, upgrade-and-test with rollback, report export (Markdown/JSON), retry/backoff for APIs, and a larger known-issues database. Diagnostic wording and severity tuned for the Problems panel._
 
 ### Added
 
@@ -220,7 +220,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [0.1.0]
 
-*Initial release: outdated dependency detection, vibrancy scoring (Vibrant / Quiet / Legacy-Locked / End of Life), tree view and webview report, inline diagnostics and hover tooltips, quick-fix code actions, status bar, and Pub.dev + GitHub API integration with caching.*
+_Initial release: outdated dependency detection, vibrancy scoring (Vibrant / Quiet / Legacy-Locked / End of Life), tree view and webview report, inline diagnostics and hover tooltips, quick-fix code actions, status bar, and Pub.dev + GitHub API integration with caching._
 
 ### Added
 
