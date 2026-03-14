@@ -18,9 +18,9 @@ describe('package-families', () => {
             assert.deepStrictEqual(result, { id: 'firebase', label: 'Firebase' });
         });
 
-        it('should match google_fonts to Google', () => {
+        it('should return null for google_fonts (publisher prefix, not a version-coupled family)', () => {
             const result = matchFamily('google_fonts');
-            assert.deepStrictEqual(result, { id: 'google', label: 'Google' });
+            assert.strictEqual(result, null);
         });
 
         it('should match riverpod to Riverpod', () => {

@@ -11,6 +11,22 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Package Details panel updates when selecting from Action Items**: Selecting a package from the Problems/Action Items list (e.g. "30 risk — 1 problem(s)") now updates the Package Details panel with that package's full vibrancy details. Previously only selections from the main package list synced the panel.
+
+---
+
+## [1.2.0]
+
+### Fixed
+
+- **Family conflict no longer flags unrelated packages**: Family conflict detection now applies only to real version-coupled product families (Firebase, Riverpod, Bloc, Freezed, Drift). The over-broad "Google" family (any `google_*` package) was removed, so packages like `google_fonts`, `google_sign_in`, and `google_maps_flutter` are no longer flagged when they are on different major versions—they are independent products with separate release cadences. Warnings still appear when you mix major versions within a single product family (e.g. Firebase or Riverpod).
+
+---
+
 ## [1.1.0]
 
 *In this release we fix scoring for recently published packages (so they are no longer misclassified as Legacy-Locked), implement the missing goToLine and showChangelog commands and guard tree commands against bad arguments, handle known-issue replacement semantics correctly (package names vs instructions, with optional version thresholds), and stop suggesting removal of dev_dependencies when no imports are found.*

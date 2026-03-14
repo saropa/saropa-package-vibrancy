@@ -4,15 +4,15 @@ interface FamilyDef {
     readonly pattern: RegExp;
 }
 
-/** Known package families where major version alignment matters. */
+/** Known package families where major version alignment matters.
+ * Only include product families whose packages are actually version-coupled
+ * (e.g. firebase_*, riverpod/hooks_riverpod). Do NOT use publisher prefixes
+ * like "google_" — those are unrelated products (google_fonts, google_sign_in,
+ * google_maps_flutter, etc.) with independent major versions. */
 const FAMILIES: Record<string, FamilyDef> = {
     firebase: {
         label: 'Firebase',
         pattern: /^(firebase_|cloud_|flutterfire)/,
-    },
-    google: {
-        label: 'Google',
-        pattern: /^google_/,
     },
     riverpod: {
         label: 'Riverpod',
