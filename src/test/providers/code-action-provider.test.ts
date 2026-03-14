@@ -143,6 +143,82 @@ describe('VibrancyCodeActionProvider', () => {
         assert.ok(discoveryAction!.title.includes('similar'));
     });
 
+    it('should provide "Remove override" action for stale-override', () => {
+        const yamlContent = [
+            'dependencies:',
+            '  flutter:',
+            '    sdk: flutter',
+            'dependency_overrides:',
+            '  stale_pkg: 1.0.0',
+            '  other_pkg: 2.0.0',
+        ].join('\n');
+        const doc = {
+            ...makeMockDocument(),
+            getText(range?: vscode.Range): string {
+                if (!range) { return yamlContent; }
+                return 'stale_pkg';
+            },
+        } as unknown as vscode.TextDocument;
+        const diag: vscode.Diagnostic = {
+            range: new vscode.Range(4, 2, 4, 11),
+            message: 'No version conflict detected',
+            severity: vscode.DiagnosticSeverity.Warning,
+            source: 'Saropa Package Vibrancy',
+            code: 'stale-override',
+        };
+        const context = { diagnostics: [diag] } as unknown as vscode.CodeActionContext;
+        const actions = provider.provideCodeActions(
+            doc, new vscode.Range(4, 2, 4, 11), context,
+        );
+        const removeAction = actions.find(
+            a => a.title === 'Remove override for stale_pkg',
+        );
+        assert.ok(removeAction, 'Should offer remove override action');
+        assert.strictEqual(removeAction!.kind, vscode.CodeActionKind.QuickFix);
+        assert.strictEqual(removeAction!.isPreferred, true);
+    });
+
+    it('should not provide "Remove override" for non-override diagnostics', () => {
+        const doc = {
+            ...makeMockDocument(),
+            getText: (_range?: vscode.Range) => 'totally_unknown_pkg',
+        } as unknown as vscode.TextDocument;
+        const diag = makeDiagnostic('Saropa Package Vibrancy');
+        const context = { diagnostics: [diag] } as unknown as vscode.CodeActionContext;
+        const actions = provider.provideCodeActions(
+            doc, new vscode.Range(0, 0, 0, 19), context,
+        );
+        const removeAction = actions.find(a => a.title.includes('Remove override'));
+        assert.strictEqual(removeAction, undefined);
+    });
+
+    it('should not duplicate actions when multiple diagnostics exist for same package', () => {
+        const doc = {
+            ...makeMockDocument(),
+            getText: (_range?: vscode.Range) => 'pedantic',
+        } as unknown as vscode.TextDocument;
+        const diag1 = makeDiagnostic('Saropa Package Vibrancy');
+        const diag2: vscode.Diagnostic = {
+            range: new vscode.Range(0, 0, 0, 11),
+            message: 'Unused dependency',
+            severity: vscode.DiagnosticSeverity.Hint,
+            source: 'Saropa Package Vibrancy',
+            code: 'unused-dependency',
+        };
+        const context = {
+            diagnostics: [diag1, diag2],
+        } as unknown as vscode.CodeActionContext;
+
+        const actions = provider.provideCodeActions(
+            doc, new vscode.Range(0, 0, 0, 8), context,
+        );
+
+        const replaceActions = actions.filter(a => a.title.startsWith('Replace with'));
+        const suppressActions = actions.filter(a => a.title.includes('Suppress'));
+        assert.strictEqual(replaceActions.length, 1, 'Should have exactly one replace action');
+        assert.strictEqual(suppressActions.length, 1, 'Should have exactly one suppress action');
+    });
+
     it('should mark curated replacement as preferred', () => {
         const doc = {
             ...makeMockDocument(),

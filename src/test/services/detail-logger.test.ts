@@ -32,6 +32,7 @@ function makeResult(
             daysSinceLastUpdate: 3,
             daysSinceLastClose: 7,
             flaggedIssues: [],
+            license: null,
         },
         knownIssue: null,
         score,
@@ -306,6 +307,7 @@ describe('DetailLogger', () => {
                             commentCount: 15,
                         },
                     ],
+                    license: null,
                 },
             };
 

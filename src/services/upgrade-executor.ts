@@ -1,4 +1,5 @@
 import * as vscode from 'vscode';
+import { execFile } from 'child_process';
 import { UpgradeStep, UpgradeStepResult, UpgradeReport } from '../types';
 import { runPubGet, runFlutterTest } from './flutter-cli';
 import { buildVersionEdit, readVersionConstraint, findPubspecYaml } from './pubspec-editor';
@@ -6,6 +7,7 @@ import { buildVersionEdit, readVersionConstraint, findPubspecYaml } from './pubs
 interface ExecutorConfig {
     readonly skipTests: boolean;
     readonly maxSteps: number;
+    readonly autoCommit: boolean;
 }
 
 /** Execute an upgrade plan step-by-step with test gates. */
@@ -30,7 +32,7 @@ export async function executeUpgradePlan(
             continue;
         }
         const result = await executeStep(
-            step, yamlUri, cwd, channel, config.skipTests,
+            step, yamlUri, cwd, channel, config,
         );
         results.push(result);
         if (result.outcome !== 'success') { failed = true; }
@@ -53,7 +55,7 @@ async function executeStep(
     yamlUri: vscode.Uri,
     cwd: string,
     channel: vscode.OutputChannel,
-    skipTests: boolean,
+    config: ExecutorConfig,
 ): Promise<UpgradeStepResult> {
     const doc = await vscode.workspace.openTextDocument(yamlUri);
     const original = readVersionConstraint(doc, step.packageName);
@@ -75,7 +77,7 @@ async function executeStep(
         return { step, outcome: 'pub-get-failed', output: pubGet.output };
     }
 
-    if (!skipTests) {
+    if (!config.skipTests) {
         const test = await runFlutterTest(cwd);
         channel.appendLine(test.output);
         if (!test.success) {
@@ -85,6 +87,9 @@ async function executeStep(
     }
 
     channel.appendLine(`✅ ${step.packageName} upgraded successfully`);
+    if (config.autoCommit) {
+        await autoCommitStep(step, cwd, channel);
+    }
     return { step, outcome: 'success', output: '' };
 }
 
@@ -113,6 +118,29 @@ async function rollbackStep(
     const doc = await vscode.workspace.openTextDocument(yamlUri);
     await applyEdit(yamlUri, doc, pkgName, original);
     await runPubGet(cwd);
+}
+
+async function autoCommitStep(
+    step: UpgradeStep,
+    cwd: string,
+    channel: vscode.OutputChannel,
+): Promise<void> {
+    const msg = `upgrade ${step.packageName} ${step.currentVersion} → ${step.targetVersion}`;
+    try {
+        await gitExec(['add', 'pubspec.yaml', 'pubspec.lock'], cwd);
+        await gitExec(['commit', '-m', msg], cwd);
+        channel.appendLine(`  committed: ${msg}`);
+    } catch {
+        channel.appendLine(`  auto-commit skipped (git error)`);
+    }
+}
+
+function gitExec(args: string[], cwd: string): Promise<string> {
+    return new Promise((resolve, reject) => {
+        execFile('git', args, { cwd, timeout: 10_000 }, (err, stdout) => {
+            if (err) { reject(err); } else { resolve(stdout); }
+        });
+    });
 }
 
 /** Format the upgrade plan as a readable string for the output channel. */

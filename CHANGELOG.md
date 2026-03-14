@@ -9,9 +9,25 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 **Source Code** - [GitHub](https://github.com/saropa/saropa-package-vibrancy)
 
+Each version (and [Unreleased]) has a short commentary line in plain language—what this release is about for humans. Only discuss user-facing features; vary the phrasing.
+
+---
+
+## [1.3.0]
+
+*License detection now falls back to GitHub when pub.dev has no data, and the upgrade sequencer gains an auto-commit option.*
+
+### Added
+
+- **Auto-commit upgrade steps**: New `upgradeAutoCommit` setting (default: off) commits `pubspec.yaml` and `pubspec.lock` after each successful upgrade step, creating one atomic commit per package.
+- **GitHub license fallback**: When a package's pub.dev listing has no SPDX license, the extension now extracts `license.spdx_id` from the GitHub repository API as a fallback. License resolution chain: pub.dev → GitHub → known-issues → unknown.
+- **Pubspec editor tests**: Added unit tests for `buildVersionEdit`, `readVersionConstraint`, `findPackageLines`, and `buildBackupUri`.
+
 ---
 
 ## [1.2.0]
+
+*Package Details now syncs when selecting from Action Items, and family conflict detection no longer over-flags unrelated Google packages.*
 
 ### Fixed
 

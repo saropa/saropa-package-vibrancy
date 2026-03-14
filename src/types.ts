@@ -59,6 +59,8 @@ export interface GitHubMetrics {
     readonly daysSinceLastUpdate: number;
     readonly daysSinceLastClose: number;
     readonly flaggedIssues: readonly FlaggedIssue[];
+    /** SPDX license identifier from the GitHub repository, if available. */
+    readonly license: string | null;
 }
 
 /** Known issue entry from bundled JSON. */
@@ -79,6 +81,8 @@ export interface KnownIssue {
     readonly wasmReady?: boolean;
     readonly verifiedPublisher?: boolean;
     readonly platforms?: readonly string[];
+    /** Why a dependency_overrides pin is needed despite no version conflict. */
+    readonly overrideReason?: string;
 }
 
 /** Live metrics from pub.dev /metrics endpoint. Null wasmReady = API failed. */

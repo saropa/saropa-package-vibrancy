@@ -160,5 +160,6 @@ function buildMetrics(raw: RawRepoData, now: number): GitHubMetrics {
         daysSinceLastUpdate: Math.max(0, daysSinceUpdate),
         daysSinceLastClose: daysSinceClose,
         flaggedIssues: raw.flagged,
+        license: raw.repoData.license?.spdx_id ?? null,
     };
 }

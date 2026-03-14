@@ -23,6 +23,7 @@ function makeMetrics(overrides: Partial<GitHubMetrics> = {}): GitHubMetrics {
         daysSinceLastUpdate: 10,
         daysSinceLastClose: 5,
         flaggedIssues: [],
+        license: null,
         ...overrides,
     };
 }

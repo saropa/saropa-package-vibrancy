@@ -119,7 +119,7 @@ export async function analyzePackage(
     return {
         package: dep, pubDev: pubDevWithPoints, github, knownIssue,
         ...scores, category, updateInfo,
-        license: pubDevWithPoints?.license ?? knownIssue?.license ?? null,
+        license: pubDevWithPoints?.license ?? github?.license ?? knownIssue?.license ?? null,
         drift, archiveSizeBytes, bloatRating, isUnused: false,
         platforms: merged.platforms,
         verifiedPublisher: merged.verifiedPublisher,

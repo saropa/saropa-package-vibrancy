@@ -685,6 +685,11 @@
           "maximum": 25,
           "description": "Max bonus for major trusted publishers like dart.dev (0 to disable). Verified publishers get 1/3, no publisher gets \u22121/3 penalty."
         },
+        "saropaPackageVibrancy.upgradeAutoCommit": {
+          "type": "boolean",
+          "default": false,
+          "description": "Auto-commit each successful upgrade step (creates one commit per package)"
+        },
         "saropaPackageVibrancy.upgradeSkipTests": {
           "type": "boolean",
           "default": false,

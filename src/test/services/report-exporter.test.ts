@@ -28,6 +28,7 @@ function makeResult(overrides: Partial<VibrancyResult> = {}): VibrancyResult {
             daysSinceLastUpdate: 10,
             daysSinceLastClose: 5,
             flaggedIssues: [],
+            license: null,
         },
         knownIssue: null,
         score: 75,

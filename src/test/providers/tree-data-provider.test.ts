@@ -227,7 +227,7 @@ describe('SuppressedPackageItem', () => {
 const stubGithub: GitHubMetrics = {
     stars: 500, openIssues: 10, closedIssuesLast90d: 5,
     mergedPrsLast90d: 3, avgCommentsPerIssue: 2,
-    daysSinceLastUpdate: 7, daysSinceLastClose: 3, flaggedIssues: [],
+    daysSinceLastUpdate: 7, daysSinceLastClose: 3, flaggedIssues: [], license: null,
 };
 
 describe('buildGroupItems', () => {

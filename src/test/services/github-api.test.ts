@@ -102,6 +102,27 @@ describe('github-api', () => {
             assert.strictEqual(metrics.openIssues, 42);
         });
 
+        it('should extract license spdx_id from repo response', async () => {
+            stubAllEndpoints();
+            const metrics = await fetchRepoMetrics('dart-lang', 'http');
+            assert.ok(metrics);
+            assert.strictEqual(metrics.license, 'BSD-3-Clause');
+        });
+
+        it('should return null license when repo has no license field', async () => {
+            const noLicense = JSON.stringify({
+                full_name: 'org/pkg', stargazers_count: 10,
+                open_issues_count: 0, updated_at: '2024-01-01T00:00:00Z',
+            });
+            fetchStub.onCall(0).resolves(new Response(noLicense, { status: 200 }));
+            fetchStub.onCall(1).resolves(new Response('[]', { status: 200 }));
+            fetchStub.onCall(2).resolves(new Response('[]', { status: 200 }));
+            fetchStub.onCall(3).resolves(new Response('[]', { status: 200 }));
+            const metrics = await fetchRepoMetrics('org', 'pkg');
+            assert.ok(metrics);
+            assert.strictEqual(metrics.license, null);
+        });
+
         it('should include flagged issues from open issues', async () => {
             stubAllEndpoints();
             const metrics = await fetchRepoMetrics('dart-lang', 'http');

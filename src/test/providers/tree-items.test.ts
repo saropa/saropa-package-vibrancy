@@ -1,8 +1,10 @@
 import * as assert from 'assert';
 import {
     DetailItem, buildGroupItems,
+    PackageItem, InsightItem, OverrideItem,
 } from '../../providers/tree-items';
-import { VibrancyResult, GitHubMetrics, PubDevPackageInfo } from '../../types';
+import { PackageWithProblemsItem } from '../../providers/problem-tree-items';
+import { VibrancyResult, GitHubMetrics, PubDevPackageInfo, PackageInsight, OverrideAnalysis } from '../../types';
 
 function makeResult(name: string, score: number): VibrancyResult {
     return {
@@ -30,7 +32,7 @@ function stubPubDev(repoUrl: string | null = null): PubDevPackageInfo {
 const stubGithub: GitHubMetrics = {
     stars: 500, openIssues: 10, closedIssuesLast90d: 5,
     mergedPrsLast90d: 3, avgCommentsPerIssue: 2,
-    daysSinceLastUpdate: 7, daysSinceLastClose: 3, flaggedIssues: [],
+    daysSinceLastUpdate: 7, daysSinceLastClose: 3, flaggedIssues: [], license: null,
 };
 
 describe('DetailItem URL behavior', () => {
