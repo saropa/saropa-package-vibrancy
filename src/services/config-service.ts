@@ -32,6 +32,10 @@ export function getIncludeDevDependencies(): boolean {
     return getConfig().get<boolean>('includeDevDependencies', true);
 }
 
+export function getIncludeOverriddenPackages(): boolean {
+    return getConfig().get<boolean>('includeOverriddenPackages', true);
+}
+
 export function getAllowlist(): readonly string[] {
     return getConfig().get<string[]>('allowlist', []);
 }

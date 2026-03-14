@@ -11,6 +11,7 @@ import { FlutterRelease } from './services/flutter-releases';
 import {
     getGithubToken, getAllowlistSet, getScoringWeights,
     getRepoOverrides, getPublisherTrustBonus, getIncludeDevDependencies,
+    getIncludeOverriddenPackages,
 } from './services/config-service';
 
 export interface ScanConfig {
@@ -91,25 +92,62 @@ export interface ParsedDeps {
     readonly yamlContent: string;
 }
 
-export async function findAndParseDeps(): Promise<ParsedDeps | null> {
+/** Check if a dependency source should be included in the scan. */
+function isScannableSource(source: string, includeOverridden: boolean): boolean {
+    if (source === 'hosted') { return true; }
+    if (includeOverridden && (source === 'path' || source === 'git')) { return true; }
+    return false;
+}
+
+/**
+ * Find pubspec.yaml + pubspec.lock, preferring workspace root.
+ * Falls back to recursive search for monorepo / nested project layouts.
+ */
+async function findPubspecPair(): Promise<{ yaml: vscode.Uri; lock: vscode.Uri } | null> {
+    const folders = vscode.workspace.workspaceFolders;
+    if (folders) {
+        for (const folder of folders) {
+            const yaml = vscode.Uri.joinPath(folder.uri, 'pubspec.yaml');
+            const lock = vscode.Uri.joinPath(folder.uri, 'pubspec.lock');
+            try {
+                await Promise.all([
+                    vscode.workspace.fs.stat(yaml),
+                    vscode.workspace.fs.stat(lock),
+                ]);
+                return { yaml, lock };
+            } catch {
+                continue;
+            }
+        }
+    }
+
     const [yamlFiles, lockFiles] = await Promise.all([
         vscode.workspace.findFiles('**/pubspec.yaml', '**/.*/**', 1),
         vscode.workspace.findFiles('**/pubspec.lock', '**/.*/**', 1),
     ]);
     if (yamlFiles.length === 0 || lockFiles.length === 0) { return null; }
+    return { yaml: yamlFiles[0], lock: lockFiles[0] };
+}
 
-    const yamlBytes = await vscode.workspace.fs.readFile(yamlFiles[0]);
-    const lockBytes = await vscode.workspace.fs.readFile(lockFiles[0]);
+export async function findAndParseDeps(): Promise<ParsedDeps | null> {
+    const pair = await findPubspecPair();
+    if (!pair) { return null; }
+
+    const [yamlBytes, lockBytes] = await Promise.all([
+        vscode.workspace.fs.readFile(pair.yaml),
+        vscode.workspace.fs.readFile(pair.lock),
+    ]);
 
     const yamlContent = Buffer.from(yamlBytes).toString('utf8');
     const lockContent = Buffer.from(lockBytes).toString('utf8');
 
     const includeDevDeps = getIncludeDevDependencies();
+    const includeOverridden = getIncludeOverriddenPackages();
 
     const { directDeps, devDeps, constraints } = parsePubspecYaml(yamlContent);
     const effectiveDevDeps = includeDevDeps ? devDeps : [];
     const deps = parsePubspecLock(lockContent, directDeps, constraints, effectiveDevDeps)
-        .filter(d => d.isDirect && d.source === 'hosted');
+        .filter(d => d.isDirect && isScannableSource(d.source, includeOverridden));
 
-    return { deps, yamlUri: yamlFiles[0], yamlContent };
+    return { deps, yamlUri: pair.yaml, yamlContent };
 }

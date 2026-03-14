@@ -179,7 +179,7 @@ export function formatNotificationMessage(
     const majorNote = majorCount > 0 ? ` (${majorCount} major)` : '';
     const blockedNote = blockedCount > 0 ? ` (${blockedCount} blocked)` : '';
 
-    return `📦 ${notifications.length} packages updated: ${names}${suffix}${majorNote}${blockedNote}`;
+    return `📦 ${notifications.length} new versions available: ${names}${suffix}${majorNote}${blockedNote}`;
 }
 
 export function createNotificationActions(): readonly string[] {

@@ -237,7 +237,7 @@ describe('formatNotificationMessage', () => {
 
         const message = formatNotificationMessage(notifications);
 
-        assert.ok(message.includes('2 packages'));
+        assert.ok(message.includes('2 new versions'));
         assert.ok(message.includes('http'));
         assert.ok(message.includes('path'));
         assert.ok(message.includes('1 major'));
@@ -254,7 +254,7 @@ describe('formatNotificationMessage', () => {
 
         const message = formatNotificationMessage(notifications);
 
-        assert.ok(message.includes('5 packages'));
+        assert.ok(message.includes('5 new versions'));
         assert.ok(message.includes('+2 more'));
     });
 

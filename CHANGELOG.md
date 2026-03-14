@@ -13,9 +13,22 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ---
 
+## [Unreleased]
+
+### Fixed
+
+- **Pubspec discovery prefers workspace root**: Scans now check the workspace root for `pubspec.yaml` and `pubspec.lock` before falling back to a recursive search, preventing `dependency_overrides/` subdirectory files from being picked up instead of the project root.
+- **Ambiguous notification wording**: Changed freshness-watcher notification from "packages updated" to "new versions available" so users know these are available updates, not already-applied changes.
+
+### Added
+
+- **`includeOverriddenPackages` setting**: New boolean setting (default: `true`) includes `dependency_overrides` (path/git) packages in the vibrancy scan for security and health checks against pub.dev.
+
+---
+
 ## [1.3.0]
 
-*License detection now falls back to GitHub when pub.dev has no data, and the upgrade sequencer gains an auto-commit option.*
+*License detection now falls back to GitHub when pub.dev has no data, the upgrade sequencer gains an auto-commit option, and override tracking no longer produces false-positive warnings for path, git, or active overrides.*
 
 ### Added
 
