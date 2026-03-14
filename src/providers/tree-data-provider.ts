@@ -77,6 +77,11 @@ export class VibrancyTreeProvider implements vscode.TreeDataProvider<TreeNode> {
         return this._results;
     }
 
+    /** Get a single result by package name. Used when an Action Items (InsightItem) selection should sync the Package Details panel. */
+    getResultByName(name: string): VibrancyResult | undefined {
+        return this._results.find(r => r.package.name === name);
+    }
+
     getTreeItem(element: TreeNode): vscode.TreeItem {
         return element;
     }

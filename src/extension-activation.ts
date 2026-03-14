@@ -260,14 +260,27 @@ function registerTreeView(
     tv.description = `v${context.extension.packageJSON.version}`;
     context.subscriptions.push(tv);
 
+    // Sync Package Details panel: both package list (PackageItem) and Action Items (InsightItem) update the detail view.
     tv.onDidChangeSelection(e => {
         if (!detailViewProvider) { return; }
-        if (e.selection.length === 1 && 'result' in e.selection[0]) {
-            const item = e.selection[0] as { result: VibrancyResult };
-            detailViewProvider.update(item.result);
-        } else {
+        if (e.selection.length !== 1) {
             detailViewProvider.clear();
+            return;
         }
+        const item = e.selection[0];
+        if ('result' in item) {
+            detailViewProvider.update((item as { result: VibrancyResult }).result);
+            return;
+        }
+        if ('insight' in item) {
+            const name = (item as { insight: { name: string } }).insight.name;
+            const result = provider.getResultByName(name);
+            if (result) {
+                detailViewProvider.update(result);
+                return;
+            }
+        }
+        detailViewProvider.clear();
     });
 }
 

@@ -95,6 +95,24 @@ describe('VibrancyTreeProvider', () => {
         provider.updateResults([makeResult('http', 80)]);
         assert.ok(fired);
     });
+
+    describe('getResultByName', () => {
+        it('returns result when package name exists', () => {
+            const r = makeResult('mock_data', 30);
+            provider.updateResults([makeResult('http', 80), r, makeResult('path', 70)]);
+            const found = provider.getResultByName('mock_data');
+            assert.strictEqual(found, r);
+        });
+
+        it('returns undefined when no results', () => {
+            assert.strictEqual(provider.getResultByName('any'), undefined);
+        });
+
+        it('returns undefined when name not in results', () => {
+            provider.updateResults([makeResult('http', 80)]);
+            assert.strictEqual(provider.getResultByName('nonexistent'), undefined);
+        });
+    });
 });
 
 describe('suppressed grouping', () => {
