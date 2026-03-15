@@ -13,7 +13,7 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ---
 
-## [1.3.1+1]
+## [1.3.2]
 
 ### Fixed
 
