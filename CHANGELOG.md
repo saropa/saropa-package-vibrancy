@@ -13,6 +13,14 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ---
 
+## [1.3.1+1]
+
+### Fixed
+
+- **Activity bar icon too small**: Scaled the sidebar hexagon and pulse artwork to fill the 24×24 container and centered it properly at (12,12)
+
+---
+
 ## [1.3.1]
 
 ### Fixed
