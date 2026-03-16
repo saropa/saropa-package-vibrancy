@@ -17,6 +17,18 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [1.4.0]
 
+_Override tracking gets smarter — known override reasons prevent false-positive stale warnings, and Firebase is no longer mis-flagged as a version-coupled family._
+
+### Added
+
+- **Known override reasons**: New `overrideReason` field in the known-issues database lets curated entries explain why a `dependency_overrides` pin is needed despite no version conflict (e.g. `path_provider_foundation` build-hook incompatibility). Packages with a known reason are shown as active overrides instead of stale.
+- **"Remove override" quick fix**: Stale override diagnostics now offer a one-click code action to delete the override entry from `dependency_overrides`.
+
+### Fixed
+
+- **Firebase removed from family conflict detection**: Firebase packages (`firebase_core` v4, `firebase_messaging` v16, etc.) use independent version tracks, not a shared major version scheme. They were incorrectly flagged as version-conflicting. Family conflict detection now only applies to truly version-coupled families: Riverpod, Bloc, Freezed, Drift.
+- **Stale override message improved**: Changed from "Safe to remove" to "No version conflict detected — remove if unneeded", since the tool cannot detect all override reasons (e.g. runtime/build incompatibilities).
+
 ---
 
 ## [1.3.2]
