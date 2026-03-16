@@ -2,11 +2,13 @@ import * as assert from 'assert';
 import {
     formatAnnotation,
     buildAnnotationEdits,
+} from '../../providers/annotate-packages';
+import {
     formatSectionHeader,
     buildSectionHeaderEdits,
     buildSubSectionHeaderEdits,
     buildOverrideMarkerEdit,
-} from '../../providers/annotate-command';
+} from '../../providers/annotate-headers';
 
 /** Create a minimal fake TextDocument from raw text. */
 function makeFakeDoc(text: string): any {

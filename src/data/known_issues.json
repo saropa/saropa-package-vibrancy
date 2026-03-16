@@ -957,28 +957,6 @@
       "platforms": []
     },
     {
-      "name": "flutter_slidable",
-      "status": "end_of_life",
-      "reason": "(v0.x versions) Gestures conflict with modern Flutter internal navigators.",
-      "as_of": "2026-03-09",
-      "replacement": null,
-      "migrationNotes": null,
-      "archiveSizeBytes": 89485,
-      "archiveSizeMB": 0.09,
-      "license": "MIT",
-      "lastUpdated": "2025-09-27",
-      "pubPoints": 150,
-      "verifiedPublisher": true,
-      "platforms": [
-        "android",
-        "ios",
-        "linux",
-        "macos",
-        "web",
-        "windows"
-      ]
-    },
-    {
       "name": "flutter_icons",
       "status": "end_of_life",
       "reason": "Generates giant font files that drastically bloat app bundle size.",
@@ -1005,50 +983,6 @@
       "license": "MIT",
       "lastUpdated": "2026-03-09",
       "pubPoints": 160,
-      "verifiedPublisher": true,
-      "platforms": [
-        "android",
-        "ios",
-        "linux",
-        "macos",
-        "web",
-        "windows"
-      ]
-    },
-    {
-      "name": "google_fonts",
-      "status": "end_of_life",
-      "reason": "(Original 1.x) Dynamic fetching blocks the main UI thread during load.",
-      "as_of": "2026-03-09",
-      "replacement": null,
-      "migrationNotes": null,
-      "archiveSizeBytes": 1847877,
-      "archiveSizeMB": 1.76,
-      "license": "BSD-3-Clause",
-      "lastUpdated": "2026-02-18",
-      "pubPoints": 160,
-      "verifiedPublisher": true,
-      "platforms": [
-        "android",
-        "ios",
-        "linux",
-        "macos",
-        "web",
-        "windows"
-      ]
-    },
-    {
-      "name": "flutter_spinkit",
-      "status": "end_of_life",
-      "reason": "(v4.x) Hardcoded TickerProviders cause exceptions when screens pop.",
-      "as_of": "2026-03-09",
-      "replacement": null,
-      "migrationNotes": null,
-      "archiveSizeBytes": 1828277,
-      "archiveSizeMB": 1.74,
-      "license": "MIT",
-      "lastUpdated": "2025-08-11",
-      "pubPoints": 140,
       "verifiedPublisher": true,
       "platforms": [
         "android",
@@ -2175,7 +2109,7 @@
     {
       "name": "flutter_slidable",
       "status": "end_of_life",
-      "reason": "Navigator conflicts.",
+      "reason": "Gestures conflict with modern Flutter internal navigators.",
       "as_of": "2026-03-09",
       "replacement": "flutter_slidable",
       "migrationNotes": "Complete rewrite of the ActionPane builders.",
@@ -2198,7 +2132,7 @@
     {
       "name": "google_fonts",
       "status": "end_of_life",
-      "reason": "Main thread blocks.",
+      "reason": "Dynamic fetching blocks the main UI thread during load.",
       "as_of": "2026-03-09",
       "replacement": "Update to latest version",
       "migrationNotes": "Drop-in update, massive performance boost.",
@@ -2222,7 +2156,7 @@
     {
       "name": "flutter_spinkit",
       "status": "end_of_life",
-      "reason": "TickerProvider exceptions.",
+      "reason": "Hardcoded TickerProviders cause exceptions when screens pop.",
       "as_of": "2026-03-09",
       "replacement": "Update to latest version",
       "migrationNotes": "Drop-in update.",

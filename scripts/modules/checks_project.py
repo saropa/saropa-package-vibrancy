@@ -2,7 +2,7 @@
 
 import json
 import os
-from collections import Counter
+from collections import Counter, defaultdict
 
 from .constants import C, MAX_FILE_LINES, PROJECT_ROOT
 from .display import ask_yn, fail, info, ok, warn
@@ -193,12 +193,30 @@ def check_known_issues_data() -> bool:
     for status, count in sorted(status_counts.items()):
         print(f"           {status}: {C.WHITE}{count}{C.RESET}")
 
-    # Check duplicates
-    name_counts = Counter(e["name"] for e in entries)
-    dupes = {n: c for n, c in name_counts.items() if c > 1}
-    if dupes:
-        for name, count in sorted(dupes.items()):
-            fail(f"Duplicate: {name} ({count} occurrences)")
+    # Check duplicates — version-scoped entries are allowed (same name,
+    # different appliesToMinVersion/appliesToMaxVersion or different status)
+    by_name: dict[str, list[dict]] = defaultdict(list)
+    for e in entries:
+        by_name[e["name"]].append(e)
+    has_dupes = False
+    for name, group in sorted(by_name.items()):
+        if len(group) <= 1:
+            continue
+        # Build a scope key per entry: (status, minVer, maxVer)
+        scope_keys = [
+            (
+                e.get("status"),
+                e.get("appliesToMinVersion"),
+                e.get("appliesToMaxVersion"),
+            )
+            for e in group
+        ]
+        # If all scope keys are unique, these are intentional variants
+        if len(set(scope_keys)) == len(scope_keys):
+            continue
+        has_dupes = True
+        fail(f"Duplicate: {name} ({len(group)} occurrences)")
+    if has_dupes:
         return False
 
     ok("No duplicate names")

@@ -24,15 +24,8 @@ export interface SuggestedAction {
 
 /** Priority weights for action types (higher = more important). */
 const ACTION_PRIORITY: Record<ActionType, number> = {
-    'fix-vulnerability': 100,
-    'remove': 80,
-    'upgrade-blocker': 70,
-    'upgrade-family': 60,
-    'replace': 50,
-    'upgrade': 40,
-    'remove-override': 30,
-    'review-license': 20,
-    'none': 0,
+    'fix-vulnerability': 100, 'remove': 80, 'upgrade-blocker': 70, 'upgrade-family': 60,
+    'replace': 50, 'upgrade': 40, 'remove-override': 30, 'review-license': 20, 'none': 0,
 };
 
 /**
@@ -292,19 +285,11 @@ export function formatAction(action: SuggestedAction): string {
     return action.description;
 }
 
-/**
- * Get the icon for an action type.
- */
-export function actionIcon(type: ActionType): string {
-    switch (type) {
-        case 'remove': return '🗑️';
-        case 'upgrade': return '⬆️';
-        case 'upgrade-blocker': return '🔓';
-        case 'upgrade-family': return '👨‍👩‍👧‍👦';
-        case 'remove-override': return '✂️';
-        case 'replace': return '🔄';
-        case 'review-license': return '📜';
-        case 'fix-vulnerability': return '🛡️';
-        case 'none': return '💡';
-    }
-}
+/** Map action type to its display icon. */
+const ACTION_ICONS: Record<ActionType, string> = {
+    'remove': '🗑️', 'upgrade': '⬆️', 'upgrade-blocker': '🔓', 'upgrade-family': '👨‍👩‍👧‍👦',
+    'remove-override': '✂️', 'replace': '🔄', 'review-license': '📜', 'fix-vulnerability': '🛡️', 'none': '💡',
+};
+
+/** Get the icon for an action type. */
+export function actionIcon(type: ActionType): string { return ACTION_ICONS[type]; }

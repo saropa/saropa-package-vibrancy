@@ -274,10 +274,8 @@ function appendChangelogSection(
     }
 }
 
-function truncateBody(body: string): string {
-    if (!body) { return ''; }
-    return body.length > 200 ? body.substring(0, 197) + '...' : body;
-}
+const truncateBody = (body: string): string =>
+    !body ? '' : body.length > 200 ? body.substring(0, 197) + '...' : body;
 
 function appendAlternatives(
     md: vscode.MarkdownString,

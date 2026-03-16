@@ -15,6 +15,24 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ---
 
+## [2.0.0] - DEPRECATED
+
+_This extension has been merged into [Saropa Lints](https://marketplace.visualstudio.com/items?itemName=saropa.saropa-lints). All features are now available as collapsible panels in the Saropa Lints sidebar._
+
+### Deprecated
+
+- **All functionality removed** from this standalone extension
+- On activation, shows a migration notice directing users to install Saropa Lints
+- All Package Vibrancy features (scanning, vibrancy scores, upgrade planning, SBOM, vulnerability checks, etc.) are now in Saropa Lints under the "Package Vibrancy" panel
+
+### Migration
+
+1. Install **Saropa Lints** from the VS Code Marketplace
+2. Uninstall **Saropa Package Vibrancy**
+3. Your vibrancy features will appear as new collapsible panels in the Saropa Lints sidebar
+
+---
+
 ## [1.4.1]
 
 _New "caution" status for packages with known problems that aren't end-of-life — starting with shimmer jank warnings. Known issues now match by version range so the right warning surfaces for the version you actually use._

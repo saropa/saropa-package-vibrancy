@@ -1,15 +1,25 @@
 ![Saropa Package Vibrancy](https://raw.githubusercontent.com/saropa/saropa-package-vibrancy/master/images/banner.png)
 
+# DEPRECATED
+
+> **This extension has been merged into [Saropa Lints](https://marketplace.visualstudio.com/items?itemName=saropa.saropa-lints).**
+>
+> All Package Vibrancy features are now available as collapsible panels in the Saropa Lints sidebar. Please install **Saropa Lints** and uninstall this extension.
+>
+> [Install Saropa Lints](https://marketplace.visualstudio.com/items?itemName=saropa.saropa-lints)
+
+---
+
 <!-- # Saropa Package Vibrancy -->
 
-> Analyze Flutter/Dart dependency health and community vibrancy directly in VS Code.
+> ~~Analyze Flutter/Dart dependency health and community vibrancy directly in VS Code.~~
 
-## Install
+## ~~Install~~
 
 ```
 1. Open VS Code
 2. Go to Extensions (Ctrl+Shift+X)
-3. Search for "Saropa Package Vibrancy"
+3. Search for "Saropa Lints" (NOT "Saropa Package Vibrancy")
 4. Click Install
 ```
 

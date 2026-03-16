@@ -1,14 +1,17 @@
-import { VibrancyResult, UpdateInfo, DepGraphSummary, OverrideAnalysis, PackageInsight } from '../types';
+import { VibrancyResult, UpdateInfo } from '../types';
 import { formatSizeMB } from '../scoring/bloat-calculator';
 import { classifyLicense, licenseEmoji } from '../scoring/license-classifier';
-import { formatAge, isOldOverride } from '../scoring/override-analyzer';
 import { severityEmoji, severityLabel, worstSeverity } from '../scoring/vuln-classifier';
 import { DetailItem, GroupItem } from './tree-item-classes';
 
-/**
- * Builder functions for tree item children.
- * Extracted from tree-items.ts for modularity.
- */
+// Builder functions for tree item group nodes (Version, Update, Community, etc.).
+// Detail-level builders live in tree-item-detail-builders.ts and are
+// re-exported here so existing callers keep working.
+export {
+    buildDepGraphSummaryDetails,
+    buildOverrideDetails,
+    buildInsightDetails,
+} from './tree-item-detail-builders';
 
 function updateEmoji(status: string): string {
     switch (status) {
@@ -18,7 +21,6 @@ function updateEmoji(status: string): string {
         default: return '🟡';
     }
 }
-
 function bloatEmoji(rating: number): string {
     if (rating <= 3) { return '🟢'; }
     if (rating <= 6) { return '🟡'; }
@@ -276,71 +278,6 @@ function buildSecurityGroup(result: VibrancyResult): GroupItem | null {
 
     return new GroupItem('🛡️ Security', items);
 }
-
-/** Build detail items for DepGraphSummaryItem children. */
-export function buildDepGraphSummaryDetails(
-    summary: DepGraphSummary,
-): DetailItem[] {
-    const items: DetailItem[] = [];
-
-    items.push(new DetailItem('Direct', `${summary.directCount} packages`));
-    items.push(new DetailItem('Transitive', `${summary.transitiveCount} packages`));
-    items.push(new DetailItem('Total Unique', `${summary.totalUnique} packages`));
-
-    if (summary.overrideCount > 0) {
-        items.push(new DetailItem('⚠️ Overrides', `${summary.overrideCount} in pubspec.yaml`));
-    }
-
-    if (summary.sharedDeps.length > 0) {
-        for (const shared of summary.sharedDeps.slice(0, 3)) {
-            items.push(new DetailItem(`🔗 ${shared.name}`, `used by ${shared.usedBy.length} direct deps`));
-        }
-    }
-
-    return items;
-}
-
-/** Build detail items for an override node. */
-export function buildOverrideDetails(analysis: OverrideAnalysis): DetailItem[] {
-    const items: DetailItem[] = [];
-
-    if (analysis.status === 'active') {
-        items.push(new DetailItem(
-            '✓ Status',
-            `Active — ${analysis.blocker ?? 'resolves constraint'}`,
-        ));
-    } else {
-        items.push(new DetailItem(
-            '⚠️ Status',
-            'Stale — no version conflict detected',
-        ));
-    }
-
-    if (analysis.ageDays !== null) {
-        const ageStr = formatAge(analysis.ageDays);
-        const dateStr = analysis.addedDate
-            ? ` (since ${analysis.addedDate.toISOString().split('T')[0]})`
-            : '';
-        items.push(new DetailItem('📅 Age', `${ageStr}${dateStr}`));
-        if (isOldOverride(analysis) && analysis.status === 'active') {
-            items.push(new DetailItem(
-                '💡 Hint',
-                'Review whether this override is still needed',
-            ));
-        }
-    }
-
-    if (analysis.entry.isPathDep) {
-        items.push(new DetailItem('📁 Type', 'Local path dependency'));
-    } else if (analysis.entry.isGitDep) {
-        items.push(new DetailItem('🔗 Type', 'Git dependency'));
-    }
-
-    items.push(new DetailItem('⚠️ Risk', 'Bypasses version constraints'));
-
-    return items;
-}
-
 function buildAlternativesGroup(result: VibrancyResult): GroupItem | null {
     if (!result.alternatives?.length) { return null; }
 
@@ -360,28 +297,4 @@ function buildAlternativesGroup(result: VibrancyResult): GroupItem | null {
     }
 
     return new GroupItem('💡 Alternatives', items);
-}
-
-/** Build detail items for an insight node. */
-export function buildInsightDetails(insight: PackageInsight): DetailItem[] {
-    const items: DetailItem[] = [];
-
-    for (const problem of insight.problems) {
-        const emoji = problem.severity === 'high' ? '🔴'
-            : problem.severity === 'medium' ? '🟡' : '🔵';
-        items.push(new DetailItem(`${emoji} ${problem.type}`, problem.message));
-    }
-
-    if (insight.suggestedAction) {
-        items.push(new DetailItem('💡 Suggested', insight.suggestedAction));
-    }
-
-    if (insight.unlocksIfFixed.length > 0) {
-        items.push(new DetailItem(
-            '🔓 Unlocks',
-            insight.unlocksIfFixed.join(', '),
-        ));
-    }
-
-    return items;
 }

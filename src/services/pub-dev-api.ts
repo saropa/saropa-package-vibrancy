@@ -11,10 +11,15 @@ import {
     buildRegistryHeaders,
 } from './registry-service';
 
-const PUB_DEV_URL = 'https://pub.dev';
+/** Default pub.dev registry base URL. Exported for use by pub-dev-archive. */
+export const PUB_DEV_URL = 'https://pub.dev';
 
-/** Simple hash for registry URL to use in cache keys. */
-function hashUrl(url: string): string {
+/**
+ * Simple hash for a registry URL to use as a cache key prefix.
+ * Produces a short base-36 string that distinguishes custom registries
+ * from the default pub.dev registry in cache keys.
+ */
+export function hashUrl(url: string): string {
     let hash = 0;
     for (let i = 0; i < url.length; i++) {
         const char = url.charCodeAt(i);
@@ -99,6 +104,7 @@ export async function fetchPackageInfoWithPrerelease(
             topics: Array.isArray(pubspec.topics) ? pubspec.topics : [],
         };
 
+        // Cache the archive URL so fetchArchiveSize can skip a second API call
         const archiveUrl = latest.archive_url ?? null;
         if (archiveUrl) {
             await cache?.set(`${cachePrefix}.archiveUrl.${name}`, archiveUrl);
@@ -123,6 +129,7 @@ export async function fetchPackageInfoWithPrerelease(
     }
 }
 
+/** Tag values that indicate WASM compatibility. */
 const WASM_TAGS = ['is:wasm-ready', 'sdk:wasm'];
 
 /** Fetch registry metrics: points, platforms, and WASM readiness. */
@@ -176,6 +183,7 @@ export async function fetchPackageMetrics(
     }
 }
 
+/** Extract sorted platform names from score tags (e.g. "platform:web"). */
 function extractPlatforms(tags: string[]): string[] {
     return tags
         .filter(t => t.startsWith('platform:'))
@@ -225,92 +233,6 @@ export async function fetchPublisher(
     }
 }
 
-/** Fetch archive size in bytes via HEAD request to the package archive. */
-export async function fetchArchiveSize(
-    name: string,
-    cache?: CacheService,
-    logger?: ScanLogger,
-    registryOpts?: RegistryOptions,
-): Promise<number | null> {
-    const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
-    const registryService = registryOpts?.registryService;
-    const cachePrefix = registryUrl === PUB_DEV_URL ? 'pub' : `reg.${hashUrl(registryUrl)}`;
-
-    const cacheKey = `${cachePrefix}.archiveSize.${name}`;
-    const cached = cache?.get<number>(cacheKey);
-    if (cached !== null && cached !== undefined) {
-        logger?.cacheHit(cacheKey);
-        return cached;
-    }
-    logger?.cacheMiss(cacheKey);
-
-    const archiveUrl = await resolveArchiveUrl(name, cache, logger, registryOpts);
-    if (!archiveUrl) { return null; }
-
-    const headers = registryService
-        ? await buildRegistryHeaders(registryUrl, registryService)
-        : {};
-
-    return headContentLength(archiveUrl, cacheKey, cache, logger, headers);
-}
-
-async function resolveArchiveUrl(
-    name: string,
-    cache?: CacheService,
-    logger?: ScanLogger,
-    registryOpts?: RegistryOptions,
-): Promise<string | null> {
-    const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
-    const registryService = registryOpts?.registryService;
-    const cachePrefix = registryUrl === PUB_DEV_URL ? 'pub' : `reg.${hashUrl(registryUrl)}`;
-
-    const cachedUrl = cache?.get<string>(`${cachePrefix}.archiveUrl.${name}`);
-    if (cachedUrl) { return cachedUrl; }
-
-    const url = buildPackageApiUrl(registryUrl, name);
-    const headers = registryService
-        ? await buildRegistryHeaders(registryUrl, registryService)
-        : {};
-
-    try {
-        logger?.apiRequest('GET', url);
-        const t0 = Date.now();
-        const resp = await fetchWithRetry(url, { headers }, logger);
-        logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
-        if (!resp.ok) { return null; }
-
-        const json: any = await resp.json();
-        return json.latest?.archive_url ?? null;
-    } catch {
-        return null;
-    }
-}
-
-async function headContentLength(
-    archiveUrl: string,
-    cacheKey: string,
-    cache?: CacheService,
-    logger?: ScanLogger,
-    headers?: Record<string, string>,
-): Promise<number | null> {
-    try {
-        logger?.apiRequest('HEAD', archiveUrl);
-        const t0 = Date.now();
-        const resp = await fetchWithRetry(
-            archiveUrl, { method: 'HEAD', headers }, logger,
-        );
-        logger?.apiResponse(resp.status, resp.statusText, Date.now() - t0);
-        if (!resp.ok) { return null; }
-
-        const header = resp.headers.get('Content-Length');
-        if (!header) { return null; }
-
-        const size = parseInt(header, 10);
-        if (!Number.isFinite(size)) { return null; }
-
-        await cache?.set(cacheKey, size);
-        return size;
-    } catch {
-        return null;
-    }
-}
+// Re-export archive functions for backward compatibility — consumers that
+// import fetchArchiveSize from './pub-dev-api' will continue to work.
+export * from './pub-dev-archive';

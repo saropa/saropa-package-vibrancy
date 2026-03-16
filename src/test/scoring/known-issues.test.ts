@@ -154,14 +154,14 @@ describe('known-issues', () => {
         });
 
         it('should prefer scoped entry over unscoped for matching version', () => {
-            // google_fonts has both unscoped (active) and scoped v1 (end_of_life)
-            const v1 = findKnownIssue('google_fonts', '1.5.0');
-            assert.ok(v1, 'expected scoped v1 match');
-            assert.strictEqual(v1.appliesToMinVersion, '1.0.0');
+            // timeago has both scoped v2 (end_of_life) and unscoped (active)
+            const v2 = findKnownIssue('timeago', '2.5.0');
+            assert.ok(v2, 'expected scoped v2 match');
+            assert.strictEqual(v2.appliesToMinVersion, '2.0.0');
 
-            const v3 = findKnownIssue('google_fonts', '3.0.0');
-            assert.ok(v3, 'expected unscoped fallback');
-            assert.strictEqual(v3.appliesToMinVersion, undefined);
+            const v4 = findKnownIssue('timeago', '4.0.0');
+            assert.ok(v4, 'expected unscoped fallback');
+            assert.strictEqual(v4.appliesToMinVersion, undefined);
         });
 
         it('should treat min as inclusive', () => {

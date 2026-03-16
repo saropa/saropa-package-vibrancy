@@ -179,13 +179,7 @@ function createUnhealthyProblem(
 }
 
 function createUnusedProblem(name: string, line: number): UnusedProblem {
-    return {
-        id: generateProblemId(name, 'unused'),
-        type: 'unused',
-        package: name,
-        severity: 'low',
-        line,
-    };
+    return { id: generateProblemId(name, 'unused'), type: 'unused', package: name, severity: 'low', line };
 }
 
 function createBlockedUpgradeProblem(
@@ -224,18 +218,11 @@ function createRiskyTransitiveProblem(
     };
 }
 
-function createStaleOverrideProblem(
-    override: OverrideAnalysis,
-    line: number,
-): StaleOverrideProblem {
+function createStaleOverrideProblem(override: OverrideAnalysis, line: number): StaleOverrideProblem {
     return {
         id: generateProblemId(override.entry.name, 'stale-override'),
-        type: 'stale-override',
-        package: override.entry.name,
-        severity: 'low',
-        line,
-        overrideName: override.entry.name,
-        ageDays: override.ageDays,
+        type: 'stale-override', package: override.entry.name, severity: 'low', line,
+        overrideName: override.entry.name, ageDays: override.ageDays,
     };
 }
 

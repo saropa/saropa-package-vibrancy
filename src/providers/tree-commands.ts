@@ -1,8 +1,7 @@
 import * as vscode from 'vscode';
 import { findPackageRange } from '../services/pubspec-parser';
 import {
-    findPubspecYaml, buildVersionEdit, findPackageLines, buildBackupUri,
-    readVersionConstraint,
+    findPubspecYaml, readVersionConstraint,
 } from '../services/pubspec-editor';
 import {
     addSuppressedPackage, removeSuppressedPackage,
@@ -11,12 +10,19 @@ import { DetailItem, PackageItem } from './tree-items';
 import { DetailViewProvider } from '../views/detail-view-provider';
 import { DetailLogger } from '../services/detail-logger';
 import { getLatestResults } from '../extension-activation';
-import { UpdateFromCodeLensArgs } from './codelens-provider';
 import { ComparisonPanel } from '../views/comparison-webview';
 import { resultToComparisonData } from '../scoring/comparison-ranker';
 
-// Re-export for backward compatibility
-export { findPubspecYaml, buildVersionEdit, findPackageLines, readVersionConstraint };
+// Import the four pubspec-editing commands from the split-out module
+import {
+    updateToLatest, commentOutUnused, deleteUnused, updateFromCodeLens,
+} from './tree-commands-edit';
+
+// Re-export pubspec-editor helpers for consumers that import from this module
+export { findPubspecYaml, readVersionConstraint };
+// Re-export buildVersionEdit and findPackageLines via pubspec-editor
+// (detail-view-provider and tests import them from this module)
+export { buildVersionEdit, findPackageLines } from '../services/pubspec-editor';
 
 let _detailViewProvider: DetailViewProvider | null = null;
 let _detailLogger: DetailLogger | null = null;
@@ -24,8 +30,9 @@ let _detailLogger: DetailLogger | null = null;
 /**
  * Guard for commands that require a PackageItem from the Packages view.
  * Returns true if item has result.package.name; otherwise shows a warning and returns false.
+ * Exported so tree-commands-edit.ts can share the same guard logic.
  */
-function requirePackageItem(
+export function requirePackageItem(
     item: PackageItem | undefined,
     actionLabel: string,
 ): item is PackageItem {
@@ -115,30 +122,6 @@ async function openUrl(urlOrItem: string | DetailItem): Promise<void> {
     await vscode.env.openExternal(vscode.Uri.parse(url));
 }
 
-/** Replace the version constraint in pubspec.yaml with ^latest. */
-async function updateToLatest(item: PackageItem | undefined): Promise<void> {
-    if (!requirePackageItem(item, 'Update to Latest')) { return; }
-    const latest = item.result.updateInfo?.latestVersion;
-    if (!latest) { return; }
-
-    const yamlUri = await findPubspecYaml();
-    if (!yamlUri) { return; }
-
-    const doc = await vscode.workspace.openTextDocument(yamlUri);
-    const edit = buildVersionEdit(doc, item.result.package.name, `^${latest}`);
-    if (!edit) {
-        vscode.window.showWarningMessage(
-            `Could not locate version constraint for ${item.result.package.name}`,
-        );
-        return;
-    }
-
-    const wsEdit = new vscode.WorkspaceEdit();
-    wsEdit.replace(yamlUri, edit.range, edit.newText);
-    await vscode.workspace.applyEdit(wsEdit);
-    await doc.save();
-}
-
 /** Copy the package's vibrancy result to the clipboard as JSON. */
 async function copyAsJson(item: PackageItem | undefined): Promise<void> {
     if (!requirePackageItem(item, 'Copy as JSON')) { return; }
@@ -159,54 +142,6 @@ async function suppressPackage(item: PackageItem | undefined): Promise<void> {
 async function unsuppressPackage(item: PackageItem | undefined): Promise<void> {
     if (!requirePackageItem(item, 'Unsuppress')) { return; }
     await removeSuppressedPackage(item.result.package.name);
-}
-
-
-/** Comment out an unused dependency in pubspec.yaml. */
-async function commentOutUnused(item: PackageItem | undefined): Promise<void> {
-    if (!requirePackageItem(item, 'Comment Out Unused')) { return; }
-    const yamlUri = await findPubspecYaml();
-    if (!yamlUri) { return; }
-
-    const doc = await vscode.workspace.openTextDocument(yamlUri);
-    const lines = findPackageLines(doc, item.result.package.name);
-    if (!lines) { return; }
-
-    const wsEdit = new vscode.WorkspaceEdit();
-    for (let i = lines.start; i < lines.end; i++) {
-        wsEdit.insert(yamlUri, new vscode.Position(i, 0), '# ');
-    }
-    await vscode.workspace.applyEdit(wsEdit);
-    await doc.save();
-}
-
-/** Delete an unused dependency from pubspec.yaml, creating a backup. */
-async function deleteUnused(item: PackageItem | undefined): Promise<void> {
-    if (!requirePackageItem(item, 'Delete Unused')) { return; }
-    const yamlUri = await findPubspecYaml();
-    if (!yamlUri) { return; }
-
-    const doc = await vscode.workspace.openTextDocument(yamlUri);
-    const lines = findPackageLines(doc, item.result.package.name);
-    if (!lines) { return; }
-
-    const backupUri = buildBackupUri(yamlUri);
-    const content = new TextEncoder().encode(doc.getText());
-    await vscode.workspace.fs.writeFile(backupUri, content);
-
-    const wsEdit = new vscode.WorkspaceEdit();
-    const range = new vscode.Range(
-        new vscode.Position(lines.start, 0),
-        new vscode.Position(lines.end, 0),
-    );
-    wsEdit.delete(yamlUri, range);
-    await vscode.workspace.applyEdit(wsEdit);
-    await doc.save();
-
-    const backupName = backupUri.path.split('/').pop();
-    vscode.window.showInformationMessage(
-        `Deleted ${item.result.package.name} from pubspec.yaml (backup: ${backupName})`,
-    );
 }
 
 /** Focus the package details view in the sidebar. */
@@ -235,48 +170,6 @@ function logAllDetails(): void {
     _detailLogger.clear();
     _detailLogger.logAllPackages(results);
     _detailLogger.show();
-}
-
-/** Update a package version directly from CodeLens click. */
-async function updateFromCodeLens(args: UpdateFromCodeLensArgs): Promise<void> {
-    if (!args || !args.packageName || !args.targetVersion) {
-        return;
-    }
-
-    const yamlUri = args.pubspecPath
-        ? vscode.Uri.file(args.pubspecPath)
-        : await findPubspecYaml();
-
-    if (!yamlUri) {
-        vscode.window.showWarningMessage('Could not find pubspec.yaml');
-        return;
-    }
-
-    const doc = await vscode.workspace.openTextDocument(yamlUri);
-    const newConstraint = `^${args.targetVersion}`;
-    const edit = buildVersionEdit(doc, args.packageName, newConstraint);
-
-    if (!edit) {
-        vscode.window.showWarningMessage(
-            `Could not locate version constraint for ${args.packageName}`,
-        );
-        return;
-    }
-
-    const wsEdit = new vscode.WorkspaceEdit();
-    wsEdit.replace(yamlUri, edit.range, edit.newText);
-    const applied = await vscode.workspace.applyEdit(wsEdit);
-
-    if (applied) {
-        await doc.save();
-        vscode.window.showInformationMessage(
-            `Updated ${args.packageName} to ${newConstraint}`,
-        );
-    } else {
-        vscode.window.showWarningMessage(
-            `Failed to update ${args.packageName}`,
-        );
-    }
 }
 
 /** Focus a package in the tree view and show its details. */
@@ -319,3 +212,5 @@ function compareSelected(
     ComparisonPanel.createOrShow(comparisonData);
 }
 
+// Re-export all pubspec-editing commands for backward compatibility
+export * from './tree-commands-edit';

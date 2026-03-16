@@ -1,7 +1,10 @@
 import {
     Problem, ProblemType, ProblemLink, ProblemSeverity,
-    generateProblemId,
 } from './problem-types';
+
+// Re-export convertLegacyProblem so existing callers that import from
+// this module continue to work without changes.
+export { convertLegacyProblem } from './problem-legacy';
 
 /** Weight multipliers for computing priority scores. */
 const SEVERITY_WEIGHTS: Record<ProblemSeverity, number> = {
@@ -283,95 +286,5 @@ export class ProblemRegistry {
                 }
             }
         }
-    }
-}
-
-/**
- * Convert the old Problem format from types.ts to the new format.
- * Used during migration.
- */
-export function convertLegacyProblem(
-    legacy: { type: string; severity: string; message: string; relatedPackage?: string },
-    packageName: string,
-    line: number,
-): Problem | null {
-    const severity = legacy.severity as ProblemSeverity;
-    const id = generateProblemId(packageName, legacy.type as ProblemType);
-
-    switch (legacy.type) {
-        case 'unhealthy':
-            return {
-                id,
-                type: 'unhealthy',
-                package: packageName,
-                severity,
-                line,
-                score: 0,
-                category: 'legacy-locked',
-            };
-        case 'stale-override':
-            return {
-                id,
-                type: 'stale-override',
-                package: packageName,
-                severity,
-                line,
-                overrideName: packageName,
-                ageDays: null,
-            };
-        case 'family-conflict':
-            return {
-                id,
-                type: 'family-conflict',
-                package: packageName,
-                severity,
-                line,
-                familyId: 'unknown',
-                familyLabel: 'Unknown',
-                currentMajor: 0,
-                conflictingPackages: [],
-            };
-        case 'risky-transitive':
-            return {
-                id,
-                type: 'risky-transitive',
-                package: packageName,
-                severity,
-                line,
-                flaggedCount: 0,
-                flaggedTransitives: [],
-            };
-        case 'blocked-upgrade':
-            return {
-                id,
-                type: 'blocked-upgrade',
-                package: packageName,
-                severity,
-                line,
-                currentVersion: '',
-                latestVersion: '',
-                blockerPackage: legacy.relatedPackage ?? 'unknown',
-                blockerScore: null,
-            };
-        case 'unused':
-            return {
-                id,
-                type: 'unused',
-                package: packageName,
-                severity,
-                line,
-            };
-        case 'license-risk':
-            return {
-                id,
-                type: 'license-risk',
-                package: packageName,
-                severity,
-                line,
-                license: 'unknown',
-                riskLevel: 'unknown',
-            };
-        default:
-            return null;
     }
 }

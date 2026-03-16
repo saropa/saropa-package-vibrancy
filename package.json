@@ -1,8 +1,8 @@
 {
   "name": "saropa-package-vibrancy",
   "displayName": "Saropa Package Vibrancy",
-  "description": "Analyze Flutter/Dart dependency health and community vibrancy",
-  "version": "1.4.0",
+  "description": "[DEPRECATED] Merged into Saropa Lints. Install 'Saropa Lints' instead.",
+  "version": "2.0.0",
   "publisher": "saropa",
   "license": "MIT",
   "icon": "images/icon.png",
@@ -29,6 +29,7 @@
     "health"
   ],
   "main": "./dist/extension.js",
+  "extensionDependencies": ["saropa.saropa-lints"],
   "contributes": {
     "viewsContainers": {
       "activitybar": [

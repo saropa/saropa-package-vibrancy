@@ -73,23 +73,12 @@ export function computeActuals(results: readonly VibrancyResult[]): {
 }
 
 /** Classify status based on actual vs limit. Handles zero limit as exceeded. */
-function classifyStatus(
-    actual: number,
-    limit: number,
-    isMinimum: boolean,
-): BudgetStatus {
-    if (limit <= 0) {
-        return actual === 0 ? 'under' : 'exceeded';
-    }
+function classifyStatus(actual: number, limit: number, isMinimum: boolean): BudgetStatus {
+    if (limit <= 0) { return actual === 0 ? 'under' : 'exceeded'; }
     if (isMinimum) {
-        if (actual >= limit) { return 'under'; }
-        if (actual >= limit * 0.8) { return 'warning'; }
-        return 'exceeded';
-    } else {
-        if (actual < limit * 0.8) { return 'under'; }
-        if (actual < limit) { return 'warning'; }
-        return 'exceeded';
+        return actual >= limit ? 'under' : actual >= limit * 0.8 ? 'warning' : 'exceeded';
     }
+    return actual < limit * 0.8 ? 'under' : actual < limit ? 'warning' : 'exceeded';
 }
 
 interface BuildResultOpts {
