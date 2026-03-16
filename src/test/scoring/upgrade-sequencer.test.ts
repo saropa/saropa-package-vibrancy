@@ -126,17 +126,17 @@ describe('upgrade-sequencer', () => {
         it('should group family packages together', () => {
             const results = [
                 makeResult('http', { updateStatus: 'patch' }),
-                makeResult('firebase_core', { updateStatus: 'minor' }),
+                makeResult('riverpod', { updateStatus: 'minor' }),
                 makeResult('path', { updateStatus: 'patch' }),
-                makeResult('firebase_auth', { updateStatus: 'minor' }),
+                makeResult('flutter_riverpod', { updateStatus: 'minor' }),
             ];
             const steps = buildUpgradeOrder(results, new Map());
             const names = steps.map(s => s.packageName);
-            const coreIdx = names.indexOf('firebase_core');
-            const authIdx = names.indexOf('firebase_auth');
+            const rpIdx = names.indexOf('riverpod');
+            const frpIdx = names.indexOf('flutter_riverpod');
             assert.strictEqual(
-                Math.abs(coreIdx - authIdx), 1,
-                'Firebase packages should be adjacent',
+                Math.abs(rpIdx - frpIdx), 1,
+                'Riverpod packages should be adjacent',
             );
         });
 
@@ -152,10 +152,10 @@ describe('upgrade-sequencer', () => {
 
         it('should set familyId for family packages', () => {
             const results = [
-                makeResult('firebase_core', { updateStatus: 'minor' }),
+                makeResult('riverpod', { updateStatus: 'minor' }),
             ];
             const steps = buildUpgradeOrder(results, new Map());
-            assert.strictEqual(steps[0].familyId, 'firebase');
+            assert.strictEqual(steps[0].familyId, 'riverpod');
         });
 
         it('should set null familyId for non-family packages', () => {

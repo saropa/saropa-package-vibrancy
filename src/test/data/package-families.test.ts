@@ -3,24 +3,16 @@ import { matchFamily } from '../../data/package-families';
 
 describe('package-families', () => {
     describe('matchFamily', () => {
-        it('should match firebase_core to Firebase', () => {
-            const result = matchFamily('firebase_core');
-            assert.deepStrictEqual(result, { id: 'firebase', label: 'Firebase' });
+        it('should return null for firebase_core (independent version tracks)', () => {
+            assert.strictEqual(matchFamily('firebase_core'), null);
         });
 
-        it('should match cloud_firestore to Firebase', () => {
-            const result = matchFamily('cloud_firestore');
-            assert.deepStrictEqual(result, { id: 'firebase', label: 'Firebase' });
+        it('should return null for cloud_firestore (independent version tracks)', () => {
+            assert.strictEqual(matchFamily('cloud_firestore'), null);
         });
 
-        it('should match flutterfire_cli to Firebase', () => {
-            const result = matchFamily('flutterfire_cli');
-            assert.deepStrictEqual(result, { id: 'firebase', label: 'Firebase' });
-        });
-
-        it('should return null for google_fonts (publisher prefix, not a version-coupled family)', () => {
-            const result = matchFamily('google_fonts');
-            assert.strictEqual(result, null);
+        it('should return null for google_fonts (independent version tracks)', () => {
+            assert.strictEqual(matchFamily('google_fonts'), null);
         });
 
         it('should match riverpod to Riverpod', () => {

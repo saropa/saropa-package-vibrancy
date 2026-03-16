@@ -50,6 +50,7 @@ _License detection now falls back to GitHub when pub.dev has no data, the upgrad
 - **No more false-positive override warnings**: Path and git overrides (e.g. `font_awesome_flutter` Pro icon setup) are no longer flagged in the Problems panel. Active version overrides are also silenced — only stale overrides produce a diagnostic.
 - **Stale override message improved**: Changed from "Safe to remove" to "No version conflict detected — remove if unneeded", since the tool cannot detect all override reasons (e.g. runtime/build incompatibilities).
 - **Known override reasons**: Added `overrideReason` field to the known-issues database so packages with intentional version pins (e.g. `path_provider_foundation` build hooks issue) are no longer flagged as stale.
+- **Firebase removed from family conflict detection**: Firebase packages (`firebase_core` v4, `firebase_messaging` v16, etc.) use independent version tracks, not a shared major version scheme. They were incorrectly flagged as conflicting. Family conflict now only applies to truly version-coupled families: Riverpod, Bloc, Freezed, Drift.
 
 ### Added
 

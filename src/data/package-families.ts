@@ -6,14 +6,10 @@ interface FamilyDef {
 
 /** Known package families where major version alignment matters.
  * Only include product families whose packages are actually version-coupled
- * (e.g. firebase_*, riverpod/hooks_riverpod). Do NOT use publisher prefixes
- * like "google_" — those are unrelated products (google_fonts, google_sign_in,
- * google_maps_flutter, etc.) with independent major versions. */
+ * (e.g. riverpod/hooks_riverpod, bloc/flutter_bloc). Do NOT include families
+ * with independent version tracks — Firebase (firebase_core v4, firebase_messaging
+ * v16) and Google (google_fonts, google_sign_in) each manage versions independently. */
 const FAMILIES: Record<string, FamilyDef> = {
-    firebase: {
-        label: 'Firebase',
-        pattern: /^(firebase_|cloud_|flutterfire)/,
-    },
     riverpod: {
         label: 'Riverpod',
         pattern: /^(riverpod|flutter_riverpod|hooks_riverpod)$/,
