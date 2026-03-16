@@ -72,6 +72,10 @@ export interface KnownIssue {
     readonly replacement?: string;
     /** When set, do not show replacement message when user's version >= this (e.g. "9.0.0" for "Update to v9+"). Parsed and compared as semver. */
     readonly replacementObsoleteFromVersion?: string;
+    /** Minimum version this issue applies to (semver, inclusive). When absent, no lower bound. */
+    readonly appliesToMinVersion?: string;
+    /** Maximum version this issue applies to (semver, exclusive). When absent, no upper bound. */
+    readonly appliesToMaxVersion?: string;
     readonly migrationNotes?: string;
     readonly archiveSizeBytes?: number;
     readonly archiveSizeMB?: number;

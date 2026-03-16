@@ -88,6 +88,18 @@
           "overrideReason": {
             "type": ["string", "null"],
             "description": "Why a dependency_overrides pin is needed despite no version conflict."
+          },
+          "replacementObsoleteFromVersion": {
+            "type": ["string", "null"],
+            "description": "Do not show replacement when user's version >= this value (semver string)."
+          },
+          "appliesToMinVersion": {
+            "type": ["string", "null"],
+            "description": "Minimum version this issue applies to (semver, inclusive). When absent, no lower bound."
+          },
+          "appliesToMaxVersion": {
+            "type": ["string", "null"],
+            "description": "Maximum version this issue applies to (semver, exclusive). When absent, no upper bound."
           }
         },
         "required": ["name", "status", "as_of"],

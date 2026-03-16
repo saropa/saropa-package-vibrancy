@@ -19,6 +19,8 @@ function normalizeIssue(raw: Record<string, unknown>): KnownIssue {
         replacementObsoleteFromVersion: typeof raw.replacementObsoleteFromVersion === 'number'
             ? `${raw.replacementObsoleteFromVersion}.0.0`
             : normalizeOptional(raw.replacementObsoleteFromVersion as string),
+        appliesToMinVersion: normalizeOptional(raw.appliesToMinVersion as string),
+        appliesToMaxVersion: normalizeOptional(raw.appliesToMaxVersion as string),
         migrationNotes: normalizeOptional(raw.migrationNotes),
         archiveSizeBytes: typeof raw.archiveSizeBytes === 'number'
             ? raw.archiveSizeBytes : undefined,
