@@ -49,7 +49,6 @@ _License detection now falls back to GitHub when pub.dev has no data, the upgrad
 - **Auto-commit upgrade steps**: New `upgradeAutoCommit` setting (default: off) commits `pubspec.yaml` and `pubspec.lock` after each successful upgrade step, creating one atomic commit per package.
 - **GitHub license fallback**: When a package's pub.dev listing has no SPDX license, the extension now extracts `license.spdx_id` from the GitHub repository API as a fallback. License resolution chain: pub.dev → GitHub → known-issues → unknown.
 - **Pubspec editor tests**: Added unit tests for `buildVersionEdit`, `readVersionConstraint`, `findPackageLines`, and `buildBackupUri`.
-- **"Remove override" quick fix**: Stale override diagnostics now offer a one-click code action to delete the override entry from `dependency_overrides`.
 
 ### Fixed
 
@@ -58,6 +57,10 @@ _License detection now falls back to GitHub when pub.dev has no data, the upgrad
 - **Stale override message improved**: Changed from "Safe to remove" to "No version conflict detected — remove if unneeded", since the tool cannot detect all override reasons (e.g. runtime/build incompatibilities).
 - **Known override reasons**: Added `overrideReason` field to the known-issues database so packages with intentional version pins (e.g. `path_provider_foundation` build hooks issue) are no longer flagged as stale.
 - **Firebase removed from family conflict detection**: Firebase packages (`firebase_core` v4, `firebase_messaging` v16, etc.) use independent version tracks, not a shared major version scheme. They were incorrectly flagged as conflicting. Family conflict now only applies to truly version-coupled families: Riverpod, Bloc, Freezed, Drift.
+
+### Added
+
+- **"Remove override" quick fix**: Stale override diagnostics now offer a one-click code action to delete the override entry from `dependency_overrides`.
 
 ---
 
