@@ -143,8 +143,8 @@ describe('transitive-analyzer', () => {
                 transitives: ['bad_pkg'],
                 sharedDeps: [],
             }];
-            const knownIssues = new Map<string, KnownIssue>([
-                ['bad_pkg', { name: 'bad_pkg', status: 'discontinued', reason: 'No longer maintained' }],
+            const knownIssues = new Map<string, readonly KnownIssue[]>([
+                ['bad_pkg', [{ name: 'bad_pkg', status: 'discontinued', reason: 'No longer maintained' }]],
             ]);
             const flagged = flagRiskyTransitives(infos, knownIssues);
             assert.strictEqual(flagged.length, 1);
@@ -160,7 +160,7 @@ describe('transitive-analyzer', () => {
                 transitives: ['good_pkg'],
                 sharedDeps: [],
             }];
-            const knownIssues = new Map<string, KnownIssue>();
+            const knownIssues = new Map<string, readonly KnownIssue[]>();
             const flagged = flagRiskyTransitives(infos, knownIssues);
             assert.strictEqual(flagged.length, 0);
         });
@@ -176,8 +176,8 @@ describe('transitive-analyzer', () => {
                 sharedDeps: [],
             }];
             const sharedDeps = [{ name: 'shared_pkg', usedBy: ['a', 'b'] }];
-            const knownIssues = new Map<string, KnownIssue>([
-                ['bad_pkg', { name: 'bad_pkg', status: 'end-of-life' }],
+            const knownIssues = new Map<string, readonly KnownIssue[]>([
+                ['bad_pkg', [{ name: 'bad_pkg', status: 'end-of-life' }]],
             ]);
             const enriched = enrichTransitiveInfo(infos, sharedDeps, knownIssues);
 

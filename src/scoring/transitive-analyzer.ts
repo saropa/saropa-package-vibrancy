@@ -114,18 +114,22 @@ export interface FlaggedTransitive {
  */
 export function flagRiskyTransitives(
     transitiveInfos: readonly TransitiveInfo[],
-    knownIssues: ReadonlyMap<string, KnownIssue>,
+    knownIssues: ReadonlyMap<string, readonly KnownIssue[]>,
 ): FlaggedTransitive[] {
     const flagged: FlaggedTransitive[] = [];
 
     for (const info of transitiveInfos) {
         for (const transitive of info.transitives) {
-            const issue = knownIssues.get(transitive);
-            if (issue?.status === 'discontinued' || issue?.status === 'end-of-life') {
+            const issues = knownIssues.get(transitive);
+            // No version context for transitives — flag if ANY entry is risky
+            const risky = issues?.find(
+                i => i.status === 'discontinued' || i.status === 'end-of-life',
+            );
+            if (risky) {
                 flagged.push({
                     name: transitive,
                     directDep: info.directDep,
-                    reason: issue.reason ?? issue.status,
+                    reason: risky.reason ?? risky.status,
                 });
             }
         }
@@ -140,7 +144,7 @@ export function flagRiskyTransitives(
 export function enrichTransitiveInfo(
     infos: readonly TransitiveInfo[],
     sharedDeps: readonly SharedDep[],
-    knownIssues: ReadonlyMap<string, KnownIssue>,
+    knownIssues: ReadonlyMap<string, readonly KnownIssue[]>,
 ): TransitiveInfo[] {
     const sharedSet = new Set(sharedDeps.map(s => s.name));
 
@@ -149,8 +153,9 @@ export function enrichTransitiveInfo(
         const sharedInThis: string[] = [];
 
         for (const transitive of info.transitives) {
-            const issue = knownIssues.get(transitive);
-            if (issue?.status === 'discontinued' || issue?.status === 'end-of-life') {
+            const issues = knownIssues.get(transitive);
+            // No version context for transitives — flag if ANY entry is risky
+            if (issues?.some(i => i.status === 'discontinued' || i.status === 'end-of-life')) {
                 flaggedCount++;
             }
             if (sharedSet.has(transitive)) {

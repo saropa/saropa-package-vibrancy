@@ -6,7 +6,7 @@ import { escapeHtml } from './html-utils';
 
 /** Build the full HTML for the known issues library browser. */
 export function buildKnownIssuesHtml(): string {
-    const issues = Array.from(allKnownIssues().values());
+    const issues = Array.from(allKnownIssues().values()).flat();
     const withReplacement = issues.filter(i => i.replacement).length;
 
     return `<!DOCTYPE html>

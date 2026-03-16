@@ -2,18 +2,31 @@ import * as assert from 'assert';
 import knownIssuesData from '../../data/known_issues.json';
 import { findKnownIssue, allKnownIssues, isReplacementPackageName, getReplacementDisplayText } from '../../scoring/known-issues';
 
+/** Flatten grouped map into a flat array of [name, issue] pairs. */
+function flatEntries(): [string, { status: string; replacement?: string; migrationNotes?: string; archiveSizeBytes?: number }][] {
+    const result: [string, any][] = [];
+    for (const [name, issues] of allKnownIssues()) {
+        for (const issue of issues) {
+            result.push([name, issue]);
+        }
+    }
+    return result;
+}
+
 describe('known-issues', () => {
-    it('should have unique names', () => {
-        const names = (knownIssuesData as { issues: Array<{ name: string }> }).issues.map(
-            (e) => e.name,
+    it('should have unique name+version tuples', () => {
+        type RawIssue = { name: string; appliesToMinVersion?: string; appliesToMaxVersion?: string };
+        const issues = (knownIssuesData as { issues: RawIssue[] }).issues;
+        const keys = issues.map(
+            (e) => `${e.name}|${e.appliesToMinVersion ?? ''}|${e.appliesToMaxVersion ?? ''}`,
         );
-        const dupes = names.filter(
-            (n, i) => names.indexOf(n) !== i,
+        const dupes = keys.filter(
+            (k, i) => keys.indexOf(k) !== i,
         );
         assert.deepStrictEqual(
             dupes,
             [],
-            `duplicate names in known_issues.json: ${dupes.join(', ')}`,
+            `duplicate name+version tuples in known_issues.json: ${dupes.join(', ')}`,
         );
     });
 
@@ -30,11 +43,11 @@ describe('known-issues', () => {
 
     it('should load all known issues', () => {
         const all = allKnownIssues();
-        assert.ok(all.size >= 400, `expected at least 400, got ${all.size}`);
+        assert.ok(all.size >= 400, `expected at least 400 unique names, got ${all.size}`);
     });
 
     it('should have required fields on every entry', () => {
-        for (const [name, issue] of allKnownIssues()) {
+        for (const [name, issue] of flatEntries()) {
             assert.ok(name.length > 0, `empty name`);
             assert.ok(issue.status.length > 0, `${name}: missing status`);
         }
@@ -60,9 +73,8 @@ describe('known-issues', () => {
     });
 
     it('should leave archiveSizeBytes undefined when null in JSON', () => {
-        const all = allKnownIssues();
         let foundUndefined = false;
-        for (const [, issue] of all) {
+        for (const [, issue] of flatEntries()) {
             if (issue.archiveSizeBytes === undefined) {
                 foundUndefined = true;
                 break;
@@ -103,7 +115,7 @@ describe('known-issues', () => {
     });
 
     it('should have migrationNotes when replacement is present', () => {
-        for (const [name, issue] of allKnownIssues()) {
+        for (const [name, issue] of flatEntries()) {
             if (issue.replacement) {
                 assert.ok(
                     issue.migrationNotes,
@@ -111,6 +123,61 @@ describe('known-issues', () => {
                 );
             }
         }
+    });
+
+    describe('version-scoped lookup', () => {
+        it('should match scoped entry when version falls in range', () => {
+            const issue = findKnownIssue('flutter_local_notifications', '8.5.0');
+            assert.ok(issue, 'expected a match for flutter_local_notifications@8.5.0');
+            assert.strictEqual(issue.appliesToMinVersion, '8.0.0');
+            assert.strictEqual(issue.appliesToMaxVersion, '9.0.0');
+        });
+
+        it('should match different scoped entry for different version', () => {
+            const issue = findKnownIssue('flutter_local_notifications', '9.2.0');
+            assert.ok(issue, 'expected a match for flutter_local_notifications@9.2.0');
+            assert.strictEqual(issue.appliesToMinVersion, '9.0.0');
+            assert.strictEqual(issue.appliesToMaxVersion, '10.0.0');
+        });
+
+        it('should return null when version outside all ranges and no unscoped entry', () => {
+            // flutter_local_notifications has only scoped entries (v8, v9), no unscoped
+            const issue = findKnownIssue('flutter_local_notifications', '10.0.0');
+            assert.strictEqual(issue, null);
+        });
+
+        it('should return unscoped entry when no version provided', () => {
+            // flutter_datetime_picker has an unscoped entry
+            const issue = findKnownIssue('flutter_datetime_picker');
+            assert.ok(issue);
+            assert.strictEqual(issue.status, 'end_of_life');
+        });
+
+        it('should prefer scoped entry over unscoped for matching version', () => {
+            // google_fonts has both unscoped (active) and scoped v1 (end_of_life)
+            const v1 = findKnownIssue('google_fonts', '1.5.0');
+            assert.ok(v1, 'expected scoped v1 match');
+            assert.strictEqual(v1.appliesToMinVersion, '1.0.0');
+
+            const v3 = findKnownIssue('google_fonts', '3.0.0');
+            assert.ok(v3, 'expected unscoped fallback');
+            assert.strictEqual(v3.appliesToMinVersion, undefined);
+        });
+
+        it('should treat min as inclusive', () => {
+            // Exactly at min bound should match
+            const issue = findKnownIssue('flutter_local_notifications', '8.0.0');
+            assert.ok(issue, 'min bound should be inclusive');
+            assert.strictEqual(issue.appliesToMinVersion, '8.0.0');
+        });
+
+        it('should treat max as exclusive', () => {
+            // Exactly at max bound should NOT match that range
+            // 9.0.0 is the max of v8 range — should match v9 range instead
+            const issue = findKnownIssue('flutter_local_notifications', '9.0.0');
+            assert.ok(issue);
+            assert.strictEqual(issue.appliesToMinVersion, '9.0.0');
+        });
     });
 
     describe('isReplacementPackageName', () => {

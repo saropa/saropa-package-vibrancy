@@ -1915,7 +1915,7 @@
       "platforms": []
     },
     {
-      "name": "Hive (v1/v2)",
+      "name": "hive",
       "status": "end_of_life",
       "reason": "Legacy architecture, sync limits, and abandoned by original creator.",
       "as_of": "2026-03-10",
@@ -1934,7 +1934,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "3.0.0"
     },
     {
       "name": "isar",
@@ -2062,7 +2064,7 @@
       ]
     },
     {
-      "name": "audioplayers (v0.x)",
+      "name": "audioplayers",
       "status": "end_of_life",
       "reason": "Fails on Apple Silicon builds.",
       "as_of": "2026-03-09",
@@ -2081,10 +2083,11 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
-      "name": "file_picker (v1/v2)",
+      "name": "file_picker",
       "status": "end_of_life",
       "reason": "Returns unreadable cache paths.",
       "as_of": "2026-03-09",
@@ -2103,10 +2106,12 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "3.0.0"
     },
     {
-      "name": "flutter_local_notifications (v8)",
+      "name": "flutter_local_notifications",
       "status": "end_of_life",
       "reason": "Ignores Android 14 POST flags.",
       "as_of": "2026-03-09",
@@ -2124,7 +2129,9 @@
         "linux",
         "macos",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "8.0.0",
+      "appliesToMaxVersion": "9.0.0"
     },
     {
       "name": "flutter_rating_bar (Orig)",
@@ -2166,7 +2173,7 @@
       ]
     },
     {
-      "name": "flutter_slidable (v0)",
+      "name": "flutter_slidable",
       "status": "end_of_life",
       "reason": "Navigator conflicts.",
       "as_of": "2026-03-09",
@@ -2185,10 +2192,11 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
-      "name": "google_fonts (v1)",
+      "name": "google_fonts",
       "status": "end_of_life",
       "reason": "Main thread blocks.",
       "as_of": "2026-03-09",
@@ -2207,10 +2215,12 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0"
     },
     {
-      "name": "flutter_spinkit (v4)",
+      "name": "flutter_spinkit",
       "status": "end_of_life",
       "reason": "TickerProvider exceptions.",
       "as_of": "2026-03-09",
@@ -2229,7 +2239,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "4.0.0",
+      "appliesToMaxVersion": "5.0.0"
     },
     {
       "name": "flutter_advanced_networkimage",
@@ -2477,11 +2489,11 @@
       ]
     },
     {
-      "name": "simple_animations (v2)",
+      "name": "simple_animations",
       "status": "end_of_life",
       "reason": "Stateless animation logic is fundamentally incompatible with Dart 3 type safety.",
       "as_of": "2026-03-10",
-      "replacement": "simple_animations (v5+)",
+      "replacement": "simple_animations",
       "migrationNotes": "Total syntax rewrite using modern Control constructs.",
       "archiveSizeBytes": 4641780,
       "archiveSizeMB": 4.43,
@@ -2496,7 +2508,10 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "2.0.0",
+      "appliesToMaxVersion": "3.0.0",
+      "replacementObsoleteFromVersion": "5.0.0"
     },
     {
       "name": "fluro",
@@ -2580,11 +2595,11 @@
       ]
     },
     {
-      "name": "flutter_modular (v3)",
+      "name": "flutter_modular",
       "status": "end_of_life",
       "reason": "Global singletons block Dart 3 compilation; deeply flawed memory management.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_modular (v6+)",
+      "replacement": "flutter_modular",
       "migrationNotes": "Complete module syntax refactoring.",
       "archiveSizeBytes": 586162,
       "archiveSizeMB": 0.56,
@@ -2599,7 +2614,10 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "3.0.0",
+      "appliesToMaxVersion": "4.0.0",
+      "replacementObsoleteFromVersion": "6.0.0"
     },
     {
       "name": "dio_http_cache",
@@ -2912,7 +2930,7 @@
       "platforms": []
     },
     {
-      "name": "flutter_colorpicker (v0.x)",
+      "name": "flutter_colorpicker",
       "status": "end_of_life",
       "reason": "Relies on deprecated HSV math that creates inaccurate hex codes.",
       "as_of": "2026-03-10",
@@ -2931,7 +2949,8 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
       "name": "color_picker",
@@ -3052,11 +3071,11 @@
       ]
     },
     {
-      "name": "syncfusion_flutter_calendar (v18)",
+      "name": "syncfusion_flutter_calendar",
       "status": "end_of_life",
       "reason": "Legacy commercial package; completely fails Dart 3 type checks.",
       "as_of": "2026-03-10",
-      "replacement": "syncfusion_flutter_calendar (latest)",
+      "replacement": "syncfusion_flutter_calendar",
       "migrationNotes": "Update license keys and fix null-safety breaks.",
       "archiveSizeBytes": 4719387,
       "archiveSizeMB": 4.5,
@@ -3071,7 +3090,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "18.0.0",
+      "appliesToMaxVersion": "19.0.0"
     },
     {
       "name": "intro_slider",
@@ -3162,7 +3183,7 @@
       "replacement": "smooth_page_indicator",
       "migrationNotes": "Swap indicator UI.",
       "archiveSizeBytes": 5089,
-      "archiveSizeMB": 0.0,
+      "archiveSizeMB": 0,
       "license": "BSD-3-Clause",
       "lastUpdated": "2025-07-26",
       "pubPoints": 160,
@@ -3177,11 +3198,11 @@
       ]
     },
     {
-      "name": "flutter_typeahead (v1)",
+      "name": "flutter_typeahead",
       "status": "end_of_life",
       "reason": "Overlay floats behind keyboards on modern Android 14 inset architectures.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_typeahead (latest)",
+      "replacement": "flutter_typeahead",
       "migrationNotes": "Major update to overlay rendering logic.",
       "archiveSizeBytes": 30545934,
       "archiveSizeMB": 29.13,
@@ -3192,7 +3213,9 @@
       "platforms": [
         "ios",
         "web"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0"
     },
     {
       "name": "autocomplete_textfield",
@@ -3277,11 +3300,11 @@
       "platforms": []
     },
     {
-      "name": "badges (v1)",
+      "name": "badges",
       "status": "end_of_life",
       "reason": "Positioning logic broken; badges render off-screen in Material 3.",
       "as_of": "2026-03-10",
-      "replacement": "badges (v3+)",
+      "replacement": "badges",
       "migrationNotes": "Syntax overhaul; badge positioning changed entirely.",
       "archiveSizeBytes": 7602536,
       "archiveSizeMB": 7.25,
@@ -3296,7 +3319,10 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0",
+      "replacementObsoleteFromVersion": "3.0.0"
     },
     {
       "name": "flutter_inner_drawer",
@@ -3373,7 +3399,7 @@
       "replacement": "flutter_expandable_fab",
       "migrationNotes": "Total UI rewrite.",
       "archiveSizeBytes": 5246055,
-      "archiveSizeMB": 5.0,
+      "archiveSizeMB": 5,
       "license": "MIT",
       "lastUpdated": "2022-08-14",
       "pubPoints": 150,
@@ -3425,11 +3451,11 @@
       "platforms": []
     },
     {
-      "name": "curved_navigation_bar (v0.x)",
+      "name": "curved_navigation_bar",
       "status": "end_of_life",
       "reason": "Severe stutter when pushing new routes over the bar.",
       "as_of": "2026-03-10",
-      "replacement": "curved_navigation_bar (latest)",
+      "replacement": "curved_navigation_bar",
       "migrationNotes": "Fix dependencies and null-safety errors.",
       "archiveSizeBytes": 374960,
       "archiveSizeMB": 0.36,
@@ -3444,7 +3470,8 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
       "name": "fancy_bottom_navigation",
@@ -3462,11 +3489,11 @@
       "platforms": []
     },
     {
-      "name": "convex_bottom_bar (v2)",
+      "name": "convex_bottom_bar",
       "status": "end_of_life",
       "reason": "Gesture area overlaps system navigation bars on Android 15.",
       "as_of": "2026-03-10",
-      "replacement": "convex_bottom_bar (latest)",
+      "replacement": "convex_bottom_bar",
       "migrationNotes": "Update handling of system insets.",
       "archiveSizeBytes": 7319537,
       "archiveSizeMB": 6.98,
@@ -3481,7 +3508,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "2.0.0",
+      "appliesToMaxVersion": "3.0.0"
     },
     {
       "name": "flutter_snake_navigationbar",
@@ -3528,11 +3557,11 @@
       ]
     },
     {
-      "name": "responsive_builder (v0.x)",
+      "name": "responsive_builder",
       "status": "end_of_life",
       "reason": "Hardcoded breakpoints are totally obsolete for modern foldables.",
       "as_of": "2026-03-10",
-      "replacement": "responsive_builder (latest)",
+      "replacement": "responsive_builder",
       "migrationNotes": "Refactor sizing information properties.",
       "archiveSizeBytes": 1175977,
       "archiveSizeMB": 1.12,
@@ -3547,14 +3576,15 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
-      "name": "flutter_screenutil (v4)",
+      "name": "flutter_screenutil",
       "status": "end_of_life",
       "reason": "Init function crashes on initialization in modern Flutter views.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_screenutil (latest)",
+      "replacement": "flutter_screenutil",
       "migrationNotes": "Update init pattern to use standard builders.",
       "archiveSizeBytes": 850174,
       "archiveSizeMB": 0.81,
@@ -3569,7 +3599,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "4.0.0",
+      "appliesToMaxVersion": "5.0.0"
     },
     {
       "name": "size_config",
@@ -3695,11 +3727,11 @@
       "platforms": []
     },
     {
-      "name": "flutter_mobx (v0.x)",
+      "name": "flutter_mobx",
       "status": "end_of_life",
       "reason": "Generators output invalid Dart 3 code, blocking compilation.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_mobx (latest)",
+      "replacement": "flutter_mobx",
       "migrationNotes": "Update build_runner and regenerate all stores.",
       "archiveSizeBytes": 14829,
       "archiveSizeMB": 0.01,
@@ -3714,7 +3746,8 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
       "name": "fish_redux",
@@ -3797,11 +3830,11 @@
       ]
     },
     {
-      "name": "stacked (v1)",
+      "name": "stacked",
       "status": "end_of_life",
       "reason": "ViewModel locators throw exceptions due to old Provider bindings.",
       "as_of": "2026-03-10",
-      "replacement": "stacked (latest)",
+      "replacement": "stacked",
       "migrationNotes": "Update ViewModel builder syntax.",
       "archiveSizeBytes": 611627,
       "archiveSizeMB": 0.58,
@@ -3816,7 +3849,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0"
     },
     {
       "name": "momentum",
@@ -3856,11 +3891,11 @@
       "platforms": []
     },
     {
-      "name": "flutter_hooks (v0.x)",
+      "name": "flutter_hooks",
       "status": "end_of_life",
       "reason": "Hook states decouple and cause memory leaks on rapid navigation.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_hooks (latest)",
+      "replacement": "flutter_hooks",
       "migrationNotes": "Update syntax and hook definitions.",
       "archiveSizeBytes": 83307,
       "archiveSizeMB": 0.08,
@@ -3875,7 +3910,8 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
       "name": "functional_widget",
@@ -4015,11 +4051,11 @@
       ]
     },
     {
-      "name": "sembast (v1)",
+      "name": "sembast",
       "status": "end_of_life",
       "reason": "Synchronous writes freeze the UI thread on modern devices.",
       "as_of": "2026-03-10",
-      "replacement": "sembast (v3+)",
+      "replacement": "sembast",
       "migrationNotes": "Major update to async database factory logic.",
       "archiveSizeBytes": 161323,
       "archiveSizeMB": 0.15,
@@ -4034,7 +4070,10 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0",
+      "replacementObsoleteFromVersion": "3.0.0"
     },
     {
       "name": "localstorage",
@@ -4059,11 +4098,11 @@
       ]
     },
     {
-      "name": "flutter_cache_manager (v1)",
+      "name": "flutter_cache_manager",
       "status": "end_of_life",
       "reason": "Fails to clear disk space, leading to out-of-storage app crashes.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_cache_manager (latest)",
+      "replacement": "flutter_cache_manager",
       "migrationNotes": "Update cache eviction callbacks.",
       "archiveSizeBytes": 323689,
       "archiveSizeMB": 0.31,
@@ -4078,7 +4117,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0"
     },
     {
       "name": "http_middleware",
@@ -4096,11 +4137,11 @@
       "platforms": []
     },
     {
-      "name": "chopper (v3)",
+      "name": "chopper",
       "status": "end_of_life",
       "reason": "Code generator fails completely on Dart 3.",
       "as_of": "2026-03-10",
-      "replacement": "chopper (latest)",
+      "replacement": "chopper",
       "migrationNotes": "Regenerate all network services.",
       "archiveSizeBytes": 80521,
       "archiveSizeMB": 0.08,
@@ -4115,14 +4156,16 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "3.0.0",
+      "appliesToMaxVersion": "4.0.0"
     },
     {
-      "name": "retrofit (v1)",
+      "name": "retrofit",
       "status": "end_of_life",
       "reason": "Pre-null-safety; generator outputs dead code.",
       "as_of": "2026-03-10",
-      "replacement": "retrofit (latest)",
+      "replacement": "retrofit",
       "migrationNotes": "Regenerate client services.",
       "archiveSizeBytes": 23392,
       "archiveSizeMB": 0.02,
@@ -4137,10 +4180,12 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0"
     },
     {
-      "name": "graphql (v3)",
+      "name": "graphql",
       "status": "end_of_life",
       "reason": "Fails to compile on modern Flutter SDKs.",
       "as_of": "2026-03-10",
@@ -4159,7 +4204,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "3.0.0",
+      "appliesToMaxVersion": "4.0.0"
     },
     {
       "name": "hasura_connect",
@@ -4247,11 +4294,11 @@
       ]
     },
     {
-      "name": "agora_rtc_engine (v4)",
+      "name": "agora_rtc_engine",
       "status": "end_of_life",
       "reason": "Agora officially retired these SDK versions; calls will not connect.",
       "as_of": "2026-03-10",
-      "replacement": "agora_rtc_engine (v6+)",
+      "replacement": "agora_rtc_engine",
       "migrationNotes": "Massive rewrite of video view and event handlers.",
       "archiveSizeBytes": 5206880,
       "archiveSizeMB": 4.97,
@@ -4259,14 +4306,17 @@
       "lastUpdated": "2025-09-16",
       "pubPoints": 60,
       "verifiedPublisher": true,
-      "platforms": []
+      "platforms": [],
+      "appliesToMinVersion": "4.0.0",
+      "appliesToMaxVersion": "5.0.0",
+      "replacementObsoleteFromVersion": "6.0.0"
     },
     {
-      "name": "youtube_player_iframe (v2)",
+      "name": "youtube_player_iframe",
       "status": "end_of_life",
       "reason": "YouTube blocked the old Web API; iframe renders a black screen.",
       "as_of": "2026-03-10",
-      "replacement": "youtube_player_iframe (latest)",
+      "replacement": "youtube_player_iframe",
       "migrationNotes": "Controller syntax completely changed.",
       "archiveSizeBytes": 1234454,
       "archiveSizeMB": 1.18,
@@ -4279,7 +4329,9 @@
         "ios",
         "macos",
         "web"
-      ]
+      ],
+      "appliesToMinVersion": "2.0.0",
+      "appliesToMaxVersion": "3.0.0"
     },
     {
       "name": "audioplayer",
@@ -4334,11 +4386,11 @@
       ]
     },
     {
-      "name": "camera (v0.x)",
+      "name": "camera",
       "status": "end_of_life",
       "reason": "Fails Android 14 Scoped Storage and iOS 18 hardware manifest requirements.",
       "as_of": "2026-03-10",
-      "replacement": "camera (latest)",
+      "replacement": "camera",
       "migrationNotes": "Heavy update to async camera initialization.",
       "archiveSizeBytes": 102777,
       "archiveSizeMB": 0.1,
@@ -4350,7 +4402,8 @@
         "android",
         "ios",
         "web"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
       "name": "mapbox_gl",
@@ -4372,11 +4425,11 @@
       ]
     },
     {
-      "name": "flutter_map (v0.x)",
+      "name": "flutter_map",
       "status": "end_of_life",
       "reason": "Leaflet core fundamentally broken; maps render as gray squares.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_map (latest)",
+      "replacement": "flutter_map",
       "migrationNotes": "Complete rewrite of map options and layers.",
       "archiveSizeBytes": 919792,
       "archiveSizeMB": 0.88,
@@ -4391,14 +4444,15 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
-      "name": "location (v3)",
+      "name": "location",
       "status": "end_of_life",
       "reason": "Fails Android 14 exact vs approximate location prompt requirements.",
       "as_of": "2026-03-10",
-      "replacement": "location (latest)",
+      "replacement": "location",
       "migrationNotes": "Update permission request flow.",
       "archiveSizeBytes": 2942056,
       "archiveSizeMB": 2.81,
@@ -4411,7 +4465,9 @@
         "ios",
         "macos",
         "web"
-      ]
+      ],
+      "appliesToMinVersion": "3.0.0",
+      "appliesToMaxVersion": "4.0.0"
     },
     {
       "name": "bitsdojo_window",
@@ -4486,11 +4542,11 @@
       "platforms": []
     },
     {
-      "name": "timeago (v2)",
+      "name": "timeago",
       "status": "end_of_life",
       "reason": "Pre-null-safety; blocks Dart 3 compilation.",
       "as_of": "2026-03-10",
-      "replacement": "timeago (latest)",
+      "replacement": "timeago",
       "migrationNotes": "Update syntax for custom locales.",
       "archiveSizeBytes": 23847,
       "archiveSizeMB": 0.02,
@@ -4505,7 +4561,9 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "2.0.0",
+      "appliesToMaxVersion": "3.0.0"
     },
     {
       "name": "date_format",
@@ -4530,11 +4588,11 @@
       ]
     },
     {
-      "name": "supercharged (v1)",
+      "name": "supercharged",
       "status": "end_of_life",
       "reason": "String/Number extensions fail Dart 3 strict typing.",
       "as_of": "2026-03-10",
-      "replacement": "supercharged (latest)",
+      "replacement": "supercharged",
       "migrationNotes": "Syntax updates required.",
       "archiveSizeBytes": 9771,
       "archiveSizeMB": 0.01,
@@ -4549,14 +4607,16 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "1.0.0",
+      "appliesToMaxVersion": "2.0.0"
     },
     {
-      "name": "fluttertoast (v8)",
+      "name": "fluttertoast",
       "status": "end_of_life",
       "reason": "Uses deprecated overlay APIs causing context leaks and app freezes.",
       "as_of": "2026-03-10",
-      "replacement": "fluttertoast (latest)",
+      "replacement": "fluttertoast",
       "migrationNotes": "Shift to contextless FToast pattern.",
       "archiveSizeBytes": 546320,
       "archiveSizeMB": 0.52,
@@ -4568,7 +4628,9 @@
         "android",
         "ios",
         "web"
-      ]
+      ],
+      "appliesToMinVersion": "8.0.0",
+      "appliesToMaxVersion": "9.0.0"
     },
     {
       "name": "flutter_absolute_path",
@@ -4670,11 +4732,11 @@
       "platforms": []
     },
     {
-      "name": "flutter_local_notifications (v9)",
+      "name": "flutter_local_notifications",
       "status": "end_of_life",
       "reason": "Fails Android 14 POST_NOTIFICATIONS requirements.",
       "as_of": "2026-03-10",
-      "replacement": "flutter_local_notifications (latest)",
+      "replacement": "flutter_local_notifications",
       "migrationNotes": "Requires explicitly asking for exact notification permissions.",
       "archiveSizeBytes": 727307,
       "archiveSizeMB": 0.69,
@@ -4688,7 +4750,9 @@
         "linux",
         "macos",
         "windows"
-      ]
+      ],
+      "appliesToMinVersion": "9.0.0",
+      "appliesToMaxVersion": "10.0.0"
     },
     {
       "name": "flutter_native_timezone",
@@ -4706,11 +4770,11 @@
       "platforms": []
     },
     {
-      "name": "timezone (v0.x)",
+      "name": "timezone",
       "status": "end_of_life",
       "reason": "Pre-null-safety; blocks Dart 3 compilation entirely.",
       "as_of": "2026-03-10",
-      "replacement": "timezone (latest)",
+      "replacement": "timezone",
       "migrationNotes": "Total rewrite of timezone initialization and database fetching logic.",
       "archiveSizeBytes": 664044,
       "archiveSizeMB": 0.63,
@@ -4725,7 +4789,8 @@
         "macos",
         "web",
         "windows"
-      ]
+      ],
+      "appliesToMaxVersion": "1.0.0"
     },
     {
       "name": "flutter_phone_direct_caller",
@@ -4835,7 +4900,7 @@
       "replacement": "uuid",
       "migrationNotes": "Use proper UUIDs or standard cryptographically secure random number generators.",
       "archiveSizeBytes": 4593,
-      "archiveSizeMB": 0.0,
+      "archiveSizeMB": 0,
       "license": "BSD-3-Clause",
       "lastUpdated": "2021-07-16",
       "pubPoints": 160,
@@ -6458,7 +6523,7 @@
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4980,
-      "archiveSizeMB": 0.0,
+      "archiveSizeMB": 0,
       "license": "BSD-3-Clause",
       "lastUpdated": "2025-05-27",
       "pubPoints": 160,
@@ -6551,7 +6616,7 @@
       "replacement": "flutter_lints",
       "migrationNotes": "Remove DCM annotations and dependencies. Replace with saropa_lints (https://pub.dev/packages/saropa_lints) — a drop-in replacement with vastly more coverage: 2057 custom lint rules and 132 quick fixes for Flutter and Dart. Catches memory leaks, security vulnerabilities, and runtime crashes that standard linters miss. No vendor lock-in, no pay gates.",
       "archiveSizeBytes": 2408,
-      "archiveSizeMB": 0.0,
+      "archiveSizeMB": 0,
       "license": "MIT",
       "lastUpdated": "2025-07-04",
       "pubPoints": 140,
@@ -6609,7 +6674,7 @@
       "replacement": "Custom WebSockets / Firebase RTDB",
       "migrationNotes": "Major architecture shift. If budget is a strict constraint, build custom real-time messaging using standard WebSockets or cheaper cloud databases.",
       "archiveSizeBytes": 5244972,
-      "archiveSizeMB": 5.0,
+      "archiveSizeMB": 5,
       "license": "unknown",
       "lastUpdated": "2026-01-28",
       "pubPoints": 120,
@@ -6910,7 +6975,7 @@
       "replacement": "flutter_animate",
       "migrationNotes": "Dead repository. Touch-scale effects are now trivial to implement with standard animation extensions.",
       "archiveSizeBytes": 1044480,
-      "archiveSizeMB": 1.0,
+      "archiveSizeMB": 1,
       "license": "MIT",
       "lastUpdated": "2021-03-22",
       "pubPoints": 150,
@@ -7663,7 +7728,7 @@
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4692,
-      "archiveSizeMB": 0.0,
+      "archiveSizeMB": 0,
       "license": "MIT",
       "lastUpdated": "2021-03-26",
       "pubPoints": 160,
@@ -8186,7 +8251,7 @@
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 4822,
-      "archiveSizeMB": 0.0,
+      "archiveSizeMB": 0,
       "license": "BSD-3-Clause",
       "lastUpdated": "2022-06-28",
       "pubPoints": 160,
@@ -8586,7 +8651,7 @@
       "status": "active",
       "as_of": "2026-03-10",
       "archiveSizeBytes": 2020,
-      "archiveSizeMB": 0.0,
+      "archiveSizeMB": 0,
       "license": "MIT",
       "lastUpdated": "2023-02-17",
       "pubPoints": 140,

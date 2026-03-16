@@ -40,7 +40,7 @@ export function applyKnownOverrideReasons(
 ): OverrideAnalysis[] {
     return analyses.map(a => {
         if (a.status !== 'stale') { return a; }
-        const reason = findKnownIssue(a.entry.name)?.overrideReason;
+        const reason = findKnownIssue(a.entry.name, a.entry.version)?.overrideReason;
         if (!reason) { return a; }
         return { ...a, status: 'active' as const, blocker: reason };
     });

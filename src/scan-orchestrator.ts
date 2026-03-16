@@ -50,7 +50,7 @@ export async function analyzePackage(
     params: AnalyzeParams,
 ): Promise<VibrancyResult> {
     const log = params.logger;
-    const knownIssue = findKnownIssue(dep.name);
+    const knownIssue = findKnownIssue(dep.name, dep.version);
     if (knownIssue) { log?.info(`Known issue: ${knownIssue.status}`); }
 
     const [pubDevResult, metrics, publisher] = await Promise.all([

@@ -43,11 +43,17 @@ function normalizeIssue(raw: Record<string, unknown>): KnownIssue {
     };
 }
 
-const issueMap = new Map<string, KnownIssue>();
+// Multiple entries can share a bare package name (version-scoped variants).
+const issueMap = new Map<string, KnownIssue[]>();
 const { issues } = knownIssuesData as { issues: Record<string, unknown>[] };
 for (const entry of issues) {
     const issue = normalizeIssue(entry);
-    issueMap.set(issue.name, issue);
+    const existing = issueMap.get(issue.name);
+    if (existing) {
+        existing.push(issue);
+    } else {
+        issueMap.set(issue.name, [issue]);
+    }
 }
 
 /**
@@ -104,12 +110,53 @@ export function getReplacementDisplayText(
     return replacement;
 }
 
-/** Look up a package in the bundled known-issues database. */
-export function findKnownIssue(packageName: string): KnownIssue | null {
-    return issueMap.get(packageName) ?? null;
+/**
+ * True when currentVersion falls within the entry's version range.
+ * Min is inclusive (>=), max is exclusive (<). Absent bounds = unbounded.
+ */
+function matchesVersionRange(
+    entry: KnownIssue,
+    currentVersion: string,
+): boolean {
+    const { appliesToMinVersion, appliesToMaxVersion } = entry;
+    if (appliesToMinVersion && !versionGte(currentVersion, appliesToMinVersion)) {
+        return false;
+    }
+    if (appliesToMaxVersion && versionGte(currentVersion, appliesToMaxVersion)) {
+        return false;
+    }
+    return true;
 }
 
-/** Return all known issues. */
-export function allKnownIssues(): ReadonlyMap<string, KnownIssue> {
+/** True when the entry has no version bounds (applies to all versions). */
+function isUnscoped(entry: KnownIssue): boolean {
+    return !entry.appliesToMinVersion && !entry.appliesToMaxVersion;
+}
+
+/**
+ * Look up a package in the bundled known-issues database.
+ * When currentVersion is provided, returns the version-scoped entry whose
+ * range matches, falling back to an unscoped entry. When no version is
+ * provided, returns an unscoped entry if one exists.
+ */
+export function findKnownIssue(
+    packageName: string,
+    currentVersion?: string,
+): KnownIssue | null {
+    const entries = issueMap.get(packageName);
+    if (!entries || entries.length === 0) { return null; }
+    if (!currentVersion) {
+        // No version context — prefer unscoped entry
+        return entries.find(isUnscoped) ?? entries[0];
+    }
+    // Prefer a scoped entry that matches the version
+    const scoped = entries.find(e => !isUnscoped(e) && matchesVersionRange(e, currentVersion));
+    if (scoped) { return scoped; }
+    // Fall back to an unscoped entry
+    return entries.find(isUnscoped) ?? null;
+}
+
+/** Return all known issues grouped by package name. */
+export function allKnownIssues(): ReadonlyMap<string, readonly KnownIssue[]> {
     return issueMap;
 }
