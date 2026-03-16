@@ -17,16 +17,18 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ## [1.4.1]
 
-_New "caution" status for packages with known problems that aren't end-of-life — starting with shimmer jank warnings._
+_New "caution" status for packages with known problems that aren't end-of-life — starting with shimmer jank warnings. Known issues now match by version range so the right warning surfaces for the version you actually use._
 
 ### Added
 
 - **"Caution" known-issue status**: New `caution` category in the known-issues schema for packages that are alive but have significant reported problems (e.g. performance jank). The reason text surfaces in diagnostics, hover tooltips, code lens, and the tree view.
 - **Shimmer jank warnings**: `shimmer` and `fade_shimmer` flagged as `caution` with a performance-jank warning and `skeletonizer` as the recommended replacement.
+- **Version-scoped known issues**: Known-issue entries can now target a specific version range (`appliesToMinVersion`/`appliesToMaxVersion`). The lookup uses the resolved version from pubspec.lock, so version-specific warnings only appear when relevant. 35 previously unreachable entries are now active.
 
 ### Changed
 
 - **`flutter_shimmer` replacement updated**: Now points to `skeletonizer` instead of `shimmer`, since `shimmer` itself has reported jank issues.
+- **Replacement field cleanup**: Stripped `(latest)` and `(vN+)` suffixes from 26 replacement values so they pass package-name validation and work in code-action quick-fixes.
 
 ---
 
