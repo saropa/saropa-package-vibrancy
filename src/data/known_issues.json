@@ -115,7 +115,7 @@
     },
     {
       "name": "flutter_offline",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Underlying connectivity logic reports false positives on Android 14+.",
       "as_of": "2026-03-09",
       "replacement": "internet_connection_checker_plus",
@@ -346,7 +346,7 @@
     },
     {
       "name": "websafe_svg",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Obsolete; Flutter natively supports Web SVGs now. Adds dead weight.",
       "as_of": "2026-03-09",
       "replacement": "flutter_svg",
@@ -428,7 +428,7 @@
     },
     {
       "name": "flutter_markdown",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Discontinued by Google; vulnerable to unpatched markdown injection flaws.",
       "as_of": "2026-03-09",
       "replacement": "markdown_widget",
@@ -450,7 +450,7 @@
     },
     {
       "name": "flutter_adaptive_scaffold",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Discontinued; relies on older layout constraints that fail on foldable phones.",
       "as_of": "2026-03-09",
       "replacement": "Native `LayoutBuilder`",
@@ -472,7 +472,7 @@
     },
     {
       "name": "ios_platform_images",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Discontinued; redundant since modern Flutter seamlessly handles iOS assets.",
       "as_of": "2026-03-09",
       "replacement": null,
@@ -489,7 +489,7 @@
     },
     {
       "name": "palette_generator",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Discontinued; incredibly slow on modern high-res device camera feeds.",
       "as_of": "2026-03-09",
       "replacement": "color_thief_flutter",
@@ -511,7 +511,7 @@
     },
     {
       "name": "flutter_image",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Discontinued; memory leaks heavily compared to modern network image caching.",
       "as_of": "2026-03-09",
       "replacement": null,
@@ -532,7 +532,7 @@
     },
     {
       "name": "js",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Completely replaced by modern Wasm-compatible dart:js_interop.",
       "as_of": "2026-03-09",
       "replacement": null,
@@ -601,7 +601,7 @@
     },
     {
       "name": "flutter_sticky_header",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Completely breaks Flutter's modern sliver scroll physics; severe jank.",
       "as_of": "2026-03-09",
       "replacement": "sliver_tools",
@@ -653,7 +653,7 @@
     },
     {
       "name": "flutter_html_view",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Massive security risk; highly vulnerable to modern XSS injections.",
       "as_of": "2026-03-09",
       "replacement": "flutter_html",
@@ -973,7 +973,7 @@
     },
     {
       "name": "font_awesome_flutter",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "(Legacy versions) Icons render as boxes due to missing font maps.",
       "as_of": "2026-03-09",
       "replacement": "Update to latest version",
@@ -1184,7 +1184,7 @@
     },
     {
       "name": "flutter_sound_v7",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "(Legacy versions) Missing background service permissions for Android 15.",
       "as_of": "2026-03-09",
       "replacement": "Update to v9+",
@@ -1207,7 +1207,7 @@
     },
     {
       "name": "audioplayers_v0",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "(v0.x versions) Native code fails to build on Apple Silicon (M1/M2/M3) Macs.",
       "as_of": "2026-03-09",
       "replacement": null,
@@ -1259,7 +1259,7 @@
     },
     {
       "name": "flutter_downloader",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Progress synchronization isolates are broken, leaving ghost notifications.",
       "as_of": "2026-03-09",
       "replacement": "background_downloader",
@@ -1277,7 +1277,7 @@
     },
     {
       "name": "open_file_v3",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Fails to map modern MIME types, causing the OS to reject opening PDFs/docs.",
       "as_of": "2026-03-09",
       "replacement": "open_filex",
@@ -1299,7 +1299,7 @@
     },
     {
       "name": "file_picker_v3",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "(Legacy versions) Returns relative paths that the app lacks permission to read.",
       "as_of": "2026-03-09",
       "replacement": null,
@@ -1357,7 +1357,7 @@
     },
     {
       "name": "workmanager_v04",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Background execution keys fail to register, so tasks never actually fire.",
       "as_of": "2026-03-09",
       "replacement": "Update to latest version",
@@ -1410,7 +1410,7 @@
     },
     {
       "name": "workmanager",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Dead repo; incompatible with modern Android WorkManager architecture.",
       "as_of": "2026-03-09",
       "replacement": null,
@@ -1428,7 +1428,7 @@
     },
     {
       "name": "geolocator_apple_v1",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Standalone version dead; lacks modern iOS precise location toggles.",
       "as_of": "2026-03-09",
       "replacement": "geolocator",
@@ -1463,7 +1463,7 @@
     },
     {
       "name": "google_api_availability",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Obsolete detection methods return false negatives on modern devices.",
       "as_of": "2026-03-09",
       "replacement": "Use Native Channels",
@@ -1531,7 +1531,7 @@
     },
     {
       "name": "flutter_secure_storage",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "(Pre-v5.0) Keychain/Keystore logic is old; data can be wiped on OS upgrades.",
       "as_of": "2026-03-09",
       "replacement": "Update to v9+",
@@ -1576,7 +1576,7 @@
     },
     {
       "name": "local_auth",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Dead standalone package; lacks modern strong biometric fallback handlers.",
       "as_of": "2026-03-09",
       "replacement": null,
@@ -1651,7 +1651,7 @@
     },
     {
       "name": "flutter_sms_inbox",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Google Play Store explicitly bans apps using this broad SMS read permission.",
       "as_of": "2026-03-09",
       "replacement": "None",
@@ -1668,7 +1668,7 @@
     },
     {
       "name": "call_log",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Dead privacy wrapper; app will be suspended from app stores for using it.",
       "as_of": "2026-03-09",
       "replacement": "None",
@@ -1685,7 +1685,7 @@
     },
     {
       "name": "keyboard_actions",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "FocusNode conflicts cause the keyboard to continuously flicker open and closed.",
       "as_of": "2026-03-09",
       "replacement": "Use Native FocusNodes",
@@ -1999,7 +1999,7 @@
     },
     {
       "name": "audioplayers",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Fails on Apple Silicon builds.",
       "as_of": "2026-03-09",
       "replacement": "audioplayers",
@@ -2022,7 +2022,7 @@
     },
     {
       "name": "file_picker",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Returns unreadable cache paths.",
       "as_of": "2026-03-09",
       "replacement": "file_picker",
@@ -2046,7 +2046,7 @@
     },
     {
       "name": "flutter_local_notifications",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Ignores Android 14 POST flags.",
       "as_of": "2026-03-09",
       "replacement": "flutter_local_notifications",
@@ -2108,7 +2108,7 @@
     },
     {
       "name": "flutter_slidable",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Gestures conflict with modern Flutter internal navigators.",
       "as_of": "2026-03-09",
       "replacement": "flutter_slidable",
@@ -2131,7 +2131,7 @@
     },
     {
       "name": "google_fonts",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Dynamic fetching blocks the main UI thread during load.",
       "as_of": "2026-03-09",
       "replacement": "Update to latest version",
@@ -2155,7 +2155,7 @@
     },
     {
       "name": "flutter_spinkit",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Hardcoded TickerProviders cause exceptions when screens pop.",
       "as_of": "2026-03-09",
       "replacement": "Update to latest version",
@@ -2280,7 +2280,7 @@
     },
     {
       "name": "lint",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Abandoned third-party lint package; causes false positives on Dart 3 modifiers.",
       "as_of": "2026-03-10",
       "replacement": "flutter_lints",
@@ -2402,7 +2402,7 @@
     },
     {
       "name": "animations",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Pre-Material 3 package; page transitions lack predictive back gesture support.",
       "as_of": "2026-03-10",
       "replacement": "flutter_animate",
@@ -2424,7 +2424,7 @@
     },
     {
       "name": "simple_animations",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Stateless animation logic is fundamentally incompatible with Dart 3 type safety.",
       "as_of": "2026-03-10",
       "replacement": "simple_animations",
@@ -2508,7 +2508,7 @@
     },
     {
       "name": "routemaster",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Unmaintained; memory leaks active Route objects on heavy app traversal.",
       "as_of": "2026-03-10",
       "replacement": "go_router",
@@ -2530,7 +2530,7 @@
     },
     {
       "name": "flutter_modular",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Global singletons block Dart 3 compilation; deeply flawed memory management.",
       "as_of": "2026-03-10",
       "replacement": "flutter_modular",
@@ -2659,7 +2659,7 @@
     },
     {
       "name": "camerawesome",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Lacks Android Scoped Storage flags; videos save to corrupted, unreadable paths.",
       "as_of": "2026-03-10",
       "replacement": "Update to latest version",
@@ -2984,7 +2984,7 @@
     },
     {
       "name": "flutter_calendar_carousel",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Swiping physics conflicts with Flutter 3 engine updates, causing stutter.",
       "as_of": "2026-03-10",
       "replacement": "table_calendar",
@@ -3006,7 +3006,7 @@
     },
     {
       "name": "syncfusion_flutter_calendar",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Legacy commercial package; completely fails Dart 3 type checks.",
       "as_of": "2026-03-10",
       "replacement": "syncfusion_flutter_calendar",
@@ -3133,7 +3133,7 @@
     },
     {
       "name": "flutter_typeahead",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Overlay floats behind keyboards on modern Android 14 inset architectures.",
       "as_of": "2026-03-10",
       "replacement": "flutter_typeahead",
@@ -3235,7 +3235,7 @@
     },
     {
       "name": "badges",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Positioning logic broken; badges render off-screen in Material 3.",
       "as_of": "2026-03-10",
       "replacement": "badges",
@@ -3386,7 +3386,7 @@
     },
     {
       "name": "curved_navigation_bar",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Severe stutter when pushing new routes over the bar.",
       "as_of": "2026-03-10",
       "replacement": "curved_navigation_bar",
@@ -3424,7 +3424,7 @@
     },
     {
       "name": "convex_bottom_bar",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Gesture area overlaps system navigation bars on Android 15.",
       "as_of": "2026-03-10",
       "replacement": "convex_bottom_bar",
@@ -3492,7 +3492,7 @@
     },
     {
       "name": "responsive_builder",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Hardcoded breakpoints are totally obsolete for modern foldables.",
       "as_of": "2026-03-10",
       "replacement": "responsive_builder",
@@ -3515,7 +3515,7 @@
     },
     {
       "name": "flutter_screenutil",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Init function crashes on initialization in modern Flutter views.",
       "as_of": "2026-03-10",
       "replacement": "flutter_screenutil",
@@ -3582,7 +3582,7 @@
     },
     {
       "name": "flutter_i18n",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Unmaintained; delegates fail to register properly in Dart 3.",
       "as_of": "2026-03-10",
       "replacement": "slang",
@@ -3604,7 +3604,7 @@
     },
     {
       "name": "i18n_extension",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "String extension injections leak memory wildly on large translation sets.",
       "as_of": "2026-03-10",
       "replacement": "slang",
@@ -3626,7 +3626,7 @@
     },
     {
       "name": "intl_translation",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Officially deprecated by the Dart team.",
       "as_of": "2026-03-10",
       "replacement": "intl_utils",
@@ -3662,7 +3662,7 @@
     },
     {
       "name": "flutter_mobx",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Generators output invalid Dart 3 code, blocking compilation.",
       "as_of": "2026-03-10",
       "replacement": "flutter_mobx",
@@ -3765,7 +3765,7 @@
     },
     {
       "name": "stacked",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "ViewModel locators throw exceptions due to old Provider bindings.",
       "as_of": "2026-03-10",
       "replacement": "stacked",
@@ -3826,7 +3826,7 @@
     },
     {
       "name": "flutter_hooks",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Hook states decouple and cause memory leaks on rapid navigation.",
       "as_of": "2026-03-10",
       "replacement": "flutter_hooks",
@@ -3849,7 +3849,7 @@
     },
     {
       "name": "functional_widget",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Code generator is dead; fails to generate valid Dart 3 widgets.",
       "as_of": "2026-03-10",
       "replacement": "hooks_riverpod",
@@ -3916,7 +3916,7 @@
     },
     {
       "name": "sqflite_sqlcipher",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Dead package; native C bindings break on Android 15.",
       "as_of": "2026-03-10",
       "replacement": "sqlcipher_flutter_libs",
@@ -3969,7 +3969,7 @@
     },
     {
       "name": "shared_preferences_web",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Integrated into core package; redundant dead weight.",
       "as_of": "2026-03-10",
       "replacement": "shared_preferences",
@@ -3986,7 +3986,7 @@
     },
     {
       "name": "sembast",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Synchronous writes freeze the UI thread on modern devices.",
       "as_of": "2026-03-10",
       "replacement": "sembast",
@@ -4011,7 +4011,7 @@
     },
     {
       "name": "localstorage",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Uses obsolete synchronous file I/O that crashes Wasm applications.",
       "as_of": "2026-03-10",
       "replacement": "shared_preferences",
@@ -4033,7 +4033,7 @@
     },
     {
       "name": "flutter_cache_manager",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Fails to clear disk space, leading to out-of-storage app crashes.",
       "as_of": "2026-03-10",
       "replacement": "flutter_cache_manager",
@@ -4072,7 +4072,7 @@
     },
     {
       "name": "chopper",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Code generator fails completely on Dart 3.",
       "as_of": "2026-03-10",
       "replacement": "chopper",
@@ -4096,7 +4096,7 @@
     },
     {
       "name": "retrofit",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Pre-null-safety; generator outputs dead code.",
       "as_of": "2026-03-10",
       "replacement": "retrofit",
@@ -4120,7 +4120,7 @@
     },
     {
       "name": "graphql",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Fails to compile on modern Flutter SDKs.",
       "as_of": "2026-03-10",
       "replacement": "graphql_flutter",
@@ -4229,7 +4229,7 @@
     },
     {
       "name": "agora_rtc_engine",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Agora officially retired these SDK versions; calls will not connect.",
       "as_of": "2026-03-10",
       "replacement": "agora_rtc_engine",
@@ -4247,7 +4247,7 @@
     },
     {
       "name": "youtube_player_iframe",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "YouTube blocked the old Web API; iframe renders a black screen.",
       "as_of": "2026-03-10",
       "replacement": "youtube_player_iframe",
@@ -4321,7 +4321,7 @@
     },
     {
       "name": "camera",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Fails Android 14 Scoped Storage and iOS 18 hardware manifest requirements.",
       "as_of": "2026-03-10",
       "replacement": "camera",
@@ -4360,7 +4360,7 @@
     },
     {
       "name": "flutter_map",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Leaflet core fundamentally broken; maps render as gray squares.",
       "as_of": "2026-03-10",
       "replacement": "flutter_map",
@@ -4383,7 +4383,7 @@
     },
     {
       "name": "location",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Fails Android 14 exact vs approximate location prompt requirements.",
       "as_of": "2026-03-10",
       "replacement": "location",
@@ -4477,7 +4477,7 @@
     },
     {
       "name": "timeago",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Pre-null-safety; blocks Dart 3 compilation.",
       "as_of": "2026-03-10",
       "replacement": "timeago",
@@ -4523,7 +4523,7 @@
     },
     {
       "name": "supercharged",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "String/Number extensions fail Dart 3 strict typing.",
       "as_of": "2026-03-10",
       "replacement": "supercharged",
@@ -4547,7 +4547,7 @@
     },
     {
       "name": "fluttertoast",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Uses deprecated overlay APIs causing context leaks and app freezes.",
       "as_of": "2026-03-10",
       "replacement": "fluttertoast",
@@ -4667,7 +4667,7 @@
     },
     {
       "name": "flutter_local_notifications",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Fails Android 14 POST_NOTIFICATIONS requirements.",
       "as_of": "2026-03-10",
       "replacement": "flutter_local_notifications",
@@ -4705,7 +4705,7 @@
     },
     {
       "name": "timezone",
-      "status": "end_of_life",
+      "status": "caution",
       "reason": "Pre-null-safety; blocks Dart 3 compilation entirely.",
       "as_of": "2026-03-10",
       "replacement": "timezone",
@@ -4781,7 +4781,7 @@
     },
     {
       "name": "flutter_clean_architecture",
-      "status": "end_of_life",
+      "status": "caution",
       "as_of": "2026-03-10",
       "replacement": "None",
       "migrationNotes": "Abandoned. Implement clean architecture concepts using native standard widgets and standard state management (e.g., flutter_bloc).",

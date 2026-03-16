@@ -14,19 +14,60 @@ export function countByCategory(results: readonly VibrancyResult[]) {
     return { vibrant, quiet, legacy, eol };
 }
 
+/**
+ * Minimum pub.dev points for a package to qualify as actively maintained.
+ * 130/160 (81%) represents a package that passes all critical pub.dev checks
+ * but allows some tolerance below the maximum score.
+ */
+const ACTIVE_PUB_POINTS_THRESHOLD = 130;
+
+/** Maximum months since last publish before the guardrail stops protecting. */
+const ACTIVE_MONTHS_THRESHOLD = 18;
+
+/** Approximate milliseconds in one month (30 days). */
+const MS_PER_MONTH = 1000 * 60 * 60 * 24 * 30;
+
 /** Classify a package into a vibrancy category. */
 export function classifyStatus(params: {
     score: number;
     knownIssue: KnownIssue | null;
     pubDev: PubDevPackageInfo | null;
 }): VibrancyCategory {
-    if (params.knownIssue?.status === 'end_of_life') { return 'end-of-life'; }
+    // Hard override: pub.dev discontinuation is objective — always end-of-life
     if (params.pubDev?.isDiscontinued) { return 'end-of-life'; }
+
+    // Known issue override with guardrail: if pub.dev data (fetched at scan
+    // time) shows the package is actively maintained, cap at legacy-locked to
+    // prevent editorial overrides from condemning healthy packages.
+    // Note: other known issue statuses (caution, maintenance_mode, etc.)
+    // intentionally have no override — those packages are scored normally.
+    if (params.knownIssue?.status === 'end_of_life') {
+        if (isActivelyMaintained(params.pubDev)) { return 'legacy-locked'; }
+        return 'end-of-life';
+    }
 
     if (params.score >= 70) { return 'vibrant'; }
     if (params.score >= 40) { return 'quiet'; }
     if (params.score >= 10) { return 'legacy-locked'; }
     return 'end-of-life';
+}
+
+/**
+ * Check if pub.dev data indicates active maintenance.
+ * Uses pub.dev signals fetched at analysis time (not static known_issues.json
+ * data) to detect when an editorial EOL classification contradicts reality.
+ * Accepts an optional `nowMs` for deterministic testing of time boundaries.
+ */
+export function isActivelyMaintained(
+    pubDev: PubDevPackageInfo | null,
+    nowMs: number = Date.now(),
+): boolean {
+    if (!pubDev || pubDev.isDiscontinued) { return false; }
+    if (pubDev.pubPoints < ACTIVE_PUB_POINTS_THRESHOLD) { return false; }
+    const publishedMs = Date.parse(pubDev.publishedDate);
+    if (isNaN(publishedMs)) { return false; }
+    const monthsSincePublish = (nowMs - publishedMs) / MS_PER_MONTH;
+    return monthsSincePublish <= ACTIVE_MONTHS_THRESHOLD;
 }
 
 /** Map category to ThemeIcon id. */
