@@ -1,6 +1,8 @@
 # Plan: Package Family Conflict Detector
 
-**Update (2025-03-14):** The "Google" family was removed from the implementation. The `google_` prefix groups unrelated products (e.g. google_fonts, google_sign_in, google_maps_flutter) with independent version lifecycles; only version-coupled product families (Firebase, Riverpod, Bloc, Freezed, Drift) are now used. See `bugs/history/20250314/family-conflict-google-family-removed.md`.
+**Update (2025-03-14):** The "Google" family was removed from the implementation. The `google_` prefix groups unrelated products (e.g. google_fonts, google_sign_in, google_maps_flutter) with independent version lifecycles. See `bugs/history/20250314/family-conflict-google-family-removed.md`.
+
+**Update (2026-03-15):** The "Firebase" family was also removed. Firebase packages (`firebase_core` v4, `firebase_messaging` v16, etc.) use independent version tracks, not a shared major version scheme — same issue as Google. Only truly version-coupled families remain: Riverpod, Bloc, Freezed, Drift.
 
 ## Problem
 
