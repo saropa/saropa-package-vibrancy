@@ -33,6 +33,8 @@ _Override tracking gets smarter — known override reasons prevent false-positiv
 
 ## [1.3.2]
 
+_Fixes the sidebar icon rendering so it fills the activity bar properly._
+
 ### Fixed
 
 - **Activity bar icon too small**: Scaled the sidebar hexagon and pulse artwork to fill the 24×24 container and centered it properly at (12,12)
@@ -40,6 +42,8 @@ _Override tracking gets smarter — known override reasons prevent false-positiv
 ---
 
 ## [1.3.1]
+
+_Pubspec discovery now finds the right file in workspaces with override subdirectories, and freshness notifications are clearer._
 
 ### Fixed
 
