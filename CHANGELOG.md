@@ -15,6 +15,21 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ---
 
+## [1.4.1]
+
+_New "caution" status for packages with known problems that aren't end-of-life — starting with shimmer jank warnings._
+
+### Added
+
+- **"Caution" known-issue status**: New `caution` category in the known-issues schema for packages that are alive but have significant reported problems (e.g. performance jank). The reason text surfaces in diagnostics, hover tooltips, code lens, and the tree view.
+- **Shimmer jank warnings**: `shimmer` and `fade_shimmer` flagged as `caution` with a performance-jank warning and `skeletonizer` as the recommended replacement.
+
+### Changed
+
+- **`flutter_shimmer` replacement updated**: Now points to `skeletonizer` instead of `shimmer`, since `shimmer` itself has reported jank issues.
+
+---
+
 ## [1.4.0]
 
 _Override tracking gets smarter — known override reasons prevent false-positive stale warnings, and Firebase is no longer mis-flagged as a version-coupled family._
