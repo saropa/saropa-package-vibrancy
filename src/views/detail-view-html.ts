@@ -180,6 +180,19 @@ function buildCommunitySection(r: VibrancyResult): string {
         parts.push(`<div class="detail-row">${r.pubDev.pubPoints}/160 pub points</div>`);
     }
 
+    if (r.pubDev) {
+        const popularityMetrics: string[] = [];
+        if (r.pubDev.likes > 0) {
+            popularityMetrics.push(`❤️ ${formatNumber(r.pubDev.likes)} likes`);
+        }
+        if (r.pubDev.downloads > 0) {
+            popularityMetrics.push(`📥 ${formatNumber(r.pubDev.downloads)} downloads/30d`);
+        }
+        if (popularityMetrics.length > 0) {
+            parts.push(`<div class="detail-row">${popularityMetrics.join('  ')}</div>`);
+        }
+    }
+
     if (r.verifiedPublisher && r.pubDev?.publisher) {
         parts.push(`<div class="detail-row">✅ ${escapeHtml(r.pubDev.publisher)}</div>`);
     }

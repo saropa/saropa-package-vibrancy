@@ -34,6 +34,8 @@ export interface PubDevPackageInfo {
     readonly isDiscontinued: boolean;
     readonly isUnlisted: boolean;
     readonly pubPoints: number;
+    readonly likes: number;
+    readonly downloads: number;
     readonly publisher: string | null;
     readonly license: string | null;
     readonly description: string | null;
@@ -89,9 +91,11 @@ export interface KnownIssue {
     readonly overrideReason?: string;
 }
 
-/** Live metrics from pub.dev /metrics endpoint. Null wasmReady = API failed. */
+/** Live metrics from pub.dev score/metrics endpoint. Null wasmReady = API failed. */
 export interface PubDevMetrics {
     readonly pubPoints: number;
+    readonly likes: number;
+    readonly downloads: number;
     readonly platforms: readonly string[];
     readonly wasmReady: boolean | null;
 }
@@ -260,6 +264,8 @@ export interface ComparisonData {
     readonly publishedDate: string | null;
     readonly publisher: string | null;
     readonly pubPoints: number;
+    readonly likes: number;
+    readonly downloads: number;
     readonly stars: number | null;
     readonly openIssues: number | null;
     readonly archiveSizeBytes: number | null;

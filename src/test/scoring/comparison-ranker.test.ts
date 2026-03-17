@@ -11,6 +11,8 @@ function makePackage(overrides: Partial<ComparisonData>): ComparisonData {
         publishedDate: '2026-01-15',
         publisher: null,
         pubPoints: 100,
+        likes: 0,
+        downloads: 0,
         stars: 500,
         openIssues: 10,
         archiveSizeBytes: 100_000,

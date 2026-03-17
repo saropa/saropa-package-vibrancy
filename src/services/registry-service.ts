@@ -294,6 +294,11 @@ export function buildMetricsApiUrl(registryUrl: string, packageName: string): st
     return buildApiUrl(registryUrl, packageName, '/metrics');
 }
 
+/** Build the score API URL (superset of metrics, includes likes and downloads). */
+export function buildScoreApiUrl(registryUrl: string, packageName: string): string {
+    return buildApiUrl(registryUrl, packageName, '/score');
+}
+
 /** Build the publisher API URL. */
 export function buildPublisherApiUrl(registryUrl: string, packageName: string): string {
     return buildApiUrl(registryUrl, packageName, '/publisher');

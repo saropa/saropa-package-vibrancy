@@ -133,6 +133,12 @@ function buildHoverContent(
         }
         md.appendMarkdown(`| Published | ${date} |\n`);
         md.appendMarkdown(`| Pub Points | ${result.pubDev.pubPoints} |\n`);
+        if (result.pubDev.likes > 0) {
+            md.appendMarkdown(`| Likes | ${result.pubDev.likes.toLocaleString()} |\n`);
+        }
+        if (result.pubDev.downloads > 0) {
+            md.appendMarkdown(`| Downloads (30d) | ${result.pubDev.downloads.toLocaleString()} |\n`);
+        }
     }
 
     if (result.github) {

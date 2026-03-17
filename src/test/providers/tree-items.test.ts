@@ -24,8 +24,8 @@ function stubPubDev(repoUrl: string | null = null): PubDevPackageInfo {
         name: 'http', latestVersion: '2.0.0',
         publishedDate: '2025-01-01T00:00:00Z',
         repositoryUrl: repoUrl, isDiscontinued: false,
-        isUnlisted: false, pubPoints: 100, publisher: null, license: null,
-        description: null, topics: [],
+        isUnlisted: false, pubPoints: 100, likes: 0, downloads: 0,
+        publisher: null, license: null, description: null, topics: [],
     };
 }
 

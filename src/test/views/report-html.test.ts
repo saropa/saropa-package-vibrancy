@@ -17,6 +17,8 @@ function makeResult(
             isDiscontinued: false,
             isUnlisted: false,
             pubPoints: 100,
+            likes: 0,
+            downloads: 0,
             publisher: null,
             license: null,
             description: null,

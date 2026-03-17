@@ -7,6 +7,7 @@ import {
     RegistryService,
     buildPackageApiUrl,
     buildMetricsApiUrl,
+    buildScoreApiUrl,
     buildPublisherApiUrl,
     buildRegistryHeaders,
 } from './registry-service';
@@ -98,6 +99,8 @@ export async function fetchPackageInfoWithPrerelease(
             isDiscontinued: json.isDiscontinued ?? false,
             isUnlisted: json.isUnlisted ?? false,
             pubPoints: 0,
+            likes: 0,
+            downloads: 0,
             publisher: null,
             license: pubspec.license ?? null,
             description: pubspec.description ?? null,
@@ -132,7 +135,11 @@ export async function fetchPackageInfoWithPrerelease(
 /** Tag values that indicate WASM compatibility. */
 const WASM_TAGS = ['is:wasm-ready', 'sdk:wasm'];
 
-/** Fetch registry metrics: points, platforms, and WASM readiness. */
+/**
+ * Fetch registry metrics: points, likes, downloads, platforms, and WASM readiness.
+ * Uses the /score endpoint for pub.dev (superset of /metrics with likes and downloads),
+ * falls back to /metrics for custom registries that may not support /score.
+ */
 export async function fetchPackageMetrics(
     name: string,
     cache?: CacheService,
@@ -140,7 +147,7 @@ export async function fetchPackageMetrics(
     registryOpts?: RegistryOptions,
 ): Promise<PubDevMetrics> {
     const fallback: PubDevMetrics = {
-        pubPoints: 0, platforms: [], wasmReady: null,
+        pubPoints: 0, likes: 0, downloads: 0, platforms: [], wasmReady: null,
     };
 
     const registryUrl = registryOpts?.registryUrl ?? PUB_DEV_URL;
@@ -155,7 +162,11 @@ export async function fetchPackageMetrics(
     }
     logger?.cacheMiss(cacheKey);
 
-    const url = buildMetricsApiUrl(registryUrl, name);
+    // Use /score for pub.dev (returns likes + downloads), /metrics for custom registries
+    const isPubDev = registryUrl === PUB_DEV_URL;
+    const url = isPubDev
+        ? buildScoreApiUrl(registryUrl, name)
+        : buildMetricsApiUrl(registryUrl, name);
     const headers = registryService
         ? await buildRegistryHeaders(registryUrl, registryService)
         : {};
@@ -168,9 +179,16 @@ export async function fetchPackageMetrics(
         if (!resp.ok) { return fallback; }
 
         const json: any = await resp.json();
-        const tags: string[] = json.score?.tags ?? [];
+        // /score returns fields at top level; /metrics nests under json.score
+        const tags: string[] = isPubDev
+            ? (json.tags ?? [])
+            : (json.score?.tags ?? []);
         const result: PubDevMetrics = {
-            pubPoints: json.score?.grantedPoints ?? 0,
+            pubPoints: isPubDev
+                ? (json.grantedPoints ?? 0)
+                : (json.score?.grantedPoints ?? 0),
+            likes: isPubDev ? (json.likeCount ?? 0) : 0,
+            downloads: isPubDev ? (json.downloadCount30Days ?? 0) : 0,
             platforms: extractPlatforms(tags),
             wasmReady: tags.some(t => WASM_TAGS.includes(t)),
         };

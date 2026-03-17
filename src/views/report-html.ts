@@ -62,6 +62,8 @@ function buildReportTable(results: VibrancyResult[]): string {
             <th data-col="score">Score<span class="sort-arrow"></span></th>
             <th data-col="category">Category<span class="sort-arrow"></span></th>
             <th data-col="published">Published<span class="sort-arrow"></span></th>
+            <th data-col="likes">Likes<span class="sort-arrow"></span></th>
+            <th data-col="downloads">Downloads<span class="sort-arrow"></span></th>
             <th data-col="stars">Stars<span class="sort-arrow"></span></th>
             <th data-col="size">Size<span class="sort-arrow"></span></th>
             <th data-col="transitives">Transitives<span class="sort-arrow"></span></th>
@@ -81,6 +83,8 @@ function buildRow(r: VibrancyResult): string {
     const name = escapeHtml(r.package.name);
     const version = escapeHtml(r.package.version);
     const date = r.pubDev?.publishedDate.split('T')[0] ?? '';
+    const likes = r.pubDev?.likes ?? '';
+    const downloads = r.pubDev?.downloads ?? '';
     const stars = r.github?.stars ?? '';
     const sizeText = r.archiveSizeBytes !== null
         ? formatSizeMB(r.archiveSizeBytes) : '—';
@@ -112,7 +116,7 @@ function buildRow(r: VibrancyResult): string {
 
     return `<tr data-name="${name}" data-version="${version}"
         data-score="${r.score}" data-category="${r.category}"
-        data-published="${date}" data-stars="${stars}"
+        data-published="${date}" data-likes="${likes}" data-downloads="${downloads}" data-stars="${stars}"
         data-size="${r.archiveSizeBytes ?? 0}"
         data-transitives="${transitiveCount}"
         data-vulns="${vulnCount}"
@@ -125,6 +129,8 @@ function buildRow(r: VibrancyResult): string {
         <td>${Math.round(r.score / 10)}/10</td>
         <td>${categoryLabel(r.category)}</td>
         <td>${date}</td>
+        <td>${likes ? likes.toLocaleString() : '—'}</td>
+        <td>${downloads ? downloads.toLocaleString() : '—'}</td>
         <td>${stars}</td>
         <td>${sizeText}</td>
         <td class="${transitiveClass}">${transitiveText}</td>

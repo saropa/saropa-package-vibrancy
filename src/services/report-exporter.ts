@@ -144,6 +144,8 @@ function mapPackageToJson(r: VibrancyResult) {
         status: categoryLabel(r.category),
         vibrancy_score: r.score,
         pub_points: r.pubDev?.pubPoints ?? 0,
+        likes: r.pubDev?.likes ?? 0,
+        downloads_30d: r.pubDev?.downloads ?? 0,
         stars: r.github?.stars ?? 0,
         is_discontinued: r.pubDev?.isDiscontinued ?? false,
         is_unlisted: r.pubDev?.isUnlisted ?? false,

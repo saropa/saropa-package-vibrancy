@@ -162,6 +162,14 @@ export class DetailLogger {
             lines.push(`Pub points: ${result.pubDev.pubPoints}/160`);
         }
 
+        if (result.pubDev?.likes) {
+            lines.push(`Likes: ${result.pubDev.likes.toLocaleString()}`);
+        }
+
+        if (result.pubDev?.downloads) {
+            lines.push(`Downloads (30d): ${result.pubDev.downloads.toLocaleString()}`);
+        }
+
         if (result.verifiedPublisher && result.pubDev?.publisher) {
             lines.push(`Publisher: ${result.pubDev.publisher} (verified)`);
         }

@@ -97,7 +97,8 @@ describe('pub-dev-api', () => {
     });
 
     describe('fetchPackageMetrics', () => {
-        it('should return points and platforms', async () => {
+        it('should return points, likes, downloads, and platforms', async () => {
+            // Fixture uses /score format (top-level fields)
             const fixture = fs.readFileSync(
                 path.join(fixturesDir, 'pub-dev-metrics.json'), 'utf8',
             );
@@ -105,6 +106,8 @@ describe('pub-dev-api', () => {
 
             const metrics = await fetchPackageMetrics('http');
             assert.strictEqual(metrics.pubPoints, 140);
+            assert.strictEqual(metrics.likes, 2500);
+            assert.strictEqual(metrics.downloads, 150000);
             assert.deepStrictEqual(
                 metrics.platforms,
                 ['android', 'ios', 'linux', 'macos', 'web', 'windows'],
@@ -116,25 +119,29 @@ describe('pub-dev-api', () => {
             fetchStub.resolves(new Response('', { status: 400 }));
             const metrics = await fetchPackageMetrics('broken');
             assert.strictEqual(metrics.pubPoints, 0);
+            assert.strictEqual(metrics.likes, 0);
+            assert.strictEqual(metrics.downloads, 0);
             assert.deepStrictEqual(metrics.platforms, []);
             assert.strictEqual(metrics.wasmReady, null);
         });
 
-        it('should call the /metrics endpoint', async () => {
+        it('should call the /score endpoint for pub.dev', async () => {
             fetchStub.resolves(new Response('{}', { status: 200 }));
             await fetchPackageMetrics('provider');
             assert.ok(fetchStub.calledOnce);
+            // Default registry is pub.dev, so /score is used
             assert.ok(
-                fetchStub.firstCall.args[0].includes('/packages/provider/metrics'),
+                fetchStub.firstCall.args[0].includes('/packages/provider/score'),
             );
         });
 
         it('should detect WASM readiness from tags', async () => {
+            // /score format: tags at top level
             const body = JSON.stringify({
-                score: {
-                    grantedPoints: 100,
-                    tags: ['platform:web', 'is:wasm-ready'],
-                },
+                grantedPoints: 100,
+                likeCount: 50,
+                downloadCount30Days: 1000,
+                tags: ['platform:web', 'is:wasm-ready'],
             });
             fetchStub.resolves(new Response(body, { status: 200 }));
 

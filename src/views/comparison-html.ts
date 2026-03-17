@@ -162,6 +162,16 @@ const ROWS: readonly RowDef[] = [
         extract: p => p.pubPoints > 0 ? String(p.pubPoints) : '—',
     },
     {
+        label: 'Likes',
+        dimension: 'Likes',
+        extract: p => p.likes > 0 ? p.likes.toLocaleString() : '—',
+    },
+    {
+        label: 'Downloads (30d)',
+        dimension: 'Downloads (30d)',
+        extract: p => p.downloads > 0 ? p.downloads.toLocaleString() : '—',
+    },
+    {
         label: 'GitHub Stars',
         dimension: 'GitHub Stars',
         extract: p => p.stars !== null ? p.stars.toLocaleString() : '—',

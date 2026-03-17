@@ -49,7 +49,7 @@ describe('status-classifier', () => {
                 pubDev: {
                     name: 'pkg', latestVersion: '1.0.0', publishedDate: '',
                     repositoryUrl: null, isDiscontinued: true, isUnlisted: false,
-                    pubPoints: 100,
+                    pubPoints: 100, likes: 0, downloads: 0,
                     publisher: null,
                     license: null,
                     description: null,
@@ -73,7 +73,7 @@ describe('status-classifier', () => {
                     name: 'dio', latestVersion: '5.4.0',
                     publishedDate: new Date().toISOString(),
                     repositoryUrl: null, isDiscontinued: false, isUnlisted: false,
-                    pubPoints: 160, publisher: 'dart.dev',
+                    pubPoints: 160, likes: 0, downloads: 0, publisher: 'dart.dev',
                     license: 'MIT', description: null, topics: [],
                 },
             });
@@ -105,7 +105,7 @@ describe('status-classifier', () => {
                     name: 'pkg', latestVersion: '1.0.0',
                     publishedDate: new Date().toISOString(),
                     repositoryUrl: null, isDiscontinued: false, isUnlisted: false,
-                    pubPoints: 50, publisher: null,
+                    pubPoints: 50, likes: 0, downloads: 0, publisher: null,
                     license: null, description: null, topics: [],
                 },
             });
@@ -124,7 +124,7 @@ describe('status-classifier', () => {
                     name: 'pkg', latestVersion: '1.0.0',
                     publishedDate: '2022-01-01T00:00:00.000Z',
                     repositoryUrl: null, isDiscontinued: false, isUnlisted: false,
-                    pubPoints: 160, publisher: 'dart.dev',
+                    pubPoints: 160, likes: 0, downloads: 0, publisher: 'dart.dev',
                     license: null, description: null, topics: [],
                 },
             });
@@ -139,7 +139,7 @@ describe('status-classifier', () => {
                     name: 'pkg', latestVersion: '1.0.0',
                     publishedDate: new Date().toISOString(),
                     repositoryUrl: null, isDiscontinued: true, isUnlisted: false,
-                    pubPoints: 160, publisher: 'dart.dev',
+                    pubPoints: 160, likes: 0, downloads: 0, publisher: 'dart.dev',
                     license: null, description: null, topics: [],
                 },
             });
@@ -158,7 +158,7 @@ describe('status-classifier', () => {
                     name: 'pkg', latestVersion: '1.0.0',
                     publishedDate: new Date().toISOString(),
                     repositoryUrl: null, isDiscontinued: true, isUnlisted: false,
-                    pubPoints: 160, publisher: 'dart.dev',
+                    pubPoints: 160, likes: 0, downloads: 0, publisher: 'dart.dev',
                     license: null, description: null, topics: [],
                 },
             });
@@ -181,7 +181,7 @@ describe('status-classifier', () => {
                     name: 'pkg', latestVersion: '1.0.0',
                     publishedDate: new Date(seventeenMonthsAgo).toISOString(),
                     repositoryUrl: null, isDiscontinued: false, isUnlisted: false,
-                    pubPoints: 150, publisher: 'dart.dev',
+                    pubPoints: 150, likes: 0, downloads: 0, publisher: 'dart.dev',
                     license: null, description: null, topics: [],
                 },
             });
@@ -202,7 +202,7 @@ describe('status-classifier', () => {
                     name: 'pkg', latestVersion: '1.0.0',
                     publishedDate: new Date(nineteenMonthsAgo).toISOString(),
                     repositoryUrl: null, isDiscontinued: false, isUnlisted: false,
-                    pubPoints: 150, publisher: 'dart.dev',
+                    pubPoints: 150, likes: 0, downloads: 0, publisher: 'dart.dev',
                     license: null, description: null, topics: [],
                 },
             });
@@ -254,7 +254,7 @@ describe('status-classifier', () => {
             name: 'pkg', latestVersion: '1.0.0',
             publishedDate: '2026-01-01T00:00:00.000Z',
             repositoryUrl: null, isDiscontinued: false, isUnlisted: false,
-            pubPoints: 160, publisher: 'dart.dev',
+            pubPoints: 160, likes: 0, downloads: 0, publisher: 'dart.dev',
             license: null, description: null, topics: [] as readonly string[],
             ...overrides,
         });

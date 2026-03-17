@@ -129,7 +129,7 @@ describe('sbom-generator', () => {
                     name: 'http', latestVersion: '1.2.0',
                     publishedDate: '2024-01-01', repositoryUrl: null,
                     isDiscontinued: false, isUnlisted: false,
-                    pubPoints: 130, publisher: 'dart.dev',
+                    pubPoints: 130, likes: 0, downloads: 0, publisher: 'dart.dev',
                     license: 'BSD-3-Clause',
                     description: null,
                     topics: [],

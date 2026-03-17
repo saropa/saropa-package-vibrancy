@@ -14,6 +14,8 @@ function makeResult(name: string, score: number): VibrancyResult {
             isDiscontinued: false,
             isUnlisted: false,
             pubPoints: 130,
+            likes: 0,
+            downloads: 0,
             publisher: null,
             license: null,
             description: null,

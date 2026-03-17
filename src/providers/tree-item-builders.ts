@@ -172,6 +172,16 @@ function buildCommunityGroup(result: VibrancyResult): GroupItem | null {
             '📊 Pub Points', `${result.pubDev.pubPoints}/160`,
         ));
     }
+    if (result.pubDev?.likes) {
+        items.push(new DetailItem(
+            '❤️ Likes', `${result.pubDev.likes.toLocaleString()}`,
+        ));
+    }
+    if (result.pubDev?.downloads) {
+        items.push(new DetailItem(
+            '📥 Downloads (30d)', `${result.pubDev.downloads.toLocaleString()}`,
+        ));
+    }
     if (result.verifiedPublisher) {
         items.push(new DetailItem('✅ Publisher', 'Verified'));
     }

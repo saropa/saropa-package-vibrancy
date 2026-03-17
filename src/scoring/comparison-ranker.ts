@@ -25,6 +25,18 @@ const DIMENSIONS: readonly DimensionDef[] = [
         higherIsBetter: true,
     },
     {
+        name: 'Likes',
+        extract: p => p.likes > 0 ? p.likes : null,
+        format: v => v !== null ? v.toLocaleString() : '—',
+        higherIsBetter: true,
+    },
+    {
+        name: 'Downloads (30d)',
+        extract: p => p.downloads > 0 ? p.downloads : null,
+        format: v => v !== null ? v.toLocaleString() : '—',
+        higherIsBetter: true,
+    },
+    {
         name: 'GitHub Stars',
         extract: p => p.stars,
         format: v => v !== null ? v.toLocaleString() : '—',
@@ -181,6 +193,8 @@ export function resultToComparisonData(
             readonly publishedDate: string;
             readonly publisher?: string | null;
             readonly pubPoints?: number;
+            readonly likes?: number;
+            readonly downloads?: number;
         } | null;
         readonly github?: { readonly stars: number; readonly openIssues: number } | null;
         readonly archiveSizeBytes: number | null;
@@ -199,6 +213,8 @@ export function resultToComparisonData(
         publishedDate: result.pubDev?.publishedDate?.split('T')[0] ?? null,
         publisher: result.pubDev?.publisher ?? null,
         pubPoints: result.pubDev?.pubPoints ?? 0,
+        likes: result.pubDev?.likes ?? 0,
+        downloads: result.pubDev?.downloads ?? 0,
         stars: result.github?.stars ?? null,
         openIssues: result.github?.openIssues ?? null,
         archiveSizeBytes: result.archiveSizeBytes,
