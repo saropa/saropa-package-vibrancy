@@ -286,6 +286,8 @@ async function fetchComparisonData(
         publishedDate: info.publishedDate?.split('T')[0] ?? null,
         publisher,
         pubPoints: metrics.pubPoints,
+        likes: metrics.likes,
+        downloads: metrics.downloads,
         stars,
         openIssues,
         archiveSizeBytes: archiveSize,

@@ -86,6 +86,11 @@
         "icon": "$(library)"
       },
       {
+        "command": "saropaPackageVibrancy.adjustWeights",
+        "title": "Saropa: Adjust Scoring Weights",
+        "icon": "$(settings-gear)"
+      },
+      {
         "command": "saropaPackageVibrancy.about",
         "title": "Saropa: About",
         "icon": "$(info)"

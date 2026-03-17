@@ -6,6 +6,7 @@ import { VibrancyResult, NewVersionNotification } from './types';
 import { VibrancyReportPanel } from './views/report-webview';
 import { KnownIssuesPanel } from './views/known-issues-webview';
 import { AboutPanel } from './views/about-webview';
+import { WeightsPanel } from './views/weights-webview';
 import { exportReports } from './services/report-exporter';
 import { exportSbomReport } from './services/sbom-exporter';
 import {
@@ -53,6 +54,10 @@ export function registerCommands(
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.browseKnownIssues',
             () => KnownIssuesPanel.createOrShow(),
+        ),
+        vscode.commands.registerCommand(
+            'saropaPackageVibrancy.adjustWeights',
+            () => WeightsPanel.createOrShow(_state.latestResults),
         ),
         vscode.commands.registerCommand(
             'saropaPackageVibrancy.about',

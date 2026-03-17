@@ -15,6 +15,24 @@ Each version (and [Unreleased]) has a short commentary line in plain language—
 
 ---
 
+## [Unreleased]
+
+_Scoring gets smarter — likes, downloads, and pub points now feed into vibrancy scores, and a new interactive webview lets you tune scoring weights with live preview._
+
+### Added
+
+- **Likes & downloads in all views**: pub.dev likes and monthly downloads now shown in tree view tooltips, detail view, hover tooltips, comparison tables, and HTML reports
+- **Scoring weights webview panel**: New "Adjust Scoring Weights" command opens an interactive panel with sliders for resolution velocity, engagement, and popularity weights — scores update live as you drag, with delta indicators and category badges
+- **Quality penalty for low pub points**: Packages with sub-100 pub.dev points receive a penalty (up to -10) reflecting maintenance neglect
+- **Expanded popularity signal**: Popularity scoring now combines 4 signals (pub points, GitHub stars, likes, downloads) instead of 2, with pub points max corrected to 160
+
+### Changed
+
+- **pub.dev API**: Switched metrics endpoint from `/metrics` to `/score` to access likes and download counts
+- **Comparison ranker**: Likes and downloads included in comparison data and ranking
+
+---
+
 ## [2.0.0] - DEPRECATED
 
 _This extension has been merged into [Saropa Lints](https://marketplace.visualstudio.com/items?itemName=saropa.saropa-lints). All features are now available as collapsible panels in the Saropa Lints sidebar._
