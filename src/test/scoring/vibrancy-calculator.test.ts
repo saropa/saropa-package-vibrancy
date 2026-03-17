@@ -6,6 +6,7 @@ import {
     calcPopularity,
     calcPublishRecency,
     calcFlaggedIssuePenalty,
+    calcQualityPenalty,
     calcPublisherTrust,
     computeVibrancyScore,
     MAJOR_PUBLISHERS,
@@ -157,13 +158,25 @@ describe('vibrancy-calculator', () => {
     });
 
     describe('calcPopularity', () => {
-        it('should combine pub points and stars', () => {
-            const score = calcPopularity(140, 3000);
+        it('should combine pub points, stars, likes, and downloads', () => {
+            const score = calcPopularity(140, 3000, 2000, 300000);
             assert.ok(score > 50);
         });
 
         it('should return 0 for zero inputs', () => {
-            assert.strictEqual(calcPopularity(0, 0), 0);
+            assert.strictEqual(calcPopularity(0, 0, 0, 0), 0);
+        });
+
+        it('should score higher with more likes and downloads', () => {
+            const low = calcPopularity(100, 100, 0, 0);
+            const high = calcPopularity(100, 100, 5000, 500000);
+            assert.ok(high > low, `high (${high}) should exceed low (${low})`);
+        });
+
+        it('should use 160 as pub points max', () => {
+            // 160/160 = 100% normalized; with zero other signals → 25
+            const score = calcPopularity(160, 0, 0, 0);
+            assert.strictEqual(score, 25);
         });
     });
 
@@ -331,6 +344,28 @@ describe('vibrancy-calculator', () => {
 
         it('should return 0 for negative input', () => {
             assert.strictEqual(calcFlaggedIssuePenalty(-1), 0);
+        });
+    });
+
+    describe('calcQualityPenalty', () => {
+        it('should return 10 for 0 pub points', () => {
+            assert.strictEqual(calcQualityPenalty(0), 10);
+        });
+
+        it('should return 5 for 50 pub points', () => {
+            assert.strictEqual(calcQualityPenalty(50), 5);
+        });
+
+        it('should return 0 for 100 pub points', () => {
+            assert.strictEqual(calcQualityPenalty(100), 0);
+        });
+
+        it('should return 0 for 140 pub points', () => {
+            assert.strictEqual(calcQualityPenalty(140), 0);
+        });
+
+        it('should return 0 for 160 pub points', () => {
+            assert.strictEqual(calcQualityPenalty(160), 0);
         });
     });
 });

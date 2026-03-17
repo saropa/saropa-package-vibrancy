@@ -19,6 +19,7 @@ import {
     calcEngagementLevel,
     calcPopularity,
     calcFlaggedIssuePenalty,
+    calcQualityPenalty,
     calcPublisherTrust,
     calcPublishRecency,
     computeVibrancyScore,
@@ -66,12 +67,13 @@ export async function analyzePackage(
 
     const pubPoints = metrics.pubPoints;
     const scores = computeScores({
-        github, pubPoints, publishedDate: pubDev?.publishedDate ?? null,
+        github, pubPoints, likes: metrics.likes, downloads: metrics.downloads,
+        publishedDate: pubDev?.publishedDate ?? null,
         publisher, weights: params.weights,
         maxPublisherBonus: params.publisherTrustBonus,
     });
     const pubDevWithPoints = pubDev
-        ? { ...pubDev, pubPoints, publisher } : null;
+        ? { ...pubDev, pubPoints, likes: metrics.likes, downloads: metrics.downloads, publisher } : null;
     const category = classifyStatus({
         score: scores.score, knownIssue, pubDev: pubDevWithPoints,
     });
@@ -251,12 +253,14 @@ async function resolveAlternatives(params: {
 function computeScores(params: {
     readonly github: GitHubMetrics | null;
     readonly pubPoints: number;
+    readonly likes: number;
+    readonly downloads: number;
     readonly publishedDate: string | null;
     readonly publisher: string | null;
     readonly weights?: ScoringWeights;
     readonly maxPublisherBonus?: number;
 }) {
-    const { github, pubPoints, publishedDate, publisher } = params;
+    const { github, pubPoints, likes, downloads, publishedDate, publisher } = params;
     const daysSincePublish = publishedDate
         ? daysSince(publishedDate) : undefined;
     // Resolution from GitHub (issues/PRs) or, when 0, from publish recency on same 0–100 scale.
@@ -268,16 +272,19 @@ function computeScores(params: {
         : daysSincePublish !== undefined
             ? calcPublishRecency(daysSincePublish) / 2
             : 0;
-    const popularity = calcPopularity(pubPoints, github?.stars ?? 0);
+    const popularity = calcPopularity(pubPoints, github?.stars ?? 0, likes, downloads);
     const publisherTrust = calcPublisherTrust(
         publisher, params.maxPublisherBonus,
     );
 
     const flaggedPenalty = github
         ? calcFlaggedIssuePenalty(github.flaggedIssues?.length ?? 0) : 0;
+    // Sub-100 pub points indicates neglect — penalize independently of popularity weight
+    const qualityPenalty = calcQualityPenalty(pubPoints);
+    const totalPenalty = flaggedPenalty + qualityPenalty;
     const score = computeVibrancyScore(
         { resolutionVelocity, engagementLevel, popularity }, params.weights,
-        flaggedPenalty, publisherTrust,
+        totalPenalty, publisherTrust,
     );
     return {
         score, resolutionVelocity, engagementLevel,

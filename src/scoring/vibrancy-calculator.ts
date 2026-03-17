@@ -16,7 +16,7 @@ export const DEFAULT_WEIGHT_RESOLUTION = 0.5;
 /** Weight for Engagement Level (comment volume + discussion recency). */
 export const DEFAULT_WEIGHT_ENGAGEMENT = 0.4;
 
-/** Weight for Popularity (pub.dev points + GitHub stars). */
+/** Weight for Popularity (pub.dev points + GitHub stars + likes + downloads). */
 export const DEFAULT_WEIGHT_POPULARITY = 0.1;
 
 /** User-configurable scoring weights. Must sum to ~1.0 for meaningful scores. */
@@ -86,11 +86,15 @@ export function calcEngagementLevel(
     return clamp((commentScore + recencyScore) / 2);
 }
 
-/** Popularity: pub.dev points + GitHub stars. */
-export function calcPopularity(pubPoints: number, stars: number): number {
-    const pointsNorm = normalize(pubPoints, 150);
+/** Popularity: pub.dev points + GitHub stars + likes + downloads. */
+export function calcPopularity(
+    pubPoints: number, stars: number, likes: number, downloads: number,
+): number {
+    const pointsNorm = normalize(pubPoints, 160);       // pub.dev max is 160
     const starsNorm = normalize(stars, 5000);
-    return clamp((pointsNorm + starsNorm) / 2);
+    const likesNorm = normalize(likes, 5000);            // top packages ~5-8k likes
+    const downloadsNorm = normalize(downloads, 500000);  // top packages ~300k-750k/30d
+    return clamp((pointsNorm + starsNorm + likesNorm + downloadsNorm) / 4);
 }
 
 /** Major trusted publishers (Dart/Google ecosystem). */
@@ -113,6 +117,16 @@ export function calcPublisherTrust(
 export function calcFlaggedIssuePenalty(flaggedCount: number): number {
     if (flaggedCount <= 0) { return 0; }
     return Math.min(15, 5 + (flaggedCount - 1) * 2);
+}
+
+/**
+ * Penalty for low pub.dev quality score (pub points).
+ * 100+ points = no penalty; below 100, penalty scales linearly up to 10.
+ * 160/160 is often unachievable, but sub-100 indicates neglect.
+ */
+export function calcQualityPenalty(pubPoints: number): number {
+    if (pubPoints >= 100) { return 0; }
+    return Math.round((1 - pubPoints / 100) * 10);
 }
 
 /** Compute overall vibrancy score (0-100). */
